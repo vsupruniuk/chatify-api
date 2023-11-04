@@ -3,24 +3,22 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ormConfig } from '../ormConfig';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot(),
-		TypeOrmModule.forRoot({
-			type: 'mysql',
-			host: process.env.DATABASE_HOST,
-			port: Number(process.env.DATABASE_PORT),
-			username: process.env.DATABASE_USERNAME,
-			password: process.env.DATABASE_PASSWORD,
-			database: process.env.DATABASE_NAME,
-			ssl: {
-				rejectUnauthorized: true,
+		TypeOrmModule.forRoot(ormConfig),
+		ThrottlerModule.forRoot([
+			{
+				ttl: Number(process.env.THROTTLE_TIME_TO_LIVE),
+				limit: Number(process.env.THROTTLE_REQUESTS_LIMIT),
 			},
-			entities: [],
-		}),
+		]),
 	],
 	controllers: [AppController],
-	providers: [AppService],
+	providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}
