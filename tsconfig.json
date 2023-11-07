@@ -15,6 +15,9 @@
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
+    "paths": {
+      "@Entity/*": ["src/entities/*"]
+    },
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   }
