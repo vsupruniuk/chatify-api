@@ -8,7 +8,7 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import { User } from '@Entity/User.entity';
-import { Message } from '@Entity/Message.entity';
+import { GroupChatMessage } from '@Entity/GroupChatMessage.entity';
 
 @Entity('GroupChats')
 export class GroupChat {
@@ -49,11 +49,11 @@ export class GroupChat {
 	@JoinColumn({ name: 'userId' })
 	users: User[];
 
-	@ManyToMany(() => Message, (message: Message) => message.groupChat, {
+	@ManyToMany(() => GroupChatMessage, (message: GroupChatMessage) => message.groupChat, {
 		eager: false,
 		cascade: false,
 		nullable: false,
 	})
 	@JoinColumn({ name: 'messageId' })
-	messages: Message[];
+	messages: GroupChatMessage[];
 }

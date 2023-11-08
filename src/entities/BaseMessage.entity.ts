@@ -3,17 +3,14 @@ import {
 	CreateDateColumn,
 	Entity,
 	JoinColumn,
-	ManyToMany,
 	ManyToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
 import { User } from '@Entity/User.entity';
-import { DirectChat } from '@Entity/DirectChat.entity';
-import { GroupChat } from '@Entity/GroupChat.entity';
 
 @Entity('Messages')
-export class Message {
+export abstract class BaseMessage {
 	// Primary Column
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
@@ -43,20 +40,4 @@ export class Message {
 	})
 	@JoinColumn({ name: 'userId' })
 	user: User;
-
-	@ManyToMany(() => DirectChat, (directChat: DirectChat) => directChat.messages, {
-		eager: false,
-		cascade: false,
-		nullable: true,
-	})
-	@JoinColumn({ name: 'directChatId' })
-	directChat: DirectChat | null;
-
-	@ManyToMany(() => GroupChat, (groupChat: GroupChat) => groupChat.messages, {
-		eager: false,
-		cascade: false,
-		nullable: true,
-	})
-	@JoinColumn({ name: 'groupChatId' })
-	groupChat: GroupChat | null;
 }

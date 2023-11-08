@@ -8,7 +8,7 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import { User } from '@Entity/User.entity';
-import { Message } from '@Entity/Message.entity';
+import { DirectChatMessage } from '@Entity/DirectChatMessage.entity';
 
 @Entity('DirectChats')
 export class DirectChat {
@@ -34,11 +34,11 @@ export class DirectChat {
 	@JoinColumn({ name: 'userId' })
 	users: User[];
 
-	@ManyToMany(() => Message, (message: Message) => message.directChat, {
+	@ManyToMany(() => DirectChatMessage, (message: DirectChatMessage) => message.directChat, {
 		eager: false,
 		cascade: false,
 		nullable: false,
 	})
 	@JoinColumn({ name: 'messageId' })
-	messages: Message[];
+	messages: DirectChatMessage[];
 }
