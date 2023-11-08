@@ -8,9 +8,9 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import { User } from './User.entity';
-import { DirectChat } from './DirectChat.entity';
-import { GroupChat } from './GroupChat.entity';
+import { User } from '@Entity/User.entity';
+import { DirectChat } from '@Entity/DirectChat.entity';
+import { GroupChat } from '@Entity/GroupChat.entity';
 
 @Entity('Messages')
 export class Message {

@@ -7,7 +7,7 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import { User } from './User.entity';
+import { User } from '@Entity/User.entity';
 
 @Entity('Statuses')
 export class Status {
