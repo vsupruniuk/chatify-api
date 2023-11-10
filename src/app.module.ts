@@ -3,14 +3,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ormConfig } from '../ormConfig';
+import { typeOrmConfig } from './db/typeOrmConfig';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot(),
-		TypeOrmModule.forRoot(ormConfig),
+		TypeOrmModule.forRoot(typeOrmConfig),
 		ThrottlerModule.forRoot([
 			{
 				ttl: Number(process.env.THROTTLE_TIME_TO_LIVE),

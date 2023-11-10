@@ -6,24 +6,22 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('AccountSettings')
-export class AccountSettings {
-	// Primary Column
+@Entity('OTPCodes')
+export class OTPCode {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	// Columns
+	@Column({ type: 'int', nullable: true })
+	code: number | null;
+
 	@CreateDateColumn({ type: 'datetime', nullable: false })
 	createdAt: string;
 
-	@Column({ type: 'boolean', default: false })
-	enterIsSend: boolean;
-
-	@Column({ type: 'boolean', default: false })
-	notification: boolean;
-
-	@Column({ type: 'boolean', default: false })
-	twoStepVerification: boolean;
+	@Column({
+		type: 'datetime',
+		nullable: true,
+	})
+	expiresAt: string | null;
 
 	@UpdateDateColumn({ type: 'datetime', nullable: false })
 	updatedAt: string;
