@@ -2,20 +2,15 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
-	JoinColumn,
-	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import { User } from '@Entity/User.entity';
 
-@Entity('Statuses')
-export class Status {
-	// Primary Column
+@Entity()
+export abstract class BaseMessage {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	// Columns
 	@CreateDateColumn({ type: 'datetime', nullable: false })
 	createdAt: string;
 
@@ -24,20 +19,18 @@ export class Status {
 
 	@Column({
 		type: 'varchar',
-		length: 255,
+		length: 1000,
 		nullable: false,
 	})
-	statusText: string;
+	messageText: string;
 
 	@UpdateDateColumn({ type: 'datetime', nullable: false })
 	updatedAt: string;
 
-	// Columns With Relations
-	@OneToOne(() => User, (user: User) => user.status, {
-		eager: false,
-		cascade: false,
+	@Column({
+		type: 'varchar',
+		length: 255,
 		nullable: false,
 	})
-	@JoinColumn({ name: 'userId' })
-	user: User;
+	userId: string;
 }

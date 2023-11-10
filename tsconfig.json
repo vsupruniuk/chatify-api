@@ -16,7 +16,8 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "paths": {
-      "@Entity/*": ["src/entities/*"]
+      "@Entities/*": ["src/db/entities/*"],
+      "@Types/*": ["src/types/*"]
     },
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false

@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 
-export const ormConfig: TypeOrmModuleOptions = {
+export const typeOrmConfig: TypeOrmModuleOptions = {
 	type: 'mysql',
 	host: process.env.DATABASE_HOST,
 	port: Number(process.env.DATABASE_PORT),
@@ -11,5 +12,8 @@ export const ormConfig: TypeOrmModuleOptions = {
 	ssl: {
 		rejectUnauthorized: true,
 	},
-	entities: ['dist/**/*.entity{.ts,.js}'],
+	entities: ['dist/db/entities/*.entity{.ts,.js}'],
+	migrations: ['dist/db/migrations/*{.ts,.js}'],
 };
+
+export const connectionSource = new DataSource(typeOrmConfig as DataSourceOptions);
