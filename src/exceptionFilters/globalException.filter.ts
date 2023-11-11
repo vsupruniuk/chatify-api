@@ -2,6 +2,9 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { Response } from 'express';
 
+/**
+ * Global exception filter for handling all exceptions and errors in app.
+ */
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
 	catch(exception: Error, host: ArgumentsHost) {

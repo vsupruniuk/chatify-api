@@ -6,6 +6,9 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
+/**
+ * Domain entity representing information about OTP code
+ */
 @Entity('OTPCodes')
 export class OTPCode {
 	@PrimaryGeneratedColumn('uuid')

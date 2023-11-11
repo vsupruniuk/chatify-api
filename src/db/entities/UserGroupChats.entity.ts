@@ -6,6 +6,9 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
+/**
+ * Domain entity representing junction table wo pair users with their group chats
+ */
 @Entity('UserGroupChats')
 export class UserGroupChats {
 	@PrimaryGeneratedColumn('uuid')

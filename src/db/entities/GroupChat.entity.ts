@@ -6,6 +6,9 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
+/**
+ * Domain entity representing group chat between mane users
+ */
 @Entity('GroupChats')
 export class GroupChat {
 	@PrimaryGeneratedColumn('uuid')

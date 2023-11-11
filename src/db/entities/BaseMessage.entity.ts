@@ -6,6 +6,9 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
+/**
+ * Entity representing base properties for messages entities
+ */
 @Entity()
 export abstract class BaseMessage {
 	@PrimaryGeneratedColumn('uuid')

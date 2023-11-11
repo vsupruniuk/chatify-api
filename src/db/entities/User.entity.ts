@@ -6,6 +6,9 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
+/**
+ * Domain entity representing user
+ */
 @Entity('Users')
 export class User {
 	@PrimaryGeneratedColumn('uuid')
