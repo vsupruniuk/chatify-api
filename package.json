@@ -1,10 +1,14 @@
 {
   "name": "chatify-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Chatify API is a powerful NestJS-based backend service for a real-time messenger application. It provides features like user management, group chats, direct messaging, user search, and more.",
+  "author": "Vladyslav Supruniuk",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vsupruniuk/chatify-api"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -31,6 +35,7 @@
     "@nestjs/core": "10.2.8",
     "@nestjs/jwt": "^10.1.1",
     "@nestjs/platform-express": "10.2.8",
+    "@nestjs/swagger": "^7.1.15",
     "@nestjs/throttler": "^5.0.1",
     "@nestjs/typeorm": "10.0.0",
     "bcrypt": "^5.1.1",
