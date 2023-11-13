@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from '@Modules/app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { GlobalExceptionFilter } from './exceptionFilters/globalException.filter';
+import { GlobalExceptionFilter } from '@Filters/globalException.filter';
 import * as cookieParser from 'cookie-parser';
 import * as compression from 'compression';
 import helmet from 'helmet';

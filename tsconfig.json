@@ -16,8 +16,17 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "paths": {
+      "@Controllers/*": ["src/controllers/*"],
+      "@DB/*": ["src/db/*"],
+      "@DTO/*": ["src/types/dto/*"],
       "@Entities/*": ["src/db/entities/*"],
-      "@Types/*": ["src/types/*"]
+      "@Enums/*": ["src/types/enums/*"],
+      "@Filters/*": ["src/filters/*"],
+      "@Interfaces/*": ["src/types/interfaces/*"],
+      "@Modules/*": ["src/modules/*"],
+      "@Repositories/*": ["src/repositories/*"],
+      "@Services/*": ["src/services/*"],
+      "@TestMocks/*": ["src/tests/mocks/*"]
     },
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmConfig } from './db/typeOrmConfig';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { typeOrmConfig } from '@DB/typeOrmConfig';
+import { AppController } from '../app.controller';
+import { AppService } from '../app.service';
 
 @Module({
 	imports: [

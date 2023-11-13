@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
-import { DBTables } from '@Types/enums/db/DBTables.enum';
-import { DBTypes } from '@Types/enums/db/DBTypes.enum';
+import { DBTables } from '@Enums/db/DBTables.enum';
+import { DBTypes } from '@Enums//db/DBTypes.enum';
 
 /**
  * Migration for creating/reverting all necessary tables
