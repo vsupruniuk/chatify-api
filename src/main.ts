@@ -18,7 +18,12 @@ async function bootstrap(): Promise<void> {
 	app.use(compression());
 
 	app.useGlobalFilters(new GlobalExceptionFilter());
-	app.useGlobalPipes(new ValidationPipe());
+	app.useGlobalPipes(
+		new ValidationPipe({
+			whitelist: true,
+			stopAtFirstError: false,
+		}),
+	);
 
 	const config: Omit<OpenAPIObject, 'paths'> = new DocumentBuilder()
 		.setTitle('Chatify API documentation')
