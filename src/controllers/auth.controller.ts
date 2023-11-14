@@ -7,12 +7,7 @@ import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 
 @Controller('auth')
 export class AuthController {
-	constructor(
-		private readonly _usersService: UsersService,
-
-		@Inject(CACHE_MANAGER)
-		private readonly _cacheManager: Cache,
-	) {}
+	constructor(private readonly _usersService: UsersService) {}
 
 	@Post('/signup')
 	test(@Body() signupUserDto: SignupUserDto) {
