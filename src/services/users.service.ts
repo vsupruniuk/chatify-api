@@ -11,6 +11,9 @@ import { plainToClass } from 'class-transformer';
 import { CreateStatusDto } from '@DTO/statuses/CreateStatus.dto';
 import * as bcrypt from 'bcrypt';
 import { DateHelper } from '../helpers/date.helper';
+import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
+import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
+import { OTPCodesHelper } from '../helpers/OTPCodes.helper';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -20,6 +23,9 @@ export class UsersService implements IUsersService {
 
 		@Inject(CustomProviders.I_STATUSES_REPOSITORY)
 		private readonly _statusesRepository: IStatusesRepository,
+
+		@Inject(CustomProviders.I_OTP_CODES_REPOSITORY)
+		private readonly _otpCodesRepository: IOTPCodesRepository,
 
 		@Inject(CustomProviders.I_USERS_REPOSITORY)
 		private readonly _usersRepository: IUsersRepository,
@@ -31,8 +37,14 @@ export class UsersService implements IUsersService {
 			dateTime: DateHelper.dateTimeNow(),
 		});
 
+		const otpCodeDTO: CreateOTPCodeDto = plainToClass(CreateOTPCodeDto, <CreateOTPCodeDto>{
+			code: OTPCodesHelper.generateOTPCode(),
+			expiresAt: DateHelper.dateTimeFuture(1000 * 60 * 10),
+		});
+
 		const accountSettingsId: string = await this._accountSettingsRepository.createDefaultSettings();
 		const statusId: string = await this._statusesRepository.createStatus(defaultStatus);
+		const otpCodeId: string = await this._otpCodesRepository.createOTPCode(otpCodeDTO);
 		const hashedPassword: string = await bcrypt.hash(
 			signupUserDto.password,
 			Number(process.env.PASSWORD_SALT_HASH_ROUNDS),
@@ -42,6 +54,7 @@ export class UsersService implements IUsersService {
 			...signupUserDto,
 			accountSettingsId,
 			statusId,
+			OTPCodeId: otpCodeId,
 			password: hashedPassword,
 		});
 

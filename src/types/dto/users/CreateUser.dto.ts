@@ -9,4 +9,5 @@ export class CreateUserDto extends (SignupUserDto as new () => Omit<
 >) {
 	accountSettingsId: string;
 	statusId: string;
+	OTPCodeId: string;
 }

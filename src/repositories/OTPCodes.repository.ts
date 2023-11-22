@@ -2,7 +2,9 @@ import { DataSource, InsertResult, Repository } from 'typeorm';
 import { OTPCode } from '@Entities/OTPCode.entity';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodesRepository {
 	constructor(private _dataSource: DataSource) {
 		super(OTPCode, _dataSource.createEntityManager());

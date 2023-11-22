@@ -23,6 +23,7 @@ describe('usersRepository', (): void => {
 			password: 'qwerty1A',
 			accountSettingsId: '01',
 			statusId: '01',
+			OTPCodeId: '10',
 		};
 
 		beforeEach((): void => {

@@ -14,22 +14,29 @@ import { plainToClass } from 'class-transformer';
 import SpyInstance = jest.SpyInstance;
 import * as process from 'process';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
-
-// TODO add test cases for calling email service
-// TODO add test cases for generating OTP code
+import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
+import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
+import { OTPCodesHelper } from '../../../helpers/OTPCodes.helper';
 
 describe('Users service', (): void => {
 	let usersService: IUsersService;
 	let usersRepository: IUsersRepository;
 	let statusesRepository: IStatusesRepository;
 	let accountSettingsRepository: IAccountSettingsRepository;
+	let otpCodesRepository: IOTPCodesRepository;
 
 	beforeEach((): void => {
 		usersRepository = new UsersRepository(connectionSource);
 		statusesRepository = new StatusesRepository(connectionSource);
 		accountSettingsRepository = new AccountSettingsRepository(connectionSource);
+		otpCodesRepository = new OTPCodesRepository(connectionSource);
 
-		usersService = new UsersService(accountSettingsRepository, statusesRepository, usersRepository);
+		usersService = new UsersService(
+			accountSettingsRepository,
+			statusesRepository,
+			otpCodesRepository,
+			usersRepository,
+		);
 	});
 
 	describe('createUser', (): void => {
@@ -37,11 +44,15 @@ describe('Users service', (): void => {
 		let createUserMock: SpyInstance;
 		let createStatusMock: SpyInstance;
 		let createDefaultSettingsMock: SpyInstance;
+		let createOTPCodeMock: SpyInstance;
+		let generateOTPCodeMock: SpyInstance;
 		let hashMock: SpyInstance;
 
+		const otpCode: number = 123987;
 		const userId: string = '4';
 		const userStatusId: string = '01';
 		const userAccountSettingsId: string = '001';
+		const userOTPCodeId: string = '10';
 		const userHashedPassword: string = 'uuid-hash';
 		const user: SignupUserDto = {
 			firstName: 'Bruce',
@@ -62,7 +73,7 @@ describe('Users service', (): void => {
 					about: null,
 					avatarUrl: null,
 					accountSettingsId: userStatusId,
-					OTPCodeId: null,
+					OTPCodeId: userOTPCodeId,
 				}),
 			);
 
@@ -75,6 +86,12 @@ describe('Users service', (): void => {
 			createDefaultSettingsMock = jest
 				.spyOn(accountSettingsRepository, 'createDefaultSettings')
 				.mockResolvedValue(userAccountSettingsId);
+
+			createOTPCodeMock = jest
+				.spyOn(otpCodesRepository, 'createOTPCode')
+				.mockResolvedValue(userOTPCodeId);
+
+			generateOTPCodeMock = jest.spyOn(OTPCodesHelper, 'generateOTPCode').mockReturnValue(otpCode);
 
 			hashMock = jest.spyOn(bcrypt, 'hash').mockResolvedValue(userHashedPassword as never);
 		});
@@ -107,6 +124,20 @@ describe('Users service', (): void => {
 			});
 		});
 
+		it('should create OTP code for user', async (): Promise<void> => {
+			const date: string = '2023-11-22 16:30:00';
+
+			jest.setSystemTime(new Date(date));
+
+			await usersService.createUser(user);
+
+			expect(generateOTPCodeMock).toHaveBeenCalled();
+			expect(createOTPCodeMock).toHaveBeenCalledWith({
+				code: otpCode,
+				expiresAt: '2023-11-22 16:40:00',
+			});
+		});
+
 		it('should hash user password', async (): Promise<void> => {
 			await usersService.createUser(user);
 
@@ -124,6 +155,7 @@ describe('Users service', (): void => {
 				accountSettingsId: userAccountSettingsId,
 				password: userHashedPassword,
 				statusId: userStatusId,
+				OTPCodeId: userOTPCodeId,
 			});
 			expect(createdUser.firstName).toEqual(user.firstName);
 			expect(createdUser.lastName).toEqual(user.lastName);
@@ -138,7 +170,7 @@ describe('Users service', (): void => {
 			expect(createdUser.about).toBeNull();
 			expect(createdUser.avatarUrl).toBeNull();
 			expect(createdUser.accountSettingsId.length >= 1).toBeTruthy();
-			expect(createdUser.OTPCodeId).toBeNull();
+			expect(createdUser.OTPCodeId.length >= 1).toBeTruthy();
 		});
 
 		it('should return created user as instance of UserShortDto', async (): Promise<void> => {
