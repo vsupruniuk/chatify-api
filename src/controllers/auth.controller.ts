@@ -1,25 +1,21 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { UsersService } from '@Services/users.service';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
+import { IUsersService } from '@Interfaces/users/IUsersService';
+import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
-import { CreateUserDto } from '@DTO/users/CreateUser.dto';
+import { IEmailService } from '@Interfaces/emails/IEmailService';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private readonly _usersService: UsersService) {}
+	constructor(
+		@Inject(CustomProviders.I_USERS_SERVICE)
+		private readonly _usersService: IUsersService,
+
+		@Inject(CustomProviders.I_EMAIL_SERVICE)
+		private readonly _emailService: IEmailService,
+	) {}
 
 	@Post('/signup')
-	test(@Body() signupUserDto: SignupUserDto) {
-		const user: CreateUserDto = {
-			accountSettingsId: 'no',
-			statusId: 'no',
-			email: 'test@email.com',
-			firstName: 'Vlad',
-			nickname: 'nickname',
-			password: 'password',
-		};
-
-		return this._usersService.test(user);
+	async test(@Body() signupUserDTO: SignupUserDto) {
+		return this._usersService.createUser(signupUserDTO);
 	}
 }

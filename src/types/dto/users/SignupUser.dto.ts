@@ -1,4 +1,5 @@
 import { IsEmail, IsOptional, IsString, MinLength, Matches } from 'class-validator';
+import { IsStringsSimilar } from '../../../decorators/IsStringsSimilar.decorator';
 
 /**
  * DTO class representing request data for signup request
@@ -31,5 +32,6 @@ export class SignupUserDto {
 		message: '$property must contains at least 1 number and 1 uppercase character',
 	})
 	@MinLength(6, { message: '$property must be at least $constraint1 characters long' })
+	@IsStringsSimilar('password', { message: 'Password and password confirmation must match' })
 	passwordConfirmation: string;
 }

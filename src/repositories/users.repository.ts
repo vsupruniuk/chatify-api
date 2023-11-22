@@ -13,13 +13,11 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 	}
 
 	public async getById(id: string): Promise<UserShortDto | null> {
-		const users: User[] = await this.find({
+		const user: User | null = await this.findOne({
 			where: { id },
 		});
 
-		return users[0]
-			? plainToClass(UserShortDto, users[0], { excludeExtraneousValues: true })
-			: null;
+		return user ? plainToClass(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async createUser(user: CreateUserDto): Promise<string> {
