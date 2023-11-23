@@ -13,12 +13,12 @@ describe('usersRepository', (): void => {
 		usersRepository = new UsersRepository(connectionSource);
 	});
 
-	describe('getByEmail', (): void => {
+	describe('getByNickname', (): void => {
 		let findMock: SpyInstance;
 
 		const usersMock: UserShortDto[] = [...users];
-		const existingUserEmail: string = 'tony@mail.com';
-		const notExistingUserEmail: string = 'bruce@mail.com';
+		const existingUserNickname: string = 't.stark';
+		const notExistingUserNickname: string = 'b.banner';
 
 		beforeEach((): void => {
 			findMock = jest
@@ -26,7 +26,7 @@ describe('usersRepository', (): void => {
 				.mockImplementation((options: FindOneOptions): Promise<User | null> => {
 					return Promise.resolve(
 						(usersMock.find(
-							(user: UserShortDto) => user.email === options.where['email'],
+							(user: UserShortDto) => user.nickname === options.where['nickname'],
 						) as User) || null,
 					);
 				});
@@ -37,29 +37,29 @@ describe('usersRepository', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(usersRepository.getByEmail).toBeDefined();
+			expect(usersRepository.getByNickname).toBeDefined();
 		});
 
 		it('should use findOne method for searching user', async (): Promise<void> => {
-			await usersRepository.getByEmail(existingUserEmail);
+			await usersRepository.getByNickname(existingUserNickname);
 
-			expect(findMock).toBeCalledWith({ where: { email: existingUserEmail } });
+			expect(findMock).toBeCalledWith({ where: { nickname: existingUserNickname } });
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {
-			const foundedUser: UserShortDto = await usersRepository.getByEmail(existingUserEmail);
+			const foundedUser: UserShortDto = await usersRepository.getByNickname(existingUserNickname);
 
-			expect(foundedUser.id).toEqual(existingUserEmail);
+			expect(foundedUser.id).toEqual(existingUserNickname);
 		});
 
 		it('should return founded user as instance of UserShortDto', async (): Promise<void> => {
-			const foundedUser: UserShortDto = await usersRepository.getByEmail(existingUserEmail);
+			const foundedUser: UserShortDto = await usersRepository.getByNickname(existingUserNickname);
 
 			expect(foundedUser).toBeInstanceOf(UserShortDto);
 		});
 
 		it('should return null, if user not exist', async (): Promise<void> => {
-			const foundedUser = await usersRepository.getByEmail(notExistingUserEmail);
+			const foundedUser = await usersRepository.getByNickname(notExistingUserNickname);
 
 			expect(foundedUser).toBeNull();
 		});
