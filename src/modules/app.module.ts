@@ -5,12 +5,10 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { typeOrmConfig } from '@DB/typeOrmConfig';
 import { AuthModule } from '@Modules/auth.module';
-import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot(),
-		CacheModule.register(),
 		TypeOrmModule.forRoot(typeOrmConfig),
 		AuthModule,
 		ThrottlerModule.forRoot([
