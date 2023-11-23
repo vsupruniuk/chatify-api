@@ -20,6 +20,14 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 		return user ? plainToClass(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
+	getByEmail(email: string): Promise<UserShortDto | null> {
+		return Promise.resolve(undefined);
+	}
+
+	getByNickname(nickname: string): Promise<UserShortDto | null> {
+		return Promise.resolve(undefined);
+	}
+
 	public async createUser(user: CreateUserDto): Promise<string> {
 		const result: InsertResult = await this.insert(user);
 

@@ -15,6 +15,14 @@ describe('AuthController', (): void => {
 	const users: UserShortDto[] = [];
 
 	const mockUsersService = {
+		async getByEmail(userEmail: string): Promise<UserShortDto | null> {
+			return users.find((user: UserShortDto) => user.email === userEmail) || null;
+		},
+
+		async getByNickname(userNickname: string): Promise<UserShortDto | null> {
+			return users.find((user: UserShortDto) => user.nickname === userNickname) || null;
+		},
+
 		async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto> {
 			const user = plainToClass(UserShortDto, <UserShortDto>{
 				...signupUserDto,
