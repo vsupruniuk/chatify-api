@@ -20,12 +20,16 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 		return user ? plainToClass(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
-	getByEmail(email: string): Promise<UserShortDto | null> {
-		return Promise.resolve(undefined);
+	public async getByEmail(email: string): Promise<UserShortDto | null> {
+		const user: User | null = await this.findOne({ where: { email } });
+
+		return user ? plainToClass(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
-	getByNickname(nickname: string): Promise<UserShortDto | null> {
-		return Promise.resolve(undefined);
+	public async getByNickname(nickname: string): Promise<UserShortDto | null> {
+		const user: User | null = await this.findOne({ where: { nickname } });
+
+		return user ? plainToClass(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async createUser(user: CreateUserDto): Promise<string> {

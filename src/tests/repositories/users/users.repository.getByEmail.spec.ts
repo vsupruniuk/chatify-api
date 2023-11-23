@@ -49,7 +49,7 @@ describe('usersRepository', (): void => {
 		it('should find user, if it exist', async (): Promise<void> => {
 			const foundedUser: UserShortDto = await usersRepository.getByEmail(existingUserEmail);
 
-			expect(foundedUser.id).toEqual(existingUserEmail);
+			expect(foundedUser.email).toEqual(existingUserEmail);
 		});
 
 		it('should return founded user as instance of UserShortDto', async (): Promise<void> => {
