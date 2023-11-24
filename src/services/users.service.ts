@@ -72,6 +72,17 @@ export class UsersService implements IUsersService {
 	}
 
 	public async getUserOTPCode(userOTPCodeId: string): Promise<OTPCodeResponseDto | null> {
-		return undefined;
+		const otpCode: OTPCodeResponseDto | null =
+			await this._otpCodesRepository.getUserOTPCode(userOTPCodeId);
+
+		return otpCode ? this.validateOTPCodeExpirations(otpCode) : null;
+	}
+
+	private async validateOTPCodeExpirations(
+		otpCode: OTPCodeResponseDto,
+	): Promise<OTPCodeResponseDto | null> {
+		const isExpire: boolean = DateHelper.isDateLessThenCurrent(otpCode.expiresAt);
+
+		return !isExpire ? otpCode : null;
 	}
 }
