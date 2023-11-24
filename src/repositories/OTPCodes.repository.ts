@@ -4,6 +4,7 @@ import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
 import { Injectable } from '@nestjs/common';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodesRepository {
@@ -18,6 +19,8 @@ export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodes
 	}
 
 	public async getUserOTPCode(userOTPCodeId: string): Promise<OTPCodeResponseDto | null> {
-		return undefined;
+		const otpCode: OTPCode | null = await this.findOne({ where: { id: userOTPCodeId } });
+
+		return otpCode ? plainToClass(OTPCodeResponseDto, otpCode) : null;
 	}
 }
