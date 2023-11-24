@@ -26,5 +26,3 @@ import { OTPCode } from '@Entities/OTPCode.entity';
 	],
 })
 export class AuthModule {}
-
-// TODO update API docks
