@@ -31,9 +31,9 @@ export class EmailService implements IEmailService {
 		});
 	}
 
-	public async sendActivationEmail(receiverEmail: string, OPTCode: number): Promise<void> {
+	public async sendActivationEmail(receiverEmail: string, otpCode: number): Promise<void> {
 		const emailSubject: string = 'Chatify Account Activation';
-		const emailContent: string = accountActivationTemplate(OPTCode);
+		const emailContent: string = accountActivationTemplate(otpCode);
 
 		return this.sendMail(
 			receiverEmail,

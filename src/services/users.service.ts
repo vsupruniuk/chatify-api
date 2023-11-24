@@ -14,7 +14,7 @@ import { DateHelper } from '../helpers/date.helper';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
 import { OTPCodesHelper } from '../helpers/OTPCodes.helper';
-import * as process from 'process';
+import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -69,5 +69,9 @@ export class UsersService implements IUsersService {
 
 		const createdUserId: string = await this._usersRepository.createUser(userForCreation);
 		return await this._usersRepository.getById(createdUserId);
+	}
+
+	public async getUserOTPCode(userOTPCodeId: string): Promise<OTPCodeResponseDto | null> {
+		return undefined;
 	}
 }

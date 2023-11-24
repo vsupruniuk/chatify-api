@@ -18,10 +18,10 @@ import { OTPCode } from '@Entities/OTPCode.entity';
 	controllers: [AuthController],
 	providers: [
 		{ provide: CustomProviders.I_USERS_SERVICE, useClass: UsersService },
+		{ provide: CustomProviders.I_EMAIL_SERVICE, useClass: EmailService },
 		{ provide: CustomProviders.I_ACCOUNT_SETTINGS_REPOSITORY, useClass: AccountSettingsRepository },
 		{ provide: CustomProviders.I_STATUSES_REPOSITORY, useClass: StatusesRepository },
 		{ provide: CustomProviders.I_USERS_REPOSITORY, useClass: UsersRepository },
-		{ provide: CustomProviders.I_EMAIL_SERVICE, useClass: EmailService },
 		{ provide: CustomProviders.I_OTP_CODES_REPOSITORY, useClass: OTPCodesRepository },
 	],
 })

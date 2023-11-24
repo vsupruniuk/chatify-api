@@ -7,52 +7,68 @@ import { AppModule } from '@Modules/app.module';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { plainToClass } from 'class-transformer';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { users } from '@TestMocks/UserResponseDto/users';
+import { AuthController } from '@Controllers/auth.controller';
 
 // TODO test for email service
 
 describe('AuthController', (): void => {
 	let app: INestApplication;
+	let authController: AuthController;
+
 	const usersMock: UserShortDto[] = [];
 
-	const mockUsersService = {
-		async getByEmail(userEmail: string): Promise<UserShortDto | null> {
-			return usersMock.find((user: UserShortDto) => user.email === userEmail) || null;
-		},
+	const usersServiceMock = {
+		getByEmail: jest
+			.fn()
+			.mockImplementation(async (userEmail: string): Promise<UserShortDto | null> => {
+				return usersMock.find((user: UserShortDto) => user.email === userEmail) || null;
+			}),
 
-		async getByNickname(userNickname: string): Promise<UserShortDto | null> {
-			return usersMock.find((user: UserShortDto) => user.nickname === userNickname) || null;
-		},
+		getByNickname: jest
+			.fn()
+			.mockImplementation(async (userNickname: string): Promise<UserShortDto | null> => {
+				return usersMock.find((user: UserShortDto) => user.nickname === userNickname) || null;
+			}),
 
-		async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto> {
-			const user = plainToClass(UserShortDto, <UserShortDto>{
-				...signupUserDto,
-				id: '4',
-				about: null,
-				avatarUrl: null,
-				accountSettingsId: '01',
-				OTPCodeId: '001',
-			});
+		createUser: jest
+			.fn()
+			.mockImplementation(async (signupUserDto: SignupUserDto): Promise<UserShortDto> => {
+				const user = plainToClass(UserShortDto, <UserShortDto>{
+					...signupUserDto,
+					id: '4',
+					about: null,
+					avatarUrl: null,
+					accountSettingsId: '01',
+					OTPCodeId: '001',
+				});
 
-			usersMock.push(user);
+				usersMock.push(user);
 
-			return user;
-		},
+				return user;
+			}),
 	};
 
-	const mockEmailService = {};
+	const emailServiceMock = {
+		sendActivationEmail: jest
+			.fn()
+			.mockImplementation(async (receiverEmail: string, otpCode: number): Promise<string> => {
+				return `${receiverEmail}, ${otpCode}`;
+			}),
+	};
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AppModule, AuthModule],
 		})
 			.overrideProvider(CustomProviders.I_USERS_SERVICE)
-			.useValue(mockUsersService)
+			.useValue(usersServiceMock)
 			.overrideProvider(CustomProviders.I_EMAIL_SERVICE)
-			.useValue(mockEmailService)
+			.useValue(emailServiceMock)
 			.compile();
 
 		app = moduleFixture.createNestApplication();
+		authController = moduleFixture.get<AuthController>(AuthController);
+
 		app.useGlobalPipes(new ValidationPipe({ whitelist: true, stopAtFirstError: false }));
 
 		await app.init();
@@ -363,6 +379,66 @@ describe('AuthController', (): void => {
 				.send(user)
 				.expect(HttpStatus.CREATED)
 				.expect(signupResponse);
+		});
+
+		it('should call getByEmail in users service to check if email is taken', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce',
+				lastName: 'Banner',
+				email: 'bruce@mail.com',
+				nickname: 'b.banner',
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A',
+			};
+
+			await authController.signup(user);
+
+			expect(usersServiceMock.getByEmail).toHaveBeenCalledWith(user.email);
+		});
+
+		it('should call getByNickname in users service to check if nickname is taken', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce',
+				lastName: 'Banner',
+				email: 'bruce@mail.com',
+				nickname: 'b.banner',
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A',
+			};
+
+			await authController.signup(user);
+
+			expect(usersServiceMock.getByNickname).toHaveBeenCalledWith(user.nickname);
+		});
+
+		it('should call createUser in users service to create user', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce',
+				lastName: 'Banner',
+				email: 'bruce@mail.com',
+				nickname: 'b.banner',
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A',
+			};
+
+			await authController.signup(user);
+
+			expect(usersServiceMock.createUser).toHaveBeenCalledWith(user);
+		});
+
+		it('should call createUser in users service to create user', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce',
+				lastName: 'Banner',
+				email: 'bruce@mail.com',
+				nickname: 'b.banner',
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A',
+			};
+
+			await authController.signup(user);
+
+			expect(usersServiceMock.createUser).toHaveBeenCalledWith(user);
 		});
 	});
 });
