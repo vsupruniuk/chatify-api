@@ -33,14 +33,18 @@ describe('AuthController', (): void => {
 		createUser: jest
 			.fn()
 			.mockImplementation(async (signupUserDto: SignupUserDto): Promise<UserShortDto> => {
-				const user = plainToClass(UserShortDto, <UserShortDto>{
-					...signupUserDto,
-					id: '4',
-					about: null,
-					avatarUrl: null,
-					accountSettingsId: '01',
-					OTPCodeId: '001',
-				});
+				const user = plainToClass(
+					UserShortDto,
+					<UserShortDto>{
+						...signupUserDto,
+						id: '4',
+						about: null,
+						avatarUrl: null,
+						accountSettingsId: '01',
+						OTPCodeId: '001',
+					},
+					{ excludeExtraneousValues: true },
+				);
 
 				usersMock.push(user);
 
@@ -83,6 +87,10 @@ describe('AuthController', (): void => {
 	});
 
 	describe('POST /auth/signup', (): void => {
+		beforeEach((): void => {
+			usersMock.length = 0;
+		});
+
 		it('should return 400 status if email is missing', (): Test => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
@@ -124,9 +132,10 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
+			usersServiceMock.createUser(user);
+
 			return request(app.getHttpServer())
 				.post('/auth/signup')
-				.send(user)
 				.send(user)
 				.expect(HttpStatus.CONFLICT);
 		});
@@ -189,9 +198,10 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
+			usersServiceMock.createUser(user);
+
 			return request(app.getHttpServer())
 				.post('/auth/signup')
-				.send(user)
 				.send(user)
 				.expect(HttpStatus.CONFLICT);
 		});

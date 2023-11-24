@@ -30,7 +30,7 @@ export interface IUsersService {
 
 	/**
 	 * Method for searching OTP code for user
-	 * @param userOTPCodeId - OPT code id for specific user
+	 * @param userOTPCodeId - OTP code id for specific user
 	 * @returns OTPCodeResponseDto - OTP code if code was found and code is not expire
 	 * @returns null - if code wasn't found or expire
 	 */
