@@ -14,6 +14,7 @@ import { DateHelper } from '../helpers/date.helper';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
 import { OTPCodesHelper } from '../helpers/OTPCodes.helper';
+import * as process from 'process';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -30,6 +31,14 @@ export class UsersService implements IUsersService {
 		@Inject(CustomProviders.I_USERS_REPOSITORY)
 		private readonly _usersRepository: IUsersRepository,
 	) {}
+
+	public async getByEmail(email: string): Promise<UserShortDto | null> {
+		return await this._usersRepository.getByEmail(email);
+	}
+
+	public async getByNickname(nickname: string): Promise<UserShortDto | null> {
+		return await this._usersRepository.getByNickname(nickname);
+	}
 
 	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto> {
 		const defaultStatus: CreateStatusDto = plainToClass(CreateStatusDto, <CreateStatusDto>{

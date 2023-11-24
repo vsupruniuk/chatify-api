@@ -6,6 +6,21 @@ import { UserShortDto } from '@DTO/users/UserShort.dto';
  */
 export interface IUsersService {
 	/**
+	 * Method for searching one specific user by email
+	 * @param email - user email for searching
+	 * @returns UserShortDto - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	getByEmail(email: string): Promise<UserShortDto | null>;
+
+	/**
+	 * Method for searching one specific user by nickname
+	 * @param nickname - user nickname for searching
+	 * @returns UserShortDto - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	getByNickname(nickname: string): Promise<UserShortDto | null>;
+	/**
 	 * Method for creating user from signup data with some default settings
 	 * @param signupUserDto - signup data taken from user
 	 * @returns UserShortDto - created user

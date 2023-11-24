@@ -7,20 +7,21 @@ import { AppModule } from '@Modules/app.module';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { plainToClass } from 'class-transformer';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { users } from '@TestMocks/UserResponseDto/users';
 
-// TODO get user by email and nickname mocks
+// TODO test for email service
 
 describe('AuthController', (): void => {
 	let app: INestApplication;
-	const users: UserShortDto[] = [];
+	const usersMock: UserShortDto[] = [];
 
 	const mockUsersService = {
 		async getByEmail(userEmail: string): Promise<UserShortDto | null> {
-			return users.find((user: UserShortDto) => user.email === userEmail) || null;
+			return usersMock.find((user: UserShortDto) => user.email === userEmail) || null;
 		},
 
 		async getByNickname(userNickname: string): Promise<UserShortDto | null> {
-			return users.find((user: UserShortDto) => user.nickname === userNickname) || null;
+			return usersMock.find((user: UserShortDto) => user.nickname === userNickname) || null;
 		},
 
 		async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto> {
@@ -33,7 +34,7 @@ describe('AuthController', (): void => {
 				OTPCodeId: '001',
 			});
 
-			users.push(user);
+			usersMock.push(user);
 
 			return user;
 		},
