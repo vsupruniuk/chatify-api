@@ -8,14 +8,14 @@ import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { plainToClass } from 'class-transformer';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { AuthController } from '@Controllers/auth.controller';
-
-// TODO test for email service
+import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 
 describe('AuthController', (): void => {
 	let app: INestApplication;
 	let authController: AuthController;
 
 	const usersMock: UserShortDto[] = [];
+	const otpCode: OTPCodeResponseDto = { code: 111111, expiresAt: '2023-11-25 1:10:00' };
 
 	const usersServiceMock = {
 		getByEmail: jest
@@ -46,6 +46,10 @@ describe('AuthController', (): void => {
 
 				return user;
 			}),
+
+		getUserOTPCode: jest.fn().mockImplementation((): OTPCodeResponseDto => {
+			return otpCode;
+		}),
 	};
 
 	const emailServiceMock = {
@@ -426,7 +430,7 @@ describe('AuthController', (): void => {
 			expect(usersServiceMock.createUser).toHaveBeenCalledWith(user);
 		});
 
-		it('should call createUser in users service to create user', async (): Promise<void> => {
+		it('should call getUserOTPCode in users service to get user OTP code', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -438,7 +442,22 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
-			expect(usersServiceMock.createUser).toHaveBeenCalledWith(user);
+			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalled();
+		});
+
+		it('should call sendActivationEmail in email service to send email with OTP code', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce',
+				lastName: 'Banner',
+				email: 'bruce@mail.com',
+				nickname: 'b.banner',
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A',
+			};
+
+			await authController.signup(user);
+
+			expect(emailServiceMock.sendActivationEmail).toHaveBeenCalledWith(user.email, otpCode.code);
 		});
 	});
 });
