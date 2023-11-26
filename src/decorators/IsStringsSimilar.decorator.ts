@@ -21,6 +21,11 @@ export class IsStringsSimilarConstraint implements ValidatorConstraintInterface 
 	}
 }
 
+/**
+ * Validation decorator to check if two strings similar
+ * @param property - name of property to compare
+ * @param validationOptions - additional validation options
+ */
 export const IsStringsSimilar = (property: string, validationOptions?: ValidationOptions) => {
 	return (object: object, propertyName: string) => {
 		registerDecorator({

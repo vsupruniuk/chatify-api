@@ -1,14 +1,14 @@
 import * as nodemailer from 'nodemailer';
 import { Transporter } from 'nodemailer';
 import { Injectable } from '@nestjs/common';
-import { EmailPrioriy } from '@Enums/EmailPrioriy.enum';
+import { EmailPriority } from '@Enums/EmailPrioriy.enum';
 import { IEmailService } from '@Interfaces/emails/IEmailService';
 import { accountActivationTemplate } from '../emailTemplates/accountActivationTemplate';
 
 @Injectable()
 export class EmailService implements IEmailService {
-	private readonly _appName: string = 'Chatify';
-	private readonly _appEmail: string = process.env.SMTP_USER;
+	private readonly APP_NAME: string = 'Chatify';
+	private readonly APP_EMAIL: string = process.env.SMTP_USER;
 	private _transporter: Transporter;
 
 	constructor() {
@@ -17,7 +17,7 @@ export class EmailService implements IEmailService {
 			port: Number(process.env.SMTP_PORT),
 			secure: true,
 			auth: {
-				user: this._appEmail,
+				user: this.APP_EMAIL,
 				pass: process.env.SMTP_PASS,
 			},
 		});
@@ -40,7 +40,7 @@ export class EmailService implements IEmailService {
 			emailSubject,
 			emailContent,
 			emailContent,
-			EmailPrioriy.HIGH,
+			EmailPriority.HIGH,
 		);
 	}
 
@@ -49,11 +49,11 @@ export class EmailService implements IEmailService {
 		emailSubject: string,
 		emailText: string,
 		emailHtml: string,
-		emailPriority: EmailPrioriy = EmailPrioriy.NORMAL,
+		emailPriority: EmailPriority = EmailPriority.NORMAL,
 	): Promise<void> {
 		await this._transporter.sendMail({
-			from: { name: this._appName, address: this._appEmail },
-			sender: { name: this._appName, address: this._appEmail },
+			from: { name: this.APP_NAME, address: this.APP_EMAIL },
+			sender: { name: this.APP_NAME, address: this.APP_EMAIL },
 			to: receiverEmail,
 			subject: emailSubject,
 			text: emailText,

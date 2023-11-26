@@ -14,6 +14,12 @@ import { IEmailService } from '@Interfaces/emails/IEmailService';
 import { IAuthController } from '@Interfaces/users/IAuthController';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+import {
+	ApiBadRequestResponse,
+	ApiConflictResponse,
+	ApiCreatedResponse,
+	ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController implements IAuthController {
@@ -25,6 +31,15 @@ export class AuthController implements IAuthController {
 		private readonly _emailService: IEmailService,
 	) {}
 
+	// TODO type for validation and conflict errors for docs
+	@ApiTags('Auth')
+	@ApiCreatedResponse({
+		status: 201,
+		type: UserShortDto,
+		description: 'Successfully created user',
+	})
+	@ApiBadRequestResponse({ status: 400, description: 'Validation errors occurred' })
+	@ApiConflictResponse({ status: 409, description: 'Some of the unique fields are already taken' })
 	@Post('/signup')
 	@HttpCode(HttpStatus.CREATED)
 	public async signup(@Body() signupUserDTO: SignupUserDto): Promise<UserShortDto> {
