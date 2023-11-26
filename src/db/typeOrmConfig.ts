@@ -15,7 +15,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
 	ssl: {
 		rejectUnauthorized: true,
 	},
-	entities: ['dist/db/entities/*.entity{.ts,.js}'],
+	entities: ['dist/src/db/entities/*.entity{.ts,.js}'],
 	migrations: ['dist/db/migrations/*{.ts,.js}'],
 };
 

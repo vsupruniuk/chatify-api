@@ -1,0 +1,84 @@
+import { IUsersService } from '@Interfaces/users/IUsersService';
+import { UsersService } from '@Services/users.service';
+import { StatusesRepository } from '@Repositories/statuses.repository';
+import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
+import { UsersRepository } from '@Repositories/users.repository';
+import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
+import { IStatusesRepository } from '@Interfaces/statuses/IStatusesRepository';
+import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
+import { connectionSource } from '@DB/typeOrmConfig';
+import { UserShortDto } from '@DTO/users/UserShort.dto';
+import SpyInstance = jest.SpyInstance;
+import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
+import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
+import { users } from '@TestMocks/UserResponseDto/users';
+
+describe('Users service', (): void => {
+	let usersService: IUsersService;
+	let usersRepository: IUsersRepository;
+	let statusesRepository: IStatusesRepository;
+	let accountSettingsRepository: IAccountSettingsRepository;
+	let otpCodesRepository: IOTPCodesRepository;
+
+	beforeEach((): void => {
+		usersRepository = new UsersRepository(connectionSource);
+		statusesRepository = new StatusesRepository(connectionSource);
+		accountSettingsRepository = new AccountSettingsRepository(connectionSource);
+		otpCodesRepository = new OTPCodesRepository(connectionSource);
+
+		usersService = new UsersService(
+			accountSettingsRepository,
+			statusesRepository,
+			otpCodesRepository,
+			usersRepository,
+		);
+	});
+
+	describe('getByNickname', (): void => {
+		let getUserByEmailNickname: SpyInstance;
+
+		const usersMock: UserShortDto[] = [...users];
+		const existingUserNickname: string = 't.stark';
+		const notExistingUserNickname: string = 'b.banner';
+
+		beforeEach((): void => {
+			getUserByEmailNickname = jest
+				.spyOn(usersRepository, 'getByNickname')
+				.mockImplementation(async (nickname: string): Promise<UserShortDto | null> => {
+					return usersMock.find((user: UserShortDto) => user.nickname === nickname) || null;
+				});
+		});
+
+		afterEach((): void => {
+			jest.clearAllMocks();
+		});
+
+		it('should be declared', (): void => {
+			expect(usersService.getByNickname).toBeDefined();
+		});
+
+		it('should use getByEmail method from users repository for searching user', async (): Promise<void> => {
+			await usersService.getByNickname(existingUserNickname);
+
+			expect(getUserByEmailNickname).toBeCalledWith(existingUserNickname);
+		});
+
+		it('should find user, if it exist', async (): Promise<void> => {
+			const foundedUser: UserShortDto = await usersService.getByNickname(existingUserNickname);
+
+			expect(foundedUser.nickname).toEqual(existingUserNickname);
+		});
+
+		it('should return founded user as instance of UserShortDto', async (): Promise<void> => {
+			const foundedUser: UserShortDto = await usersService.getByNickname(existingUserNickname);
+
+			expect(foundedUser).toBeInstanceOf(UserShortDto);
+		});
+
+		it('should return null, if user not exist', async (): Promise<void> => {
+			const foundedUser = await usersService.getByNickname(notExistingUserNickname);
+
+			expect(foundedUser).toBeNull();
+		});
+	});
+});

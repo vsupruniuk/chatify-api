@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmConfig } from './db/typeOrmConfig';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { typeOrmConfig } from '@DB/typeOrmConfig';
+import { AuthModule } from '@Modules/auth.module';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot(),
 		TypeOrmModule.forRoot(typeOrmConfig),
+		AuthModule,
 		ThrottlerModule.forRoot([
 			{
 				ttl: Number(process.env.THROTTLE_TIME_TO_LIVE),
@@ -18,7 +18,7 @@ import { APP_GUARD } from '@nestjs/core';
 			},
 		]),
 	],
-	controllers: [AppController],
-	providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
+	controllers: [],
+	providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}
