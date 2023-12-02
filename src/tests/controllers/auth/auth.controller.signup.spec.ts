@@ -2,7 +2,7 @@ import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import * as request from 'supertest';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
@@ -36,7 +36,7 @@ describe('AuthController', (): void => {
 		createUser: jest
 			.fn()
 			.mockImplementation(async (signupUserDto: SignupUserDto): Promise<UserShortDto> => {
-				const user = plainToClass(
+				const user = plainToInstance(
 					UserShortDto,
 					<UserShortDto>{
 						...signupUserDto,

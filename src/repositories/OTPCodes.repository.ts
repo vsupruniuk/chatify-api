@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { DataSource, InsertResult, Repository } from 'typeorm';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { OTPCode } from '@Entities/OTPCode.entity';
@@ -23,6 +23,8 @@ export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodes
 	public async getUserOTPCode(userOTPCodeId: string): Promise<OTPCodeResponseDto | null> {
 		const otpCode: OTPCode | null = await this.findOne({ where: { id: userOTPCodeId } });
 
-		return otpCode ? plainToClass(OTPCodeResponseDto, otpCode) : null;
+		return otpCode
+			? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
+			: null;
 	}
 }

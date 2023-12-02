@@ -1,4 +1,4 @@
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 import { connectionSource } from '@DB/typeOrmConfig';
 
@@ -58,7 +58,7 @@ describe('Users service', (): void => {
 					);
 
 					return otpCode
-						? plainToClass(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
+						? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
 						: null;
 				});
 

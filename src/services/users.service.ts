@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
@@ -44,12 +44,12 @@ export class UsersService implements IUsersService {
 	}
 
 	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto> {
-		const defaultStatus: CreateStatusDto = plainToClass(CreateStatusDto, <CreateStatusDto>{
+		const defaultStatus: CreateStatusDto = plainToInstance(CreateStatusDto, <CreateStatusDto>{
 			statusText: '',
 			dateTime: DateHelper.dateTimeNow(),
 		});
 
-		const otpCodeDTO: CreateOTPCodeDto = plainToClass(CreateOTPCodeDto, <CreateOTPCodeDto>{
+		const otpCodeDTO: CreateOTPCodeDto = plainToInstance(CreateOTPCodeDto, <CreateOTPCodeDto>{
 			code: OTPCodesHelper.generateOTPCode(),
 			expiresAt: DateHelper.dateTimeFuture(1000 * 60 * 10),
 		});
@@ -62,7 +62,7 @@ export class UsersService implements IUsersService {
 			Number(process.env.PASSWORD_SALT_HASH_ROUNDS),
 		);
 
-		const userForCreation: CreateUserDto = plainToClass(CreateUserDto, <CreateUserDto>{
+		const userForCreation: CreateUserDto = plainToInstance(CreateUserDto, <CreateUserDto>{
 			...signupUserDto,
 			accountSettingsId,
 			statusId,

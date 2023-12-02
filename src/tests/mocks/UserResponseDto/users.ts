@@ -1,9 +1,9 @@
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 
 export const users: UserShortDto[] = [
-	plainToClass(UserShortDto, <UserShortDto>{
+	plainToInstance(UserShortDto, <UserShortDto>{
 		id: '1',
 		about: null,
 		avatarUrl: null,
@@ -14,7 +14,7 @@ export const users: UserShortDto[] = [
 		accountSettingsId: '1001',
 	}),
 
-	plainToClass(UserShortDto, <UserShortDto>{
+	plainToInstance(UserShortDto, <UserShortDto>{
 		id: '2',
 		about: 'Thor - the strongest avenger',
 		avatarUrl: null,
@@ -25,7 +25,7 @@ export const users: UserShortDto[] = [
 		accountSettingsId: '1002',
 	}),
 
-	plainToClass(UserShortDto, <UserShortDto>{
+	plainToInstance(UserShortDto, <UserShortDto>{
 		id: '3',
 		about: null,
 		avatarUrl: null,

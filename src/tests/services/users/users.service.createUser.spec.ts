@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 import { connectionSource } from '@DB/typeOrmConfig';
 
@@ -70,7 +70,7 @@ describe('Users service', (): void => {
 			jest.useFakeTimers();
 
 			getUserByIdMock = jest.spyOn(usersRepository, 'getById').mockResolvedValue(
-				plainToClass(UserShortDto, <UserShortDto>{
+				plainToInstance(UserShortDto, <UserShortDto>{
 					...user,
 					id: userId,
 					about: null,

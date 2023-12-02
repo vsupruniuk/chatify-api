@@ -1,7 +1,7 @@
 import { InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 import { connectionSource } from '@DB/typeOrmConfig';
 
@@ -21,7 +21,7 @@ describe('OTPCodesRepository', (): void => {
 	describe('createOTPCode', (): void => {
 		let insertMock: SpyInstance;
 		const id: string = '10';
-		const createOTPCodeDtoMock: CreateOTPCodeDto = plainToClass(CreateOTPCodeDto, <
+		const createOTPCodeDtoMock: CreateOTPCodeDto = plainToInstance(CreateOTPCodeDto, <
 			CreateOTPCodeDto
 		>{
 			code: 476293,

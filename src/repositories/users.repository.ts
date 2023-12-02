@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { DataSource, InsertResult, Repository } from 'typeorm';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
 import { User } from '@Entities/User.entity';
@@ -19,19 +19,19 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 			where: { id },
 		});
 
-		return user ? plainToClass(UserShortDto, user, { excludeExtraneousValues: true }) : null;
+		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async getByEmail(email: string): Promise<UserShortDto | null> {
 		const user: User | null = await this.findOne({ where: { email } });
 
-		return user ? plainToClass(UserShortDto, user, { excludeExtraneousValues: true }) : null;
+		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async getByNickname(nickname: string): Promise<UserShortDto | null> {
 		const user: User | null = await this.findOne({ where: { nickname } });
 
-		return user ? plainToClass(UserShortDto, user, { excludeExtraneousValues: true }) : null;
+		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async createUser(user: CreateUserDto): Promise<string> {
