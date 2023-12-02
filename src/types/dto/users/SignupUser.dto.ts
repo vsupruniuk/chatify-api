@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, MinLength, Matches } from 'class-validator';
+import { IsEmail, IsOptional, IsString, MinLength, Matches, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { IsStringsSimilar } from '@Decorators/IsStringsSimilar.decorator';
@@ -16,6 +16,7 @@ export class SignupUserDto {
 		example: 't.stark@mail.com',
 	})
 	@IsEmail({}, { message: 'Wrong $property format' })
+	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum' })
 	email: string;
 
 	@ApiProperty({
@@ -28,6 +29,7 @@ export class SignupUserDto {
 	})
 	@IsString({ message: '$property must be a string' })
 	@MinLength(3, { message: '$property must be at least $constraint1 characters long' })
+	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum' })
 	firstName: string;
 
 	@ApiPropertyOptional({
@@ -39,6 +41,7 @@ export class SignupUserDto {
 		example: 'Stark',
 	})
 	@MinLength(3, { message: '$property must be at least $constraint1 characters long' })
+	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum' })
 	@IsOptional()
 	lastName?: string;
 
@@ -53,6 +56,7 @@ export class SignupUserDto {
 	})
 	@IsString({ message: '$property must be a string' })
 	@MinLength(3, { message: '$property must be at least $constraint1 characters long' })
+	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum' })
 	nickname: string;
 
 	@ApiProperty({
@@ -69,6 +73,7 @@ export class SignupUserDto {
 		message: '$property must contains at least 1 number and 1 uppercase character',
 	})
 	@MinLength(6, { message: '$property must be at least $constraint1 characters long' })
+	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum' })
 	password: string;
 
 	@ApiProperty({
@@ -84,6 +89,7 @@ export class SignupUserDto {
 		message: '$property must contains at least 1 number and 1 uppercase character',
 	})
 	@MinLength(6, { message: '$property must be at least $constraint1 characters long' })
+	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum' })
 	@IsStringsSimilar('password', { message: 'Password and password confirmation must match' })
 	passwordConfirmation: string;
 }
