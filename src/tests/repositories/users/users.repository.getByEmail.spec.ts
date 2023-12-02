@@ -48,7 +48,7 @@ describe('usersRepository', (): void => {
 		it('should use findOne method for searching user', async (): Promise<void> => {
 			await usersRepository.getByEmail(existingUserEmail);
 
-			expect(findMock).toBeCalledWith({ where: { email: existingUserEmail } });
+			expect(findMock).toHaveBeenCalledWith({ where: { email: existingUserEmail } });
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {

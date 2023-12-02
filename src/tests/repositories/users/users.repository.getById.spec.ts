@@ -47,7 +47,7 @@ describe('usersRepository', (): void => {
 		it('should use findOne method for searching user', async (): Promise<void> => {
 			await usersRepository.getById(existingUserId);
 
-			expect(findMock).toBeCalledWith({ where: { id: existingUserId } });
+			expect(findMock).toHaveBeenCalledWith({ where: { id: existingUserId } });
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {

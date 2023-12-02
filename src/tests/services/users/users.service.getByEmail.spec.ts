@@ -64,7 +64,7 @@ describe('Users service', (): void => {
 		it('should use getByEmail method from users repository for searching user', async (): Promise<void> => {
 			await usersService.getByEmail(existingUserEmail);
 
-			expect(getUserByEmailMock).toBeCalledWith(existingUserEmail);
+			expect(getUserByEmailMock).toHaveBeenCalledWith(existingUserEmail);
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {
