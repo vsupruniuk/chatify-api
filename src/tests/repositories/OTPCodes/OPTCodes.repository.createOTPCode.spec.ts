@@ -1,10 +1,15 @@
-import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-import { connectionSource } from '@DB/typeOrmConfig';
-import SpyInstance = jest.SpyInstance;
-import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
-import { plainToClass } from 'class-transformer';
 import { InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
+
+import { plainToClass } from 'class-transformer';
+
+import { connectionSource } from '@DB/typeOrmConfig';
+
+import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
+
+import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
+
+import SpyInstance = jest.SpyInstance;
 
 describe('OTPCodesRepository', (): void => {
 	let otpCodesRepository: OTPCodesRepository;

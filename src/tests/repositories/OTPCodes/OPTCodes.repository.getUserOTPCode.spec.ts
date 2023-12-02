@@ -1,10 +1,15 @@
-import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-import { connectionSource } from '@DB/typeOrmConfig';
-import SpyInstance = jest.SpyInstance;
-import { OTPCode } from '@Entities/OTPCode.entity';
-import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
 import { FindOneOptions } from 'typeorm';
+
+import { connectionSource } from '@DB/typeOrmConfig';
+
+import { OTPCode } from '@Entities/OTPCode.entity';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+
+import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
+
+import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
+
+import SpyInstance = jest.SpyInstance;
 
 describe('OTPCodesRepository', (): void => {
 	let otpCodesRepository: OTPCodesRepository;

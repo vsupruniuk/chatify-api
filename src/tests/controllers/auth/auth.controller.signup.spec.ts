@@ -1,14 +1,17 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthModule } from '@Modules/auth.module';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
+
 import * as request from 'supertest';
-import { AppModule } from '@Modules/app.module';
-import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { plainToClass } from 'class-transformer';
+
+import { CustomProviders } from '@Enums/CustomProviders.enum';
+import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { AuthController } from '@Controllers/auth.controller';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+
+import { AuthModule } from '@Modules/auth.module';
+import { AppModule } from '@Modules/app.module';
+import { AuthController } from '@Controllers/auth.controller';
 
 describe('AuthController', (): void => {
 	let app: INestApplication;

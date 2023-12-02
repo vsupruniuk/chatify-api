@@ -1,10 +1,15 @@
-import { UsersRepository } from '@Repositories/users.repository';
-import { connectionSource } from '@DB/typeOrmConfig';
-import SpyInstance = jest.SpyInstance;
-import { users } from '@TestMocks/UserResponseDto/users';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { FindOneOptions } from 'typeorm';
+
+import { connectionSource } from '@DB/typeOrmConfig';
+
 import { User } from '@Entities/User.entity';
+import { UserShortDto } from '@DTO/users/UserShort.dto';
+
+import { UsersRepository } from '@Repositories/users.repository';
+
+import { users } from '@TestMocks/UserResponseDto/users';
+
+import SpyInstance = jest.SpyInstance;
 
 describe('usersRepository', (): void => {
 	let usersRepository: UsersRepository;

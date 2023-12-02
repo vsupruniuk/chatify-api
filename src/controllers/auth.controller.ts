@@ -7,19 +7,20 @@ import {
 	Inject,
 	Post,
 } from '@nestjs/common';
-import { IUsersService } from '@Interfaces/users/IUsersService';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { SignupUserDto } from '@DTO/users/SignupUser.dto';
-import { IEmailService } from '@Interfaces/emails/IEmailService';
-import { IAuthController } from '@Interfaces/users/IAuthController';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import {
 	ApiBadRequestResponse,
 	ApiConflictResponse,
 	ApiCreatedResponse,
 	ApiTags,
 } from '@nestjs/swagger';
+
+import { IUsersService } from '@Interfaces/users/IUsersService';
+import { IEmailService } from '@Interfaces/emails/IEmailService';
+import { IAuthController } from '@Interfaces/users/IAuthController';
+import { SignupUserDto } from '@DTO/users/SignupUser.dto';
+import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+import { CustomProviders } from '@Enums/CustomProviders.enum';
 
 @Controller('auth')
 export class AuthController implements IAuthController {

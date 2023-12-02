@@ -1,4 +1,4 @@
-import { DateHelper } from '../../../helpers/date.helper';
+import { DateHelper } from '@Helpers/date.helper';
 
 describe('dateHelper', (): void => {
 	describe('dateTimeNow', (): void => {

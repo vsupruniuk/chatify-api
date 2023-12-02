@@ -1,5 +1,6 @@
-import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { plainToClass } from 'class-transformer';
+
+import { UserShortDto } from '@DTO/users/UserShort.dto';
 
 export const users: UserShortDto[] = [
 	plainToClass(UserShortDto, <UserShortDto>{

@@ -1,9 +1,11 @@
-import { DataSource, InsertResult, Repository } from 'typeorm';
-import { User } from '@Entities/User.entity';
 import { Injectable } from '@nestjs/common';
-import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
+
+import { DataSource, InsertResult, Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
+
+import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
+import { User } from '@Entities/User.entity';
+import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 
 @Injectable()

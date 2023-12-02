@@ -1,9 +1,13 @@
-import { connectionSource } from '@DB/typeOrmConfig';
-import SpyInstance = jest.SpyInstance;
 import { InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
-import { StatusesRepository } from '@Repositories/statuses.repository';
+
+import { connectionSource } from '@DB/typeOrmConfig';
+
 import { CreateStatusDto } from '@DTO/statuses/CreateStatus.dto';
+
+import { StatusesRepository } from '@Repositories/statuses.repository';
+
+import SpyInstance = jest.SpyInstance;
 
 describe('statusesRepository', (): void => {
 	let statusesRepository: StatusesRepository;

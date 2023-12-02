@@ -1,10 +1,12 @@
-import { DataSource, InsertResult, Repository } from 'typeorm';
-import { OTPCode } from '@Entities/OTPCode.entity';
-import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
-import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
 import { Injectable } from '@nestjs/common';
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+
+import { DataSource, InsertResult, Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
+
+import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
+import { OTPCode } from '@Entities/OTPCode.entity';
+import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
+import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 
 @Injectable()
 export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodesRepository {

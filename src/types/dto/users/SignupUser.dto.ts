@@ -1,6 +1,7 @@
 import { IsEmail, IsOptional, IsString, MinLength, Matches } from 'class-validator';
-import { IsStringsSimilar } from '../../../decorators/IsStringsSimilar.decorator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+import { IsStringsSimilar } from '@Decorators/IsStringsSimilar.decorator';
 
 /**
  * DTO class representing request data for signup request

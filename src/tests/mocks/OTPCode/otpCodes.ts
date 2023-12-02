@@ -1,4 +1,5 @@
 import { plainToClass } from 'class-transformer';
+
 import { OTPCode } from '@Entities/OTPCode.entity';
 
 export const otpCodes: OTPCode[] = [

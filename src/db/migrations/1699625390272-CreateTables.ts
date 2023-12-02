@@ -1,4 +1,5 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+
 import { DBTables } from '@Enums/db/DBTables.enum';
 import { DBTypes } from '@Enums//db/DBTypes.enum';
 

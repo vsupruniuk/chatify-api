@@ -1,8 +1,11 @@
-import { connectionSource } from '@DB/typeOrmConfig';
-import SpyInstance = jest.SpyInstance;
 import { InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
+
+import { connectionSource } from '@DB/typeOrmConfig';
+
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
+
+import SpyInstance = jest.SpyInstance;
 
 describe('accountSettingsRepository', (): void => {
 	let accountSettingsRepository: AccountSettingsRepository;
