@@ -44,7 +44,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
 		responseResult.errorsLength = responseResult.errors.length;
 
-		if (process.env.NODE_ENV === Environments.PROD) {
+		if (process.env.NODE_ENV === Environments.DEV) {
 			responseResult.stack = exception.stack;
 			responseResult.dateTime = DateHelper.dateTimeNow();
 		}
