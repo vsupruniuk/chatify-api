@@ -29,6 +29,7 @@
       "@Migrations/*":  ["src/db/migrations/*"],
       "@Modules/*": ["src/modules/*"],
       "@Repositories/*": ["src/repositories/*"],
+      "@Responses/*": ["src/types/responses/*"],
       "@Services/*": ["src/services/*"],
       "@TestMocks/*": ["src/tests/mocks/*"]
     },
