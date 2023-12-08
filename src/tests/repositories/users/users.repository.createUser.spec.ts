@@ -1,9 +1,13 @@
-import { UsersRepository } from '@Repositories/users.repository';
-import { connectionSource } from '@DB/typeOrmConfig';
-import SpyInstance = jest.SpyInstance;
-import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 import { InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
+
+import { connectionSource } from '@DB/typeOrmConfig';
+
+import { CreateUserDto } from '@DTO/users/CreateUser.dto';
+
+import { UsersRepository } from '@Repositories/users.repository';
+
+import SpyInstance = jest.SpyInstance;
 
 describe('usersRepository', (): void => {
 	let usersRepository: UsersRepository;

@@ -18,13 +18,18 @@
     "paths": {
       "@Controllers/*": ["src/controllers/*"],
       "@DB/*": ["src/db/*"],
+      "@Decorators/*": ["src/decorators/*"],
       "@DTO/*": ["src/types/dto/*"],
+      "@EmailTemplates/*": ["src/emailTemplates/*"],
       "@Entities/*": ["src/db/entities/*"],
       "@Enums/*": ["src/types/enums/*"],
       "@Filters/*": ["src/filters/*"],
+      "@Helpers/*": ["src/helpers/*"],
       "@Interfaces/*": ["src/types/interfaces/*"],
+      "@Migrations/*":  ["src/db/migrations/*"],
       "@Modules/*": ["src/modules/*"],
       "@Repositories/*": ["src/repositories/*"],
+      "@Responses/*": ["src/types/responses/*"],
       "@Services/*": ["src/services/*"],
       "@TestMocks/*": ["src/tests/mocks/*"]
     },

@@ -1,20 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
+
+import { plainToInstance } from 'class-transformer';
+import * as bcrypt from 'bcrypt';
+
 import { IUsersService } from '@Interfaces/users/IUsersService';
-import { SignupUserDto } from '@DTO/users/SignupUser.dto';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { IStatusesRepository } from '@Interfaces/statuses/IStatusesRepository';
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
-import { CreateUserDto } from '@DTO/users/CreateUser.dto';
-import { plainToClass } from 'class-transformer';
-import { CreateStatusDto } from '@DTO/statuses/CreateStatus.dto';
-import * as bcrypt from 'bcrypt';
-import { DateHelper } from '../helpers/date.helper';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
+import { SignupUserDto } from '@DTO/users/SignupUser.dto';
+import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { CreateStatusDto } from '@DTO/statuses/CreateStatus.dto';
+import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
-import { OTPCodesHelper } from '../helpers/OTPCodes.helper';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+import { CustomProviders } from '@Enums/CustomProviders.enum';
+
+import { DateHelper } from '@Helpers/date.helper';
+import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -41,12 +44,12 @@ export class UsersService implements IUsersService {
 	}
 
 	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto> {
-		const defaultStatus: CreateStatusDto = plainToClass(CreateStatusDto, <CreateStatusDto>{
+		const defaultStatus: CreateStatusDto = plainToInstance(CreateStatusDto, <CreateStatusDto>{
 			statusText: '',
 			dateTime: DateHelper.dateTimeNow(),
 		});
 
-		const otpCodeDTO: CreateOTPCodeDto = plainToClass(CreateOTPCodeDto, <CreateOTPCodeDto>{
+		const otpCodeDTO: CreateOTPCodeDto = plainToInstance(CreateOTPCodeDto, <CreateOTPCodeDto>{
 			code: OTPCodesHelper.generateOTPCode(),
 			expiresAt: DateHelper.dateTimeFuture(1000 * 60 * 10),
 		});
@@ -59,7 +62,7 @@ export class UsersService implements IUsersService {
 			Number(process.env.PASSWORD_SALT_HASH_ROUNDS),
 		);
 
-		const userForCreation: CreateUserDto = plainToClass(CreateUserDto, <CreateUserDto>{
+		const userForCreation: CreateUserDto = plainToInstance(CreateUserDto, <CreateUserDto>{
 			...signupUserDto,
 			accountSettingsId,
 			statusId,

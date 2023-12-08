@@ -1,22 +1,25 @@
+import * as bcrypt from 'bcrypt';
+import { plainToInstance } from 'class-transformer';
+
+import { connectionSource } from '@DB/typeOrmConfig';
+
 import { IUsersService } from '@Interfaces/users/IUsersService';
+import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
+import { IStatusesRepository } from '@Interfaces/statuses/IStatusesRepository';
+import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
+import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
+import { SignupUserDto } from '@DTO/users/SignupUser.dto';
+import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { CreateUserDto } from '@DTO/users/CreateUser.dto';
+
 import { UsersService } from '@Services/users.service';
 import { StatusesRepository } from '@Repositories/statuses.repository';
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
 import { UsersRepository } from '@Repositories/users.repository';
-import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
-import { IStatusesRepository } from '@Interfaces/statuses/IStatusesRepository';
-import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
-import * as bcrypt from 'bcrypt';
-import { SignupUserDto } from '@DTO/users/SignupUser.dto';
-import { connectionSource } from '@DB/typeOrmConfig';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { plainToClass } from 'class-transformer';
-import SpyInstance = jest.SpyInstance;
-import * as process from 'process';
-import { CreateUserDto } from '@DTO/users/CreateUser.dto';
-import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-import { OTPCodesHelper } from '../../../helpers/OTPCodes.helper';
+import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
+
+import SpyInstance = jest.SpyInstance;
 
 describe('Users service', (): void => {
 	let usersService: IUsersService;
@@ -67,7 +70,7 @@ describe('Users service', (): void => {
 			jest.useFakeTimers();
 
 			getUserByIdMock = jest.spyOn(usersRepository, 'getById').mockResolvedValue(
-				plainToClass(UserShortDto, <UserShortDto>{
+				plainToInstance(UserShortDto, <UserShortDto>{
 					...user,
 					id: userId,
 					about: null,

@@ -1,4 +1,4 @@
-import { OTPCodesHelper } from '../../../helpers/OTPCodes.helper';
+import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 
 describe('otpCodesHelper', (): void => {
 	describe('generateOTPCode', (): void => {

@@ -1,11 +1,13 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '@Modules/app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { GlobalExceptionFilter } from '@Filters/globalException.filter';
+
 import * as cookieParser from 'cookie-parser';
 import * as compression from 'compression';
 import helmet from 'helmet';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+
+import { AppModule } from '@Modules/app.module';
+import { GlobalExceptionFilter } from '@Filters/globalException.filter';
 
 async function bootstrap(): Promise<void> {
 	const port: number = Number(process.env.PORT) || 3000;

@@ -1,17 +1,21 @@
+import { connectionSource } from '@DB/typeOrmConfig';
+
 import { IUsersService } from '@Interfaces/users/IUsersService';
+import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
+import { IStatusesRepository } from '@Interfaces/statuses/IStatusesRepository';
+import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
+import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
+import { UserShortDto } from '@DTO/users/UserShort.dto';
+
 import { UsersService } from '@Services/users.service';
 import { StatusesRepository } from '@Repositories/statuses.repository';
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
 import { UsersRepository } from '@Repositories/users.repository';
-import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
-import { IStatusesRepository } from '@Interfaces/statuses/IStatusesRepository';
-import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
-import { connectionSource } from '@DB/typeOrmConfig';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
-import SpyInstance = jest.SpyInstance;
-import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
+
 import { users } from '@TestMocks/UserResponseDto/users';
+
+import SpyInstance = jest.SpyInstance;
 
 describe('Users service', (): void => {
 	let usersService: IUsersService;
@@ -60,7 +64,7 @@ describe('Users service', (): void => {
 		it('should use getByEmail method from users repository for searching user', async (): Promise<void> => {
 			await usersService.getByEmail(existingUserEmail);
 
-			expect(getUserByEmailMock).toBeCalledWith(existingUserEmail);
+			expect(getUserByEmailMock).toHaveBeenCalledWith(existingUserEmail);
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {

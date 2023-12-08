@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+
 import { DataSource, InsertResult, Repository } from 'typeorm';
-import { AccountSettings } from '@Entities/AccountSettings.entity';
+
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
+import { AccountSettings } from '@Entities/AccountSettings.entity';
 
 @Injectable()
 export class AccountSettingsRepository

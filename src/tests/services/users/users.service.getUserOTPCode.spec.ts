@@ -1,19 +1,24 @@
+import { plainToInstance } from 'class-transformer';
+
+import { connectionSource } from '@DB/typeOrmConfig';
+
+import { OTPCode } from '@Entities/OTPCode.entity';
 import { IUsersService } from '@Interfaces/users/IUsersService';
+import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
+import { IStatusesRepository } from '@Interfaces/statuses/IStatusesRepository';
+import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
+import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
+import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+
 import { UsersService } from '@Services/users.service';
 import { StatusesRepository } from '@Repositories/statuses.repository';
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
 import { UsersRepository } from '@Repositories/users.repository';
-import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
-import { IStatusesRepository } from '@Interfaces/statuses/IStatusesRepository';
-import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
-import { connectionSource } from '@DB/typeOrmConfig';
-import SpyInstance = jest.SpyInstance;
-import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-import { OTPCode } from '@Entities/OTPCode.entity';
+
 import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
-import { plainToClass } from 'class-transformer';
+
+import SpyInstance = jest.SpyInstance;
 
 describe('Users service', (): void => {
 	let usersService: IUsersService;
@@ -53,7 +58,7 @@ describe('Users service', (): void => {
 					);
 
 					return otpCode
-						? plainToClass(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
+						? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
 						: null;
 				});
 
@@ -72,7 +77,7 @@ describe('Users service', (): void => {
 		it('should use getUserOTPCode method from users repository for searching OTP code', async (): Promise<void> => {
 			await usersService.getUserOTPCode(existingId);
 
-			expect(getUserOTPCodeMock).toBeCalledWith(existingId);
+			expect(getUserOTPCodeMock).toHaveBeenCalledWith(existingId);
 		});
 
 		it('should return OTP code, if it exist', async (): Promise<void> => {

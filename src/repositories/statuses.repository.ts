@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+
 import { DataSource, InsertResult, Repository } from 'typeorm';
-import { Status } from '@Entities/Status.entity';
+
 import { IStatusesRepository } from '@Interfaces/statuses/IStatusesRepository';
+import { Status } from '@Entities/Status.entity';
 import { CreateStatusDto } from '@DTO/statuses/CreateStatus.dto';
 
 @Injectable()

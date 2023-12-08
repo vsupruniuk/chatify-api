@@ -1,14 +1,21 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthModule } from '@Modules/auth.module';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
+
 import * as request from 'supertest';
-import { AppModule } from '@Modules/app.module';
-import { SignupUserDto } from '@DTO/users/SignupUser.dto';
-import { plainToClass } from 'class-transformer';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { AuthController } from '@Controllers/auth.controller';
+import { plainToInstance } from 'class-transformer';
+
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+import { SignupUserDto } from '@DTO/users/SignupUser.dto';
+import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { CustomProviders } from '@Enums/CustomProviders.enum';
+import { ResponseStatus } from '@Enums/ResponseStatus.enum';
+
+import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
+import { ResponseResult } from '@Responses/ResponseResult';
+
+import { AppModule } from '@Modules/app.module';
+import { AuthModule } from '@Modules/auth.module';
+import { AuthController } from '@Controllers/auth.controller';
 
 describe('AuthController', (): void => {
 	let app: INestApplication;
@@ -33,7 +40,7 @@ describe('AuthController', (): void => {
 		createUser: jest
 			.fn()
 			.mockImplementation(async (signupUserDto: SignupUserDto): Promise<UserShortDto> => {
-				const user = plainToClass(
+				const user = plainToInstance(
 					UserShortDto,
 					<UserShortDto>{
 						...signupUserDto,
@@ -376,23 +383,30 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			const signupResponse = <UserShortDto>{
-				id: '4',
-				firstName: 'Bruce',
-				lastName: 'Banner',
-				email: 'bruce@mail.com',
-				nickname: 'b.banner',
-				about: null,
-				avatarUrl: null,
-				accountSettingsId: '01',
-				OTPCodeId: '001',
+			const responseResult = <SuccessfulResponseResult<UserShortDto>>{
+				code: HttpStatus.CREATED,
+				status: ResponseStatus.SUCCESS,
+				data: [
+					{
+						id: '4',
+						firstName: 'Bruce',
+						lastName: 'Banner',
+						email: 'bruce@mail.com',
+						nickname: 'b.banner',
+						about: null,
+						avatarUrl: null,
+						accountSettingsId: '01',
+						OTPCodeId: '001',
+					},
+				],
+				dataLength: 1,
 			};
 
 			return request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.CREATED)
-				.expect(signupResponse);
+				.expect(responseResult);
 		});
 
 		it('should call getByEmail in users service to check if email is taken', async (): Promise<void> => {
@@ -468,6 +482,21 @@ describe('AuthController', (): void => {
 			await authController.signup(user);
 
 			expect(emailServiceMock.sendActivationEmail).toHaveBeenCalledWith(user.email, otpCode.code);
+		});
+
+		it('should return response as instance of SuccessfulResponseResult', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce',
+				lastName: 'Banner',
+				email: 'bruce@mail.com',
+				nickname: 'b.banner',
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A',
+			};
+
+			const response: ResponseResult = await authController.signup(user);
+
+			expect(response).toBeInstanceOf(SuccessfulResponseResult);
 		});
 	});
 });
