@@ -12,7 +12,9 @@ import { GlobalExceptionFilter } from '@Filters/globalException.filter';
 async function bootstrap(): Promise<void> {
 	const port: number = Number(process.env.PORT) || 3000;
 
-	const app: INestApplication = await NestFactory.create(AppModule);
+	const app: INestApplication = await NestFactory.create(AppModule, {
+		logger: ['log', 'fatal', 'error', 'warn', 'debug'],
+	});
 
 	app.enableCors({ origin: '*', credentials: true });
 	app.use(helmet());
