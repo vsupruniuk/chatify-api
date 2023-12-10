@@ -10,5 +10,4 @@ export enum DBTables {
 	DIRECT_CHATS = 'DirectChats',
 	GROUP_CHATS = 'GroupChats',
 	OTP_CODES = 'OTPCodes',
-	STATUSES = 'Statuses',
 }

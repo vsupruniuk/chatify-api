@@ -5,7 +5,6 @@ import { connectionSource } from '@DB/typeOrmConfig';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
-import { IStatusesRepository } from '@Interfaces/statuses/IStatusesRepository';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
@@ -13,7 +12,6 @@ import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 
 import { UsersService } from '@Services/users.service';
-import { StatusesRepository } from '@Repositories/statuses.repository';
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
 import { UsersRepository } from '@Repositories/users.repository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
@@ -24,28 +22,20 @@ import SpyInstance = jest.SpyInstance;
 describe('Users service', (): void => {
 	let usersService: IUsersService;
 	let usersRepository: IUsersRepository;
-	let statusesRepository: IStatusesRepository;
 	let accountSettingsRepository: IAccountSettingsRepository;
 	let otpCodesRepository: IOTPCodesRepository;
 
 	beforeEach((): void => {
 		usersRepository = new UsersRepository(connectionSource);
-		statusesRepository = new StatusesRepository(connectionSource);
 		accountSettingsRepository = new AccountSettingsRepository(connectionSource);
 		otpCodesRepository = new OTPCodesRepository(connectionSource);
 
-		usersService = new UsersService(
-			accountSettingsRepository,
-			statusesRepository,
-			otpCodesRepository,
-			usersRepository,
-		);
+		usersService = new UsersService(accountSettingsRepository, otpCodesRepository, usersRepository);
 	});
 
 	describe('createUser', (): void => {
 		let getUserByIdMock: SpyInstance;
 		let createUserMock: SpyInstance;
-		let createStatusMock: SpyInstance;
 		let createDefaultSettingsMock: SpyInstance;
 		let createOTPCodeMock: SpyInstance;
 		let generateOTPCodeMock: SpyInstance;
@@ -53,7 +43,6 @@ describe('Users service', (): void => {
 
 		const otpCode: number = 123987;
 		const userId: string = '4';
-		const userStatusId: string = '01';
 		const userAccountSettingsId: string = '001';
 		const userOTPCodeId: string = '10';
 		const userHashedPassword: string = 'uuid-hash';
@@ -75,16 +64,12 @@ describe('Users service', (): void => {
 					id: userId,
 					about: null,
 					avatarUrl: null,
-					accountSettingsId: userStatusId,
+					accountSettingsId: userAccountSettingsId,
 					OTPCodeId: userOTPCodeId,
 				}),
 			);
 
 			createUserMock = jest.spyOn(usersRepository, 'createUser').mockResolvedValue(userId);
-
-			createStatusMock = jest
-				.spyOn(statusesRepository, 'createStatus')
-				.mockResolvedValue(userStatusId);
 
 			createDefaultSettingsMock = jest
 				.spyOn(accountSettingsRepository, 'createDefaultSettings')
@@ -112,19 +97,6 @@ describe('Users service', (): void => {
 			await usersService.createUser(user);
 
 			expect(createDefaultSettingsMock).toHaveBeenCalled();
-		});
-
-		it('should create status entity for user', async (): Promise<void> => {
-			const date: string = '2023-11-18 12:00:00';
-
-			jest.setSystemTime(new Date(date));
-
-			await usersService.createUser(user);
-
-			expect(createStatusMock).toHaveBeenCalledWith({
-				statusText: '',
-				dateTime: date,
-			});
 		});
 
 		it('should create OTP code for user', async (): Promise<void> => {
@@ -157,7 +129,6 @@ describe('Users service', (): void => {
 				...user,
 				accountSettingsId: userAccountSettingsId,
 				password: userHashedPassword,
-				statusId: userStatusId,
 				OTPCodeId: userOTPCodeId,
 			});
 			expect(createdUser.firstName).toEqual(user.firstName);

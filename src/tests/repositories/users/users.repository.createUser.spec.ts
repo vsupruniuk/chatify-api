@@ -26,7 +26,6 @@ describe('usersRepository', (): void => {
 			email: 'bruce@mail.com',
 			password: 'qwerty1A',
 			accountSettingsId: '01',
-			statusId: '01',
 			OTPCodeId: '10',
 		};
 

@@ -8,6 +8,5 @@ export class CreateUserDto extends (SignupUserDto as new () => Omit<
 	'passwordConfirmation'
 >) {
 	accountSettingsId: string;
-	statusId: string;
 	OTPCodeId: string;
 }

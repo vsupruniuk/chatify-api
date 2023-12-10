@@ -87,11 +87,4 @@ export class User {
 		nullable: true,
 	})
 	OTPCodeId: string | null;
-
-	@Column({
-		type: 'varchar',
-		length: 255,
-		nullable: true,
-	})
-	statusId: string;
 }

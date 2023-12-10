@@ -91,12 +91,6 @@ export class CreateTables1699625390272 implements MigrationInterface {
 						length: '255',
 						isNullable: true,
 					},
-					{
-						name: 'statusId',
-						type: DBTypes.VARCHAR,
-						length: '255',
-						isNullable: false,
-					},
 				],
 			}),
 		);
@@ -501,43 +495,6 @@ export class CreateTables1699625390272 implements MigrationInterface {
 				],
 			}),
 		);
-
-		await queryRunner.createTable(
-			new Table({
-				name: DBTables.STATUSES,
-				columns: [
-					{
-						name: 'id',
-						type: DBTypes.VARCHAR,
-						generationStrategy: 'uuid',
-						isPrimary: true,
-					},
-					{
-						name: 'createdAt',
-						type: DBTypes.DATETIME,
-						default: 'now()',
-						isNullable: false,
-					},
-					{
-						name: 'dateTime',
-						type: DBTypes.DATETIME,
-						isNullable: false,
-					},
-					{
-						name: 'statusText',
-						type: DBTypes.VARCHAR,
-						length: '255',
-						isNullable: false,
-					},
-					{
-						name: 'updatedAt',
-						type: DBTypes.DATETIME,
-						default: 'now()',
-						isNullable: false,
-					},
-				],
-			}),
-		);
 	}
 
 	public async down(queryRunner: QueryRunner): Promise<void> {
@@ -552,6 +509,5 @@ export class CreateTables1699625390272 implements MigrationInterface {
 		await queryRunner.dropTable(DBTables.DIRECT_CHATS, true, true, true);
 		await queryRunner.dropTable(DBTables.GROUP_CHATS, true, true, true);
 		await queryRunner.dropTable(DBTables.OTP_CODES, true, true, true);
-		await queryRunner.dropTable(DBTables.STATUSES, true, true, true);
 	}
 }
