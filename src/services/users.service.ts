@@ -5,12 +5,10 @@ import * as bcrypt from 'bcrypt';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
-import { IStatusesRepository } from '@Interfaces/statuses/IStatusesRepository';
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { CreateStatusDto } from '@DTO/statuses/CreateStatus.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
@@ -24,9 +22,6 @@ export class UsersService implements IUsersService {
 	constructor(
 		@Inject(CustomProviders.I_ACCOUNT_SETTINGS_REPOSITORY)
 		private readonly _accountSettingsRepository: IAccountSettingsRepository,
-
-		@Inject(CustomProviders.I_STATUSES_REPOSITORY)
-		private readonly _statusesRepository: IStatusesRepository,
 
 		@Inject(CustomProviders.I_OTP_CODES_REPOSITORY)
 		private readonly _otpCodesRepository: IOTPCodesRepository,
@@ -44,18 +39,12 @@ export class UsersService implements IUsersService {
 	}
 
 	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto> {
-		const defaultStatus: CreateStatusDto = plainToInstance(CreateStatusDto, <CreateStatusDto>{
-			statusText: '',
-			dateTime: DateHelper.dateTimeNow(),
-		});
-
 		const otpCodeDTO: CreateOTPCodeDto = plainToInstance(CreateOTPCodeDto, <CreateOTPCodeDto>{
 			code: OTPCodesHelper.generateOTPCode(),
 			expiresAt: DateHelper.dateTimeFuture(1000 * 60 * 10),
 		});
 
 		const accountSettingsId: string = await this._accountSettingsRepository.createDefaultSettings();
-		const statusId: string = await this._statusesRepository.createStatus(defaultStatus);
 		const otpCodeId: string = await this._otpCodesRepository.createOTPCode(otpCodeDTO);
 		const hashedPassword: string = await bcrypt.hash(
 			signupUserDto.password,
@@ -65,7 +54,6 @@ export class UsersService implements IUsersService {
 		const userForCreation: CreateUserDto = plainToInstance(CreateUserDto, <CreateUserDto>{
 			...signupUserDto,
 			accountSettingsId,
-			statusId,
 			OTPCodeId: otpCodeId,
 			password: hashedPassword,
 		});

@@ -17,7 +17,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
 		rejectUnauthorized: true,
 	},
 	entities: ['dist/src/db/entities/*.entity{.ts,.js}'],
-	migrations: ['dist/db/migrations/*{.ts,.js}'],
+	migrations: ['dist/src/db/migrations/*{.ts,.js}'],
 };
 
 export const connectionSource = new DataSource(typeOrmConfig as DataSourceOptions);
