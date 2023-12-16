@@ -7,12 +7,7 @@ import {
 	Inject,
 	Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 
-import { ApiBadRequestResponseGeneric } from '@Decorators/ApiResponses/ApiBadRequestResponseGeneric.decorator';
-import { ApiConflictResponseGeneric } from '@Decorators/ApiResponses/ApiConflictResponseGeneric.decorator';
-
-import { ApiCreatedResponseGeneric } from '@Decorators/ApiResponses/ApiCreatedlResponseGeneric.decorator';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
@@ -23,7 +18,6 @@ import { IAuthController } from '@Interfaces/users/IAuthController';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
 
-import { ValidationErrorField } from '@Responses/errors/ValidationErrorField';
 import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 
@@ -37,22 +31,6 @@ export class AuthController implements IAuthController {
 		private readonly _emailService: IEmailService,
 	) {}
 
-	@ApiTags('Auth')
-	@ApiCreatedResponseGeneric({
-		status: 201,
-		dataType: UserShortDto,
-		description: 'Successfully created user',
-	})
-	@ApiBadRequestResponseGeneric({
-		status: 400,
-		errorType: ValidationErrorField,
-		description: 'Validation errors occurred',
-	})
-	@ApiConflictResponseGeneric({
-		status: 409,
-		errorType: ValidationErrorField,
-		description: 'Some of the unique fields are already taken',
-	})
 	@Post('/signup')
 	@HttpCode(HttpStatus.CREATED)
 	public async signup(@Body() signupUserDTO: SignupUserDto): Promise<ResponseResult> {
