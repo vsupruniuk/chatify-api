@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
 
 import { DBTables } from '@Enums/db/DBTables.enum';
 import { DBTypes } from '@Enums//db/DBTypes.enum';
@@ -495,6 +495,104 @@ export class CreateTables1699625390272 implements MigrationInterface {
 				],
 			}),
 		);
+
+		await queryRunner.createIndex(
+			DBTables.USERS,
+			new TableIndex({
+				name: 'IDX_USERS_EMAIL',
+				columnNames: ['email'],
+				isUnique: true,
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.USERS,
+			new TableIndex({
+				name: 'IDX_USERS_NICKNAME',
+				columnNames: ['nickname'],
+				isUnique: true,
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.USER_BLOCKED_USERS,
+			new TableIndex({
+				name: 'IDX_USER_BLOCKED_USERS_BLOCKEDUSERID',
+				columnNames: ['blockedUserId'],
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.USER_BLOCKED_USERS,
+			new TableIndex({
+				name: 'IDX_USER_BLOCKED_USERS_USERID',
+				columnNames: ['userId'],
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.USER_CONNECTED_USERS,
+			new TableIndex({
+				name: 'IDX_USER_CONNECTED_USERS_CONNECTEDUSERID',
+				columnNames: ['connectedUserId'],
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.USER_CONNECTED_USERS,
+			new TableIndex({
+				name: 'IDX_USER_CONNECTED_USERS_USERID',
+				columnNames: ['userId'],
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.USER_DIRECT_CHATS,
+			new TableIndex({
+				name: 'IDX_USER_DIRECT_CHATS_DIRECTCHATID',
+				columnNames: ['directChatId'],
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.USER_DIRECT_CHATS,
+			new TableIndex({
+				name: 'IDX_USER_DIRECT_CHATS_USERID',
+				columnNames: ['userId'],
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.USER_GROUP_CHATS,
+			new TableIndex({
+				name: 'IDX_USER_GROUP_CHATS_GROUPCHATID',
+				columnNames: ['groupChatId'],
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.USER_GROUP_CHATS,
+			new TableIndex({
+				name: 'IDX_USER_GROUP_CHATS_USERID',
+				columnNames: ['userId'],
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.DIRECT_CHAT_MESSAGES,
+			new TableIndex({
+				name: 'IDX_DIRECT_CHAT_MESSAGES_DIRECTCHATID',
+				columnNames: ['directChatId'],
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.GROUP_CHAT_MESSAGES,
+			new TableIndex({
+				name: 'IDX_DIRECT_CHAT_MESSAGES_GROUPCHATID',
+				columnNames: ['groupChatId'],
+			}),
+		);
 	}
 
 	public async down(queryRunner: QueryRunner): Promise<void> {
@@ -509,5 +607,30 @@ export class CreateTables1699625390272 implements MigrationInterface {
 		await queryRunner.dropTable(DBTables.DIRECT_CHATS, true, true, true);
 		await queryRunner.dropTable(DBTables.GROUP_CHATS, true, true, true);
 		await queryRunner.dropTable(DBTables.OTP_CODES, true, true, true);
+
+		await queryRunner.dropIndex(DBTables.USERS, 'IDX_USERS_EMAIL');
+		await queryRunner.dropIndex(DBTables.USERS, 'IDX_USERS_NICKNAME');
+		await queryRunner.dropIndex(
+			DBTables.USER_BLOCKED_USERS,
+			'IDX_USER_BLOCKED_USERS_BLOCKEDUSERID',
+		);
+		await queryRunner.dropIndex(DBTables.USER_BLOCKED_USERS, 'IDX_USER_BLOCKED_USERS_USERID');
+		await queryRunner.dropIndex(
+			DBTables.USER_CONNECTED_USERS,
+			'IDX_USER_CONNECTED_USERS_CONNECTEDUSERID',
+		);
+		await queryRunner.dropIndex(DBTables.USER_CONNECTED_USERS, 'IDX_USER_CONNECTED_USERS_USERID');
+		await queryRunner.dropIndex(DBTables.USER_DIRECT_CHATS, 'IDX_USER_DIRECT_CHATS_DIRECTCHATID');
+		await queryRunner.dropIndex(DBTables.USER_DIRECT_CHATS, 'IDX_USER_DIRECT_CHATS_USERID');
+		await queryRunner.dropIndex(DBTables.USER_GROUP_CHATS, 'IDX_USER_GROUP_CHATS_GROUPCHATID');
+		await queryRunner.dropIndex(DBTables.USER_GROUP_CHATS, 'IDX_USER_GROUP_CHATS_USERID');
+		await queryRunner.dropIndex(
+			DBTables.DIRECT_CHAT_MESSAGES,
+			'IDX_DIRECT_CHAT_MESSAGES_DIRECTCHATID',
+		);
+		await queryRunner.dropIndex(
+			DBTables.GROUP_CHAT_MESSAGES,
+			'IDX_DIRECT_CHAT_MESSAGES_GROUPCHATID',
+		);
 	}
 }

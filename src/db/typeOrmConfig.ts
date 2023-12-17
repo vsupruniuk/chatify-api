@@ -18,6 +18,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
 	},
 	entities: ['dist/src/db/entities/*.entity{.ts,.js}'],
 	migrations: ['dist/src/db/migrations/*{.ts,.js}'],
+	migrationsTableName: 'Migrations',
 };
 
 export const connectionSource = new DataSource(typeOrmConfig as DataSourceOptions);
