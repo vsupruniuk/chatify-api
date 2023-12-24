@@ -18,7 +18,7 @@ describe('OTPCodesRepository', (): void => {
 		otpCodesRepository = new OTPCodesRepository(connectionSource);
 	});
 
-	describe('createOTPCode', (): void => {
+	describe('getUserOTPCodeById', (): void => {
 		let findOneMock: SpyInstance;
 
 		const otpCodesMock: OTPCode[] = [...otpCodes];
@@ -41,29 +41,29 @@ describe('OTPCodesRepository', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(otpCodesRepository.getUserOTPCode).toBeDefined();
+			expect(otpCodesRepository.getUserOTPCodeById).toBeDefined();
 		});
 
 		it('should use findOne method for searching OTP code', async (): Promise<void> => {
-			await otpCodesRepository.getUserOTPCode(existingId);
+			await otpCodesRepository.getUserOTPCodeById(existingId);
 
 			expect(findOneMock).toHaveBeenCalledWith({ where: { id: existingId } });
 		});
 
 		it('should return OTP code if it exist', async (): Promise<void> => {
-			const result: OTPCodeResponseDto = await otpCodesRepository.getUserOTPCode(existingId);
+			const result: OTPCodeResponseDto = await otpCodesRepository.getUserOTPCodeById(existingId);
 
 			expect(result.code).toEqual(existingOtpCode);
 		});
 
 		it('should return OTP code as instance of OTPCodeResponseDto', async (): Promise<void> => {
-			const result: OTPCodeResponseDto = await otpCodesRepository.getUserOTPCode(existingId);
+			const result: OTPCodeResponseDto = await otpCodesRepository.getUserOTPCodeById(existingId);
 
 			expect(result).toBeInstanceOf(OTPCodeResponseDto);
 		});
 
 		it('should return null if OTP code not exist', async (): Promise<void> => {
-			const result: OTPCodeResponseDto = await otpCodesRepository.getUserOTPCode(notExistingId);
+			const result: OTPCodeResponseDto = await otpCodesRepository.getUserOTPCodeById(notExistingId);
 
 			expect(result).toBeNull();
 		});

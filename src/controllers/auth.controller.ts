@@ -1,3 +1,15 @@
+import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
+
+import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+import { SignupUserDto } from '@DTO/users/SignupUser.dto';
+import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { CustomProviders } from '@Enums/CustomProviders.enum';
+import { ResponseStatus } from '@Enums/ResponseStatus.enum';
+import { IAuthController } from '@Interfaces/auth/IAuthController';
+import { IAuthService } from '@Interfaces/auth/IAuthService';
+import { IEmailService } from '@Interfaces/emails/IEmailService';
+
+import { IUsersService } from '@Interfaces/users/IUsersService';
 import {
 	Body,
 	ConflictException,
@@ -8,16 +20,6 @@ import {
 	Post,
 } from '@nestjs/common';
 
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
-import { SignupUserDto } from '@DTO/users/SignupUser.dto';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
-import { IEmailService } from '@Interfaces/emails/IEmailService';
-import { IAuthController } from '@Interfaces/users/IAuthController';
-
-import { IUsersService } from '@Interfaces/users/IUsersService';
-
 import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 
@@ -26,6 +28,9 @@ export class AuthController implements IAuthController {
 	constructor(
 		@Inject(CustomProviders.I_USERS_SERVICE)
 		private readonly _usersService: IUsersService,
+
+		@Inject(CustomProviders.I_AUTH_SERVICE)
+		private readonly _authService: IAuthService,
 
 		@Inject(CustomProviders.I_EMAIL_SERVICE)
 		private readonly _emailService: IEmailService,
@@ -66,5 +71,29 @@ export class AuthController implements IAuthController {
 		responseResult.dataLength = responseResult.data.length;
 
 		return responseResult;
+	}
+
+	@Post('/activate-account')
+	@HttpCode(HttpStatus.OK)
+	public async activateAccount(
+		@Body() accountActivationDto: AccountActivationDto,
+	): Promise<ResponseResult> {
+		const responseResult: SuccessfulResponseResult<object> = new SuccessfulResponseResult<object>(
+			200,
+			ResponseStatus.SUCCESS,
+		);
+
+		await this._authService.activateAccount(accountActivationDto);
+
+		return responseResult;
+
+		// Workflow
+		// 1. Get codeId and code from body and validate them
+		// 2. Call activation method in service
+		// 3. Get otp code from db via repository
+		// 4. Validate expiration in service
+		// 5. If expire return false
+		// 6. If not expire update activated status via repository
+		// 7. Return true
 	}
 }

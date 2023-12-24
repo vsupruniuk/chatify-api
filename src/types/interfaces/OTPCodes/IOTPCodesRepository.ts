@@ -13,10 +13,10 @@ export interface IOTPCodesRepository {
 	createOTPCode(createOTPCodeDto: CreateOTPCodeDto): Promise<string>;
 
 	/**
-	 * Method for searching OTP code for user
+	 * Method for searching OTP code for user by id of the code
 	 * @param userOTPCodeId - OPT code id for specific user
 	 * @returns OTPCodeResponseDto - OTP code if code was found
 	 * @returns null - if code wasn't found
 	 */
-	getUserOTPCode(userOTPCodeId: string): Promise<OTPCodeResponseDto | null>;
+	getUserOTPCodeById(userOTPCodeId: string): Promise<OTPCodeResponseDto | null>;
 }

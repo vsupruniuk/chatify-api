@@ -64,16 +64,14 @@ export class UsersService implements IUsersService {
 
 	public async getUserOTPCode(userOTPCodeId: string): Promise<OTPCodeResponseDto | null> {
 		const otpCode: OTPCodeResponseDto | null =
-			await this._otpCodesRepository.getUserOTPCode(userOTPCodeId);
+			await this._otpCodesRepository.getUserOTPCodeById(userOTPCodeId);
 
-		return otpCode ? this.validateOTPCodeExpirations(otpCode) : null;
-	}
+		if (!otpCode) {
+			return null;
+		}
 
-	private async validateOTPCodeExpirations(
-		otpCode: OTPCodeResponseDto,
-	): Promise<OTPCodeResponseDto | null> {
-		const isExpire: boolean = DateHelper.isDateLessThenCurrent(otpCode.expiresAt);
+		const isExpired: boolean = OTPCodesHelper.isExpired(otpCode);
 
-		return !isExpire ? otpCode : null;
+		return !isExpired ? otpCode : null;
 	}
 }

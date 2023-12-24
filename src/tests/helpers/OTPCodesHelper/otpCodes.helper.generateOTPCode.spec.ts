@@ -5,7 +5,7 @@ describe('otpCodesHelper', (): void => {
 		const minValue: number = 100000;
 		const maxValue: number = 999999;
 
-		it('should be declared', () => {
+		it('should be declared', (): void => {
 			expect(OTPCodesHelper.generateOTPCode).toBeDefined();
 		});
 

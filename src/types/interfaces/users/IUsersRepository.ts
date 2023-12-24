@@ -1,3 +1,4 @@
+import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 
@@ -35,4 +36,13 @@ export interface IUsersRepository {
 	 * @returns id - of created user
 	 */
 	createUser(user: CreateUserDto): Promise<string>;
+
+	/**
+	 * Method for updating existing user
+	 * @param userId - id of user that will be updated
+	 * @param updateUserDto - new user data for updating
+	 * @returns true - user was updated
+	 * @returns false - user wasn't created
+	 */
+	updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean>;
 }

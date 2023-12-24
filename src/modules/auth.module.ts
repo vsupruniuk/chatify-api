@@ -1,17 +1,17 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthController } from '@Controllers/auth.controller';
+import { AccountSettings } from '@Entities/AccountSettings.entity';
+import { OTPCode } from '@Entities/OTPCode.entity';
 
 import { User } from '@Entities/User.entity';
-import { OTPCode } from '@Entities/OTPCode.entity';
-import { AccountSettings } from '@Entities/AccountSettings.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
-
-import { AuthController } from '@Controllers/auth.controller';
-import { UsersService } from '@Services/users.service';
-import { EmailService } from '@Services/email.service';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
-import { UsersRepository } from '@Repositories/users.repository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
+import { UsersRepository } from '@Repositories/users.repository';
+import { EmailService } from '@Services/email.service';
+import { AuthService } from '@Services/auth.service';
+import { UsersService } from '@Services/users.service';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([User, AccountSettings, OTPCode])],
@@ -22,6 +22,7 @@ import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 		{ provide: CustomProviders.I_ACCOUNT_SETTINGS_REPOSITORY, useClass: AccountSettingsRepository },
 		{ provide: CustomProviders.I_USERS_REPOSITORY, useClass: UsersRepository },
 		{ provide: CustomProviders.I_OTP_CODES_REPOSITORY, useClass: OTPCodesRepository },
+		{ provide: CustomProviders.I_AUTH_SERVICE, useClass: AuthService },
 	],
 })
 export class AuthModule {}
