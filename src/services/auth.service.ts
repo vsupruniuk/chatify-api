@@ -1,5 +1,7 @@
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
+import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
+import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 import { IAuthService } from '@Interfaces/auth/IAuthService';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
@@ -16,13 +18,26 @@ export class AuthService implements IAuthService {
 	) {}
 
 	public async activateAccount(accountActivationDto: AccountActivationDto): Promise<boolean> {
-		await this._usersRepository.updateUser('f86d7ac8-361b-4c5d-ae2c-104238c64c91', {
-			firstName: 'NAMEe',
-			lastName: 'test',
+		const otpCode: OTPCodeResponseDto | null = await this._otpCodesRepository.getUserOTPCodeById(
+			accountActivationDto.OTPCodeId,
+		);
+
+		if (!otpCode) {
+			return false;
+		}
+
+		const isExpired: boolean = OTPCodesHelper.isExpired(otpCode);
+
+		if (isExpired) {
+			return false;
+		}
+
+		if (accountActivationDto.code !== otpCode.code) {
+			return false;
+		}
+
+		return await this._usersRepository.updateUser(accountActivationDto.id, {
+			isActivated: true,
 		});
-
-		console.log(accountActivationDto);
-
-		return undefined;
 	}
 }

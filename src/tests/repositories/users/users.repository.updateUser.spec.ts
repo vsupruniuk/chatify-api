@@ -23,7 +23,6 @@ describe('usersRepository', (): void => {
 			isActivated: true,
 			lastName: null,
 			nickname: 'hulk',
-			password: '12345Hulk',
 		};
 
 		beforeEach((): void => {
