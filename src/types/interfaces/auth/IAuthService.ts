@@ -1,5 +1,8 @@
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
 
+/**
+ * Interface representing public methods of auth service
+ */
 export interface IAuthService {
 	/**
 	 * Method for activating user account via OTP code

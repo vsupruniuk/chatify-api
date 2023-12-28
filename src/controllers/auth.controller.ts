@@ -11,6 +11,7 @@ import { IEmailService } from '@Interfaces/emails/IEmailService';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import {
+	BadRequestException,
 	Body,
 	ConflictException,
 	Controller,
@@ -78,22 +79,22 @@ export class AuthController implements IAuthController {
 	public async activateAccount(
 		@Body() accountActivationDto: AccountActivationDto,
 	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<object> = new SuccessfulResponseResult<object>(
+		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			200,
 			ResponseStatus.SUCCESS,
 		);
 
-		await this._authService.activateAccount(accountActivationDto);
+		const isActivated: boolean = await this._authService.activateAccount(accountActivationDto);
+
+		if (!isActivated) {
+			throw new BadRequestException([
+				'Invalid or expired code. Please check the entered code or request a new one|otpCode',
+			]);
+		}
+
+		responseResult.data = [];
+		responseResult.dataLength = responseResult.data.length;
 
 		return responseResult;
-
-		// Workflow
-		// 1. Get codeId and code from body and validate them
-		// 2. Call activation method in service
-		// 3. Get otp code from db via repository
-		// 4. Validate expiration in service
-		// 5. If expire return false
-		// 6. If not expire update activated status via repository
-		// 7. Return true
 	}
 }

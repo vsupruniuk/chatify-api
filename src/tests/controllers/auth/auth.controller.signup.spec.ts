@@ -1,3 +1,5 @@
+import { IEmailService } from '@Interfaces/emails/IEmailService';
+import { IUsersService } from '@Interfaces/users/IUsersService';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -24,7 +26,7 @@ describe('AuthController', (): void => {
 	const usersMock: UserShortDto[] = [];
 	const otpCode: OTPCodeResponseDto = { code: 111111, expiresAt: '2023-11-25 1:10:00' };
 
-	const usersServiceMock = {
+	const usersServiceMock: IUsersService = {
 		getByEmail: jest
 			.fn()
 			.mockImplementation(async (userEmail: string): Promise<UserShortDto | null> => {
@@ -63,7 +65,7 @@ describe('AuthController', (): void => {
 		}),
 	};
 
-	const emailServiceMock = {
+	const emailServiceMock: IEmailService = {
 		sendActivationEmail: jest
 			.fn()
 			.mockImplementation(async (receiverEmail: string, otpCode: number): Promise<string> => {

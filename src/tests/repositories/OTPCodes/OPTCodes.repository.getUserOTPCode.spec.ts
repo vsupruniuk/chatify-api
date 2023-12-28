@@ -22,9 +22,9 @@ describe('OTPCodesRepository', (): void => {
 		let findOneMock: SpyInstance;
 
 		const otpCodesMock: OTPCode[] = [...otpCodes];
-		const existingId: string = '1';
+		const existingId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
+		const notExistingId: string = '1662543c-4d4b-4424-ac31-45189dedd099';
 		const existingOtpCode: number = 111111;
-		const notExistingId: string = '10';
 
 		beforeEach((): void => {
 			findOneMock = jest

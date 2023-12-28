@@ -34,8 +34,8 @@ describe('Auth service', (): void => {
 		const otpCodesMock: OTPCode[] = [...otpCodes];
 		const usersMock: UserShortDto[] = [...users];
 
-		const existingOTPCodeId: string = '1';
-		const notExistingOTPCodeId: string = '5';
+		const existingOTPCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
+		const notExistingOTPCodeId: string = '1632043c-4d4b-4424-ac31-45189dedd099';
 		const existingUserId: string = '1';
 		const notExistingUserId: string = '5';
 

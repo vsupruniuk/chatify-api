@@ -38,8 +38,8 @@ describe('Users service', (): void => {
 		let isExpiredMock: SpyInstance;
 
 		const otpCodesMock: OTPCode[] = [...otpCodes];
-		const existingId: string = '1';
-		const notExistingId: string = '10';
+		const existingId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
+		const notExistingId: string = '1162043c-4d4b-4424-ac31-45189dedd099';
 		const existingOtpCode: number = 111111;
 
 		beforeEach((): void => {
