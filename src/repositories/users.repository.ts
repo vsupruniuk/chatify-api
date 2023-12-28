@@ -1,6 +1,7 @@
+import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { Injectable } from '@nestjs/common';
 
-import { DataSource, InsertResult, Repository } from 'typeorm';
+import { DataSource, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
@@ -38,5 +39,11 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 		const result: InsertResult = await this.insert(user);
 
 		return result.identifiers[0].id;
+	}
+
+	public async updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean> {
+		const updateResult: UpdateResult = await this.update({ id: userId }, updateUserDto);
+
+		return updateResult.affected > 0;
 	}
 }

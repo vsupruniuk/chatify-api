@@ -20,7 +20,7 @@ export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodes
 		return result.identifiers[0].id;
 	}
 
-	public async getUserOTPCode(userOTPCodeId: string): Promise<OTPCodeResponseDto | null> {
+	public async getUserOTPCodeById(userOTPCodeId: string): Promise<OTPCodeResponseDto | null> {
 		const otpCode: OTPCode | null = await this.findOne({ where: { id: userOTPCodeId } });
 
 		return otpCode

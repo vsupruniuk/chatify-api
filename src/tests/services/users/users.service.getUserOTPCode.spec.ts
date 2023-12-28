@@ -1,3 +1,4 @@
+import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 import { plainToInstance } from 'class-transformer';
 
 import { connectionSource } from '@DB/typeOrmConfig';
@@ -34,15 +35,16 @@ describe('Users service', (): void => {
 
 	describe('getUserOTPCode', (): void => {
 		let getUserOTPCodeMock: SpyInstance;
+		let isExpiredMock: SpyInstance;
 
 		const otpCodesMock: OTPCode[] = [...otpCodes];
-		const existingId: string = '1';
-		const notExistingId: string = '10';
+		const existingId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
+		const notExistingId: string = '1162043c-4d4b-4424-ac31-45189dedd099';
 		const existingOtpCode: number = 111111;
 
 		beforeEach((): void => {
 			getUserOTPCodeMock = jest
-				.spyOn(otpCodesRepository, 'getUserOTPCode')
+				.spyOn(otpCodesRepository, 'getUserOTPCodeById')
 				.mockImplementation(async (userOTPCodeId: string): Promise<OTPCodeResponseDto | null> => {
 					const otpCode: OTPCode = otpCodesMock.find(
 						(otpCode: OTPCode) => otpCode.id === userOTPCodeId,
@@ -52,6 +54,8 @@ describe('Users service', (): void => {
 						? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
 						: null;
 				});
+
+			isExpiredMock = jest.spyOn(OTPCodesHelper, 'isExpired');
 
 			jest.useFakeTimers();
 		});
@@ -69,6 +73,12 @@ describe('Users service', (): void => {
 			await usersService.getUserOTPCode(existingId);
 
 			expect(getUserOTPCodeMock).toHaveBeenCalledWith(existingId);
+		});
+
+		it('should use OTPCodes helper to check if code is expired', async (): Promise<void> => {
+			await usersService.getUserOTPCode(existingId);
+
+			expect(isExpiredMock).toHaveBeenCalled();
 		});
 
 		it('should return OTP code, if it exist', async (): Promise<void> => {
