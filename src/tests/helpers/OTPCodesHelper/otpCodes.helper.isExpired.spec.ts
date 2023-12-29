@@ -24,7 +24,7 @@ describe('otpCodesHelper', (): void => {
 
 			const isExpired: boolean = OTPCodesHelper.isExpired(otpCode);
 
-			expect(isExpired).toBeFalsy();
+			expect(isExpired).toBe(false);
 		});
 
 		it('should return false if code expiresAt property equal to current date', (): void => {
@@ -34,7 +34,7 @@ describe('otpCodesHelper', (): void => {
 
 			const isExpired: boolean = OTPCodesHelper.isExpired(otpCode);
 
-			expect(isExpired).toBeFalsy();
+			expect(isExpired).toBe(false);
 		});
 
 		it('should return true if code expiresAt property less then current date', (): void => {
@@ -44,7 +44,7 @@ describe('otpCodesHelper', (): void => {
 
 			const isExpired: boolean = OTPCodesHelper.isExpired(otpCode);
 
-			expect(isExpired).toBeTruthy();
+			expect(isExpired).toBe(true);
 		});
 	});
 });

@@ -70,6 +70,7 @@ describe('Auth service', (): void => {
 		});
 
 		afterEach((): void => {
+			jest.clearAllMocks();
 			jest.useRealTimers();
 		});
 
