@@ -28,10 +28,10 @@ describe('usersRepository', (): void => {
 		beforeEach((): void => {
 			findMock = jest
 				.spyOn(usersRepository, 'findOne')
-				.mockImplementation((options: FindOneOptions): Promise<User | null> => {
-					return Promise.resolve(
+				.mockImplementation(async (options: FindOneOptions): Promise<User | null> => {
+					return (
 						(usersMock.find((user: UserShortDto) => user.id === options.where['id']) as User) ||
-							null,
+						null
 					);
 				});
 		});

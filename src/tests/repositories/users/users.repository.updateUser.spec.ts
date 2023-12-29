@@ -28,12 +28,12 @@ describe('usersRepository', (): void => {
 		beforeEach((): void => {
 			updateMock = jest
 				.spyOn(usersRepository, 'update')
-				.mockImplementation(({ id }: { id: string }): Promise<UpdateResult> => {
-					return Promise.resolve<UpdateResult>({
+				.mockImplementation(async ({ id }: { id: string }): Promise<UpdateResult> => {
+					return <UpdateResult>{
 						raw: [],
 						affected: id === existingUserId ? 1 : 0,
 						generatedMaps: [],
-					});
+					};
 				});
 		});
 
@@ -54,13 +54,13 @@ describe('usersRepository', (): void => {
 		it('should return false if user with given id not exist', async (): Promise<void> => {
 			const result: boolean = await usersRepository.updateUser(notExistingUserId, updateUserDto);
 
-			expect(result).toBeFalsy();
+			expect(result).toBe(false);
 		});
 
 		it('should return true if user with given id exist and was updated', async (): Promise<void> => {
 			const result: boolean = await usersRepository.updateUser(existingUserId, updateUserDto);
 
-			expect(result).toBeTruthy();
+			expect(result).toBe(true);
 		});
 	});
 });
