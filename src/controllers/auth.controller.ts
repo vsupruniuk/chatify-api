@@ -11,7 +11,6 @@ import { IEmailService } from '@Interfaces/emails/IEmailService';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import {
-	BadRequestException,
 	Body,
 	ConflictException,
 	Controller,
@@ -19,6 +18,7 @@ import {
 	HttpStatus,
 	Inject,
 	Post,
+	UnprocessableEntityException,
 } from '@nestjs/common';
 
 import { ResponseResult } from '@Responses/ResponseResult';
@@ -87,7 +87,7 @@ export class AuthController implements IAuthController {
 		const isActivated: boolean = await this._authService.activateAccount(accountActivationDto);
 
 		if (!isActivated) {
-			throw new BadRequestException([
+			throw new UnprocessableEntityException([
 				'Invalid or expired code. Please check the entered code or request a new one|otpCode',
 			]);
 		}

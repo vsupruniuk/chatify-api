@@ -153,7 +153,7 @@ describe('AuthController', (): void => {
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if OTPCodeId does not exist', (): Test => {
+		it('should return 422 status if OTPCodeId does not exist', (): Test => {
 			const accountActivationDto = <AccountActivationDto>{
 				id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
 				code: 123456,
@@ -163,10 +163,10 @@ describe('AuthController', (): void => {
 			return request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
-				.expect(HttpStatus.BAD_REQUEST);
+				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
 		});
 
-		it('should return 400 status if code is expired', (): Test => {
+		it('should return 422 status if code is expired', (): Test => {
 			jest.setSystemTime(new Date('2023-11-24 18:35:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
@@ -178,10 +178,10 @@ describe('AuthController', (): void => {
 			return request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
-				.expect(HttpStatus.BAD_REQUEST);
+				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
 		});
 
-		it('should return 400 status if code is wrong', (): Test => {
+		it('should return 422 status if code is wrong', (): Test => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
@@ -193,10 +193,10 @@ describe('AuthController', (): void => {
 			return request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
-				.expect(HttpStatus.BAD_REQUEST);
+				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
 		});
 
-		it('should return 400 status if user id does not exist', (): Test => {
+		it('should return 422 status if user id does not exist', (): Test => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
@@ -208,7 +208,7 @@ describe('AuthController', (): void => {
 			return request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
-				.expect(HttpStatus.BAD_REQUEST);
+				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
 		});
 
 		it('should return 200 status and correct response if all data is valid', (): Test => {
