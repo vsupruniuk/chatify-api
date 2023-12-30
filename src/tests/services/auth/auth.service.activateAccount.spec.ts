@@ -4,6 +4,7 @@ import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { OTPCode } from '@Entities/OTPCode.entity';
+import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 import { IAuthService } from '@Interfaces/auth/IAuthService';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
@@ -30,12 +31,14 @@ describe('Auth service', (): void => {
 	describe('activateAccount', (): void => {
 		let getUserOTPCodeByIdMock: SpyInstance;
 		let updateUserMock: SpyInstance;
+		let isExpiredMock: SpyInstance;
 
 		const otpCodesMock: OTPCode[] = [...otpCodes];
 		const usersMock: UserShortDto[] = [...users];
 
 		const existingOTPCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
 		const notExistingOTPCodeId: string = '1632043c-4d4b-4424-ac31-45189dedd099';
+		const nullableOTPCodeId: string = '1662043c-4d4b-4424-ac31-55189dedd099';
 		const existingUserId: string = '1';
 		const notExistingUserId: string = '5';
 
@@ -66,6 +69,8 @@ describe('Auth service', (): void => {
 					},
 				);
 
+			isExpiredMock = jest.spyOn(OTPCodesHelper, 'isExpired');
+
 			jest.useFakeTimers();
 		});
 
@@ -90,6 +95,20 @@ describe('Auth service', (): void => {
 			await authService.activateAccount(accountActivationDto);
 
 			expect(getUserOTPCodeByIdMock).toHaveBeenCalledWith(existingOTPCodeId);
+		});
+
+		it('should call isExpired method in OTPCodes helper to check if code was expired', async (): Promise<void> => {
+			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
+
+			const accountActivationDto: AccountActivationDto = {
+				id: existingUserId,
+				OTPCodeId: existingOTPCodeId,
+				code: 111111,
+			};
+
+			await authService.activateAccount(accountActivationDto);
+
+			expect(isExpiredMock).toHaveBeenCalled();
 		});
 
 		it('should call updateUser method in users repository to update isActivated status of user account', async (): Promise<void> => {
@@ -155,6 +174,34 @@ describe('Auth service', (): void => {
 				id: notExistingUserId,
 				OTPCodeId: existingOTPCodeId,
 				code: 111111,
+			};
+
+			const isActivated: boolean = await authService.activateAccount(accountActivationDto);
+
+			expect(isActivated).toBe(false);
+		});
+
+		it('should return false if code expiresAt is null', async (): Promise<void> => {
+			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
+
+			const accountActivationDto: AccountActivationDto = {
+				id: existingUserId,
+				OTPCodeId: nullableOTPCodeId,
+				code: 333333,
+			};
+
+			const isActivated: boolean = await authService.activateAccount(accountActivationDto);
+
+			expect(isActivated).toBe(false);
+		});
+
+		it('should return false if code is null', async (): Promise<void> => {
+			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
+
+			const accountActivationDto: AccountActivationDto = {
+				id: existingUserId,
+				OTPCodeId: nullableOTPCodeId,
+				code: 333333,
 			};
 
 			const isActivated: boolean = await authService.activateAccount(accountActivationDto);

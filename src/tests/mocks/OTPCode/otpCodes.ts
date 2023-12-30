@@ -15,7 +15,7 @@ export const otpCodes: OTPCode[] = [
 	}),
 	plainToInstance(OTPCode, <OTPCode>{
 		id: '1662043c-4d4b-4424-ac31-55189dedd099',
-		code: 333333,
-		expiresAt: '2023-11-24 18:30:00',
+		code: null,
+		expiresAt: null,
 	}),
 ];
