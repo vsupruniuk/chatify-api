@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { DataSource, InsertResult, Repository } from 'typeorm';
+import { DataSource, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { OTPCode } from '@Entities/OTPCode.entity';
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
 
 @Injectable()
 export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodesRepository {
@@ -26,5 +27,14 @@ export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodes
 		return otpCode
 			? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
 			: null;
+	}
+
+	public async updateOTPCode(
+		userOTPCodeId: string,
+		updateOTPCodeDto: Partial<UpdateOTPCodeDto>,
+	): Promise<boolean> {
+		const updateResult: UpdateResult = await this.update({ id: userOTPCodeId }, updateOTPCodeDto);
+
+		return updateResult.affected > 0;
 	}
 }
