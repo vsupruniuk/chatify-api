@@ -16,7 +16,7 @@ import { users } from '@TestMocks/UserResponseDto/users';
 import { plainToInstance } from 'class-transformer';
 import SpyInstance = jest.SpyInstance;
 
-describe('Auth service', (): void => {
+describe('AuthService', (): void => {
 	let authService: IAuthService;
 	let otpCodesRepository: IOTPCodesRepository;
 	let usersRepository: IUsersRepository;
