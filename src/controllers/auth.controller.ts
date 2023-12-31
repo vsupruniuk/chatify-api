@@ -8,6 +8,7 @@ import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { IAuthController } from '@Interfaces/auth/IAuthController';
 import { IAuthService } from '@Interfaces/auth/IAuthService';
 import { IEmailService } from '@Interfaces/emails/IEmailService';
+import { IOTPCodesService } from '@Interfaces/OTPCodes/IOTPCodesService';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import {
@@ -35,6 +36,9 @@ export class AuthController implements IAuthController {
 
 		@Inject(CustomProviders.I_EMAIL_SERVICE)
 		private readonly _emailService: IEmailService,
+
+		@Inject(CustomProviders.I_OTP_CODES_SERVICE)
+		private readonly _otpCodesService: IOTPCodesService,
 	) {}
 
 	@Post('/signup')
@@ -91,6 +95,11 @@ export class AuthController implements IAuthController {
 				'Invalid or expired code. Please check the entered code or request a new one|otpCode',
 			]);
 		}
+
+		await this._otpCodesService.updateOTPCode(accountActivationDto.OTPCodeId, {
+			code: null,
+			expiresAt: null,
+		});
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;

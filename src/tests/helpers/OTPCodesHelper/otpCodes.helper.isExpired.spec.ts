@@ -46,5 +46,15 @@ describe('otpCodesHelper', (): void => {
 
 			expect(isExpired).toBe(true);
 		});
+
+		it('should return true if code expiresAt property is null', (): void => {
+			jest.setSystemTime(new Date(timeMock));
+
+			const otpCode: OTPCodeResponseDto = { code: 123456, expiresAt: null };
+
+			const isExpired: boolean = OTPCodesHelper.isExpired(otpCode);
+
+			expect(isExpired).toBe(true);
+		});
 	});
 });

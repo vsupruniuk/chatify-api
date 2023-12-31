@@ -23,6 +23,10 @@ export class OTPCodesHelper {
 	 * @returns false - if code is not expired
 	 */
 	public static isExpired(otpCode: OTPCodeResponseDto): boolean {
+		if (otpCode.expiresAt === null) {
+			return true;
+		}
+
 		return DateHelper.isDateLessThenCurrent(otpCode.expiresAt);
 	}
 }
