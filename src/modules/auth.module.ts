@@ -9,8 +9,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 import { UsersRepository } from '@Repositories/users.repository';
-import { EmailService } from '@Services/email.service';
 import { AuthService } from '@Services/auth.service';
+import { EmailService } from '@Services/email.service';
+import { OTPCodesService } from '@Services/OTPCodes.service';
 import { UsersService } from '@Services/users.service';
 
 @Module({
@@ -18,11 +19,12 @@ import { UsersService } from '@Services/users.service';
 	controllers: [AuthController],
 	providers: [
 		{ provide: CustomProviders.I_USERS_SERVICE, useClass: UsersService },
-		{ provide: CustomProviders.I_EMAIL_SERVICE, useClass: EmailService },
-		{ provide: CustomProviders.I_ACCOUNT_SETTINGS_REPOSITORY, useClass: AccountSettingsRepository },
 		{ provide: CustomProviders.I_USERS_REPOSITORY, useClass: UsersRepository },
+		{ provide: CustomProviders.I_OTP_CODES_SERVICE, useClass: OTPCodesService },
 		{ provide: CustomProviders.I_OTP_CODES_REPOSITORY, useClass: OTPCodesRepository },
 		{ provide: CustomProviders.I_AUTH_SERVICE, useClass: AuthService },
+		{ provide: CustomProviders.I_ACCOUNT_SETTINGS_REPOSITORY, useClass: AccountSettingsRepository },
+		{ provide: CustomProviders.I_EMAIL_SERVICE, useClass: EmailService },
 	],
 })
 export class AuthModule {}

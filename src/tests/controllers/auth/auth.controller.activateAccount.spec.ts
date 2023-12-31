@@ -1,11 +1,13 @@
 import { AuthController } from '@Controllers/auth.controller';
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
+import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
 import { OTPCode } from '@Entities/OTPCode.entity';
 import { User } from '@Entities/User.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 import { IAuthService } from '@Interfaces/auth/IAuthService';
+import { IOTPCodesService } from '@Interfaces/OTPCodes/IOTPCodesService';
 import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
@@ -22,6 +24,11 @@ describe('AuthController', (): void => {
 
 	const otpCodesMock: OTPCode[] = [...otpCodes];
 	let usersMock: User[] = [...users];
+
+	const existingOTPCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
+	const notExistingOTPCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd000';
+	const existingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
+	const notExistingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33333';
 
 	const authServiceMock: IAuthService = {
 		activateAccount: jest
@@ -57,12 +64,20 @@ describe('AuthController', (): void => {
 			}),
 	};
 
+	const otpCodesServiceMock: IOTPCodesService = {
+		updateOTPCode: jest.fn().mockImplementation(async (userOTPCodeId: string): Promise<boolean> => {
+			return otpCodesMock.some((code: OTPCode) => code.id === userOTPCodeId);
+		}),
+	};
+
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AppModule, AuthModule],
 		})
 			.overrideProvider(CustomProviders.I_AUTH_SERVICE)
 			.useValue(authServiceMock)
+			.overrideProvider(CustomProviders.I_OTP_CODES_SERVICE)
+			.useValue(otpCodesServiceMock)
 			.compile();
 
 		app = moduleFixture.createNestApplication();
@@ -92,7 +107,7 @@ describe('AuthController', (): void => {
 			const accountActivationDto = <AccountActivationDto>{
 				id: 'uuid-4',
 				code: 111111,
-				OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd098',
+				OTPCodeId: existingOTPCodeId,
 			};
 
 			return request(app.getHttpServer())
@@ -103,7 +118,7 @@ describe('AuthController', (): void => {
 
 		it('should return 400 status if OTPCodeId format is incorrect', (): Test => {
 			const accountActivationDto = <AccountActivationDto>{
-				id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
+				id: existingUserId,
 				code: 111111,
 				OTPCodeId: 'uuid-4',
 			};
@@ -116,9 +131,9 @@ describe('AuthController', (): void => {
 
 		it('should return 400 status if code is not a number', (): Test => {
 			const accountActivationDto = {
-				id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
+				id: existingUserId,
 				code: 'string',
-				OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
+				OTPCodeId: existingOTPCodeId,
 			};
 
 			return request(app.getHttpServer())
@@ -129,9 +144,9 @@ describe('AuthController', (): void => {
 
 		it('should return 400 status if code less then 100 000 (not a 6-digit number)', (): Test => {
 			const accountActivationDto = <AccountActivationDto>{
-				id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
+				id: existingUserId,
 				code: 98765,
-				OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
+				OTPCodeId: existingOTPCodeId,
 			};
 
 			return request(app.getHttpServer())
@@ -142,9 +157,9 @@ describe('AuthController', (): void => {
 
 		it('should return 400 status if code greater then 999 999 (not a 6-digit number)', (): Test => {
 			const accountActivationDto = <AccountActivationDto>{
-				id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
+				id: existingUserId,
 				code: 1234567,
-				OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
+				OTPCodeId: existingOTPCodeId,
 			};
 
 			return request(app.getHttpServer())
@@ -155,9 +170,9 @@ describe('AuthController', (): void => {
 
 		it('should return 422 status if OTPCodeId does not exist', (): Test => {
 			const accountActivationDto = <AccountActivationDto>{
-				id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
+				id: existingUserId,
 				code: 123456,
-				OTPCodeId: '1162843c-4d4b-4124-ac31-45549dedd099',
+				OTPCodeId: notExistingOTPCodeId,
 			};
 
 			return request(app.getHttpServer())
@@ -170,9 +185,9 @@ describe('AuthController', (): void => {
 			jest.setSystemTime(new Date('2023-11-24 18:35:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
-				id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
+				id: existingUserId,
 				code: 123456,
-				OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
+				OTPCodeId: existingOTPCodeId,
 			};
 
 			return request(app.getHttpServer())
@@ -185,9 +200,9 @@ describe('AuthController', (): void => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
-				id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
+				id: existingUserId,
 				code: 444444,
-				OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
+				OTPCodeId: existingOTPCodeId,
 			};
 
 			return request(app.getHttpServer())
@@ -200,9 +215,9 @@ describe('AuthController', (): void => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
-				id: 'f46845d7-90af-4c29-8e1a-227c90b33853',
+				id: notExistingUserId,
 				code: 111111,
-				OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
+				OTPCodeId: existingOTPCodeId,
 			};
 
 			return request(app.getHttpServer())
@@ -215,9 +230,9 @@ describe('AuthController', (): void => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
-				id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
+				id: existingUserId,
 				code: 111111,
-				OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
+				OTPCodeId: existingOTPCodeId,
 			};
 
 			const expectedResponse = <SuccessfulResponseResult<null>>{
@@ -238,9 +253,9 @@ describe('AuthController', (): void => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
-				id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
+				id: existingUserId,
 				code: 111111,
-				OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
+				OTPCodeId: existingOTPCodeId,
 			};
 
 			await authController.activateAccount(accountActivationDto);
@@ -248,13 +263,35 @@ describe('AuthController', (): void => {
 			expect(authServiceMock.activateAccount).toHaveBeenCalledWith(accountActivationDto);
 		});
 
+		it('should call updateOTPCode method in otpCodes service to update opt code after account activation', async (): Promise<void> => {
+			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
+
+			const accountActivationDto = <AccountActivationDto>{
+				id: existingUserId,
+				code: 111111,
+				OTPCodeId: existingOTPCodeId,
+			};
+
+			const updateOTPCodeDto: UpdateOTPCodeDto = {
+				code: null,
+				expiresAt: null,
+			};
+
+			await authController.activateAccount(accountActivationDto);
+
+			expect(otpCodesServiceMock.updateOTPCode).toHaveBeenCalledWith(
+				existingOTPCodeId,
+				updateOTPCodeDto,
+			);
+		});
+
 		it('should return response as instance of SuccessfulResponseResult', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
-				id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
+				id: existingUserId,
 				code: 111111,
-				OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
+				OTPCodeId: existingOTPCodeId,
 			};
 
 			const response: ResponseResult = await authController.activateAccount(accountActivationDto);
