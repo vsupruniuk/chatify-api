@@ -26,7 +26,7 @@ export interface IUsersService {
 	 * @param signupUserDto - signup data taken from user
 	 * @returns UserShortDto - created user
 	 */
-	createUser(signupUserDto: SignupUserDto): Promise<UserShortDto>;
+	createUser(signupUserDto: SignupUserDto): Promise<UserShortDto | null>;
 
 	/**
 	 * Method for searching OTP code for user
@@ -34,5 +34,5 @@ export interface IUsersService {
 	 * @returns OTPCodeResponseDto - OTP code if code was found and code is not expire
 	 * @returns null - if code wasn't found or expire
 	 */
-	getUserOTPCode(userOTPCodeId: string): Promise<OTPCodeResponseDto | null>;
+	getUserOTPCode(userOTPCodeId: string | null): Promise<OTPCodeResponseDto | null>;
 }

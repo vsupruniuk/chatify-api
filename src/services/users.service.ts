@@ -38,7 +38,7 @@ export class UsersService implements IUsersService {
 		return await this._usersRepository.getByNickname(nickname);
 	}
 
-	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto> {
+	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto | null> {
 		const otpCodeDTO: CreateOTPCodeDto = plainToInstance(CreateOTPCodeDto, <CreateOTPCodeDto>{
 			code: OTPCodesHelper.generateOTPCode(),
 			expiresAt: DateHelper.dateTimeFuture(1000 * 60 * 10),
@@ -62,7 +62,11 @@ export class UsersService implements IUsersService {
 		return await this._usersRepository.getById(createdUserId);
 	}
 
-	public async getUserOTPCode(userOTPCodeId: string): Promise<OTPCodeResponseDto | null> {
+	public async getUserOTPCode(userOTPCodeId: string | null): Promise<OTPCodeResponseDto | null> {
+		if (!userOTPCodeId) {
+			return null;
+		}
+
 		const otpCode: OTPCodeResponseDto | null =
 			await this._otpCodesRepository.getUserOTPCodeById(userOTPCodeId);
 

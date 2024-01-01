@@ -35,6 +35,6 @@ export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodes
 	): Promise<boolean> {
 		const updateResult: UpdateResult = await this.update({ id: userOTPCodeId }, updateOTPCodeDto);
 
-		return updateResult.affected > 0;
+		return updateResult.affected ? updateResult.affected > 0 : false;
 	}
 }

@@ -30,7 +30,7 @@ describe('usersRepository', (): void => {
 				.spyOn(usersRepository, 'findOne')
 				.mockImplementation(async (options: FindOneOptions): Promise<User | null> => {
 					return (
-						(usersMock.find((user: UserShortDto) => user.id === options.where['id']) as User) ||
+						(usersMock.find((user: UserShortDto) => user.id === options.where!['id']) as User) ||
 						null
 					);
 				});
@@ -51,19 +51,19 @@ describe('usersRepository', (): void => {
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {
-			const foundedUser: UserShortDto = await usersRepository.getById(existingUserId);
+			const foundedUser: UserShortDto | null = await usersRepository.getById(existingUserId);
 
-			expect(foundedUser.id).toEqual(existingUserId);
+			expect(foundedUser?.id).toEqual(existingUserId);
 		});
 
 		it('should return founded user as instance of UserShortDto', async (): Promise<void> => {
-			const foundedUser: UserShortDto = await usersRepository.getById(existingUserId);
+			const foundedUser: UserShortDto | null = await usersRepository.getById(existingUserId);
 
 			expect(foundedUser).toBeInstanceOf(UserShortDto);
 		});
 
 		it('should return null, if user not exist', async (): Promise<void> => {
-			const foundedUser = await usersRepository.getById(notExistingUserId);
+			const foundedUser: UserShortDto | null = await usersRepository.getById(notExistingUserId);
 
 			expect(foundedUser).toBeNull();
 		});

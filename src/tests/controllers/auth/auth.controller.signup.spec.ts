@@ -100,7 +100,7 @@ describe('AuthController', (): void => {
 			usersMock.length = 0;
 		});
 
-		it('should return 400 status if email is missing', (): Test => {
+		it('should return 400 status if email is missing', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -109,13 +109,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if email is incorrect', (): Test => {
+		it('should return 400 status if email is incorrect', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -125,13 +125,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 409 status if email is already taken', (): Test => {
+		it('should return 409 status if email is already taken', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -143,13 +143,13 @@ describe('AuthController', (): void => {
 
 			usersServiceMock.createUser(user);
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.CONFLICT);
 		});
 
-		it('should return 400 status if firstName is not a string', (): Test => {
+		it('should return 400 status if firstName is not a string', async (): Promise<void> => {
 			const user = {
 				firstName: 2,
 				lastName: 'Banner',
@@ -159,13 +159,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if firstName is to short', (): Test => {
+		it('should return 400 status if firstName is to short', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Br',
 				lastName: 'Banner',
@@ -175,13 +175,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if lastName is present but to short', (): Test => {
+		it('should return 400 status if lastName is present but to short', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Ba',
@@ -191,13 +191,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 409 status if nickname is already taken', (): Test => {
+		it('should return 409 status if nickname is already taken', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -209,13 +209,13 @@ describe('AuthController', (): void => {
 
 			usersServiceMock.createUser(user);
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.CONFLICT);
 		});
 
-		it('should return 400 status if nickname is to short', (): Test => {
+		it('should return 400 status if nickname is to short', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -225,13 +225,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if password is not a string', (): Test => {
+		it('should return 400 status if password is not a string', async (): Promise<void> => {
 			const user = {
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -241,13 +241,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if password is to short', (): Test => {
+		it('should return 400 status if password is to short', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -257,13 +257,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if password not contains at least 1 number', (): Test => {
+		it('should return 400 status if password not contains at least 1 number', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -273,13 +273,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if password not contains at least 1 uppercase letter', (): Test => {
+		it('should return 400 status if password not contains at least 1 uppercase letter', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -289,13 +289,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if password confirmation is not a string', (): Test => {
+		it('should return 400 status if password confirmation is not a string', async (): Promise<void> => {
 			const user = {
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -305,13 +305,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 2,
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if password confirmation is to short', (): Test => {
+		it('should return 400 status if password confirmation is to short', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -321,13 +321,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwert',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if password confirmation not contains at least 1 number', (): Test => {
+		it('should return 400 status if password confirmation not contains at least 1 number', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -337,13 +337,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwertyA',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if password confirmation not contains at least 1 uppercase letter', (): Test => {
+		it('should return 400 status if password confirmation not contains at least 1 uppercase letter', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -353,13 +353,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if password and password confirmation not matching', (): Test => {
+		it('should return 400 status if password and password confirmation not matching', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -369,13 +369,13 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1AA',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 201 status and user data', (): Test => {
+		it('should return 201 status and user data', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -404,7 +404,7 @@ describe('AuthController', (): void => {
 				dataLength: 1,
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/signup')
 				.send(user)
 				.expect(HttpStatus.CREATED)

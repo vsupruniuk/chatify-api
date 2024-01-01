@@ -65,10 +65,19 @@ export class AuthController implements IAuthController {
 			throw new ConflictException(['This nickname is already taken|nickname']);
 		}
 
-		const createdUser: UserShortDto = await this._usersService.createUser(signupUserDTO);
-		const userOTPCode: OTPCodeResponseDto = await this._usersService.getUserOTPCode(
+		const createdUser: UserShortDto | null = await this._usersService.createUser(signupUserDTO);
+
+		if (!createdUser) {
+			throw new UnprocessableEntityException(['Failed to create user. Please try again|email']);
+		}
+
+		const userOTPCode: OTPCodeResponseDto | null = await this._usersService.getUserOTPCode(
 			createdUser.OTPCodeId,
 		);
+
+		if (!userOTPCode || !userOTPCode.code) {
+			throw new UnprocessableEntityException(['Failed to create user. Please try again|email']);
+		}
 
 		await this._emailService.sendActivationEmail(createdUser.email, userOTPCode.code);
 

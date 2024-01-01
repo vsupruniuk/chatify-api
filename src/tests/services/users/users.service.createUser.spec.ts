@@ -123,7 +123,7 @@ describe('Users service', (): void => {
 		});
 
 		it('should create a new user and return him as response', async (): Promise<void> => {
-			const createdUser: UserShortDto = await usersService.createUser(user);
+			const createdUser: UserShortDto | null = await usersService.createUser(user);
 
 			expect(createUserMock).toHaveBeenCalledWith(<CreateUserDto>{
 				...user,
@@ -131,24 +131,24 @@ describe('Users service', (): void => {
 				password: userHashedPassword,
 				OTPCodeId: userOTPCodeId,
 			});
-			expect(createdUser.firstName).toEqual(user.firstName);
-			expect(createdUser.lastName).toEqual(user.lastName);
-			expect(createdUser.nickname).toEqual(user.nickname);
-			expect(createdUser.email).toEqual(user.email);
+			expect(createdUser?.firstName).toEqual(user.firstName);
+			expect(createdUser?.lastName).toEqual(user.lastName);
+			expect(createdUser?.nickname).toEqual(user.nickname);
+			expect(createdUser?.email).toEqual(user.email);
 		});
 
 		it('should create create default values for user', async (): Promise<void> => {
-			const createdUser: UserShortDto = await usersService.createUser(user);
+			const createdUser: UserShortDto | null = await usersService.createUser(user);
 
-			expect(createdUser.id.length >= 1).toBe(true);
-			expect(createdUser.about).toBeNull();
-			expect(createdUser.avatarUrl).toBeNull();
-			expect(createdUser.accountSettingsId.length >= 1).toBe(true);
-			expect(createdUser.OTPCodeId.length >= 1).toBe(true);
+			expect((createdUser?.id || '').length >= 1).toBe(true);
+			expect(createdUser?.about).toBeNull();
+			expect(createdUser?.avatarUrl).toBeNull();
+			expect((createdUser?.accountSettingsId || '').length >= 1).toBe(true);
+			expect((createdUser?.OTPCodeId || '').length >= 1).toBe(true);
 		});
 
 		it('should return created user as instance of UserShortDto', async (): Promise<void> => {
-			const createdUser: UserShortDto = await usersService.createUser(user);
+			const createdUser: UserShortDto | null = await usersService.createUser(user);
 
 			expect(createdUser).toBeInstanceOf(UserShortDto);
 		});

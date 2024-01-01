@@ -44,6 +44,6 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 	public async updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean> {
 		const updateResult: UpdateResult = await this.update({ id: userId }, updateUserDto);
 
-		return updateResult.affected > 0;
+		return updateResult.affected ? updateResult.affected > 0 : false;
 	}
 }

@@ -103,85 +103,85 @@ describe('AuthController', (): void => {
 			jest.useRealTimers();
 		});
 
-		it('should return 400 status if id format is incorrect', (): Test => {
+		it('should return 400 status if id format is incorrect', async (): Promise<void> => {
 			const accountActivationDto = <AccountActivationDto>{
 				id: 'uuid-4',
 				code: 111111,
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if OTPCodeId format is incorrect', (): Test => {
+		it('should return 400 status if OTPCodeId format is incorrect', async (): Promise<void> => {
 			const accountActivationDto = <AccountActivationDto>{
 				id: existingUserId,
 				code: 111111,
 				OTPCodeId: 'uuid-4',
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if code is not a number', (): Test => {
+		it('should return 400 status if code is not a number', async (): Promise<void> => {
 			const accountActivationDto = {
 				id: existingUserId,
 				code: 'string',
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if code less then 100 000 (not a 6-digit number)', (): Test => {
+		it('should return 400 status if code less then 100 000 (not a 6-digit number)', async (): Promise<void> => {
 			const accountActivationDto = <AccountActivationDto>{
 				id: existingUserId,
 				code: 98765,
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if code greater then 999 999 (not a 6-digit number)', (): Test => {
+		it('should return 400 status if code greater then 999 999 (not a 6-digit number)', async (): Promise<void> => {
 			const accountActivationDto = <AccountActivationDto>{
 				id: existingUserId,
 				code: 1234567,
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 422 status if OTPCodeId does not exist', (): Test => {
+		it('should return 422 status if OTPCodeId does not exist', async (): Promise<void> => {
 			const accountActivationDto = <AccountActivationDto>{
 				id: existingUserId,
 				code: 123456,
 				OTPCodeId: notExistingOTPCodeId,
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
 				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
 		});
 
-		it('should return 422 status if code is expired', (): Test => {
+		it('should return 422 status if code is expired', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-11-24 18:35:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
@@ -190,13 +190,13 @@ describe('AuthController', (): void => {
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
 				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
 		});
 
-		it('should return 422 status if code is wrong', (): Test => {
+		it('should return 422 status if code is wrong', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
@@ -205,13 +205,13 @@ describe('AuthController', (): void => {
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
 				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
 		});
 
-		it('should return 422 status if user id does not exist', (): Test => {
+		it('should return 422 status if user id does not exist', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
@@ -220,13 +220,13 @@ describe('AuthController', (): void => {
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			return request(app.getHttpServer())
+			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
 				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
 		});
 
-		it('should return 200 status and correct response if all data is valid', (): Test => {
+		it('should return 200 status and correct response if all data is valid', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
@@ -242,7 +242,7 @@ describe('AuthController', (): void => {
 				dataLength: 0,
 			};
 
-			return request(app.getHttpServer())
+			request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
 				.expect(HttpStatus.OK)

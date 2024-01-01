@@ -59,13 +59,13 @@ describe('Users service', (): void => {
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {
-			const foundedUser: UserShortDto = await usersService.getByEmail(existingUserEmail);
+			const foundedUser: UserShortDto | null = await usersService.getByEmail(existingUserEmail);
 
-			expect(foundedUser.email).toEqual(existingUserEmail);
+			expect(foundedUser?.email).toEqual(existingUserEmail);
 		});
 
 		it('should return founded user as instance of UserShortDto', async (): Promise<void> => {
-			const foundedUser: UserShortDto = await usersService.getByEmail(existingUserEmail);
+			const foundedUser: UserShortDto | null = await usersService.getByEmail(existingUserEmail);
 
 			expect(foundedUser).toBeInstanceOf(UserShortDto);
 		});
