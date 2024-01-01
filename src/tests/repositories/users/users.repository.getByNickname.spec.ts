@@ -31,7 +31,7 @@ describe('usersRepository', (): void => {
 				.mockImplementation(async (options: FindOneOptions): Promise<User | null> => {
 					return (
 						(usersMock.find(
-							(user: UserShortDto) => user.nickname === options.where['nickname'],
+							(user: UserShortDto) => user.nickname === options.where!['nickname'],
 						) as User) || null
 					);
 				});
@@ -52,19 +52,22 @@ describe('usersRepository', (): void => {
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {
-			const foundedUser: UserShortDto = await usersRepository.getByNickname(existingUserNickname);
+			const foundedUser: UserShortDto | null =
+				await usersRepository.getByNickname(existingUserNickname);
 
-			expect(foundedUser.nickname).toEqual(existingUserNickname);
+			expect(foundedUser?.nickname).toEqual(existingUserNickname);
 		});
 
 		it('should return founded user as instance of UserShortDto', async (): Promise<void> => {
-			const foundedUser: UserShortDto = await usersRepository.getByNickname(existingUserNickname);
+			const foundedUser: UserShortDto | null =
+				await usersRepository.getByNickname(existingUserNickname);
 
 			expect(foundedUser).toBeInstanceOf(UserShortDto);
 		});
 
 		it('should return null, if user not exist', async (): Promise<void> => {
-			const foundedUser = await usersRepository.getByNickname(notExistingUserNickname);
+			const foundedUser: UserShortDto | null =
+				await usersRepository.getByNickname(notExistingUserNickname);
 
 			expect(foundedUser).toBeNull();
 		});

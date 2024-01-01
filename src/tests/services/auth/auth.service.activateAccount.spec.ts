@@ -45,7 +45,7 @@ describe('AuthService', (): void => {
 		beforeEach((): void => {
 			getUserOTPCodeByIdMock = jest
 				.spyOn(otpCodesRepository, 'getUserOTPCodeById')
-				.mockImplementation(async (id: string): Promise<OTPCodeResponseDto> => {
+				.mockImplementation(async (id: string): Promise<OTPCodeResponseDto | null> => {
 					const otpCode: OTPCode | undefined = otpCodesMock.find((code: OTPCode) => code.id === id);
 
 					return otpCode

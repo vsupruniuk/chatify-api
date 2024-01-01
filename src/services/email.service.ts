@@ -11,7 +11,7 @@ import { accountActivationTemplate } from '@EmailTemplates/accountActivationTemp
 @Injectable()
 export class EmailService implements IEmailService {
 	private readonly APP_NAME: string = 'Chatify';
-	private readonly APP_EMAIL: string = process.env.SMTP_USER;
+	private readonly APP_EMAIL: string = process.env.SMTP_USER || '';
 	private _transporter: Transporter;
 
 	constructor() {

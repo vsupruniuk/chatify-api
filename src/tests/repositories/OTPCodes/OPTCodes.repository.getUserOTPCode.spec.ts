@@ -31,7 +31,7 @@ describe('OTPCodesRepository', (): void => {
 				.spyOn(otpCodesRepository, 'findOne')
 				.mockImplementation(async (options: FindOneOptions<OTPCode>): Promise<OTPCode | null> => {
 					return (
-						otpCodesMock.find((otpCode: OTPCode) => otpCode.id === options.where['id']) || null
+						otpCodesMock.find((otpCode: OTPCode) => otpCode.id === options.where!['id']) || null
 					);
 				});
 		});
@@ -51,19 +51,22 @@ describe('OTPCodesRepository', (): void => {
 		});
 
 		it('should return OTP code if it exist', async (): Promise<void> => {
-			const result: OTPCodeResponseDto = await otpCodesRepository.getUserOTPCodeById(existingId);
+			const result: OTPCodeResponseDto | null =
+				await otpCodesRepository.getUserOTPCodeById(existingId);
 
-			expect(result.code).toEqual(existingOtpCode);
+			expect(result?.code).toEqual(existingOtpCode);
 		});
 
 		it('should return OTP code as instance of OTPCodeResponseDto', async (): Promise<void> => {
-			const result: OTPCodeResponseDto = await otpCodesRepository.getUserOTPCodeById(existingId);
+			const result: OTPCodeResponseDto | null =
+				await otpCodesRepository.getUserOTPCodeById(existingId);
 
 			expect(result).toBeInstanceOf(OTPCodeResponseDto);
 		});
 
 		it('should return null if OTP code not exist', async (): Promise<void> => {
-			const result: OTPCodeResponseDto = await otpCodesRepository.getUserOTPCodeById(notExistingId);
+			const result: OTPCodeResponseDto | null =
+				await otpCodesRepository.getUserOTPCodeById(notExistingId);
 
 			expect(result).toBeNull();
 		});

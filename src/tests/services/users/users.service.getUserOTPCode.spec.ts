@@ -45,15 +45,17 @@ describe('Users service', (): void => {
 		beforeEach((): void => {
 			getUserOTPCodeMock = jest
 				.spyOn(otpCodesRepository, 'getUserOTPCodeById')
-				.mockImplementation(async (userOTPCodeId: string): Promise<OTPCodeResponseDto | null> => {
-					const otpCode: OTPCode = otpCodesMock.find(
-						(otpCode: OTPCode) => otpCode.id === userOTPCodeId,
-					);
+				.mockImplementation(
+					async (userOTPCodeId: string | null): Promise<OTPCodeResponseDto | null> => {
+						const otpCode: OTPCode | undefined = otpCodesMock.find(
+							(otpCode: OTPCode) => otpCode.id === userOTPCodeId,
+						);
 
-					return otpCode
-						? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
-						: null;
-				});
+						return otpCode
+							? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
+							: null;
+					},
+				);
 
 			isExpiredMock = jest.spyOn(OTPCodesHelper, 'isExpired');
 
@@ -84,21 +86,28 @@ describe('Users service', (): void => {
 		it('should return OTP code, if it exist', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
-			const foundedCode: OTPCodeResponseDto = await usersService.getUserOTPCode(existingId);
+			const foundedCode: OTPCodeResponseDto | null = await usersService.getUserOTPCode(existingId);
 
-			expect(foundedCode.code).toEqual(existingOtpCode);
+			expect(foundedCode?.code).toEqual(existingOtpCode);
 		});
 
 		it('should return founded OTP code as instance of OTPCodeResponseDto', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
-			const foundedCode: OTPCodeResponseDto = await usersService.getUserOTPCode(existingId);
+			const foundedCode: OTPCodeResponseDto | null = await usersService.getUserOTPCode(existingId);
 
 			expect(foundedCode).toBeInstanceOf(OTPCodeResponseDto);
 		});
 
 		it('should return null, if OTP code not exist', async (): Promise<void> => {
-			const foundedCode: OTPCodeResponseDto = await usersService.getUserOTPCode(notExistingId);
+			const foundedCode: OTPCodeResponseDto | null =
+				await usersService.getUserOTPCode(notExistingId);
+
+			expect(foundedCode).toBeNull();
+		});
+
+		it('should return null, null was passed to method', async (): Promise<void> => {
+			const foundedCode: OTPCodeResponseDto | null = await usersService.getUserOTPCode(null);
 
 			expect(foundedCode).toBeNull();
 		});
@@ -106,7 +115,7 @@ describe('Users service', (): void => {
 		it('should return null if code expires', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-12-24 18:40:00'));
 
-			const foundedCode: OTPCodeResponseDto = await usersService.getUserOTPCode(existingId);
+			const foundedCode: OTPCodeResponseDto | null = await usersService.getUserOTPCode(existingId);
 
 			expect(foundedCode).toBeNull();
 		});
