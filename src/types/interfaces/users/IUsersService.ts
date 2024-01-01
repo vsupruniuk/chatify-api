@@ -25,6 +25,7 @@ export interface IUsersService {
 	 * Method for creating user from signup data with some default settings
 	 * @param signupUserDto - signup data taken from user
 	 * @returns UserShortDto - created user
+	 * @returns null - if user wasn't created
 	 */
 	createUser(signupUserDto: SignupUserDto): Promise<UserShortDto | null>;
 
