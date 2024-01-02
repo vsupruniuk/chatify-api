@@ -83,6 +83,10 @@ describe('AuthService', (): void => {
 			expect(authService.activateAccount).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(authService.activateAccount).toBeInstanceOf(Function);
+		});
+
 		it('should call getUserOTPCodeById method in otpCodes repository to get user OTP code', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 

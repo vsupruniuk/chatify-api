@@ -45,6 +45,10 @@ describe('usersRepository', (): void => {
 			expect(usersRepository.updateUser).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(usersRepository.updateUser).toBeInstanceOf(Function);
+		});
+
 		it('should call update method to update user', async (): Promise<void> => {
 			await usersRepository.updateUser(existingUserId, updateUserDto);
 

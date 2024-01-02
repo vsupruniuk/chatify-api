@@ -71,6 +71,10 @@ describe('Users service', (): void => {
 			expect(usersService.getUserOTPCode).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(usersService.getUserOTPCode).toBeInstanceOf(Function);
+		});
+
 		it('should use getUserOTPCode method from users repository for searching OTP code', async (): Promise<void> => {
 			await usersService.getUserOTPCode(existingId);
 

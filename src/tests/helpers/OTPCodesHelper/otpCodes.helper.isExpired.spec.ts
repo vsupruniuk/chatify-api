@@ -17,6 +17,10 @@ describe('otpCodesHelper', (): void => {
 			expect(OTPCodesHelper.isExpired).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(OTPCodesHelper.isExpired).toBeInstanceOf(Function);
+		});
+
 		it('should return false if code expiresAt property greater then current date', (): void => {
 			jest.setSystemTime(new Date(timeMock));
 

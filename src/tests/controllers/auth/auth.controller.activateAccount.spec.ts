@@ -103,6 +103,14 @@ describe('AuthController', (): void => {
 			jest.useRealTimers();
 		});
 
+		it('should be defined', (): void => {
+			expect(authController.activateAccount).toBeDefined();
+		});
+
+		it('should be a function', (): void => {
+			expect(authController.activateAccount).toBeInstanceOf(Function);
+		});
+
 		it('should return 400 status if id format is incorrect', async (): Promise<void> => {
 			const accountActivationDto = <AccountActivationDto>{
 				id: 'uuid-4',

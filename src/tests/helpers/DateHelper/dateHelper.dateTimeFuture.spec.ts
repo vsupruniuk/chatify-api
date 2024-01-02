@@ -17,6 +17,10 @@ describe('dateHelper', (): void => {
 			expect(DateHelper.dateTimeFuture).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(DateHelper.dateTimeFuture).toBeInstanceOf(Function);
+		});
+
 		it('should return current date and time if passed 0 milliseconds', (): void => {
 			jest.setSystemTime(new Date(dateTimeMock));
 

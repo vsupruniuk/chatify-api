@@ -34,6 +34,10 @@ describe('accountSettingsRepository', (): void => {
 			expect(accountSettingsRepository.createDefaultSettings).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(accountSettingsRepository.createDefaultSettings).toBeInstanceOf(Function);
+		});
+
 		it('should use insert method for creating account settings', async (): Promise<void> => {
 			await accountSettingsRepository.createDefaultSettings();
 

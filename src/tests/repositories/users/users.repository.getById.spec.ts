@@ -44,6 +44,10 @@ describe('usersRepository', (): void => {
 			expect(usersRepository.getById).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(usersRepository.getById).toBeInstanceOf(Function);
+		});
+
 		it('should use findOne method for searching user', async (): Promise<void> => {
 			await usersRepository.getById(existingUserId);
 
