@@ -40,6 +40,10 @@ describe('OTPCodesService', (): void => {
 			expect(otpCodesService.updateOTPCode).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(otpCodesService.updateOTPCode).toBeInstanceOf(Function);
+		});
+
 		it('should call updateOTPCode method in OTPCodes repository to update code', async (): Promise<void> => {
 			await otpCodesService.updateOTPCode(existingCodeId, updateOTPCodeDto);
 

@@ -45,6 +45,10 @@ describe('usersRepository', (): void => {
 			expect(usersRepository.createUser).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(usersRepository.createUser).toBeInstanceOf(Function);
+		});
+
 		it('should use insert method for creating user', async (): Promise<void> => {
 			await usersRepository.createUser(user);
 

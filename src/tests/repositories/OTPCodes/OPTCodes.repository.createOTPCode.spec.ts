@@ -44,6 +44,10 @@ describe('OTPCodesRepository', (): void => {
 			expect(otpCodesRepository.createOTPCode).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(otpCodesRepository.createOTPCode).toBeInstanceOf(Function);
+		});
+
 		it('should use insert method for creating new OTP code', async (): Promise<void> => {
 			await otpCodesRepository.createOTPCode(createOTPCodeDtoMock);
 

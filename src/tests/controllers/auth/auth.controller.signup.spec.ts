@@ -100,6 +100,14 @@ describe('AuthController', (): void => {
 			usersMock.length = 0;
 		});
 
+		it('should be defined', (): void => {
+			expect(authController.signup).toBeDefined();
+		});
+
+		it('should be a function', (): void => {
+			expect(authController.signup).toBeInstanceOf(Function);
+		});
+
 		it('should return 400 status if email is missing', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',

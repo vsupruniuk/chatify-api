@@ -93,6 +93,10 @@ describe('Users service', (): void => {
 			expect(usersService.createUser).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(usersService.createUser).toBeInstanceOf(Function);
+		});
+
 		it('should create basic account settings for user', async (): Promise<void> => {
 			await usersService.createUser(user);
 

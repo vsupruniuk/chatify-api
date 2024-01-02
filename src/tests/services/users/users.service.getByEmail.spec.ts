@@ -52,6 +52,10 @@ describe('Users service', (): void => {
 			expect(usersService.getByEmail).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(usersService.getByEmail).toBeInstanceOf(Function);
+		});
+
 		it('should use getByEmail method from users repository for searching user', async (): Promise<void> => {
 			await usersService.getByEmail(existingUserEmail);
 

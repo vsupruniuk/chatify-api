@@ -44,6 +44,10 @@ describe('OTPCodesRepository', (): void => {
 			expect(otpCodesRepository.getUserOTPCodeById).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(otpCodesRepository.getUserOTPCodeById).toBeInstanceOf(Function);
+		});
+
 		it('should use findOne method for searching OTP code', async (): Promise<void> => {
 			await otpCodesRepository.getUserOTPCodeById(existingId);
 

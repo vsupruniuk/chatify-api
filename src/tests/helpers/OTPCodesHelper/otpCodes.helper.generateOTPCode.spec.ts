@@ -9,6 +9,10 @@ describe('otpCodesHelper', (): void => {
 			expect(OTPCodesHelper.generateOTPCode).toBeDefined();
 		});
 
+		it('should be a function', (): void => {
+			expect(OTPCodesHelper.generateOTPCode).toBeInstanceOf(Function);
+		});
+
 		it(`should return number equal greater than ${minValue}`, (): void => {
 			const result: number = OTPCodesHelper.generateOTPCode();
 
