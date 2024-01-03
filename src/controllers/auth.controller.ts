@@ -1,4 +1,5 @@
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
+import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
 
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
@@ -93,7 +94,7 @@ export class AuthController implements IAuthController {
 		@Body() accountActivationDto: AccountActivationDto,
 	): Promise<ResponseResult> {
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			200,
+			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
 		);
 
@@ -112,6 +113,25 @@ export class AuthController implements IAuthController {
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
+
+		return responseResult;
+	}
+
+	@Post('/resend-activation-code')
+	@HttpCode(HttpStatus.OK)
+	public async resendActivationCode(
+		resendActivationCodeDto: ResendActivationCodeDto,
+	): Promise<ResponseResult> {
+		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
+			HttpStatus.OK,
+			ResponseStatus.SUCCESS,
+		);
+
+		// Workflow
+		// 1. Take email
+		// 2. If account activated - return 422
+		// 3. Update code and expires at
+		// 4. Get code and send email
 
 		return responseResult;
 	}

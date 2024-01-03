@@ -1,5 +1,7 @@
 import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
+import { DateHelper } from '@Helpers/date.helper';
+import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { IOTPCodesService } from '@Interfaces/OTPCodes/IOTPCodesService';
 import { Inject, Injectable } from '@nestjs/common';
@@ -16,5 +18,14 @@ export class OTPCodesService implements IOTPCodesService {
 		updateOTPCodeDto: Partial<UpdateOTPCodeDto>,
 	): Promise<boolean> {
 		return await this._otpCodesRepository.updateOTPCode(userOTPCodeId, updateOTPCodeDto);
+	}
+
+	public async createNewOTPCode(userOTPCodeId: string): Promise<boolean> {
+		const newCode: UpdateOTPCodeDto = {
+			code: OTPCodesHelper.generateOTPCode(),
+			expiresAt: DateHelper.dateTimeNow(),
+		};
+
+		return await this._otpCodesRepository.updateOTPCode(userOTPCodeId, newCode);
 	}
 }

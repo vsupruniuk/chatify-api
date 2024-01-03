@@ -64,7 +64,7 @@ describe('AuthController', (): void => {
 			}),
 	};
 
-	const otpCodesServiceMock: IOTPCodesService = {
+	const otpCodesServiceMock: Partial<IOTPCodesService> = {
 		updateOTPCode: jest.fn().mockImplementation(async (userOTPCodeId: string): Promise<boolean> => {
 			return otpCodesMock.some((code: OTPCode) => code.id === userOTPCodeId);
 		}),
