@@ -1,19 +1,30 @@
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { DateHelper } from '@Helpers/date.helper';
+import * as crypto from 'crypto';
 
 /**
  * Helper clas for OTP codes
  */
 export class OTPCodesHelper {
+	private static OTP_CODE_LENGTH = 6;
 	/**
-	 * Generate random OTP code between 100 000 and 999 999
+	 * Generate random 6 digit OTP code
 	 * @return otpCode - generated OTP code
 	 */
 	public static generateOTPCode(): number {
-		const minValue: number = 100000;
-		const maxValue: number = 999999;
+		let code: string = '';
 
-		return Math.floor(Math.random() * (maxValue - minValue) + minValue);
+		while (code.length < this.OTP_CODE_LENGTH) {
+			const number: number = crypto.randomInt(0, 10);
+
+			if (!code.length && number === 0) {
+				continue;
+			}
+
+			code += number;
+		}
+
+		return Number(code);
 	}
 
 	/**
