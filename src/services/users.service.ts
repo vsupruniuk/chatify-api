@@ -1,3 +1,4 @@
+import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { Inject, Injectable } from '@nestjs/common';
 
 import { plainToInstance } from 'class-transformer';
@@ -29,6 +30,10 @@ export class UsersService implements IUsersService {
 		@Inject(CustomProviders.I_USERS_REPOSITORY)
 		private readonly _usersRepository: IUsersRepository,
 	) {}
+
+	public async getFullUserByEmail(email: string): Promise<UserFullDto | null> {
+		return await this._usersRepository.getFullUserByEmail(email);
+	}
 
 	public async getByEmail(email: string): Promise<UserShortDto | null> {
 		return await this._usersRepository.getByEmail(email);

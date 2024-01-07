@@ -26,7 +26,7 @@ describe('AuthController', (): void => {
 	const usersMock: UserShortDto[] = [];
 	const otpCode: OTPCodeResponseDto = { code: 111111, expiresAt: '2023-11-25 1:10:00' };
 
-	const usersServiceMock: IUsersService = {
+	const usersServiceMock: Partial<IUsersService> = {
 		getByEmail: jest
 			.fn()
 			.mockImplementation(async (userEmail: string): Promise<UserShortDto | null> => {
@@ -149,7 +149,7 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			usersServiceMock.createUser(user);
+			usersServiceMock.createUser?.(user);
 
 			await request(app.getHttpServer())
 				.post('/auth/signup')
@@ -215,7 +215,7 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			usersServiceMock.createUser(user);
+			usersServiceMock.createUser?.(user);
 
 			await request(app.getHttpServer())
 				.post('/auth/signup')

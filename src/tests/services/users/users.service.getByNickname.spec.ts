@@ -11,7 +11,7 @@ import { AccountSettingsRepository } from '@Repositories/accountSettings.reposit
 import { UsersRepository } from '@Repositories/users.repository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 
-import { users } from '@TestMocks/UserResponseDto/users';
+import { users } from '@TestMocks/UserShortDto/users';
 
 import SpyInstance = jest.SpyInstance;
 

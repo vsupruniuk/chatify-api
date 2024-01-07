@@ -1,7 +1,7 @@
 import { connectionSource } from '@DB/typeOrmConfig';
 import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-import { UpdateResult } from 'typeorm';
+import { FindOptionsWhere, ObjectId, UpdateResult } from 'typeorm';
 import SpyInstance = jest.SpyInstance;
 
 describe('OTPCodesRepository', (): void => {
@@ -24,13 +24,28 @@ describe('OTPCodesRepository', (): void => {
 		beforeEach((): void => {
 			updateMock = jest
 				.spyOn(otpCodesRepository, 'update')
-				.mockImplementation(async ({ id }: { id: string }): Promise<UpdateResult> => {
-					return <UpdateResult>{
-						raw: [],
-						affected: id === existingCodeId ? 1 : 0,
-						generatedMaps: [],
-					};
-				});
+				.mockImplementation(
+					async <T>(
+						criteria:
+							| string
+							| number
+							| string[]
+							| Date
+							| ObjectId
+							| number[]
+							| Date[]
+							| ObjectId[]
+							| FindOptionsWhere<T>,
+					): Promise<UpdateResult> => {
+						const { id } = criteria as unknown as { id: string };
+
+						return <UpdateResult>{
+							raw: [],
+							affected: id === existingCodeId ? 1 : 0,
+							generatedMaps: [],
+						};
+					},
+				);
 		});
 
 		afterEach((): void => {

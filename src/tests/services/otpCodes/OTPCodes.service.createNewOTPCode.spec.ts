@@ -19,7 +19,7 @@ describe('OTPCodesService', (): void => {
 	describe('createNewOTPCode', (): void => {
 		let updateOTPCodeMock: SpyInstance;
 		let generateOTPCodeMock: SpyInstance;
-		let dateTimeNowMock: SpyInstance;
+		let dateTimeFutureMock: SpyInstance;
 
 		const existingCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
 		const notExistingCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd000';
@@ -39,7 +39,10 @@ describe('OTPCodesService', (): void => {
 				});
 
 			generateOTPCodeMock = jest.spyOn(OTPCodesHelper, 'generateOTPCode').mockReturnValue(codeMock);
-			dateTimeNowMock = jest.spyOn(DateHelper, 'dateTimeNow').mockReturnValue(codeExpiresAtMock);
+
+			dateTimeFutureMock = jest
+				.spyOn(DateHelper, 'dateTimeFuture')
+				.mockReturnValue(codeExpiresAtMock);
 		});
 
 		afterEach((): void => {
@@ -60,16 +63,22 @@ describe('OTPCodesService', (): void => {
 			expect(generateOTPCodeMock).toHaveBeenCalled();
 		});
 
-		it('should call dateTimeNow in DateHelper to get current date', async (): Promise<void> => {
+		it('should call dateTimeFuture in DateHelper to get current date', async (): Promise<void> => {
 			await otpCodesService.createNewOTPCode(existingCodeId);
 
-			expect(dateTimeNowMock).toHaveBeenCalled();
+			expect(dateTimeFutureMock).toHaveBeenCalled();
 		});
 
 		it('should call updateOTPCode in otpCodesRepository to create new code for existing user', async (): Promise<void> => {
 			await otpCodesService.createNewOTPCode(existingCodeId);
 
 			expect(updateOTPCodeMock).toHaveBeenCalledWith(existingCodeId, updateOTPCodeDto);
+		});
+
+		it('should return false if id is null', async (): Promise<void> => {
+			const isCreated: boolean = await otpCodesService.createNewOTPCode(null);
+
+			expect(isCreated).toBe(false);
 		});
 
 		it("should return false if new code wasn't created", async (): Promise<void> => {

@@ -20,10 +20,14 @@ export class OTPCodesService implements IOTPCodesService {
 		return await this._otpCodesRepository.updateOTPCode(userOTPCodeId, updateOTPCodeDto);
 	}
 
-	public async createNewOTPCode(userOTPCodeId: string): Promise<boolean> {
+	public async createNewOTPCode(userOTPCodeId: string | null): Promise<boolean> {
+		if (!userOTPCodeId) {
+			return false;
+		}
+
 		const newCode: UpdateOTPCodeDto = {
 			code: OTPCodesHelper.generateOTPCode(),
-			expiresAt: DateHelper.dateTimeNow(),
+			expiresAt: DateHelper.dateTimeFuture(1000 * 60 * 10),
 		};
 
 		return await this._otpCodesRepository.updateOTPCode(userOTPCodeId, newCode);

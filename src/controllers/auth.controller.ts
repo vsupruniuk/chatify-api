@@ -3,6 +3,7 @@ import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
 
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
+import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
@@ -19,6 +20,7 @@ import {
 	HttpCode,
 	HttpStatus,
 	Inject,
+	NotFoundException,
 	Post,
 	UnprocessableEntityException,
 } from '@nestjs/common';
@@ -120,18 +122,41 @@ export class AuthController implements IAuthController {
 	@Post('/resend-activation-code')
 	@HttpCode(HttpStatus.OK)
 	public async resendActivationCode(
-		resendActivationCodeDto: ResendActivationCodeDto,
+		@Body() resendActivationCodeDto: ResendActivationCodeDto,
 	): Promise<ResponseResult> {
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
 		);
 
-		// Workflow
-		// 1. Take email
-		// 2. If account activated - return 422
-		// 3. Update code and expires at
-		// 4. Get code and send email
+		const user: UserFullDto | null = await this._usersService.getFullUserByEmail(
+			resendActivationCodeDto.email,
+		);
+
+		if (!user) {
+			throw new NotFoundException(['User with this email does not exist|email']);
+		}
+
+		if (user.isActivated) {
+			throw new UnprocessableEntityException(['This account is already activated|email']);
+		}
+
+		await this._otpCodesService.createNewOTPCode(user.OTPCodeId);
+
+		const otpCode: OTPCodeResponseDto | null = await this._usersService.getUserOTPCode(
+			user.OTPCodeId,
+		);
+
+		if (!otpCode || !otpCode.code) {
+			throw new UnprocessableEntityException([
+				'Failed to create new OTP code. Please try again|email',
+			]);
+		}
+
+		await this._emailService.sendActivationEmail(resendActivationCodeDto.email, otpCode.code);
+
+		responseResult.data = [];
+		responseResult.dataLength = responseResult.data.length;
 
 		return responseResult;
 	}

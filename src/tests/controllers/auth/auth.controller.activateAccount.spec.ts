@@ -1,8 +1,8 @@
 import { AuthController } from '@Controllers/auth.controller';
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
 import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
+import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { OTPCode } from '@Entities/OTPCode.entity';
-import { User } from '@Entities/User.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
@@ -15,7 +15,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
-import { users } from '@TestMocks/User/users';
+import { users } from '@TestMocks/UserFullDto/users';
 import * as request from 'supertest';
 
 describe('AuthController', (): void => {
@@ -23,7 +23,7 @@ describe('AuthController', (): void => {
 	let authController: AuthController;
 
 	const otpCodesMock: OTPCode[] = [...otpCodes];
-	let usersMock: User[] = [...users];
+	let usersMock: UserFullDto[] = [...users];
 
 	const existingOTPCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
 	const notExistingOTPCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd000';
@@ -52,7 +52,9 @@ describe('AuthController', (): void => {
 					return false;
 				}
 
-				const userIndex = usersMock.findIndex((user: User) => user.id === accountActivationDto.id);
+				const userIndex = usersMock.findIndex(
+					(user: UserFullDto) => user.id === accountActivationDto.id,
+				);
 
 				if (userIndex < 0) {
 					return false;

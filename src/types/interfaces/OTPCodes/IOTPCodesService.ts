@@ -19,5 +19,5 @@ export interface IOTPCodesService {
 	 * @returns true - if code was created
 	 * @returns false - if code wasn't created
 	 */
-	createNewOTPCode(userOTPCodeId: string): Promise<boolean>;
+	createNewOTPCode(userOTPCodeId: string | null): Promise<boolean>;
 }
