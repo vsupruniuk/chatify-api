@@ -12,7 +12,7 @@ import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 import { UsersRepository } from '@Repositories/users.repository';
 import { AuthService } from '@Services/auth.service';
 import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
-import { users } from '@TestMocks/UserResponseDto/users';
+import { users } from '@TestMocks/UserShortDto/users';
 import { plainToInstance } from 'class-transformer';
 import SpyInstance = jest.SpyInstance;
 

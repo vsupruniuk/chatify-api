@@ -12,4 +12,12 @@ export interface IOTPCodesService {
 		userOTPCodeId: string,
 		updateOTPCodeDto: Partial<UpdateOTPCodeDto>,
 	): Promise<boolean>;
+
+	/**
+	 * Method for creating new OTP code for user
+	 * @param userOTPCodeId - OTP code id that will be updated
+	 * @returns true - if code was created
+	 * @returns false - if code wasn't created
+	 */
+	createNewOTPCode(userOTPCodeId: string | null): Promise<boolean>;
 }

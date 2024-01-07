@@ -1,4 +1,5 @@
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
+import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 
@@ -13,6 +14,14 @@ export interface IUsersRepository {
 	 * @returns null - if user wasn't found
 	 */
 	getById(id: string): Promise<UserShortDto | null>;
+
+	/**
+	 * Method for searching user by id. Return all user information (except service information of the DB)
+	 * @param email - user id for searching
+	 * @returns UserFullDto - if user was found. Not used as API public response
+	 * @returns null - if user wasn't found
+	 */
+	getFullUserByEmail(email: string): Promise<UserFullDto | null>;
 
 	/**
 	 * Method for searching one specific user by email

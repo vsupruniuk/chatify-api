@@ -7,7 +7,7 @@ import { UserShortDto } from '@DTO/users/UserShort.dto';
 
 import { UsersRepository } from '@Repositories/users.repository';
 
-import { users } from '@TestMocks/UserResponseDto/users';
+import { users } from '@TestMocks/UserShortDto/users';
 
 import SpyInstance = jest.SpyInstance;
 

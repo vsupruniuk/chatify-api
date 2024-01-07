@@ -1,4 +1,5 @@
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
+import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { Injectable } from '@nestjs/common';
 
 import { DataSource, InsertResult, Repository, UpdateResult } from 'typeorm';
@@ -21,6 +22,12 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 		});
 
 		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
+	}
+
+	public async getFullUserByEmail(email: string): Promise<UserFullDto | null> {
+		const user: User | null = await this.findOne({ where: { email } });
+
+		return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async getByEmail(email: string): Promise<UserShortDto | null> {

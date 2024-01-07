@@ -1,4 +1,5 @@
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
+import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 
@@ -6,6 +7,13 @@ import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
  * Interface representing public methods of users service
  */
 export interface IUsersService {
+	/**
+	 * Method for searching user by id. Return all user information (except service information of the DB)
+	 * @param email - user id for searching
+	 * @returns UserFullDto - if user was found. Not used as API public response
+	 * @returns null - if user wasn't found
+	 */
+	getFullUserByEmail(email: string): Promise<UserFullDto | null>;
 	/**
 	 * Method for searching one specific user by email
 	 * @param email - user email for searching
