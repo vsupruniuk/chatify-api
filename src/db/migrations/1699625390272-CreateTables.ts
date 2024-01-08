@@ -3,9 +3,6 @@ import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
 import { DBTables } from '@Enums/db/DBTables.enum';
 import { DBTypes } from '@Enums//db/DBTypes.enum';
 
-/**
- * Migration for creating/reverting all necessary tables
- */
 export class CreateTables1699625390272 implements MigrationInterface {
 	public async up(queryRunner: QueryRunner): Promise<void> {
 		await queryRunner.createTable(

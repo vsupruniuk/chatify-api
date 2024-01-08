@@ -71,6 +71,13 @@ export class User {
 	})
 	password: string;
 
+	@Column({
+		type: 'varchar',
+		length: 255,
+		nullable: true,
+	})
+	passwordResetToken: string | null;
+
 	@UpdateDateColumn({ type: 'datetime', nullable: false })
 	updatedAt: string;
 
