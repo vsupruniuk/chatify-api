@@ -65,7 +65,7 @@ describe('AuthController', (): void => {
 		}),
 	};
 
-	const emailServiceMock: IEmailService = {
+	const emailServiceMock: Partial<IEmailService> = {
 		sendActivationEmail: jest
 			.fn()
 			.mockImplementation(async (receiverEmail: string, otpCode: number): Promise<string> => {
