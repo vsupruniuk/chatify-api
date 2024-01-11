@@ -44,4 +44,12 @@ export interface IUsersService {
 	 * @returns null - if code wasn't found or expire
 	 */
 	getUserOTPCode(userOTPCodeId: string | null): Promise<OTPCodeResponseDto | null>;
+
+	/**
+	 * Method for creating password reset token for user
+	 * @param userId - user id for creating token
+	 * @returns token - if token was created and saved to db
+	 * @returns null - if token wasn't created
+	 */
+	createPasswordResetToken(userId: string): Promise<string | null>;
 }

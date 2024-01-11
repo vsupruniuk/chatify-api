@@ -1,6 +1,6 @@
 import { DBTables } from '@Enums/db/DBTables.enum';
 import { DBTypes } from '@Enums/db/DBTypes.enum';
-import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
+import { MigrationInterface, QueryRunner, TableColumn, TableIndex } from 'typeorm';
 
 export class AddPasswordResetToken1704727989104 implements MigrationInterface {
 	public async up(queryRunner: QueryRunner): Promise<void> {
@@ -11,6 +11,14 @@ export class AddPasswordResetToken1704727989104 implements MigrationInterface {
 				type: DBTypes.VARCHAR,
 				length: '255',
 				isNullable: true,
+			}),
+		);
+
+		await queryRunner.createIndex(
+			DBTables.USERS,
+			new TableIndex({
+				name: 'IDX_USER_PASSWORD_RESET_TOKEN',
+				columnNames: ['passwordResetToken'],
 			}),
 		);
 	}

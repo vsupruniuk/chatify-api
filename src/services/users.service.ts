@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { plainToInstance } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
@@ -82,5 +83,15 @@ export class UsersService implements IUsersService {
 		const isExpired: boolean = OTPCodesHelper.isExpired(otpCode);
 
 		return !isExpired ? otpCode : null;
+	}
+
+	public async createPasswordResetToken(userId: string): Promise<string | null> {
+		const passwordResetToken: string = uuidv4();
+
+		const isUpdated: boolean = await this._usersRepository.updateUser(userId, {
+			passwordResetToken,
+		});
+
+		return isUpdated ? passwordResetToken : null;
 	}
 }

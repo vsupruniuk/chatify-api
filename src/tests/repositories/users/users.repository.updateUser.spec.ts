@@ -15,7 +15,7 @@ describe('usersRepository', (): void => {
 		let updateMock: SpyInstance;
 		const existingUserId: string = '1';
 		const notExistingUserId: string = '2';
-		const updateUserDto: UpdateUserDto = {
+		const updateUserDto: Partial<UpdateUserDto> = {
 			about: 'No Banner, Only Hulk!',
 			avatarUrl: 'hulk.png',
 			email: 'hulk@mail.com',

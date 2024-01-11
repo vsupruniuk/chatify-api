@@ -1,5 +1,6 @@
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
 import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
+import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
 
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
@@ -157,6 +158,23 @@ export class AuthController implements IAuthController {
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
+
+		return responseResult;
+	}
+
+	@Post('/reset-password')
+	@HttpCode(HttpStatus.OK)
+	async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<ResponseResult> {
+		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
+			HttpStatus.OK,
+			ResponseStatus.SUCCESS,
+		);
+
+		// Workflow
+		// 1. Validate email
+		// 2. Return 404 if user not exist
+		// 3. Generate uuid and set to user as reset token
+		// 4. Sent email with reset link
 
 		return responseResult;
 	}
