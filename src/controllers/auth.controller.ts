@@ -164,17 +164,28 @@ export class AuthController implements IAuthController {
 
 	@Post('/reset-password')
 	@HttpCode(HttpStatus.OK)
-	async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<ResponseResult> {
+	async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<ResponseResult> {
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
 		);
 
-		// Workflow
-		// 1. Validate email
-		// 2. Return 404 if user not exist
-		// 3. Generate uuid and set to user as reset token
-		// 4. Sent email with reset link
+		const user: UserShortDto | null = await this._usersService.getByEmail(resetPasswordDto.email);
+
+		if (!user) {
+			throw new NotFoundException(['User with this email does not exist|email']);
+		}
+
+		const token: string | null = await this._usersService.createPasswordResetToken(user.id);
+
+		if (!token) {
+			throw new UnprocessableEntityException(['Failed to reset password. Please try again|email']);
+		}
+
+		await this._emailService.sendResetPasswordEmail(user.email, user.firstName, token);
+
+		responseResult.data = [];
+		responseResult.dataLength = responseResult.data.length;
 
 		return responseResult;
 	}

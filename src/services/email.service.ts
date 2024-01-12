@@ -52,7 +52,9 @@ export class EmailService implements IEmailService {
 		token: string,
 	): Promise<void> {
 		const emailSubject: string = 'Password reset';
-		const emailContent: string = resetPasswordTemplate(userName, this.APP_EMAIL, token);
+		const link: string = `${process.env.CLIENT_URL || ''}/reset-password/${token}`;
+
+		const emailContent: string = resetPasswordTemplate(userName, this.APP_EMAIL, link);
 
 		return this.sendMail(
 			receiverEmail,
