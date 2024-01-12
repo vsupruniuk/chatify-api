@@ -29,6 +29,9 @@ export class UserFullDto {
 	password: string;
 
 	@Expose()
+	passwordResetToken: string | null;
+
+	@Expose()
 	accountSettingsId: string;
 
 	@Expose()

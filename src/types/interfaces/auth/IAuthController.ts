@@ -1,5 +1,6 @@
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
 import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
+import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { ResponseResult } from '@Responses/ResponseResult';
 
@@ -27,4 +28,11 @@ export interface IAuthController {
 	 * @returns responseResult - successful result if code was resend to user email
 	 */
 	resendActivationCode(resendActivationCodeDto: ResendActivationCodeDto): Promise<ResponseResult>;
+
+	/**
+	 * Method for generating reset password token and sending via email
+	 * @param resetPasswordDto - user email for generating token
+	 * @returns responseResult - successful result if reset token was generated and send to user
+	 */
+	resetPassword(resetPasswordDto: ResetPasswordDto): Promise<ResponseResult>;
 }

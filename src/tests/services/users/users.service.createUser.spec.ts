@@ -19,7 +19,7 @@ import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 
 import SpyInstance = jest.SpyInstance;
 
-describe('Users service', (): void => {
+describe('UsersService', (): void => {
 	let usersService: IUsersService;
 	let usersRepository: IUsersRepository;
 	let accountSettingsRepository: IAccountSettingsRepository;

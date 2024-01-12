@@ -1,5 +1,6 @@
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
 import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
+import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
 
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
@@ -154,6 +155,34 @@ export class AuthController implements IAuthController {
 		}
 
 		await this._emailService.sendActivationEmail(resendActivationCodeDto.email, otpCode.code);
+
+		responseResult.data = [];
+		responseResult.dataLength = responseResult.data.length;
+
+		return responseResult;
+	}
+
+	@Post('/reset-password')
+	@HttpCode(HttpStatus.OK)
+	async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<ResponseResult> {
+		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
+			HttpStatus.OK,
+			ResponseStatus.SUCCESS,
+		);
+
+		const user: UserShortDto | null = await this._usersService.getByEmail(resetPasswordDto.email);
+
+		if (!user) {
+			throw new NotFoundException(['User with this email does not exist|email']);
+		}
+
+		const token: string | null = await this._usersService.createPasswordResetToken(user.id);
+
+		if (!token) {
+			throw new UnprocessableEntityException(['Failed to reset password. Please try again|email']);
+		}
+
+		await this._emailService.sendResetPasswordEmail(user.email, user.firstName, token);
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
