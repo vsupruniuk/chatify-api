@@ -29,6 +29,15 @@ export interface IUsersService {
 	 * @returns null - if user wasn't found
 	 */
 	getByNickname(nickname: string): Promise<UserShortDto | null>;
+
+	/**
+	 * Method for searching user by its password reset token
+	 * @param token - user reset token
+	 * @returns UserShortDto - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	getByResetPasswordToken(token: string): Promise<UserFullDto | null>;
+
 	/**
 	 * Method for creating user from signup data with some default settings
 	 * @param signupUserDto - signup data taken from user

@@ -44,6 +44,10 @@ export class UsersService implements IUsersService {
 		return await this._usersRepository.getByNickname(nickname);
 	}
 
+	public async getByResetPasswordToken(token: string): Promise<UserFullDto | null> {
+		return await this._usersRepository.getByResetPasswordToken(token);
+	}
+
 	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto | null> {
 		const otpCodeDTO: CreateOTPCodeDto = plainToInstance(CreateOTPCodeDto, <CreateOTPCodeDto>{
 			code: OTPCodesHelper.generateOTPCode(),

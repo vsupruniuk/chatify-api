@@ -15,7 +15,7 @@ import { users } from '@TestMocks/UserShortDto/users';
 
 import SpyInstance = jest.SpyInstance;
 
-describe('Users service', (): void => {
+describe('UsersService', (): void => {
 	let usersService: IUsersService;
 	let usersRepository: IUsersRepository;
 	let accountSettingsRepository: IAccountSettingsRepository;
