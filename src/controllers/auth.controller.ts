@@ -1,6 +1,7 @@
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
 import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
 import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
+import { ResetPasswordConfirmationDto } from '@DTO/auth/ResetPasswordConfirmation.dto';
 
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
@@ -22,6 +23,8 @@ import {
 	HttpStatus,
 	Inject,
 	NotFoundException,
+	Param,
+	ParseUUIDPipe,
 	Post,
 	UnprocessableEntityException,
 } from '@nestjs/common';
@@ -164,7 +167,7 @@ export class AuthController implements IAuthController {
 
 	@Post('/reset-password')
 	@HttpCode(HttpStatus.OK)
-	async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<ResponseResult> {
+	public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<ResponseResult> {
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
@@ -186,6 +189,26 @@ export class AuthController implements IAuthController {
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
+
+		return responseResult;
+	}
+
+	@Post(`/reset-password/:resetToken`)
+	@HttpCode(HttpStatus.OK)
+	public async resetPasswordConfirmation(
+		@Body() resetPasswordConfirmationDto: ResetPasswordConfirmationDto,
+		@Param('resetToken', ParseUUIDPipe) resetToken: string,
+	): Promise<ResponseResult> {
+		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
+			HttpStatus.OK,
+			ResponseStatus.SUCCESS,
+		);
+
+		// Workflow
+		// 1. Validate password and password confirmation
+		// 2. Find user by reset token
+		// 2. Call update password method in users service
+		// 3. Send response
 
 		return responseResult;
 	}

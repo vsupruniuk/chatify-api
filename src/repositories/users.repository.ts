@@ -42,6 +42,12 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
+	public async getByResetPasswordToken(token: string): Promise<UserFullDto | null> {
+		const user: User | null = await this.findOne({ where: { passwordResetToken: token } });
+
+		return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
+	}
+
 	public async createUser(user: CreateUserDto): Promise<string> {
 		const result: InsertResult = await this.insert(user);
 

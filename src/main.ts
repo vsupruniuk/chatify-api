@@ -15,7 +15,7 @@ async function bootstrap(): Promise<void> {
 		logger: ['log', 'fatal', 'error', 'warn', 'debug'],
 	});
 
-	app.enableCors({ origin: '*', credentials: true });
+	app.enableCors({ origin: process.env.CLIENT_URL || '', credentials: true });
 	app.use(helmet());
 	app.use(cookieParser());
 	app.use(compression());
