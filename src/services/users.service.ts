@@ -1,3 +1,4 @@
+import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { Inject, Injectable } from '@nestjs/common';
 
@@ -97,5 +98,9 @@ export class UsersService implements IUsersService {
 		});
 
 		return isUpdated ? passwordResetToken : null;
+	}
+
+	public async updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean> {
+		return await this._usersRepository.updateUser(userId, updateUserDto);
 	}
 }

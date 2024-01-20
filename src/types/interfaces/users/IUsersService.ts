@@ -1,4 +1,5 @@
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
+import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
@@ -61,4 +62,13 @@ export interface IUsersService {
 	 * @returns null - if token wasn't created
 	 */
 	createPasswordResetToken(userId: string): Promise<string | null>;
+
+	/**
+	 * Method for updating user password
+	 * @param userId - id of user which will be updated
+	 * @param updateUserDto - dto with a new user data
+	 * @returns true - if user was updated
+	 * @returns false - if user wasn't updated
+	 */
+	updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean>;
 }
