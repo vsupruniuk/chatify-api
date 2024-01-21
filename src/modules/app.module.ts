@@ -15,8 +15,8 @@ import { AuthModule } from '@Modules/auth.module';
 		AuthModule,
 		ThrottlerModule.forRoot([
 			{
-				ttl: Number(process.env.THROTTLE_TIME_TO_LIVE),
-				limit: Number(process.env.THROTTLE_REQUESTS_LIMIT),
+				ttl: Number(process.env.THROTTLE_TIME_TO_LIVE) || 1000000,
+				limit: Number(process.env.THROTTLE_REQUESTS_LIMIT) || 100,
 			},
 		]),
 	],
