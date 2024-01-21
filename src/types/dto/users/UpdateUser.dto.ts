@@ -6,5 +6,6 @@ export class UpdateUserDto {
 	isActivated: boolean;
 	lastName: string | null;
 	nickname: string;
+	password: string;
 	passwordResetToken: string | null;
 }

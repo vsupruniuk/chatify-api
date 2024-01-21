@@ -12,7 +12,7 @@ export const users: UserFullDto[] = [
 		lastName: 'Stark',
 		nickname: 't.stark',
 		password: 'qwertyA1',
-		passwordResetToken: 'uuid-1',
+		passwordResetToken: '1662043c-4d4b-4424-ac31-45189dedd099',
 		accountSettingsId: '1001',
 		OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
 	}),

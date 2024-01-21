@@ -29,8 +29,8 @@ describe('UsersService', (): void => {
 		let getByResetPasswordTokenMock: SpyInstance;
 
 		const usersMock: UserFullDto[] = [...users];
-		const existingUserToken: string = 'uuid-1';
-		const notExistingUserToken: string = 'uuid-2';
+		const existingUserToken: string = '1662043c-4d4b-4424-ac31-45189dedd099';
+		const notExistingUserToken: string = '1662043c-4d4b-4424-ac31-45189dedd090';
 
 		beforeEach((): void => {
 			getByResetPasswordTokenMock = jest

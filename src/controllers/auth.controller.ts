@@ -204,11 +204,24 @@ export class AuthController implements IAuthController {
 			ResponseStatus.SUCCESS,
 		);
 
-		// Workflow
-		// 1. Validate password and password confirmation
-		// 2. Find user by reset token
-		// 2. Call update password method in users service
-		// 3. Send response
+		const user: UserFullDto | null = await this._usersService.getByResetPasswordToken(resetToken);
+
+		if (!user) {
+			throw new NotFoundException(['User related to this token not found|reset-token']);
+		}
+
+		const isUpdated: boolean = await this._usersService.updateUser(user.id, {
+			password: resetPasswordConfirmationDto.password,
+		});
+
+		if (!isUpdated) {
+			throw new UnprocessableEntityException([
+				'Failed to update password. Please try again|password',
+			]);
+		}
+
+		responseResult.data = [];
+		responseResult.dataLength = responseResult.data.length;
 
 		return responseResult;
 	}
