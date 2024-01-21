@@ -10,6 +10,7 @@ import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 import { UsersRepository } from '@Repositories/users.repository';
 import { UsersService } from '@Services/users.service';
 import { users } from '@TestMocks/UserFullDto/users';
+import * as bcrypt from 'bcrypt';
 import SpyInstance = jest.SpyInstance;
 
 describe('UsersService', (): void => {
@@ -28,10 +29,12 @@ describe('UsersService', (): void => {
 
 	describe('updateUser', (): void => {
 		let updateUserMock: SpyInstance;
+		let hashMock: SpyInstance;
 
 		const usersMock: UserFullDto[] = [...users];
 		const existingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
 		const notExistingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b44442';
+		const userHashedPassword: string = 'uuid-hash';
 		const updateUserDto: Partial<UpdateUserDto> = {
 			firstName: 'Bruce',
 			lastName: 'Banner',
@@ -43,6 +46,8 @@ describe('UsersService', (): void => {
 				.mockImplementation(async (userId: string): Promise<boolean> => {
 					return usersMock.some((user: UserFullDto) => user.id === userId);
 				});
+
+			hashMock = jest.spyOn(bcrypt, 'hash').mockResolvedValue(userHashedPassword as never);
 		});
 
 		afterEach((): void => {
@@ -61,6 +66,27 @@ describe('UsersService', (): void => {
 			await usersService.updateUser(existingUserId, updateUserDto);
 
 			expect(updateUserMock).toHaveBeenCalled();
+		});
+
+		it('should call hash method in bcrypt if password was passed in dto', async (): Promise<void> => {
+			const updateUserDtoWithPassword: Partial<UpdateUserDto> = {
+				firstName: 'Bruce',
+				lastName: 'Banner',
+				password: 'qwerty123QWERTY',
+			};
+
+			await usersService.updateUser(existingUserId, updateUserDtoWithPassword);
+
+			expect(hashMock).toHaveBeenCalledWith(
+				updateUserDtoWithPassword.password,
+				Number(process.env.PASSWORD_SALT_HASH_ROUNDS),
+			);
+		});
+
+		it('should not call hash method in bcrypt if password was passed in dto', async (): Promise<void> => {
+			await usersService.updateUser(existingUserId, updateUserDto);
+
+			expect(hashMock).not.toHaveBeenCalled();
 		});
 
 		it('should return false if user with given id not exist', async (): Promise<void> => {
