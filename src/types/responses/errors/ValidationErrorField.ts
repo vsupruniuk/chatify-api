@@ -1,5 +1,5 @@
 export class ValidationErrorField {
-	field: string;
+	field: string | null;
 
 	message: string;
 }

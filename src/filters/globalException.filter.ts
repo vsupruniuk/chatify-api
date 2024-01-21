@@ -34,13 +34,20 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 				? 'Some fields did not pass validation'
 				: 'Internal server error';
 
-		responseResult.errors = (exception as unknown as IValidationError).response.message.map(
-			(error: string) => {
-				const [message, field] = error.split('|');
+		responseResult.errors = Array.isArray(
+			(exception as unknown as IValidationError).response.message,
+		)
+			? (exception as unknown as IValidationError).response.message.map((error: string) => {
+					const [message, field] = error.split('|');
 
-				return { message, field };
-			},
-		);
+					return { message, field };
+			  })
+			: ([
+					{
+						message: (exception as unknown as IValidationError).response.message,
+						field: null,
+					},
+			  ] as unknown as ValidationErrorField[]);
 
 		responseResult.errorsLength = responseResult.errors.length;
 

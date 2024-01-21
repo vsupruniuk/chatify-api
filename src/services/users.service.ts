@@ -1,23 +1,24 @@
-import { UserFullDto } from '@DTO/users/UserFull.dto';
-import { Inject, Injectable } from '@nestjs/common';
-
-import { plainToInstance } from 'class-transformer';
-import * as bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
-
-import { IUsersService } from '@Interfaces/users/IUsersService';
-import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
-import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
-import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
-import { SignupUserDto } from '@DTO/users/SignupUser.dto';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+import { CreateUserDto } from '@DTO/users/CreateUser.dto';
+import { SignupUserDto } from '@DTO/users/SignupUser.dto';
+import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
+import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 
 import { DateHelper } from '@Helpers/date.helper';
 import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
+import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
+import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
+import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
+
+import { IUsersService } from '@Interfaces/users/IUsersService';
+import { Inject, Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+
+import { plainToInstance } from 'class-transformer';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -42,6 +43,10 @@ export class UsersService implements IUsersService {
 
 	public async getByNickname(nickname: string): Promise<UserShortDto | null> {
 		return await this._usersRepository.getByNickname(nickname);
+	}
+
+	public async getByResetPasswordToken(token: string): Promise<UserFullDto | null> {
+		return await this._usersRepository.getByResetPasswordToken(token);
 	}
 
 	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto | null> {
@@ -93,5 +98,18 @@ export class UsersService implements IUsersService {
 		});
 
 		return isUpdated ? passwordResetToken : null;
+	}
+
+	public async updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean> {
+		const updateUserDtoCopy: Partial<UpdateUserDto> = { ...updateUserDto };
+
+		if (updateUserDtoCopy.password) {
+			updateUserDtoCopy.password = await bcrypt.hash(
+				updateUserDtoCopy.password,
+				Number(process.env.PASSWORD_SALT_HASH_ROUNDS),
+			);
+		}
+
+		return await this._usersRepository.updateUser(userId, updateUserDtoCopy);
 	}
 }

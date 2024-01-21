@@ -40,6 +40,14 @@ export interface IUsersRepository {
 	getByNickname(nickname: string): Promise<UserShortDto | null>;
 
 	/**
+	 * Method for searching user by its password reset token
+	 * @param token - user reset token
+	 * @returns UserShortDto - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	getByResetPasswordToken(token: string): Promise<UserFullDto | null>;
+
+	/**
 	 * Method for creating user
 	 * @param user - user data for creating
 	 * @returns id - of created user
