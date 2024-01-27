@@ -7,33 +7,24 @@ import {
 } from 'typeorm';
 
 /**
- * Entity representing base properties for messages entities
+ * Domain model representing user JWT token
  */
-@Entity()
-export abstract class BaseMessage {
+@Entity('JWTToken')
+export class JWTToken {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
 	@CreateDateColumn({ type: 'datetime', nullable: false })
 	createdAt: string;
 
-	@Column({ type: 'datetime', nullable: false })
-	dateTime: string;
-
 	@Column({
 		type: 'varchar',
-		length: 1000,
+		length: 500,
+		unique: true,
 		nullable: false,
 	})
-	messageText: string;
+	token: string;
 
 	@UpdateDateColumn({ type: 'datetime', nullable: false })
 	updatedAt: string;
-
-	@Column({
-		type: 'varchar',
-		length: 255,
-		nullable: false,
-	})
-	userId: string;
 }

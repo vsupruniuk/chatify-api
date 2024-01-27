@@ -1,5 +1,6 @@
 import { AuthController } from '@Controllers/auth.controller';
 import { AccountSettings } from '@Entities/AccountSettings.entity';
+import { JWTToken } from '@Entities/JWTToken.entity';
 import { OTPCode } from '@Entities/OTPCode.entity';
 
 import { User } from '@Entities/User.entity';
@@ -15,7 +16,7 @@ import { OTPCodesService } from '@Services/OTPCodes.service';
 import { UsersService } from '@Services/users.service';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([User, AccountSettings, OTPCode])],
+	imports: [TypeOrmModule.forFeature([User, AccountSettings, OTPCode, JWTToken])],
 	controllers: [AuthController],
 	providers: [
 		{ provide: CustomProviders.I_USERS_SERVICE, useClass: UsersService },

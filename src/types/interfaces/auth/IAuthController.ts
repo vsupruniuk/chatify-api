@@ -1,4 +1,5 @@
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
+import { LoginDto } from '@DTO/auth/Login.dto';
 import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
 import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
 import { ResetPasswordConfirmationDto } from '@DTO/auth/ResetPasswordConfirmation.dto';
@@ -47,4 +48,11 @@ export interface IAuthController {
 		resetPasswordConfirmationDto: ResetPasswordConfirmationDto,
 		resetToken: string,
 	): Promise<ResponseResult>;
+
+	/**
+	 * Method for handling user log in
+	 * @param loginDto - user email end password
+	 * @returns responseResult - successful result if new password was saved to db
+	 */
+	login(loginDto: LoginDto): Promise<ResponseResult>;
 }

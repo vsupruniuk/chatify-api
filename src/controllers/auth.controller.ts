@@ -1,4 +1,5 @@
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
+import { LoginDto } from '@DTO/auth/Login.dto';
 import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
 import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
 import { ResetPasswordConfirmationDto } from '@DTO/auth/ResetPasswordConfirmation.dto';
@@ -222,6 +223,26 @@ export class AuthController implements IAuthController {
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
+
+		return responseResult;
+	}
+
+	@Post('/login')
+	@HttpCode(HttpStatus.OK)
+	public async login(loginDto: LoginDto): Promise<ResponseResult> {
+		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
+			HttpStatus.OK,
+			ResponseStatus.SUCCESS,
+		);
+
+		console.log(loginDto);
+
+		// Workflow
+		// 1. Find user by email (if not, throw error)
+		// 2. Validate password (if not, throw error)
+		// 3. Generate access and refresh tokens
+		// 4. Save refresh token to db
+		// 5. Save to cookies
 
 		return responseResult;
 	}
