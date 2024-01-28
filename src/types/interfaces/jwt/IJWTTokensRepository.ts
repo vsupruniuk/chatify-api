@@ -24,4 +24,12 @@ export interface IJWTTokensRepository {
 	 * @returns false - if token wasn't updated
 	 */
 	updateToken(id: string, token: string): Promise<boolean>;
+
+	/**
+	 * Method for deleting token
+	 * @param id - token id to delete
+	 * @returns true - if token was deleted
+	 * @returns false - if token wasn't deleted
+	 */
+	deleteToken(id: string): Promise<boolean>;
 }

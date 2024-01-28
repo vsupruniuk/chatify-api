@@ -229,7 +229,7 @@ export class AuthController implements IAuthController {
 
 	@Post('/login')
 	@HttpCode(HttpStatus.OK)
-	public async login(loginDto: LoginDto): Promise<ResponseResult> {
+	public async login(@Body() loginDto: LoginDto): Promise<ResponseResult> {
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
