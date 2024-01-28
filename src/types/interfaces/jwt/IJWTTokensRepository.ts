@@ -15,4 +15,13 @@ export interface IJWTTokensRepository {
 	 * @returns id - id of created token
 	 */
 	createToken(token: string): Promise<string>;
+
+	/**
+	 * Method for updating user JWT token
+	 * @param id - token id to update
+	 * @param token - new token value
+	 * @returns true - if token was updated
+	 * @returns false - if token wasn't updated
+	 */
+	updateToken(id: string, token: string): Promise<boolean>;
 }

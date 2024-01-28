@@ -3,7 +3,7 @@ import { JWTToken } from '@Entities/JWTToken.entity';
 import { IJWTTokensRepository } from '@Interfaces/jwt/IJWTTokensRepository';
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { DataSource, InsertResult, Repository } from 'typeorm';
+import { DataSource, InsertResult, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class JWTTokensRepository extends Repository<JWTToken> implements IJWTTokensRepository {
@@ -23,5 +23,11 @@ export class JWTTokensRepository extends Repository<JWTToken> implements IJWTTok
 		const result: InsertResult = await this.insert({ token });
 
 		return result.identifiers[0].id;
+	}
+
+	public async updateToken(id: string, token: string): Promise<boolean> {
+		const updateResult: UpdateResult = await this.update({ id }, { token });
+
+		return updateResult.affected ? updateResult.affected > 0 : false;
 	}
 }
