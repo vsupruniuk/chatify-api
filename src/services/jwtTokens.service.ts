@@ -12,4 +12,11 @@ export class JwtTokensService implements IJWTTokensService {
 			expiresIn: Number(process.env.JWT_ACCESS_TOKEN_EXPIERS_IN) || 0,
 		});
 	}
+
+	public async generateRefreshToken(payload: JWTPayloadDto): Promise<string> {
+		return await this._jwtService.signAsync(payload, {
+			secret: process.env.JWT_REFRESH_TOKEN_SECRET || '',
+			expiresIn: Number(process.env.JWT_REFRESH_TOKEN_EXPIERS_IN) || 0,
+		});
+	}
 }
