@@ -4,7 +4,7 @@ import { Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 export class JwtTokensService implements IJWTTokensService {
-	constructor(@Inject(JwtService) private _jwtService: JwtService) {}
+	constructor(@Inject(JwtService) private readonly _jwtService: JwtService) {}
 
 	public async generateAccessToken(payload: JWTPayloadDto): Promise<string> {
 		return await this._jwtService.signAsync(payload, {
@@ -18,5 +18,15 @@ export class JwtTokensService implements IJWTTokensService {
 			secret: process.env.JWT_REFRESH_TOKEN_SECRET || '',
 			expiresIn: Number(process.env.JWT_REFRESH_TOKEN_EXPIERS_IN) || 0,
 		});
+	}
+
+	public async verifyAccessToken(token: string): Promise<JWTPayloadDto | null> {
+		try {
+			return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
+				secret: process.env.JWT_ACCESS_TOKEN_SECRET || '',
+			});
+		} catch (err) {
+			return null;
+		}
 	}
 }

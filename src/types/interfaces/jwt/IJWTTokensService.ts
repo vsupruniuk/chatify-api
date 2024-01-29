@@ -14,4 +14,12 @@ export interface IJWTTokensService {
 	 * @returns token - JWT token
 	 */
 	generateRefreshToken(payload: JWTPayloadDto): Promise<string>;
+
+	/**
+	 * Verify if JWT access token valid or not
+	 * @param token - JWT access token
+	 * @returns JWTPayloadDto - user data if JWT token valid
+	 * @returns null - if JWT token invalid
+	 */
+	verifyAccessToken(token: string): Promise<JWTPayloadDto | null>;
 }

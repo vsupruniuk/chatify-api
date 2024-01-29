@@ -13,6 +13,7 @@ import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { IAuthController } from '@Interfaces/auth/IAuthController';
 import { IAuthService } from '@Interfaces/auth/IAuthService';
 import { IEmailService } from '@Interfaces/emails/IEmailService';
+import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
 import { IOTPCodesService } from '@Interfaces/OTPCodes/IOTPCodesService';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
@@ -47,6 +48,9 @@ export class AuthController implements IAuthController {
 
 		@Inject(CustomProviders.I_OTP_CODES_SERVICE)
 		private readonly _otpCodesService: IOTPCodesService,
+
+		@Inject(CustomProviders.I_JWT_TOKENS_SERVICE)
+		private readonly _jwtTokensService: IJWTTokensService,
 	) {}
 
 	@Post('/signup')
