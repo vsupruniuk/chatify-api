@@ -11,7 +11,7 @@ describe('jwtTokensService', (): void => {
 		jwtTokensServiceMock = new JwtTokensService(jwtService);
 	});
 
-	describe('verifyAccessToken', (): void => {
+	describe('verifyRefreshToken', (): void => {
 		let verifyAsyncMock: SpyInstance;
 
 		const validJwtToken: string = 'validJwtToken';
@@ -41,22 +41,22 @@ describe('jwtTokensService', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(jwtTokensServiceMock.verifyAccessToken).toBeDefined();
+			expect(jwtTokensServiceMock.verifyRefreshToken).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(jwtTokensServiceMock.verifyAccessToken).toBeInstanceOf(Function);
+			expect(jwtTokensServiceMock.verifyRefreshToken).toBeInstanceOf(Function);
 		});
 
 		it('should call verifyAsync method to verify JWT token', async (): Promise<void> => {
-			await jwtTokensServiceMock.verifyAccessToken(validJwtToken);
+			await jwtTokensServiceMock.verifyRefreshToken(validJwtToken);
 
 			expect(verifyAsyncMock).toHaveBeenCalled();
 		});
 
 		it('should return user data if JWT token valid', async (): Promise<void> => {
 			const data: JWTPayloadDto | null =
-				await jwtTokensServiceMock.verifyAccessToken(validJwtToken);
+				await jwtTokensServiceMock.verifyRefreshToken(validJwtToken);
 
 			expect(data?.id).toBe(jwtPayloadMock.id);
 			expect(data?.email).toBe(jwtPayloadMock.email);
@@ -67,7 +67,7 @@ describe('jwtTokensService', (): void => {
 
 		it('should return null if JWT token invalid', async (): Promise<void> => {
 			const data: JWTPayloadDto | null =
-				await jwtTokensServiceMock.verifyAccessToken(invalidJwtToken);
+				await jwtTokensServiceMock.verifyRefreshToken(invalidJwtToken);
 
 			expect(data).toBeNull();
 		});

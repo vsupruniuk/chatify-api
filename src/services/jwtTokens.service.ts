@@ -29,4 +29,14 @@ export class JwtTokensService implements IJWTTokensService {
 			return null;
 		}
 	}
+
+	public async verifyRefreshToken(token: string): Promise<JWTPayloadDto | null> {
+		try {
+			return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
+				secret: process.env.JWT_REFRESH_TOKEN_SECRET || '',
+			});
+		} catch (err) {
+			return null;
+		}
+	}
 }

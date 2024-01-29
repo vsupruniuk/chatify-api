@@ -18,8 +18,16 @@ export interface IJWTTokensService {
 	/**
 	 * Verify if JWT access token valid or not
 	 * @param token - JWT access token
-	 * @returns JWTPayloadDto - user data if JWT token valid
-	 * @returns null - if JWT token invalid
+	 * @returns JWTPayloadDto - user data if JWT access token valid
+	 * @returns null - if JWT access token invalid
 	 */
 	verifyAccessToken(token: string): Promise<JWTPayloadDto | null>;
+
+	/**
+	 * Verify if JWT refresh token valid or not
+	 * @param token - JWT refresh token
+	 * @returns JWTPayloadDto - user data if JWT refresh token valid
+	 * @returns null - if JWT refresh token invalid
+	 */
+	verifyRefreshToken(token: string): Promise<JWTPayloadDto | null>;
 }
