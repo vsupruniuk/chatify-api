@@ -1,14 +1,18 @@
+import { connectionSource } from '@DB/typeOrmConfig';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { JwtService } from '@nestjs/jwt';
+import { JWTTokensRepository } from '@Repositories/JWTTokens.repository';
 import { JwtTokensService } from '@Services/jwtTokens.service';
 import SpyInstance = jest.SpyInstance;
 
 describe('jwtTokensService', (): void => {
-	let jwtTokensServiceMock: JwtTokensService;
+	let jwtTokensService: JwtTokensService;
 	const jwtService: JwtService = new JwtService();
 
 	beforeEach((): void => {
-		jwtTokensServiceMock = new JwtTokensService(jwtService);
+		const jwtTokensRepository: JWTTokensRepository = new JWTTokensRepository(connectionSource);
+
+		jwtTokensService = new JwtTokensService(jwtService, jwtTokensRepository);
 	});
 
 	describe('generateRefreshToken', (): void => {
@@ -34,21 +38,21 @@ describe('jwtTokensService', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(jwtTokensServiceMock.generateRefreshToken).toBeDefined();
+			expect(jwtTokensService.generateRefreshToken).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(jwtTokensServiceMock.generateRefreshToken).toBeInstanceOf(Function);
+			expect(jwtTokensService.generateRefreshToken).toBeInstanceOf(Function);
 		});
 
 		it('should call signAsync method to sign JWT token', async (): Promise<void> => {
-			await jwtTokensServiceMock.generateRefreshToken(jwtPayloadMock);
+			await jwtTokensService.generateRefreshToken(jwtPayloadMock);
 
 			expect(signAsyncMock).toHaveBeenCalled();
 		});
 
 		it('should return JWT token as string', async (): Promise<void> => {
-			const jwt: string = await jwtTokensServiceMock.generateRefreshToken(jwtPayloadMock);
+			const jwt: string = await jwtTokensService.generateRefreshToken(jwtPayloadMock);
 
 			expect(jwt).toBe(jwtTokenMock);
 		});

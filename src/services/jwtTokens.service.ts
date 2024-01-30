@@ -1,10 +1,19 @@
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
+import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
+import { CustomProviders } from '@Enums/CustomProviders.enum';
+import { IJWTTokensRepository } from '@Interfaces/jwt/IJWTTokensRepository';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
 import { Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 export class JwtTokensService implements IJWTTokensService {
-	constructor(@Inject(JwtService) private readonly _jwtService: JwtService) {}
+	constructor(
+		@Inject(JwtService)
+		private readonly _jwtService: JwtService,
+
+		@Inject(CustomProviders.I_JWT_TOKENS_REPOSITORY)
+		private readonly _jwtTokensRepository: IJWTTokensRepository,
+	) {}
 
 	public async generateAccessToken(payload: JWTPayloadDto): Promise<string> {
 		return await this._jwtService.signAsync(payload, {
@@ -37,6 +46,18 @@ export class JwtTokensService implements IJWTTokensService {
 			});
 		} catch (err) {
 			return null;
+		}
+	}
+
+	public async saveRefreshToken(id: string, token: string): Promise<boolean> {
+		const existingToken: JWTTokenFullDto | null = await this._jwtTokensRepository.getById(id);
+
+		if (existingToken) {
+			return await this._jwtTokensRepository.updateToken(id, token);
+		} else {
+			const createdTokenId: string = await this._jwtTokensRepository.createToken(token);
+
+			return Boolean(createdTokenId);
 		}
 	}
 }

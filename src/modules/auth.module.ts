@@ -9,6 +9,7 @@ import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
+import { JWTTokensRepository } from '@Repositories/JWTTokens.repository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 import { UsersRepository } from '@Repositories/users.repository';
 import { AuthService } from '@Services/auth.service';
@@ -30,6 +31,7 @@ import { UsersService } from '@Services/users.service';
 		{ provide: CustomProviders.I_ACCOUNT_SETTINGS_REPOSITORY, useClass: AccountSettingsRepository },
 		{ provide: CustomProviders.I_EMAIL_SERVICE, useClass: EmailService },
 		{ provide: CustomProviders.I_JWT_TOKENS_SERVICE, useClass: JwtTokensService },
+		{ provide: CustomProviders.I_JWT_TOKENS_REPOSITORY, useClass: JWTTokensRepository },
 	],
 })
 export class AuthModule {}

@@ -30,4 +30,13 @@ export interface IJWTTokensService {
 	 * @returns null - if JWT refresh token invalid
 	 */
 	verifyRefreshToken(token: string): Promise<JWTPayloadDto | null>;
+
+	/**
+	 * Save new user refresh token to DB or update existing one
+	 * @param id - user JWT token id
+	 * @param token - JWT refresh token
+	 * @returns true - if token was saved to DB
+	 * @returns false - if token wasn't saved to DB
+	 */
+	saveRefreshToken(id: string, token: string): Promise<boolean>;
 }

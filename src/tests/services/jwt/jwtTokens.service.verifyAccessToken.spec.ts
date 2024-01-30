@@ -1,14 +1,18 @@
+import { connectionSource } from '@DB/typeOrmConfig';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { JwtService } from '@nestjs/jwt';
+import { JWTTokensRepository } from '@Repositories/JWTTokens.repository';
 import { JwtTokensService } from '@Services/jwtTokens.service';
 import SpyInstance = jest.SpyInstance;
 
 describe('jwtTokensService', (): void => {
-	let jwtTokensServiceMock: JwtTokensService;
+	let jwtTokensService: JwtTokensService;
 	const jwtService: JwtService = new JwtService();
 
 	beforeEach((): void => {
-		jwtTokensServiceMock = new JwtTokensService(jwtService);
+		const jwtTokensRepository: JWTTokensRepository = new JWTTokensRepository(connectionSource);
+
+		jwtTokensService = new JwtTokensService(jwtService, jwtTokensRepository);
 	});
 
 	describe('verifyAccessToken', (): void => {
@@ -41,22 +45,21 @@ describe('jwtTokensService', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(jwtTokensServiceMock.verifyAccessToken).toBeDefined();
+			expect(jwtTokensService.verifyAccessToken).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(jwtTokensServiceMock.verifyAccessToken).toBeInstanceOf(Function);
+			expect(jwtTokensService.verifyAccessToken).toBeInstanceOf(Function);
 		});
 
 		it('should call verifyAsync method to verify JWT token', async (): Promise<void> => {
-			await jwtTokensServiceMock.verifyAccessToken(validJwtToken);
+			await jwtTokensService.verifyAccessToken(validJwtToken);
 
 			expect(verifyAsyncMock).toHaveBeenCalled();
 		});
 
 		it('should return user data if JWT token valid', async (): Promise<void> => {
-			const data: JWTPayloadDto | null =
-				await jwtTokensServiceMock.verifyAccessToken(validJwtToken);
+			const data: JWTPayloadDto | null = await jwtTokensService.verifyAccessToken(validJwtToken);
 
 			expect(data?.id).toBe(jwtPayloadMock.id);
 			expect(data?.email).toBe(jwtPayloadMock.email);
@@ -66,8 +69,7 @@ describe('jwtTokensService', (): void => {
 		});
 
 		it('should return null if JWT token invalid', async (): Promise<void> => {
-			const data: JWTPayloadDto | null =
-				await jwtTokensServiceMock.verifyAccessToken(invalidJwtToken);
+			const data: JWTPayloadDto | null = await jwtTokensService.verifyAccessToken(invalidJwtToken);
 
 			expect(data).toBeNull();
 		});
