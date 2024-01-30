@@ -39,4 +39,12 @@ export interface IJWTTokensService {
 	 * @returns false - if token wasn't saved to DB
 	 */
 	saveRefreshToken(id: string, token: string): Promise<boolean>;
+
+	/**
+	 * Delete user refresh token from DB
+	 * @param id - user JWT token id
+	 * @returns true - if token was deleted
+	 * @returns false - if token wasn't deleted
+	 */
+	deleteToken(id: string): Promise<boolean>;
 }

@@ -60,4 +60,8 @@ export class JwtTokensService implements IJWTTokensService {
 			return Boolean(createdTokenId);
 		}
 	}
+
+	public async deleteToken(id: string): Promise<boolean> {
+		return await this._jwtTokensRepository.deleteToken(id);
+	}
 }
