@@ -11,4 +11,13 @@ export interface IAuthService {
 	 * @returns false - if account wasn't activated
 	 */
 	activateAccount(accountActivationDto: AccountActivationDto): Promise<boolean>;
+
+	/**
+	 * Method to check if user password valid or not
+	 * @param passwordFromDto - password received from user request
+	 * @param passwordFromDb - user password received from DB
+	 * @returns true - if user password valid
+	 * @returns false - if user password invalid
+	 */
+	validatePassword(passwordFromDto: string, passwordFromDb: string): Promise<boolean>;
 }

@@ -5,6 +5,7 @@ import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
 import { ResetPasswordConfirmationDto } from '@DTO/auth/ResetPasswordConfirmation.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { ResponseResult } from '@Responses/ResponseResult';
+import { Response } from 'express';
 
 /**
  * Interface representing public methods of auth controller
@@ -51,8 +52,9 @@ export interface IAuthController {
 
 	/**
 	 * Method for handling user log in
+	 * @param response - client response object
 	 * @param loginDto - user email end password
 	 * @returns responseResult - successful result if new password was saved to db
 	 */
-	login(loginDto: LoginDto): Promise<ResponseResult>;
+	login(response: Response, loginDto: LoginDto): Promise<ResponseResult>;
 }

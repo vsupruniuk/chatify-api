@@ -26,6 +26,7 @@ describe('jwtTokensService', (): void => {
 		const jwtTokenMock: string = 'jwt-token-1-new';
 		const existingTokenId: string = '1';
 		const notExistingTokenId: string = '4';
+		const createdTokenId: string = '5';
 
 		beforeEach((): void => {
 			getByIdMock = jest
@@ -36,7 +37,7 @@ describe('jwtTokensService', (): void => {
 
 			createTokenMock = jest
 				.spyOn(jwtTokensRepository, 'createToken')
-				.mockImplementation(async (): Promise<string> => '5');
+				.mockImplementation(async (): Promise<string> => createdTokenId);
 
 			updateTokenMock = jest
 				.spyOn(jwtTokensRepository, 'updateToken')
@@ -82,22 +83,16 @@ describe('jwtTokensService', (): void => {
 			expect(createTokenMock).not.toHaveBeenCalled();
 		});
 
-		it('should return true if token was created', async (): Promise<void> => {
-			const isCreated: boolean = await jwtTokensService.saveRefreshToken(
-				notExistingTokenId,
-				jwtTokenMock,
-			);
+		it('should return token id if token was created', async (): Promise<void> => {
+			const id: string = await jwtTokensService.saveRefreshToken(notExistingTokenId, jwtTokenMock);
 
-			expect(isCreated).toBe(true);
+			expect(id).toBe(createdTokenId);
 		});
 
 		it('should return true if token was updated', async (): Promise<void> => {
-			const isUpdated: boolean = await jwtTokensService.saveRefreshToken(
-				existingTokenId,
-				jwtTokenMock,
-			);
+			const id: string = await jwtTokensService.saveRefreshToken(existingTokenId, jwtTokenMock);
 
-			expect(isUpdated).toBe(true);
+			expect(id).toBe(existingTokenId);
 		});
 	});
 });

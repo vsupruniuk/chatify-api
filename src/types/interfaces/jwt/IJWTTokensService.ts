@@ -35,10 +35,9 @@ export interface IJWTTokensService {
 	 * Save new user refresh token to DB or update existing one
 	 * @param id - user JWT token id
 	 * @param token - JWT refresh token
-	 * @returns true - if token was saved to DB
-	 * @returns false - if token wasn't saved to DB
+	 * @returns id - token id of created or updated token
 	 */
-	saveRefreshToken(id: string, token: string): Promise<boolean>;
+	saveRefreshToken(id: string | null, token: string): Promise<string>;
 
 	/**
 	 * Delete user refresh token from DB

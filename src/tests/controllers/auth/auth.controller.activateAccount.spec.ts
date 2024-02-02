@@ -30,7 +30,7 @@ describe('AuthController', (): void => {
 	const existingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
 	const notExistingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33333';
 
-	const authServiceMock: IAuthService = {
+	const authServiceMock: Partial<IAuthService> = {
 		activateAccount: jest
 			.fn()
 			.mockImplementation(async (accountActivationDto: AccountActivationDto): Promise<boolean> => {

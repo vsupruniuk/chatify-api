@@ -1,5 +1,6 @@
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
 import { LoginDto } from '@DTO/auth/Login.dto';
+import { LoginResponseDto } from '@DTO/auth/LoginResponse.dto';
 import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
 import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
 import { ResetPasswordConfirmationDto } from '@DTO/auth/ResetPasswordConfirmation.dto';
@@ -8,6 +9,7 @@ import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { CookiesNames } from '@Enums/CookiesNames';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { IAuthController } from '@Interfaces/auth/IAuthController';
@@ -28,11 +30,13 @@ import {
 	Param,
 	ParseUUIDPipe,
 	Post,
+	Res,
 	UnprocessableEntityException,
 } from '@nestjs/common';
 
 import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController implements IAuthController {
@@ -233,20 +237,66 @@ export class AuthController implements IAuthController {
 
 	@Post('/login')
 	@HttpCode(HttpStatus.OK)
-	public async login(@Body() loginDto: LoginDto): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			HttpStatus.OK,
-			ResponseStatus.SUCCESS,
+	public async login(
+		@Res({ passthrough: true }) response: Response,
+		@Body() loginDto: LoginDto,
+	): Promise<ResponseResult> {
+		const responseResult: SuccessfulResponseResult<LoginResponseDto> =
+			new SuccessfulResponseResult<LoginResponseDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
+
+		const user: UserFullDto | null = await this._usersService.getFullUserByEmail(loginDto.email);
+
+		if (!user) {
+			throw new UnprocessableEntityException(['Invalid email or password|password']);
+		}
+
+		const isPasswordValid: boolean = await this._authService.validatePassword(
+			loginDto.password,
+			user.password,
 		);
 
-		console.log(loginDto);
+		if (!isPasswordValid) {
+			throw new UnprocessableEntityException(['Invalid email or password|password']);
+		}
 
-		// Workflow
-		// 1. Find user by email (if not, throw error)
-		// 2. Validate password (if not, throw error)
-		// 3. Generate access and refresh tokens
-		// 4. Save refresh token to db
-		// 5. Save to cookies
+		const accessToken: string = await this._jwtTokensService.generateAccessToken({
+			id: user.id,
+			email: user.email,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			nickname: user.nickname,
+		});
+
+		const refreshToken: string = await this._jwtTokensService.generateRefreshToken({
+			id: user.id,
+			email: user.email,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			nickname: user.nickname,
+		});
+
+		const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
+			user.JWTTokenId,
+			refreshToken,
+		);
+
+		const isTokenIdUpdated: boolean = await this._usersService.updateUser(user.id, {
+			JWTTokenId: savedTokenId,
+		});
+
+		if (!isTokenIdUpdated) {
+			throw new UnprocessableEntityException(['Failed to login. Please try again|password']);
+		}
+
+		response.cookie(CookiesNames.REFRESH_TOKEN, refreshToken, {
+			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIERS_IN) || 0,
+			secure: true,
+			sameSite: 'strict',
+			httpOnly: true,
+		});
+
+		responseResult.data = [{ accessToken }];
+		responseResult.dataLength = responseResult.data.length;
 
 		return responseResult;
 	}

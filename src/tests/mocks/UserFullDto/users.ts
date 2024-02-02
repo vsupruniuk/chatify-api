@@ -14,6 +14,7 @@ export const users: UserFullDto[] = [
 		password: 'qwertyA1',
 		passwordResetToken: '1662043c-4d4b-4424-ac31-45189dedd099',
 		accountSettingsId: '1001',
+		JWTTokenId: null,
 		OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
 	}),
 
@@ -29,6 +30,7 @@ export const users: UserFullDto[] = [
 		password: 'qwertyA1',
 		passwordResetToken: null,
 		accountSettingsId: '1002',
+		JWTTokenId: 'jwt-1',
 		OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd000',
 	}),
 
@@ -44,6 +46,7 @@ export const users: UserFullDto[] = [
 		password: 'qwertyA1',
 		passwordResetToken: null,
 		accountSettingsId: '1003',
+		JWTTokenId: 'jwt-2',
 		OTPCodeId: '1662043c-4d4b-4424-ac31-45189dedd099',
 	}),
 ];

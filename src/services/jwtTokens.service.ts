@@ -49,15 +49,17 @@ export class JwtTokensService implements IJWTTokensService {
 		}
 	}
 
-	public async saveRefreshToken(id: string, token: string): Promise<boolean> {
-		const existingToken: JWTTokenFullDto | null = await this._jwtTokensRepository.getById(id);
+	public async saveRefreshToken(id: string | null, token: string): Promise<string> {
+		const existingToken: JWTTokenFullDto | null = id
+			? await this._jwtTokensRepository.getById(id)
+			: null;
 
-		if (existingToken) {
-			return await this._jwtTokensRepository.updateToken(id, token);
+		if (!existingToken || !id) {
+			return await this._jwtTokensRepository.createToken(token);
 		} else {
-			const createdTokenId: string = await this._jwtTokensRepository.createToken(token);
+			await this._jwtTokensRepository.updateToken(id, token);
 
-			return Boolean(createdTokenId);
+			return id;
 		}
 	}
 
