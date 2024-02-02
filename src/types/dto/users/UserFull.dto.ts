@@ -35,5 +35,8 @@ export class UserFullDto {
 	accountSettingsId: string;
 
 	@Expose()
+	JWTTokenId: string | null;
+
+	@Expose()
 	OTPCodeId: string | null;
 }

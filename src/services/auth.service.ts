@@ -6,6 +6,7 @@ import { IAuthService } from '@Interfaces/auth/IAuthService';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
 import { Inject, Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -39,5 +40,9 @@ export class AuthService implements IAuthService {
 		return await this._usersRepository.updateUser(accountActivationDto.id, {
 			isActivated: true,
 		});
+	}
+
+	public async validatePassword(passwordFromDto: string, passwordFromDb: string): Promise<boolean> {
+		return await bcrypt.compare(passwordFromDto, passwordFromDb);
 	}
 }

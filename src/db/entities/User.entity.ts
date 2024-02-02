@@ -93,5 +93,12 @@ export class User {
 		length: 255,
 		nullable: true,
 	})
+	JWTTokenId: string | null;
+
+	@Column({
+		type: 'varchar',
+		length: 255,
+		nullable: true,
+	})
 	OTPCodeId: string | null;
 }
