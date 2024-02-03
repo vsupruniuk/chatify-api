@@ -1,9 +1,11 @@
+import { Cookie } from '@Decorators/Cookie.decorator';
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
 import { LoginDto } from '@DTO/auth/Login.dto';
 import { LoginResponseDto } from '@DTO/auth/LoginResponse.dto';
 import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
 import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
 import { ResetPasswordConfirmationDto } from '@DTO/auth/ResetPasswordConfirmation.dto';
+import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
@@ -297,6 +299,47 @@ export class AuthController implements IAuthController {
 
 		responseResult.data = [{ accessToken }];
 		responseResult.dataLength = responseResult.data.length;
+
+		return responseResult;
+	}
+
+	@Post('/logout')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	public async logout(
+		@Res({ passthrough: true }) response: Response,
+		@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
+	): Promise<ResponseResult> {
+		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
+			HttpStatus.NO_CONTENT,
+			ResponseStatus.SUCCESS,
+		);
+
+		const userData: JWTPayloadDto | null =
+			await this._jwtTokensService.verifyRefreshToken(refreshToken);
+
+		if (userData) {
+			const fullUserData: UserFullDto | null = await this._usersService.getFullUserByEmail(
+				userData.email,
+			);
+
+			if (!fullUserData || !fullUserData.JWTTokenId) {
+				throw new UnprocessableEntityException(['Failed to log out. Please try again|email']);
+			}
+
+			const isCookieDeleted: boolean = await this._jwtTokensService.deleteToken(
+				fullUserData.JWTTokenId,
+			);
+
+			const isUserUpdated: boolean = await this._usersService.updateUser(userData.id, {
+				JWTTokenId: null,
+			});
+
+			if (!isCookieDeleted || !isUserUpdated) {
+				throw new UnprocessableEntityException(['Failed to log out. Please try again|email']);
+			}
+		}
+
+		response.clearCookie(CookiesNames.REFRESH_TOKEN);
 
 		return responseResult;
 	}
