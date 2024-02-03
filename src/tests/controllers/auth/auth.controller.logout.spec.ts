@@ -7,10 +7,12 @@ import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { users } from '@TestMocks/UserFullDto/users';
 import { Response } from 'express';
+import * as cookieParser from 'cookie-parser';
+import * as request from 'supertest';
 
 describe('AuthController', (): void => {
 	let app: INestApplication;
@@ -68,6 +70,7 @@ describe('AuthController', (): void => {
 		authController = moduleFixture.get<AuthController>(AuthController);
 
 		app.useGlobalPipes(new ValidationPipe({ whitelist: true, stopAtFirstError: false }));
+		app.use(cookieParser());
 
 		await app.init();
 	});
@@ -87,6 +90,13 @@ describe('AuthController', (): void => {
 
 		it('should be a function', (): void => {
 			expect(authController.logout).toBeInstanceOf(Function);
+		});
+
+		it('should return 204 status', async (): Promise<void> => {
+			await request(app.getHttpServer())
+				.post('/auth/logout')
+				.set('Cookie', [CookiesNames.REFRESH_TOKEN + validToken])
+				.expect(HttpStatus.NO_CONTENT);
 		});
 
 		it('should call verifyRefreshToken method in jwtTokens service to verify user refresh token', async (): Promise<void> => {

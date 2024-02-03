@@ -291,7 +291,7 @@ export class AuthController implements IAuthController {
 		}
 
 		response.cookie(CookiesNames.REFRESH_TOKEN, refreshToken, {
-			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIERS_IN) || 0,
+			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) || 0,
 			secure: true,
 			sameSite: 'strict',
 			httpOnly: true,
