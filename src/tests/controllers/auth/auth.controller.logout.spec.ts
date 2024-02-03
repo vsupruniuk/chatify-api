@@ -1,0 +1,150 @@
+import { AuthController } from '@Controllers/auth.controller';
+import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
+import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { CookiesNames } from '@Enums/CookiesNames';
+import { CustomProviders } from '@Enums/CustomProviders.enum';
+import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
+import { IUsersService } from '@Interfaces/users/IUsersService';
+import { AppModule } from '@Modules/app.module';
+import { AuthModule } from '@Modules/auth.module';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { users } from '@TestMocks/UserFullDto/users';
+import { Response } from 'express';
+import * as cookieParser from 'cookie-parser';
+import * as request from 'supertest';
+
+describe('AuthController', (): void => {
+	let app: INestApplication;
+	let authController: AuthController;
+
+	const validToken: string = 'valid-jwt-token';
+	const invalidToken: string = 'invalid-jwt-token';
+	const validTokenId: string = 'jwt-1';
+	const usersMock: UserFullDto[] = [...users];
+
+	const responseMock: Partial<Response> = {
+		clearCookie: jest.fn().mockImplementation((): void => {}),
+	};
+
+	const jwtTokensServiceMock: Partial<IJWTTokensService> = {
+		verifyRefreshToken: jest
+			.fn()
+			.mockImplementation(async (token: string): Promise<JWTPayloadDto | null> => {
+				if (token === validToken) {
+					return <JWTPayloadDto>{
+						id: 'f46845d7-90af-4c29-8e1a-221c90b33852',
+						email: 'thor@mail.com',
+						firstName: 'Thor',
+						lastName: 'Odinson',
+						nickname: 't.odinson',
+					};
+				}
+
+				return null;
+			}),
+
+		deleteToken: jest.fn().mockImplementation(async (): Promise<boolean> => true),
+	};
+
+	const usersServiceMock: Partial<IUsersService> = {
+		getFullUserByEmail: jest
+			.fn()
+			.mockImplementation(async (email: string): Promise<UserFullDto | null> => {
+				return usersMock.find((user: UserFullDto) => user.email === email) || null;
+			}),
+		updateUser: jest.fn().mockImplementation(async (): Promise<boolean> => true),
+	};
+
+	beforeAll(async (): Promise<void> => {
+		const moduleFixture: TestingModule = await Test.createTestingModule({
+			imports: [AppModule, AuthModule],
+		})
+			.overrideProvider(CustomProviders.I_JWT_TOKENS_SERVICE)
+			.useValue(jwtTokensServiceMock)
+			.overrideProvider(CustomProviders.I_USERS_SERVICE)
+			.useValue(usersServiceMock)
+			.compile();
+
+		app = moduleFixture.createNestApplication();
+		authController = moduleFixture.get<AuthController>(AuthController);
+
+		app.useGlobalPipes(new ValidationPipe({ whitelist: true, stopAtFirstError: false }));
+		app.use(cookieParser());
+
+		await app.init();
+	});
+
+	afterAll(async (): Promise<void> => {
+		await app.close();
+	});
+
+	describe('POST /auth/logout', (): void => {
+		beforeEach((): void => {
+			jest.clearAllMocks();
+		});
+
+		it('should be defined', (): void => {
+			expect(authController.logout).toBeDefined();
+		});
+
+		it('should be a function', (): void => {
+			expect(authController.logout).toBeInstanceOf(Function);
+		});
+
+		it('should return 204 status', async (): Promise<void> => {
+			await request(app.getHttpServer())
+				.post('/auth/logout')
+				.set('Cookie', [CookiesNames.REFRESH_TOKEN + validToken])
+				.expect(HttpStatus.NO_CONTENT);
+		});
+
+		it('should call verifyRefreshToken method in jwtTokens service to verify user refresh token', async (): Promise<void> => {
+			await authController.logout(responseMock as Response, validToken);
+
+			expect(jwtTokensServiceMock.verifyRefreshToken).toHaveBeenCalledTimes(1);
+			expect(jwtTokensServiceMock.verifyRefreshToken).toHaveBeenCalledWith(validToken);
+		});
+
+		it('should call deleteToken method in jwtTokens service to delete user refresh token', async (): Promise<void> => {
+			await authController.logout(responseMock as Response, validToken);
+
+			expect(jwtTokensServiceMock.deleteToken).toHaveBeenCalledTimes(1);
+			expect(jwtTokensServiceMock.deleteToken).toHaveBeenCalledWith(validTokenId);
+		});
+
+		it('should call getFullUserByEmail method in users service to get user from db', async (): Promise<void> => {
+			const userData: JWTPayloadDto | null =
+				await jwtTokensServiceMock.verifyRefreshToken!(validToken);
+
+			await authController.logout(responseMock as Response, validToken);
+
+			expect(usersServiceMock.getFullUserByEmail).toHaveBeenCalledTimes(1);
+			expect(usersServiceMock.getFullUserByEmail).toHaveBeenCalledWith(userData?.email);
+		});
+
+		it('should call updateUser method in users service to set JWTTokenId to null', async (): Promise<void> => {
+			const userData: JWTPayloadDto | null =
+				await jwtTokensServiceMock.verifyRefreshToken!(validToken);
+
+			await authController.logout(responseMock as Response, validToken);
+
+			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
+			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(userData?.id, { JWTTokenId: null });
+		});
+
+		it('should not to call deleteToken and updateUser methods if refresh token invalid', async (): Promise<void> => {
+			await authController.logout(responseMock as Response, invalidToken);
+
+			expect(jwtTokensServiceMock.deleteToken).not.toHaveBeenCalled();
+			expect(usersServiceMock.updateUser).not.toHaveBeenCalled();
+		});
+
+		it('should call clearCookie method to clear refresh token from cookie', async (): Promise<void> => {
+			await authController.logout(responseMock as Response, validToken);
+
+			expect(responseMock.clearCookie).toHaveBeenCalledTimes(1);
+			expect(responseMock.clearCookie).toHaveBeenCalledWith(CookiesNames.REFRESH_TOKEN);
+		});
+	});
+});

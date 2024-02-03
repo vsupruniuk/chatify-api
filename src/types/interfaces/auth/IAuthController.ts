@@ -51,10 +51,18 @@ export interface IAuthController {
 	): Promise<ResponseResult>;
 
 	/**
-	 * Method for handling user log in
+	 * Method for handling user login
 	 * @param response - client response object
 	 * @param loginDto - user email end password
-	 * @returns responseResult - successful result if new password was saved to db
+	 * @returns responseResult - successful result if user was logged in
 	 */
 	login(response: Response, loginDto: LoginDto): Promise<ResponseResult>;
+
+	/**
+	 * Method for handling log out
+	 * @param response - client response object
+	 * @param refreshToken - user refresh token from cookie
+	 * @return responseResult - successful result if user was logged out
+	 */
+	logout(response: Response, refreshToken: string): Promise<ResponseResult>;
 }
