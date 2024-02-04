@@ -308,7 +308,10 @@ describe('AuthController', (): void => {
 			await authController.login(responceMock as Response, loginDto);
 
 			expect(jwtTokensServiceMock.saveRefreshToken).toHaveBeenCalledTimes(1);
-			expect(jwtTokensServiceMock.saveRefreshToken).toHaveBeenCalledWith(null, refreshToken);
+			expect(jwtTokensServiceMock.saveRefreshToken).toHaveBeenCalledWith(
+				user?.JWTTokenId,
+				refreshToken,
+			);
 		});
 
 		it('should call updateUser in usersService to update user JWT token id', async (): Promise<void> => {

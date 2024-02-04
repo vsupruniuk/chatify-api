@@ -20,7 +20,7 @@ describe('AuthController', (): void => {
 
 	const validToken: string = 'valid-jwt-token';
 	const invalidToken: string = 'invalid-jwt-token';
-	const validTokenId: string = 'jwt-1';
+	const validTokenId: string = '2';
 	const usersMock: UserFullDto[] = [...users];
 
 	const responseMock: Partial<Response> = {
@@ -95,7 +95,7 @@ describe('AuthController', (): void => {
 		it('should return 204 status', async (): Promise<void> => {
 			await request(app.getHttpServer())
 				.post('/auth/logout')
-				.set('Cookie', [CookiesNames.REFRESH_TOKEN + validToken])
+				.set('Cookie', [`${CookiesNames.REFRESH_TOKEN}=${validToken}`])
 				.expect(HttpStatus.NO_CONTENT);
 		});
 
