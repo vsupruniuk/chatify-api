@@ -6,6 +6,7 @@ import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
 import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
 import { ResetPasswordConfirmationDto } from '@DTO/auth/ResetPasswordConfirmation.dto';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
+import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
 
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
@@ -33,6 +34,7 @@ import {
 	ParseUUIDPipe,
 	Post,
 	Res,
+	UnauthorizedException,
 	UnprocessableEntityException,
 } from '@nestjs/common';
 
@@ -340,6 +342,78 @@ export class AuthController implements IAuthController {
 		}
 
 		response.clearCookie(CookiesNames.REFRESH_TOKEN);
+
+		return responseResult;
+	}
+
+	@Post('/refresh')
+	@HttpCode(HttpStatus.OK)
+	public async refresh(
+		@Res({ passthrough: true }) response: Response,
+		@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
+	): Promise<ResponseResult> {
+		const responseResult: SuccessfulResponseResult<LoginResponseDto> =
+			new SuccessfulResponseResult<LoginResponseDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
+
+		const userData: JWTPayloadDto | null =
+			await this._jwtTokensService.verifyRefreshToken(refreshToken);
+
+		if (!userData) {
+			throw new UnauthorizedException(['Please, login to perform this action|email']);
+		}
+
+		const user: UserFullDto | null = await this._usersService.getFullUserByEmail(userData.email);
+
+		if (!user || !user.JWTTokenId) {
+			throw new UnauthorizedException(['Please, login to perform this action|email']);
+		}
+
+		const token: JWTTokenFullDto | null = await this._jwtTokensService.getById(user.JWTTokenId);
+
+		if (!token) {
+			throw new UnauthorizedException(['Please, login to perform this action|email']);
+		}
+
+		const newAccessToken: string = await this._jwtTokensService.generateAccessToken({
+			id: user.id,
+			email: user.email,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			nickname: user.nickname,
+		});
+
+		const newRefreshToken: string = await this._jwtTokensService.generateRefreshToken({
+			id: user.id,
+			email: user.email,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			nickname: user.nickname,
+		});
+
+		const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
+			user.JWTTokenId,
+			newRefreshToken,
+		);
+
+		const isTokenIdUpdated: boolean = await this._usersService.updateUser(user.id, {
+			JWTTokenId: savedTokenId,
+		});
+
+		if (!isTokenIdUpdated) {
+			throw new UnprocessableEntityException([
+				'Failed to refresh access token. Please try again|email',
+			]);
+		}
+
+		response.cookie(CookiesNames.REFRESH_TOKEN, newRefreshToken, {
+			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) || 0,
+			secure: true,
+			sameSite: 'strict',
+			httpOnly: true,
+		});
+
+		responseResult.data = [{ accessToken: newAccessToken }];
+		responseResult.dataLength = responseResult.data.length;
 
 		return responseResult;
 	}

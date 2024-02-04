@@ -65,4 +65,12 @@ export interface IAuthController {
 	 * @return responseResult - successful result if user was logged out
 	 */
 	logout(response: Response, refreshToken: string): Promise<ResponseResult>;
+
+	/**
+	 * Method for refreshing access and refresh tokens of authorized user
+	 * @param response - client response object
+	 * @param refreshToken - user refresh token from cookie
+	 * @returns responseResult - successful result if access and refresh tokens updated
+	 */
+	refresh(response: Response, refreshToken: string): Promise<ResponseResult>;
 }

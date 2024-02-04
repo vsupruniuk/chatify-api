@@ -1,4 +1,5 @@
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
+import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
 
 export interface IJWTTokensService {
 	/**
@@ -30,6 +31,14 @@ export interface IJWTTokensService {
 	 * @returns null - if JWT refresh token invalid
 	 */
 	verifyRefreshToken(token: string): Promise<JWTPayloadDto | null>;
+
+	/**
+	 * Get user JWT refresh token by id
+	 * @param id - token id
+	 * @returns JWTTokenFullDto - if token was found
+	 * @returns null - if token wasn't found
+	 */
+	getById(id: string): Promise<JWTTokenFullDto | null>;
 
 	/**
 	 * Save new user refresh token to DB or update existing one

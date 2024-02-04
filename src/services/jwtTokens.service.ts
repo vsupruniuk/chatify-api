@@ -49,6 +49,10 @@ export class JwtTokensService implements IJWTTokensService {
 		}
 	}
 
+	public async getById(id: string): Promise<JWTTokenFullDto | null> {
+		return await this._jwtTokensRepository.getById(id);
+	}
+
 	public async saveRefreshToken(id: string | null, token: string): Promise<string> {
 		const existingToken: JWTTokenFullDto | null = id
 			? await this._jwtTokensRepository.getById(id)
