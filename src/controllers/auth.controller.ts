@@ -263,21 +263,13 @@ export class AuthController implements IAuthController {
 			throw new UnprocessableEntityException(['Invalid email or password|password']);
 		}
 
-		const accessToken: string = await this._jwtTokensService.generateAccessToken({
-			id: user.id,
-			email: user.email,
-			firstName: user.firstName,
-			lastName: user.lastName,
-			nickname: user.nickname,
-		});
+		const accessToken: string = await this._jwtTokensService.generateAccessToken(
+			this.createJwtPayload(user),
+		);
 
-		const refreshToken: string = await this._jwtTokensService.generateRefreshToken({
-			id: user.id,
-			email: user.email,
-			firstName: user.firstName,
-			lastName: user.lastName,
-			nickname: user.nickname,
-		});
+		const refreshToken: string = await this._jwtTokensService.generateRefreshToken(
+			this.createJwtPayload(user),
+		);
 
 		const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
 			user.JWTTokenId,
@@ -374,21 +366,13 @@ export class AuthController implements IAuthController {
 			throw new UnauthorizedException(['Please, login to perform this action|email']);
 		}
 
-		const newAccessToken: string = await this._jwtTokensService.generateAccessToken({
-			id: user.id,
-			email: user.email,
-			firstName: user.firstName,
-			lastName: user.lastName,
-			nickname: user.nickname,
-		});
+		const newAccessToken: string = await this._jwtTokensService.generateAccessToken(
+			this.createJwtPayload(user),
+		);
 
-		const newRefreshToken: string = await this._jwtTokensService.generateRefreshToken({
-			id: user.id,
-			email: user.email,
-			firstName: user.firstName,
-			lastName: user.lastName,
-			nickname: user.nickname,
-		});
+		const newRefreshToken: string = await this._jwtTokensService.generateRefreshToken(
+			this.createJwtPayload(user),
+		);
 
 		const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
 			user.JWTTokenId,
@@ -416,5 +400,15 @@ export class AuthController implements IAuthController {
 		responseResult.dataLength = responseResult.data.length;
 
 		return responseResult;
+	}
+
+	private createJwtPayload(user: UserFullDto): JWTPayloadDto {
+		return {
+			id: user.id,
+			email: user.email,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			nickname: user.nickname,
+		};
 	}
 }
