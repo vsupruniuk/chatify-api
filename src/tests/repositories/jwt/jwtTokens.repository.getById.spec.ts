@@ -47,6 +47,7 @@ describe('jwtTokensRepository', (): void => {
 		it('should use findOne method for searching token', async (): Promise<void> => {
 			await jwtTokensRepository.getById(existingTokenId);
 
+			expect(findMock).toHaveBeenCalledTimes(1);
 			expect(findMock).toHaveBeenCalledWith({ where: { id: existingTokenId } });
 		});
 

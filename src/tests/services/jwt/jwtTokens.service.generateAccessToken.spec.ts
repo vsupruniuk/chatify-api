@@ -48,7 +48,11 @@ describe('jwtTokensService', (): void => {
 		it('should call signAsync method to sign JWT token', async (): Promise<void> => {
 			await jwtTokensService.generateAccessToken(jwtPayloadMock);
 
-			expect(signAsyncMock).toHaveBeenCalled();
+			expect(signAsyncMock).toHaveBeenCalledTimes(1);
+			expect(signAsyncMock).toHaveBeenCalledWith(jwtPayloadMock, {
+				secret: process.env.JWT_ACCESS_TOKEN_SECRET || '',
+				expiresIn: Number(process.env.JWT_ACCESS_TOKEN_EXPIRES_IN) || 0,
+			});
 		});
 
 		it('should return JWT token as string', async (): Promise<void> => {

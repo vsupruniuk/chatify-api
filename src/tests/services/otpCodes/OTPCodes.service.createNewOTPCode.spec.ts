@@ -60,18 +60,20 @@ describe('OTPCodesService', (): void => {
 		it('should call generateOTPCode in OTPCodesHelper to generate otp code', async (): Promise<void> => {
 			await otpCodesService.createNewOTPCode(existingCodeId);
 
-			expect(generateOTPCodeMock).toHaveBeenCalled();
+			expect(generateOTPCodeMock).toHaveBeenCalledTimes(1);
 		});
 
-		it('should call dateTimeFuture in DateHelper to get current date', async (): Promise<void> => {
+		it('should call dateTimeFuture in DateHelper to get expiration date', async (): Promise<void> => {
 			await otpCodesService.createNewOTPCode(existingCodeId);
 
-			expect(dateTimeFutureMock).toHaveBeenCalled();
+			expect(dateTimeFutureMock).toHaveBeenCalledTimes(1);
+			expect(dateTimeFutureMock).toHaveBeenCalledWith(1000 * 60 * 10);
 		});
 
 		it('should call updateOTPCode in otpCodesRepository to create new code for existing user', async (): Promise<void> => {
 			await otpCodesService.createNewOTPCode(existingCodeId);
 
+			expect(updateOTPCodeMock).toHaveBeenCalledTimes(1);
 			expect(updateOTPCodeMock).toHaveBeenCalledWith(existingCodeId, updateOTPCodeDto);
 		});
 

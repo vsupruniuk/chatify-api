@@ -52,6 +52,7 @@ describe('usersRepository', (): void => {
 		it('should use insert method for creating user', async (): Promise<void> => {
 			await usersRepository.createUser(user);
 
+			expect(insertMock).toHaveBeenCalledTimes(1);
 			expect(insertMock).toHaveBeenCalledWith(user);
 		});
 

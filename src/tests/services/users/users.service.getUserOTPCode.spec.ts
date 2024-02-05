@@ -78,6 +78,7 @@ describe('Users service', (): void => {
 		it('should use getUserOTPCode method from users repository for searching OTP code', async (): Promise<void> => {
 			await usersService.getUserOTPCode(existingId);
 
+			expect(getUserOTPCodeMock).toHaveBeenCalledTimes(1);
 			expect(getUserOTPCodeMock).toHaveBeenCalledWith(existingId);
 		});
 

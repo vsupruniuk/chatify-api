@@ -63,7 +63,8 @@ describe('OTPCodesRepository', (): void => {
 		it('should call update method to update otp code', async (): Promise<void> => {
 			await otpCodesRepository.updateOTPCode(existingCodeId, updateOTPCodeDto);
 
-			expect(updateMock).toHaveBeenCalled();
+			expect(updateMock).toHaveBeenCalledTimes(1);
+			expect(updateMock).toHaveBeenCalledWith({ id: existingCodeId }, updateOTPCodeDto);
 		});
 
 		it('should return false if otp code with given id not exist', async (): Promise<void> => {

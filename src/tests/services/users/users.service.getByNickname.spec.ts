@@ -59,6 +59,7 @@ describe('UsersService', (): void => {
 		it('should use getByEmail method from users repository for searching user', async (): Promise<void> => {
 			await usersService.getByNickname(existingUserNickname);
 
+			expect(getUserByEmailNickname).toHaveBeenCalledTimes(1);
 			expect(getUserByEmailNickname).toHaveBeenCalledWith(existingUserNickname);
 		});
 

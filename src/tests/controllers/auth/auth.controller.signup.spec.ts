@@ -98,6 +98,7 @@ describe('AuthController', (): void => {
 	describe('POST /auth/signup', (): void => {
 		beforeEach((): void => {
 			usersMock.length = 0;
+			jest.clearAllMocks();
 		});
 
 		it('should be defined', (): void => {
@@ -431,6 +432,7 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
+			expect(usersServiceMock.getByEmail).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getByEmail).toHaveBeenCalledWith(user.email);
 		});
 
@@ -446,6 +448,7 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
+			expect(usersServiceMock.getByNickname).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getByNickname).toHaveBeenCalledWith(user.nickname);
 		});
 
@@ -461,6 +464,7 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
+			expect(usersServiceMock.createUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.createUser).toHaveBeenCalledWith(user);
 		});
 
@@ -476,7 +480,7 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
-			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalled();
+			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalledTimes(1);
 		});
 
 		it('should call sendActivationEmail in email service to send email with OTP code', async (): Promise<void> => {
@@ -491,6 +495,7 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
+			expect(emailServiceMock.sendActivationEmail).toHaveBeenCalledTimes(1);
 			expect(emailServiceMock.sendActivationEmail).toHaveBeenCalledWith(user.email, otpCode.code);
 		});
 

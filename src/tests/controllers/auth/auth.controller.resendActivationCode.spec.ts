@@ -82,6 +82,10 @@ describe('AuthController', (): void => {
 		const notExistingUserEmail: string = 'vision@mail.com';
 		const userOTPCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
 
+		afterEach((): void => {
+			jest.clearAllMocks();
+		});
+
 		it('should be defined', (): void => {
 			expect(authController.resendActivationCode).toBeDefined();
 		});
@@ -180,6 +184,7 @@ describe('AuthController', (): void => {
 
 			await authController.resendActivationCode(resendActivationCodeDto);
 
+			expect(usersServiceMock.getFullUserByEmail).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getFullUserByEmail).toHaveBeenCalledWith(existingUserEmail);
 		});
 
@@ -190,6 +195,7 @@ describe('AuthController', (): void => {
 
 			await authController.resendActivationCode(resendActivationCodeDto);
 
+			expect(otpCodesServiceMock.createNewOTPCode).toHaveBeenCalledTimes(1);
 			expect(otpCodesServiceMock.createNewOTPCode).toHaveBeenCalledWith(userOTPCodeId);
 		});
 
@@ -200,6 +206,7 @@ describe('AuthController', (): void => {
 
 			await authController.resendActivationCode(resendActivationCodeDto);
 
+			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalledWith(userOTPCodeId);
 		});
 
@@ -210,6 +217,7 @@ describe('AuthController', (): void => {
 
 			await authController.resendActivationCode(resendActivationCodeDto);
 
+			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalledWith(userOTPCodeId);
 		});
 	});

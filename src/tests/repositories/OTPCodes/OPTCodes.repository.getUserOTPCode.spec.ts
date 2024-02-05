@@ -51,6 +51,7 @@ describe('OTPCodesRepository', (): void => {
 		it('should use findOne method for searching OTP code', async (): Promise<void> => {
 			await otpCodesRepository.getUserOTPCodeById(existingId);
 
+			expect(findOneMock).toHaveBeenCalledTimes(1);
 			expect(findOneMock).toHaveBeenCalledWith({ where: { id: existingId } });
 		});
 

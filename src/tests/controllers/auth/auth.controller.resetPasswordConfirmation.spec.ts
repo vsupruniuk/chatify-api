@@ -52,6 +52,10 @@ describe('AuthController', (): void => {
 	});
 
 	describe('POST /reset-password/:resetToken', (): void => {
+		afterEach((): void => {
+			jest.clearAllMocks();
+		});
+
 		it('should be defined', (): void => {
 			expect(authController.resetPasswordConfirmation).toBeDefined();
 		});
@@ -244,6 +248,7 @@ describe('AuthController', (): void => {
 
 			await authController.resetPasswordConfirmation(resetPasswordConfirmationDto, resetToken);
 
+			expect(usersServiceMock.getByResetPasswordToken).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getByResetPasswordToken).toHaveBeenCalledWith(resetToken);
 		});
 
@@ -258,6 +263,7 @@ describe('AuthController', (): void => {
 
 			await authController.resetPasswordConfirmation(resetPasswordConfirmationDto, resetToken);
 
+			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(userId, {
 				password: resetPasswordConfirmationDto.password,
 			});

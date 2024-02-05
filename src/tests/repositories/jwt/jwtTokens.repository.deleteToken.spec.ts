@@ -57,6 +57,7 @@ describe('jwtTokensRepository', (): void => {
 		it('should call delete method to update token', async (): Promise<void> => {
 			await jwtTokensRepository.deleteToken(existingTokenId);
 
+			expect(deleteMock).toHaveBeenCalledTimes(1);
 			expect(deleteMock).toHaveBeenCalledWith({ id: existingTokenId });
 		});
 

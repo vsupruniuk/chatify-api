@@ -98,6 +98,7 @@ describe('AuthService', (): void => {
 
 			await authService.activateAccount(accountActivationDto);
 
+			expect(getUserOTPCodeByIdMock).toHaveBeenCalledTimes(1);
 			expect(getUserOTPCodeByIdMock).toHaveBeenCalledWith(existingOTPCodeId);
 		});
 
@@ -112,7 +113,11 @@ describe('AuthService', (): void => {
 
 			await authService.activateAccount(accountActivationDto);
 
-			expect(isExpiredMock).toHaveBeenCalled();
+			expect(isExpiredMock).toHaveBeenCalledTimes(1);
+			expect(isExpiredMock).toHaveBeenCalledWith({
+				code: accountActivationDto.code,
+				expiresAt: '2023-11-24 18:30:00',
+			});
 		});
 
 		it('should call updateUser method in users repository to update isActivated status of user account', async (): Promise<void> => {
@@ -128,6 +133,7 @@ describe('AuthService', (): void => {
 
 			await authService.activateAccount(accountActivationDto);
 
+			expect(updateUserMock).toHaveBeenCalledTimes(1);
 			expect(updateUserMock).toHaveBeenCalledWith(existingUserId, updateUserDto);
 		});
 
