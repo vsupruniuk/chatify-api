@@ -114,6 +114,17 @@ describe('AuthController', (): void => {
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
+		it('should return 400 status if email too long', async (): Promise<void> => {
+			const resendActivationCodeDto = <ResendActivationCodeDto>{
+				email: 'tony@mail.com'.padStart(256, 't'),
+			};
+
+			await request(app.getHttpServer())
+				.post('/auth/resend-activation-code')
+				.send(resendActivationCodeDto)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
 		it('should return 404 status if user with given email not exist', async (): Promise<void> => {
 			const resendActivationCodeDto = <ResendActivationCodeDto>{
 				email: notExistingUserEmail,

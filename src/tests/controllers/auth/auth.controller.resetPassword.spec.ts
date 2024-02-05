@@ -95,6 +95,17 @@ describe('AuthController', (): void => {
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
+		it('should return 400 status if email in wrong format', async (): Promise<void> => {
+			const resetPasswordDto: ResetPasswordDto = {
+				email: 'tony@mail.com'.padStart(256, 't'),
+			};
+
+			await request(app.getHttpServer())
+				.post('/auth/reset-password')
+				.send(resetPasswordDto)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
 		it('should return 404 status if user with this email not exist', async (): Promise<void> => {
 			const resetPasswordDto: ResetPasswordDto = {
 				email: 'bruce@mail.com',

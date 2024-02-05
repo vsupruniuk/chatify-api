@@ -158,6 +158,18 @@ describe('AuthController', (): void => {
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
+		it('should return 400 status if password too long', async (): Promise<void> => {
+			const resetPasswordConfirmationDto = {
+				password: 'qwerty1A'.padStart(256, 'q'),
+				passwordConfirmation: 'qwerty1A',
+			} as ResetPasswordConfirmationDto;
+
+			await request(app.getHttpServer())
+				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
+				.send(resetPasswordConfirmationDto)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
 		it('should return 400 status if passwordConfirmation is not a string', async (): Promise<void> => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwertyAA',
@@ -198,6 +210,18 @@ describe('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwert',
+			} as ResetPasswordConfirmationDto;
+
+			await request(app.getHttpServer())
+				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
+				.send(resetPasswordConfirmationDto)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if passwordConfirmation too long', async (): Promise<void> => {
+			const resetPasswordConfirmationDto = {
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A'.padStart(256, 'q'),
 			} as ResetPasswordConfirmationDto;
 
 			await request(app.getHttpServer())
