@@ -40,6 +40,7 @@ describe('jwtTokensRepository', (): void => {
 		it('should use insert method for creating token', async (): Promise<void> => {
 			await jwtTokensRepository.createToken(token);
 
+			expect(insertMock).toHaveBeenCalledTimes(1);
 			expect(insertMock).toHaveBeenCalledWith({ token });
 		});
 

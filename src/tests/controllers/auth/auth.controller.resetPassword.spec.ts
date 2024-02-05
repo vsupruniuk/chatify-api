@@ -65,6 +65,10 @@ describe('AuthController', (): void => {
 	});
 
 	describe('POST /auth/reset-password', (): void => {
+		afterEach((): void => {
+			jest.clearAllMocks();
+		});
+
 		it('should be defined', (): void => {
 			expect(authController.resetPassword).toBeDefined();
 		});
@@ -83,6 +87,17 @@ describe('AuthController', (): void => {
 		it('should return 400 status if email in wrong format', async (): Promise<void> => {
 			const resetPasswordDto: ResetPasswordDto = {
 				email: 'tonymail.com',
+			};
+
+			await request(app.getHttpServer())
+				.post('/auth/reset-password')
+				.send(resetPasswordDto)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if email in wrong format', async (): Promise<void> => {
+			const resetPasswordDto: ResetPasswordDto = {
+				email: 'tony@mail.com'.padStart(256, 't'),
 			};
 
 			await request(app.getHttpServer())
@@ -138,6 +153,7 @@ describe('AuthController', (): void => {
 
 			await authController.resetPassword(resetPasswordDto);
 
+			expect(usersServiceMock.getByEmail).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getByEmail).toHaveBeenCalledWith(resetPasswordDto.email);
 		});
 
@@ -150,6 +166,7 @@ describe('AuthController', (): void => {
 
 			await authController.resetPassword(resetPasswordDto);
 
+			expect(usersServiceMock.createPasswordResetToken).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.createPasswordResetToken).toHaveBeenCalledWith(userId);
 		});
 
@@ -163,6 +180,7 @@ describe('AuthController', (): void => {
 
 			await authController.resetPassword(resetPasswordDto);
 
+			expect(emailServiceMock.sendResetPasswordEmail).toHaveBeenCalledTimes(1);
 			expect(emailServiceMock.sendResetPasswordEmail).toHaveBeenCalledWith(
 				resetPasswordDto.email,
 				userName,

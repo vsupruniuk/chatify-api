@@ -62,12 +62,13 @@ describe('UsersService', (): void => {
 		it('should call uuid method for creating reset token', async (): Promise<void> => {
 			await usersService.createPasswordResetToken(existingUserId);
 
-			expect(uuidv4).toHaveBeenCalled();
+			expect(uuidv4).toHaveBeenCalledTimes(1);
 		});
 
 		it('should call updateUser method in users repository to update user', async (): Promise<void> => {
 			await usersService.createPasswordResetToken(existingUserId);
 
+			expect(updateUserMock).toHaveBeenCalledTimes(1);
 			expect(updateUserMock).toHaveBeenCalledWith(existingUserId, {
 				passwordResetToken: 'uuid-v4',
 			});

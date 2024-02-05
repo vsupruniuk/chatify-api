@@ -102,6 +102,7 @@ describe('AuthController', (): void => {
 		});
 
 		afterEach((): void => {
+			jest.clearAllMocks();
 			jest.useRealTimers();
 		});
 
@@ -270,6 +271,7 @@ describe('AuthController', (): void => {
 
 			await authController.activateAccount(accountActivationDto);
 
+			expect(authServiceMock.activateAccount).toHaveBeenCalledTimes(1);
 			expect(authServiceMock.activateAccount).toHaveBeenCalledWith(accountActivationDto);
 		});
 
@@ -289,6 +291,7 @@ describe('AuthController', (): void => {
 
 			await authController.activateAccount(accountActivationDto);
 
+			expect(otpCodesServiceMock.updateOTPCode).toHaveBeenCalledTimes(1);
 			expect(otpCodesServiceMock.updateOTPCode).toHaveBeenCalledWith(
 				existingOTPCodeId,
 				updateOTPCodeDto,

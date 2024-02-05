@@ -65,7 +65,8 @@ describe('UsersService', (): void => {
 		it('should call updateUser method in users repository to update user', async (): Promise<void> => {
 			await usersService.updateUser(existingUserId, updateUserDto);
 
-			expect(updateUserMock).toHaveBeenCalled();
+			expect(updateUserMock).toHaveBeenCalledTimes(1);
+			expect(updateUserMock).toHaveBeenCalledWith(existingUserId, updateUserDto);
 		});
 
 		it('should call hash method in bcrypt if password was passed in dto', async (): Promise<void> => {
@@ -77,13 +78,14 @@ describe('UsersService', (): void => {
 
 			await usersService.updateUser(existingUserId, updateUserDtoWithPassword);
 
+			expect(hashMock).toHaveBeenCalledTimes(1);
 			expect(hashMock).toHaveBeenCalledWith(
 				updateUserDtoWithPassword.password,
 				Number(process.env.PASSWORD_SALT_HASH_ROUNDS),
 			);
 		});
 
-		it('should not call hash method in bcrypt if password was passed in dto', async (): Promise<void> => {
+		it('should not call hash method in bcrypt if password was not passed in dto', async (): Promise<void> => {
 			await usersService.updateUser(existingUserId, updateUserDto);
 
 			expect(hashMock).not.toHaveBeenCalled();

@@ -48,6 +48,7 @@ describe('usersRepository', (): void => {
 		it('should call findOne method to search user', async (): Promise<void> => {
 			await usersRepository.getByResetPasswordToken(existingUserToken);
 
+			expect(findMock).toHaveBeenCalledTimes(1);
 			expect(findMock).toHaveBeenCalledWith({ where: { passwordResetToken: existingUserToken } });
 		});
 

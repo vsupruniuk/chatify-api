@@ -100,7 +100,7 @@ describe('UsersService', (): void => {
 		it('should create basic account settings for user', async (): Promise<void> => {
 			await usersService.createUser(user);
 
-			expect(createDefaultSettingsMock).toHaveBeenCalled();
+			expect(createDefaultSettingsMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('should create OTP code for user', async (): Promise<void> => {
@@ -110,7 +110,7 @@ describe('UsersService', (): void => {
 
 			await usersService.createUser(user);
 
-			expect(generateOTPCodeMock).toHaveBeenCalled();
+			expect(generateOTPCodeMock).toHaveBeenCalledTimes(1);
 			expect(createOTPCodeMock).toHaveBeenCalledWith({
 				code: otpCode,
 				expiresAt: '2023-11-22 16:40:00',
@@ -120,6 +120,7 @@ describe('UsersService', (): void => {
 		it('should hash user password', async (): Promise<void> => {
 			await usersService.createUser(user);
 
+			expect(hashMock).toHaveBeenCalledTimes(1);
 			expect(hashMock).toHaveBeenCalledWith(
 				user.password,
 				Number(process.env.PASSWORD_SALT_HASH_ROUNDS),
@@ -129,12 +130,14 @@ describe('UsersService', (): void => {
 		it('should create a new user and return him as response', async (): Promise<void> => {
 			const createdUser: UserShortDto | null = await usersService.createUser(user);
 
+			expect(createUserMock).toHaveBeenCalledTimes(1);
 			expect(createUserMock).toHaveBeenCalledWith(<CreateUserDto>{
 				...user,
 				accountSettingsId: userAccountSettingsId,
 				password: userHashedPassword,
 				OTPCodeId: userOTPCodeId,
 			});
+
 			expect(createdUser?.firstName).toEqual(user.firstName);
 			expect(createdUser?.lastName).toEqual(user.lastName);
 			expect(createdUser?.nickname).toEqual(user.nickname);

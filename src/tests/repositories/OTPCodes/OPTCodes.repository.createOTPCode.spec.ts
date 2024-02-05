@@ -51,6 +51,7 @@ describe('OTPCodesRepository', (): void => {
 		it('should use insert method for creating new OTP code', async (): Promise<void> => {
 			await otpCodesRepository.createOTPCode(createOTPCodeDtoMock);
 
+			expect(insertMock).toHaveBeenCalledTimes(1);
 			expect(insertMock).toHaveBeenCalledWith(createOTPCodeDtoMock);
 		});
 

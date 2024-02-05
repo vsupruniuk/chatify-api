@@ -47,6 +47,7 @@ describe('OTPCodesService', (): void => {
 		it('should call updateOTPCode method in OTPCodes repository to update code', async (): Promise<void> => {
 			await otpCodesService.updateOTPCode(existingCodeId, updateOTPCodeDto);
 
+			expect(updateOTPCodeMock).toHaveBeenCalledTimes(1);
 			expect(updateOTPCodeMock).toHaveBeenCalledWith(existingCodeId, updateOTPCodeDto);
 		});
 

@@ -55,7 +55,10 @@ describe('jwtTokensService', (): void => {
 		it('should call verifyAsync method to verify JWT token', async (): Promise<void> => {
 			await jwtTokensService.verifyAccessToken(validJwtToken);
 
-			expect(verifyAsyncMock).toHaveBeenCalled();
+			expect(verifyAsyncMock).toHaveBeenCalledTimes(1);
+			expect(verifyAsyncMock).toHaveBeenCalledWith(validJwtToken, {
+				secret: process.env.JWT_ACCESS_TOKEN_SECRET || '',
+			});
 		});
 
 		it('should return user data if JWT token valid', async (): Promise<void> => {

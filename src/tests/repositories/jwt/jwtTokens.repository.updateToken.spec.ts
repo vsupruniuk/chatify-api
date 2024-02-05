@@ -59,7 +59,8 @@ describe('jwtTokensRepository', (): void => {
 		it('should call update method to update token', async (): Promise<void> => {
 			await jwtTokensRepository.updateToken(existingTokenId, updateTokenMock);
 
-			expect(updateMock).toHaveBeenCalled();
+			expect(updateMock).toHaveBeenCalledTimes(1);
+			expect(updateMock).toHaveBeenCalledWith({ id: existingTokenId }, { token: updateTokenMock });
 		});
 
 		it('should return false if token with given id not exist', async (): Promise<void> => {

@@ -66,7 +66,8 @@ describe('usersRepository', (): void => {
 		it('should call update method to update user', async (): Promise<void> => {
 			await usersRepository.updateUser(existingUserId, updateUserDto);
 
-			expect(updateMock).toHaveBeenCalled();
+			expect(updateMock).toHaveBeenCalledTimes(1);
+			expect(updateMock).toHaveBeenCalledWith({ id: existingUserId }, updateUserDto);
 		});
 
 		it('should return false if user with given id not exist', async (): Promise<void> => {

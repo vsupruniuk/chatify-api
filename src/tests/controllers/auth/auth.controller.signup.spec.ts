@@ -98,6 +98,7 @@ describe('AuthController', (): void => {
 	describe('POST /auth/signup', (): void => {
 		beforeEach((): void => {
 			usersMock.length = 0;
+			jest.clearAllMocks();
 		});
 
 		it('should be defined', (): void => {
@@ -128,6 +129,22 @@ describe('AuthController', (): void => {
 				firstName: 'Bruce',
 				lastName: 'Banner',
 				email: 'bruce.mail.com',
+				nickname: 'b.banner',
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A',
+			};
+
+			await request(app.getHttpServer())
+				.post('/auth/signup')
+				.send(user)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if email is too long', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce',
+				lastName: 'Banner',
+				email: 'bruce@mail.com'.padStart(256, 'b'),
 				nickname: 'b.banner',
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
@@ -173,7 +190,7 @@ describe('AuthController', (): void => {
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if firstName is to short', async (): Promise<void> => {
+		it('should return 400 status if firstName is too short', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Br',
 				lastName: 'Banner',
@@ -189,10 +206,42 @@ describe('AuthController', (): void => {
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if lastName is present but to short', async (): Promise<void> => {
+		it('should return 400 status if firstName is too long', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce'.padStart(256, 'B'),
+				lastName: 'Banner',
+				email: 'bruce@mail.com',
+				nickname: 'b.banner',
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A',
+			};
+
+			await request(app.getHttpServer())
+				.post('/auth/signup')
+				.send(user)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if lastName is present but too short', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Ba',
+				email: 'bruce@mail.com',
+				nickname: 'b.banner',
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A',
+			};
+
+			await request(app.getHttpServer())
+				.post('/auth/signup')
+				.send(user)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if lastName is present but too long', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce',
+				lastName: 'Banner'.padStart(256, 'B'),
 				email: 'bruce@mail.com',
 				nickname: 'b.banner',
 				password: 'qwerty1A',
@@ -223,12 +272,28 @@ describe('AuthController', (): void => {
 				.expect(HttpStatus.CONFLICT);
 		});
 
-		it('should return 400 status if nickname is to short', async (): Promise<void> => {
+		it('should return 400 status if nickname is too short', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
 				email: 'bruce@mail.com',
 				nickname: 'bb',
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A',
+			};
+
+			await request(app.getHttpServer())
+				.post('/auth/signup')
+				.send(user)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if nickname is too long', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce',
+				lastName: 'Banner',
+				email: 'bruce@mail.com',
+				nickname: 'b.banner'.padStart(256, 'b'),
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
 			};
@@ -255,13 +320,29 @@ describe('AuthController', (): void => {
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if password is to short', async (): Promise<void> => {
+		it('should return 400 status if password is too short', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
 				email: 'bruce@mail.com',
 				nickname: 'b.banner',
 				password: 'qwert',
+				passwordConfirmation: 'qwerty1A',
+			};
+
+			await request(app.getHttpServer())
+				.post('/auth/signup')
+				.send(user)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if password is too long', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce',
+				lastName: 'Banner',
+				email: 'bruce@mail.com',
+				nickname: 'b.banner',
+				password: 'qwerty1A'.padStart(256, 'q'),
 				passwordConfirmation: 'qwerty1A',
 			};
 
@@ -319,7 +400,7 @@ describe('AuthController', (): void => {
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 status if password confirmation is to short', async (): Promise<void> => {
+		it('should return 400 status if password confirmation is too short', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -327,6 +408,22 @@ describe('AuthController', (): void => {
 				nickname: 'b.banner',
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwert',
+			};
+
+			await request(app.getHttpServer())
+				.post('/auth/signup')
+				.send(user)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if password confirmation is too long', async (): Promise<void> => {
+			const user = <SignupUserDto>{
+				firstName: 'Bruce',
+				lastName: 'Banner',
+				email: 'bruce@mail.com',
+				nickname: 'b.banner',
+				password: 'qwerty1A'.padStart(256, 'q'),
+				passwordConfirmation: 'qwerty1A'.padStart(256, 'q'),
 			};
 
 			await request(app.getHttpServer())
@@ -431,6 +528,7 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
+			expect(usersServiceMock.getByEmail).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getByEmail).toHaveBeenCalledWith(user.email);
 		});
 
@@ -446,6 +544,7 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
+			expect(usersServiceMock.getByNickname).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getByNickname).toHaveBeenCalledWith(user.nickname);
 		});
 
@@ -461,6 +560,7 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
+			expect(usersServiceMock.createUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.createUser).toHaveBeenCalledWith(user);
 		});
 
@@ -476,7 +576,7 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
-			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalled();
+			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalledTimes(1);
 		});
 
 		it('should call sendActivationEmail in email service to send email with OTP code', async (): Promise<void> => {
@@ -491,6 +591,7 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
+			expect(emailServiceMock.sendActivationEmail).toHaveBeenCalledTimes(1);
 			expect(emailServiceMock.sendActivationEmail).toHaveBeenCalledWith(user.email, otpCode.code);
 		});
 

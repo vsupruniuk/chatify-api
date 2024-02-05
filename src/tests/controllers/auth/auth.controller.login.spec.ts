@@ -170,6 +170,30 @@ describe('AuthController', (): void => {
 				.expect(HttpStatus.BAD_REQUEST);
 		});
 
+		it('should return 400 status email too long', async (): Promise<void> => {
+			const loginDto = <LoginDto>{
+				email: 'tony@mail.com'.padStart(256, 't'),
+				password: 'qwerty1A',
+			};
+
+			await request(app.getHttpServer())
+				.post('/auth/login')
+				.send(loginDto)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status password too long', async (): Promise<void> => {
+			const loginDto = <LoginDto>{
+				email: 'tony@mail.com',
+				password: 'qwerty1A'.padStart(256, 'q'),
+			};
+
+			await request(app.getHttpServer())
+				.post('/auth/login')
+				.send(loginDto)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
 		it('should return 422 status if user with email does not exist', async (): Promise<void> => {
 			const loginDto = <LoginDto>{
 				email: 'bruce@mail.com',

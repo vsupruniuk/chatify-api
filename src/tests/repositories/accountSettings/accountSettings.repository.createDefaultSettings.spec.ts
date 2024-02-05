@@ -41,6 +41,7 @@ describe('accountSettingsRepository', (): void => {
 		it('should use insert method for creating account settings', async (): Promise<void> => {
 			await accountSettingsRepository.createDefaultSettings();
 
+			expect(insertMock).toHaveBeenCalledTimes(1);
 			expect(insertMock).toHaveBeenCalledWith({});
 		});
 

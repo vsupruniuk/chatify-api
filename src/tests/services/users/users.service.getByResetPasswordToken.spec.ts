@@ -55,6 +55,7 @@ describe('UsersService', (): void => {
 		it('should call getByResetPasswordToken method in users repository to find user by its reset token', async (): Promise<void> => {
 			await usersService.getByResetPasswordToken(existingUserToken);
 
+			expect(getByResetPasswordTokenMock).toHaveBeenCalledTimes(1);
 			expect(getByResetPasswordTokenMock).toHaveBeenCalledWith(existingUserToken);
 		});
 
