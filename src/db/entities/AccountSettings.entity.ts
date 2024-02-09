@@ -14,7 +14,18 @@ export class AccountSettings {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@CreateDateColumn({ type: 'datetime', nullable: false })
+	@CreateDateColumn({
+		type: 'datetime',
+		nullable: false,
+		transformer: {
+			from(date: string): string {
+				return new Date(date).toISOString();
+			},
+			to(date: string): string {
+				return date;
+			},
+		},
+	})
 	createdAt: string;
 
 	@Column({ type: 'boolean', default: false })
@@ -23,9 +34,23 @@ export class AccountSettings {
 	@Column({ type: 'boolean', default: false })
 	notification: boolean;
 
-	@Column({ type: 'boolean', default: false })
+	@Column({
+		type: 'boolean',
+		default: false,
+	})
 	twoStepVerification: boolean;
 
-	@UpdateDateColumn({ type: 'datetime', nullable: false })
+	@UpdateDateColumn({
+		type: 'datetime',
+		nullable: false,
+		transformer: {
+			from(date: string): string {
+				return new Date(date).toISOString();
+			},
+			to(date: string): string {
+				return date;
+			},
+		},
+	})
 	updatedAt: string;
 }

@@ -113,7 +113,7 @@ describe('UsersService', (): void => {
 			expect(generateOTPCodeMock).toHaveBeenCalledTimes(1);
 			expect(createOTPCodeMock).toHaveBeenCalledWith({
 				code: otpCode,
-				expiresAt: '2023-11-22 16:40:00',
+				expiresAt: new Date('2023-11-22 16:40:00').toISOString(),
 			});
 		});
 
