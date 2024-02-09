@@ -32,6 +32,12 @@ describe('AuthController', (): void => {
 			.mockImplementation(async (email: string): Promise<UserShortDto | null> => {
 				return usersMock.find((user: UserFullDto) => user.email === email) || null;
 			}),
+	};
+
+	const otpCodesServiceMock: Partial<OTPCodesService> = {
+		createNewOTPCode: jest.fn().mockImplementation(async (): Promise<boolean> => {
+			return true;
+		}),
 
 		getUserOTPCode: jest
 			.fn()
@@ -40,12 +46,6 @@ describe('AuthController', (): void => {
 					return otpCodesMock.find((otpCode: OTPCode) => otpCode.id === userOTPCodeId) || null;
 				},
 			),
-	};
-
-	const otpCodesServiceMock: Partial<OTPCodesService> = {
-		createNewOTPCode: jest.fn().mockImplementation(async (): Promise<boolean> => {
-			return true;
-		}),
 	};
 
 	const emailServiceMock: Partial<EmailService> = {
@@ -210,15 +210,15 @@ describe('AuthController', (): void => {
 			expect(otpCodesServiceMock.createNewOTPCode).toHaveBeenCalledWith(userOTPCodeId);
 		});
 
-		it('should call getUserOTPCode method in users service to get new code', async (): Promise<void> => {
+		it('should call getUserOTPCode method in otpCodes service to get new code', async (): Promise<void> => {
 			const resendActivationCodeDto = <ResendActivationCodeDto>{
 				email: existingUserEmail,
 			};
 
 			await authController.resendActivationCode(resendActivationCodeDto);
 
-			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalledWith(userOTPCodeId);
+			expect(otpCodesServiceMock.getUserOTPCode).toHaveBeenCalledTimes(1);
+			expect(otpCodesServiceMock.getUserOTPCode).toHaveBeenCalledWith(userOTPCodeId);
 		});
 
 		it('should call sendActivationEmail method in email service to send email with code', async (): Promise<void> => {
@@ -228,8 +228,7 @@ describe('AuthController', (): void => {
 
 			await authController.resendActivationCode(resendActivationCodeDto);
 
-			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalledWith(userOTPCodeId);
+			expect(emailServiceMock.sendActivationEmail).toHaveBeenCalledTimes(1);
 		});
 	});
 });

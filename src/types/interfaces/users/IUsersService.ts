@@ -2,7 +2,6 @@ import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 
 /**
  * Interface representing public methods of users service
@@ -46,14 +45,6 @@ export interface IUsersService {
 	 * @returns null - if user wasn't created
 	 */
 	createUser(signupUserDto: SignupUserDto): Promise<UserShortDto | null>;
-
-	/**
-	 * Method for searching OTP code for user
-	 * @param userOTPCodeId - OTP code id for specific user
-	 * @returns OTPCodeResponseDto - OTP code if code was found and code is not expire
-	 * @returns null - if code wasn't found or expire
-	 */
-	getUserOTPCode(userOTPCodeId: string | null): Promise<OTPCodeResponseDto | null>;
 
 	/**
 	 * Method for creating password reset token for user

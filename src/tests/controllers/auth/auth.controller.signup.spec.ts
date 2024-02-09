@@ -1,4 +1,5 @@
 import { IEmailService } from '@Interfaces/emails/IEmailService';
+import { IOTPCodesService } from '@Interfaces/OTPCodes/IOTPCodesService';
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -59,7 +60,9 @@ describe('AuthController', (): void => {
 
 				return user;
 			}),
+	};
 
+	const otpCodesServiceMock: Partial<IOTPCodesService> = {
 		getUserOTPCode: jest.fn().mockImplementation((): OTPCodeResponseDto => {
 			return otpCode;
 		}),
@@ -81,6 +84,8 @@ describe('AuthController', (): void => {
 			.useValue(usersServiceMock)
 			.overrideProvider(CustomProviders.I_EMAIL_SERVICE)
 			.useValue(emailServiceMock)
+			.overrideProvider(CustomProviders.I_OTP_CODES_SERVICE)
+			.useValue(otpCodesServiceMock)
 			.compile();
 
 		app = moduleFixture.createNestApplication();
@@ -564,7 +569,7 @@ describe('AuthController', (): void => {
 			expect(usersServiceMock.createUser).toHaveBeenCalledWith(user);
 		});
 
-		it('should call getUserOTPCode in users service to get user OTP code', async (): Promise<void> => {
+		it('should call getUserOTPCode in otpCodes service to get user OTP code', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -576,7 +581,7 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
-			expect(usersServiceMock.getUserOTPCode).toHaveBeenCalledTimes(1);
+			expect(otpCodesServiceMock.getUserOTPCode).toHaveBeenCalledTimes(1);
 		});
 
 		it('should call sendActivationEmail in email service to send email with OTP code', async (): Promise<void> => {
