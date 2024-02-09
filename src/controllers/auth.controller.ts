@@ -125,10 +125,7 @@ export class AuthController implements IAuthController {
 			]);
 		}
 
-		await this._otpCodesService.updateOTPCode(accountActivationDto.OTPCodeId, {
-			code: null,
-			expiresAt: null,
-		});
+		await this._otpCodesService.deactivateUserOTPCode(accountActivationDto.OTPCodeId);
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
