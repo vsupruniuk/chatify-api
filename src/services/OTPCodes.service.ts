@@ -50,4 +50,11 @@ export class OTPCodesService implements IOTPCodesService {
 
 		return !isExpired ? otpCode : null;
 	}
+
+	public async deactivateUserOTPCode(userOTPCodeId: string): Promise<boolean> {
+		return await this._otpCodesRepository.updateOTPCode(userOTPCodeId, {
+			expiresAt: null,
+			code: null,
+		});
+	}
 }

@@ -1,6 +1,5 @@
 import { AuthController } from '@Controllers/auth.controller';
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
-import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { OTPCode } from '@Entities/OTPCode.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
@@ -67,9 +66,11 @@ describe('AuthController', (): void => {
 	};
 
 	const otpCodesServiceMock: Partial<IOTPCodesService> = {
-		updateOTPCode: jest.fn().mockImplementation(async (userOTPCodeId: string): Promise<boolean> => {
-			return otpCodesMock.some((code: OTPCode) => code.id === userOTPCodeId);
-		}),
+		deactivateUserOTPCode: jest
+			.fn()
+			.mockImplementation(async (userOTPCodeId: string): Promise<boolean> => {
+				return otpCodesMock.some((code: OTPCode) => code.id === userOTPCodeId);
+			}),
 	};
 
 	beforeAll(async (): Promise<void> => {
@@ -275,7 +276,7 @@ describe('AuthController', (): void => {
 			expect(authServiceMock.activateAccount).toHaveBeenCalledWith(accountActivationDto);
 		});
 
-		it('should call updateOTPCode method in otpCodes service to update opt code after account activation', async (): Promise<void> => {
+		it('should call deactivateUserOTPCode method in otpCodes service to deactivate opt code after account activation', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
 			const accountActivationDto = <AccountActivationDto>{
@@ -284,18 +285,10 @@ describe('AuthController', (): void => {
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			const updateOTPCodeDto: UpdateOTPCodeDto = {
-				code: null,
-				expiresAt: null,
-			};
-
 			await authController.activateAccount(accountActivationDto);
 
-			expect(otpCodesServiceMock.updateOTPCode).toHaveBeenCalledTimes(1);
-			expect(otpCodesServiceMock.updateOTPCode).toHaveBeenCalledWith(
-				existingOTPCodeId,
-				updateOTPCodeDto,
-			);
+			expect(otpCodesServiceMock.deactivateUserOTPCode).toHaveBeenCalledTimes(1);
+			expect(otpCodesServiceMock.deactivateUserOTPCode).toHaveBeenCalledWith(existingOTPCodeId);
 		});
 
 		it('should return response as instance of SuccessfulResponseResult', async (): Promise<void> => {

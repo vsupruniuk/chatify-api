@@ -29,4 +29,12 @@ export interface IOTPCodesService {
 	 * @returns null - if code wasn't found or expire
 	 */
 	getUserOTPCode(userOTPCodeId: string | null): Promise<OTPCodeResponseDto | null>;
+
+	/**
+	 * Method for deactivating user OTP code after it was used
+	 * @param userOTPCodeId - otp code id
+	 * @returns true - if code was deactivated
+	 * @returns false - if code wasn't deactivated
+	 */
+	deactivateUserOTPCode(userOTPCodeId: string): Promise<boolean>;
 }
