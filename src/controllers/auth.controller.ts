@@ -91,7 +91,7 @@ export class AuthController implements IAuthController {
 			throw new UnprocessableEntityException(['Failed to create user. Please try again|email']);
 		}
 
-		const userOTPCode: OTPCodeResponseDto | null = await this._usersService.getUserOTPCode(
+		const userOTPCode: OTPCodeResponseDto | null = await this._otpCodesService.getUserOTPCode(
 			createdUser.OTPCodeId,
 		);
 
@@ -160,7 +160,7 @@ export class AuthController implements IAuthController {
 
 		await this._otpCodesService.createNewOTPCode(user.OTPCodeId);
 
-		const otpCode: OTPCodeResponseDto | null = await this._usersService.getUserOTPCode(
+		const otpCode: OTPCodeResponseDto | null = await this._otpCodesService.getUserOTPCode(
 			user.OTPCodeId,
 		);
 

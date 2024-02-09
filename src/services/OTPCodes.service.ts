@@ -1,3 +1,4 @@
+import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { DateHelper } from '@Helpers/date.helper';
@@ -31,5 +32,22 @@ export class OTPCodesService implements IOTPCodesService {
 		};
 
 		return await this._otpCodesRepository.updateOTPCode(userOTPCodeId, newCode);
+	}
+
+	public async getUserOTPCode(userOTPCodeId: string | null): Promise<OTPCodeResponseDto | null> {
+		if (!userOTPCodeId) {
+			return null;
+		}
+
+		const otpCode: OTPCodeResponseDto | null =
+			await this._otpCodesRepository.getUserOTPCodeById(userOTPCodeId);
+
+		if (!otpCode) {
+			return null;
+		}
+
+		const isExpired: boolean = OTPCodesHelper.isExpired(otpCode);
+
+		return !isExpired ? otpCode : null;
 	}
 }

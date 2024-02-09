@@ -1,5 +1,4 @@
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
@@ -71,23 +70,6 @@ export class UsersService implements IUsersService {
 
 		const createdUserId: string = await this._usersRepository.createUser(userForCreation);
 		return await this._usersRepository.getById(createdUserId);
-	}
-
-	public async getUserOTPCode(userOTPCodeId: string | null): Promise<OTPCodeResponseDto | null> {
-		if (!userOTPCodeId) {
-			return null;
-		}
-
-		const otpCode: OTPCodeResponseDto | null =
-			await this._otpCodesRepository.getUserOTPCodeById(userOTPCodeId);
-
-		if (!otpCode) {
-			return null;
-		}
-
-		const isExpired: boolean = OTPCodesHelper.isExpired(otpCode);
-
-		return !isExpired ? otpCode : null;
 	}
 
 	public async createPasswordResetToken(userId: string): Promise<string | null> {
