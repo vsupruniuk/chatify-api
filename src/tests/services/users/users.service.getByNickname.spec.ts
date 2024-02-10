@@ -12,6 +12,7 @@ import { UsersRepository } from '@Repositories/users.repository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 
 import { users } from '@TestMocks/UserShortDto/users';
+import { TUserGetFields } from '@Types/users/TUserGetFields';
 
 import SpyInstance = jest.SpyInstance;
 
@@ -30,18 +31,36 @@ describe('UsersService', (): void => {
 	});
 
 	describe('getByNickname', (): void => {
-		let getUserByEmailNickname: SpyInstance;
+		let getUserByFieldMock: SpyInstance;
 
 		const usersMock: UserShortDto[] = [...users];
 		const existingUserNickname: string = 't.stark';
 		const notExistingUserNickname: string = 'b.banner';
 
 		beforeEach((): void => {
-			getUserByEmailNickname = jest
-				.spyOn(usersRepository, 'getByNickname')
-				.mockImplementation(async (nickname: string): Promise<UserShortDto | null> => {
-					return usersMock.find((user: UserShortDto) => user.nickname === nickname) || null;
-				});
+			getUserByFieldMock = jest
+				.spyOn(usersRepository, 'getByField')
+				.mockImplementation(
+					async (fieldName: TUserGetFields, fieldValue: string): Promise<UserShortDto | null> => {
+						return (
+							usersMock.find((user: UserShortDto) => {
+								if (fieldName === 'id') {
+									return user.id === fieldValue;
+								}
+
+								if (fieldName === 'email') {
+									return user.email === fieldValue;
+								}
+
+								if (fieldName === 'nickname') {
+									return user.nickname === fieldValue;
+								}
+
+								return false;
+							}) || null
+						);
+					},
+				);
 		});
 
 		afterEach((): void => {
@@ -59,8 +78,8 @@ describe('UsersService', (): void => {
 		it('should use getByEmail method from users repository for searching user', async (): Promise<void> => {
 			await usersService.getByNickname(existingUserNickname);
 
-			expect(getUserByEmailNickname).toHaveBeenCalledTimes(1);
-			expect(getUserByEmailNickname).toHaveBeenCalledWith(existingUserNickname);
+			expect(getUserByFieldMock).toHaveBeenCalledTimes(1);
+			expect(getUserByFieldMock).toHaveBeenCalledWith('nickname', existingUserNickname);
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {
@@ -78,7 +97,8 @@ describe('UsersService', (): void => {
 		});
 
 		it('should return null, if user not exist', async (): Promise<void> => {
-			const foundedUser = await usersService.getByNickname(notExistingUserNickname);
+			const foundedUser: UserShortDto | null =
+				await usersService.getByNickname(notExistingUserNickname);
 
 			expect(foundedUser).toBeNull();
 		});

@@ -7,7 +7,7 @@ import { DataSource, DeleteResult, InsertResult, Repository, UpdateResult } from
 
 @Injectable()
 export class JWTTokensRepository extends Repository<JWTToken> implements IJWTTokensRepository {
-	constructor(private _dataSource: DataSource) {
+	constructor(_dataSource: DataSource) {
 		super(JWTToken, _dataSource.createEntityManager());
 	}
 

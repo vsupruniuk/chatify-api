@@ -10,7 +10,7 @@ export class AccountSettingsRepository
 	extends Repository<AccountSettings>
 	implements IAccountSettingsRepository
 {
-	constructor(private _dataSource: DataSource) {
+	constructor(_dataSource: DataSource) {
 		super(AccountSettings, _dataSource.createEntityManager());
 	}
 

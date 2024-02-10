@@ -37,11 +37,11 @@ export class UsersService implements IUsersService {
 	}
 
 	public async getByEmail(email: string): Promise<UserShortDto | null> {
-		return await this._usersRepository.getByEmail(email);
+		return await this._usersRepository.getByField('email', email);
 	}
 
 	public async getByNickname(nickname: string): Promise<UserShortDto | null> {
-		return await this._usersRepository.getByNickname(nickname);
+		return await this._usersRepository.getByField('nickname', nickname);
 	}
 
 	public async getByResetPasswordToken(token: string): Promise<UserFullDto | null> {
@@ -69,7 +69,8 @@ export class UsersService implements IUsersService {
 		});
 
 		const createdUserId: string = await this._usersRepository.createUser(userForCreation);
-		return await this._usersRepository.getById(createdUserId);
+
+		return await this._usersRepository.getByField('id', createdUserId);
 	}
 
 	public async createPasswordResetToken(userId: string): Promise<string | null> {

@@ -25,6 +25,7 @@ export default async (): Promise<Config> => {
 			'@Responses/(.*)': '<rootDir>/src/types/responses/$1',
 			'@Services/(.*)': '<rootDir>/src/services/$1',
 			'@TestMocks/(.*)': '<rootDir>/src/tests/mocks/$1',
+			'@Types/(.*)': '<rootDir>/src/types/types/$1',
 		},
 		verbose: true,
 		preset: 'ts-jest',

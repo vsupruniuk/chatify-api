@@ -1,6 +1,7 @@
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { Injectable } from '@nestjs/common';
+import { TUserGetFields } from '@Types/users/TUserGetFields';
 
 import { DataSource, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
@@ -12,13 +13,16 @@ import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 
 @Injectable()
 export class UsersRepository extends Repository<User> implements IUsersRepository {
-	constructor(private _dataSource: DataSource) {
+	constructor(_dataSource: DataSource) {
 		super(User, _dataSource.createEntityManager());
 	}
 
-	public async getById(id: string): Promise<UserShortDto | null> {
+	public async getByField(
+		fieldName: TUserGetFields,
+		fieldValue: string,
+	): Promise<UserShortDto | null> {
 		const user: User | null = await this.findOne({
-			where: { id },
+			where: { [fieldName]: fieldValue },
 		});
 
 		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
@@ -28,18 +32,6 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 		const user: User | null = await this.findOne({ where: { email } });
 
 		return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
-	}
-
-	public async getByEmail(email: string): Promise<UserShortDto | null> {
-		const user: User | null = await this.findOne({ where: { email } });
-
-		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
-	}
-
-	public async getByNickname(nickname: string): Promise<UserShortDto | null> {
-		const user: User | null = await this.findOne({ where: { nickname } });
-
-		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async getByResetPasswordToken(token: string): Promise<UserFullDto | null> {

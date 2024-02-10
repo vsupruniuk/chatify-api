@@ -12,6 +12,7 @@ import { UsersRepository } from '@Repositories/users.repository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 
 import { users } from '@TestMocks/UserShortDto/users';
+import { TUserGetFields } from '@Types/users/TUserGetFields';
 
 import SpyInstance = jest.SpyInstance;
 
@@ -30,18 +31,36 @@ describe('usersService', (): void => {
 	});
 
 	describe('getByEmail', (): void => {
-		let getUserByEmailMock: SpyInstance;
+		let getUserByFieldMock: SpyInstance;
 
 		const usersMock: UserShortDto[] = [...users];
 		const existingUserEmail: string = 'tony@mail.com';
 		const notExistingUserEmail: string = 'bruce@mail.com';
 
 		beforeEach((): void => {
-			getUserByEmailMock = jest
-				.spyOn(usersRepository, 'getByEmail')
-				.mockImplementation(async (email: string): Promise<UserShortDto | null> => {
-					return usersMock.find((user: UserShortDto) => user.email === email) || null;
-				});
+			getUserByFieldMock = jest
+				.spyOn(usersRepository, 'getByField')
+				.mockImplementation(
+					async (fieldName: TUserGetFields, fieldValue: string): Promise<UserShortDto | null> => {
+						return (
+							usersMock.find((user: UserShortDto) => {
+								if (fieldName === 'id') {
+									return user.id === fieldValue;
+								}
+
+								if (fieldName === 'email') {
+									return user.email === fieldValue;
+								}
+
+								if (fieldName === 'nickname') {
+									return user.nickname === fieldValue;
+								}
+
+								return false;
+							}) || null
+						);
+					},
+				);
 		});
 
 		afterEach((): void => {
@@ -59,8 +78,8 @@ describe('usersService', (): void => {
 		it('should use getByEmail method from users repository for searching user', async (): Promise<void> => {
 			await usersService.getByEmail(existingUserEmail);
 
-			expect(getUserByEmailMock).toHaveBeenCalledTimes(1);
-			expect(getUserByEmailMock).toHaveBeenCalledWith(existingUserEmail);
+			expect(getUserByFieldMock).toHaveBeenCalledTimes(1);
+			expect(getUserByFieldMock).toHaveBeenCalledWith('email', existingUserEmail);
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {

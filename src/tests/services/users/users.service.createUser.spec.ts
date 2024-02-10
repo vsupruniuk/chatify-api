@@ -34,7 +34,7 @@ describe('UsersService', (): void => {
 	});
 
 	describe('createUser', (): void => {
-		let getUserByIdMock: SpyInstance;
+		let getUserByFieldMock: SpyInstance;
 		let createUserMock: SpyInstance;
 		let createDefaultSettingsMock: SpyInstance;
 		let createOTPCodeMock: SpyInstance;
@@ -58,7 +58,7 @@ describe('UsersService', (): void => {
 		beforeEach((): void => {
 			jest.useFakeTimers();
 
-			getUserByIdMock = jest.spyOn(usersRepository, 'getById').mockResolvedValue(
+			getUserByFieldMock = jest.spyOn(usersRepository, 'getByField').mockResolvedValue(
 				plainToInstance(UserShortDto, <UserShortDto>{
 					...user,
 					id: userId,
@@ -160,10 +160,11 @@ describe('UsersService', (): void => {
 			expect(createdUser).toBeInstanceOf(UserShortDto);
 		});
 
-		it('should call getById method from users repository to get created user by id', async (): Promise<void> => {
+		it('should call getByField method from users repository to get created user by id', async (): Promise<void> => {
 			await usersService.createUser(user);
 
-			expect(getUserByIdMock).toHaveBeenCalledWith(userId);
+			expect(getUserByFieldMock).toHaveBeenCalledTimes(1);
+			expect(getUserByFieldMock).toHaveBeenCalledWith('id', userId);
 		});
 	});
 });
