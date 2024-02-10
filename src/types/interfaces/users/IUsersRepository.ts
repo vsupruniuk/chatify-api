@@ -2,18 +2,20 @@ import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
+import { TUserGetFields } from '@Types/users/TUserGetFields';
 
 /**
  * Interface representing public methods of users repository
  */
 export interface IUsersRepository {
 	/**
-	 * Method for searching one specific user by id
-	 * @param id - user id for searching
+	 * Method for searching user by one of its fields
+	 * @param fieldName - acceptable field for searching
+	 * @param fieldValue - value of field for searching
 	 * @returns UserShortDto - if user was found
 	 * @returns null - if user wasn't found
 	 */
-	getById(id: string): Promise<UserShortDto | null>;
+	getByField(fieldName: TUserGetFields, fieldValue: string): Promise<UserShortDto | null>;
 
 	/**
 	 * Method for searching user by id. Return all user information (except service information of the DB)
@@ -22,22 +24,6 @@ export interface IUsersRepository {
 	 * @returns null - if user wasn't found
 	 */
 	getFullUserByEmail(email: string): Promise<UserFullDto | null>;
-
-	/**
-	 * Method for searching one specific user by email
-	 * @param email - user email for searching
-	 * @returns UserShortDto - if user was found
-	 * @returns null - if user wasn't found
-	 */
-	getByEmail(email: string): Promise<UserShortDto | null>;
-
-	/**
-	 * Method for searching one specific user by nickname
-	 * @param nickname - user nickname for searching
-	 * @returns UserShortDto - if user was found
-	 * @returns null - if user wasn't found
-	 */
-	getByNickname(nickname: string): Promise<UserShortDto | null>;
 
 	/**
 	 * Method for searching user by its password reset token

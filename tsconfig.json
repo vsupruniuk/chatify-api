@@ -32,7 +32,8 @@
       "@Repositories/*": ["src/repositories/*"],
       "@Responses/*": ["src/types/responses/*"],
       "@Services/*": ["src/services/*"],
-      "@TestMocks/*": ["src/tests/mocks/*"]
+      "@TestMocks/*": ["src/tests/mocks/*"],
+      "@Types/*": ["src/types/types/*"]
     },
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false

@@ -11,7 +11,7 @@ import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
 
 @Injectable()
 export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodesRepository {
-	constructor(private _dataSource: DataSource) {
+	constructor(_dataSource: DataSource) {
 		super(OTPCode, _dataSource.createEntityManager());
 	}
 
