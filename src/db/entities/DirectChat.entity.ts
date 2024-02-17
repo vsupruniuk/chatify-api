@@ -1,10 +1,4 @@
-import {
-	Column,
-	CreateDateColumn,
-	Entity,
-	PrimaryGeneratedColumn,
-	UpdateDateColumn,
-} from 'typeorm';
+import { CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 /**
  * Domain entity representing direct chat between 2 users
@@ -27,9 +21,6 @@ export class DirectChat {
 		},
 	})
 	createdAt: string;
-
-	@Column({ type: 'boolean', default: true })
-	isEmpty: boolean;
 
 	@UpdateDateColumn({
 		type: 'datetime',

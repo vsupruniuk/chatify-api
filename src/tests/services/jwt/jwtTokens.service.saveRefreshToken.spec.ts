@@ -51,11 +51,11 @@ describe('jwtTokensService', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(jwtTokensService.generateRefreshToken).toBeDefined();
+			expect(jwtTokensService.saveRefreshToken).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(jwtTokensService.generateRefreshToken).toBeInstanceOf(Function);
+			expect(jwtTokensService.saveRefreshToken).toBeInstanceOf(Function);
 		});
 
 		it('should call getById method in jwtTokens repository to check if token already exist', async (): Promise<void> => {

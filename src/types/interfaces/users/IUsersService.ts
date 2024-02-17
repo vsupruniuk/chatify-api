@@ -47,14 +47,6 @@ export interface IUsersService {
 	createUser(signupUserDto: SignupUserDto): Promise<UserShortDto | null>;
 
 	/**
-	 * Method for creating password reset token for user
-	 * @param userId - user id for creating token
-	 * @returns token - if token was created and saved to db
-	 * @returns null - if token wasn't created
-	 */
-	createPasswordResetToken(userId: string): Promise<string | null>;
-
-	/**
 	 * Method for updating user password
 	 * @param userId - id of user which will be updated
 	 * @param updateUserDto - dto with a new user data

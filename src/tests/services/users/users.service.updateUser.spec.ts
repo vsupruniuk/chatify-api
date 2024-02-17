@@ -3,10 +3,12 @@ import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
+import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
+import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
 import { UsersRepository } from '@Repositories/users.repository';
 import { UsersService } from '@Services/users.service';
 import { users } from '@TestMocks/UserFullDto/users';
@@ -18,13 +20,20 @@ describe('UsersService', (): void => {
 	let usersRepository: IUsersRepository;
 	let accountSettingsRepository: IAccountSettingsRepository;
 	let otpCodesRepository: IOTPCodesRepository;
+	let passwordResetTokensRepository: IPasswordResetTokensRepository;
 
 	beforeEach((): void => {
 		usersRepository = new UsersRepository(connectionSource);
 		accountSettingsRepository = new AccountSettingsRepository(connectionSource);
 		otpCodesRepository = new OTPCodesRepository(connectionSource);
+		passwordResetTokensRepository = new PasswordResetTokensRepository(connectionSource);
 
-		usersService = new UsersService(accountSettingsRepository, otpCodesRepository, usersRepository);
+		usersService = new UsersService(
+			accountSettingsRepository,
+			otpCodesRepository,
+			usersRepository,
+			passwordResetTokensRepository,
+		);
 	});
 
 	describe('updateUser', (): void => {

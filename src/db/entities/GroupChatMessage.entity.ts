@@ -2,6 +2,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	Index,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -42,6 +43,7 @@ export class GroupChatMessage {
 	})
 	dateTime: string;
 
+	@Index({ unique: true })
 	@Column({
 		type: 'varchar',
 		length: 255,
@@ -56,6 +58,13 @@ export class GroupChatMessage {
 	})
 	messageText: string;
 
+	@Column({
+		type: 'varchar',
+		length: 255,
+		nullable: false,
+	})
+	senderId: string;
+
 	@UpdateDateColumn({
 		type: 'datetime',
 		nullable: false,
@@ -69,11 +78,4 @@ export class GroupChatMessage {
 		},
 	})
 	updatedAt: string;
-
-	@Column({
-		type: 'varchar',
-		length: 255,
-		nullable: false,
-	})
-	userId: string;
 }

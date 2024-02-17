@@ -1,3 +1,5 @@
+import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
+import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
 import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 
@@ -24,13 +26,20 @@ describe('UsersService', (): void => {
 	let usersRepository: IUsersRepository;
 	let accountSettingsRepository: IAccountSettingsRepository;
 	let otpCodesRepository: IOTPCodesRepository;
+	let passwordResetTokensRepository: IPasswordResetTokensRepository;
 
 	beforeEach((): void => {
 		usersRepository = new UsersRepository(connectionSource);
 		accountSettingsRepository = new AccountSettingsRepository(connectionSource);
 		otpCodesRepository = new OTPCodesRepository(connectionSource);
+		passwordResetTokensRepository = new PasswordResetTokensRepository(connectionSource);
 
-		usersService = new UsersService(accountSettingsRepository, otpCodesRepository, usersRepository);
+		usersService = new UsersService(
+			accountSettingsRepository,
+			otpCodesRepository,
+			usersRepository,
+			passwordResetTokensRepository,
+		);
 	});
 
 	describe('createUser', (): void => {

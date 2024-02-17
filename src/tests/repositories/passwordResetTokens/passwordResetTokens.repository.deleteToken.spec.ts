@@ -1,13 +1,13 @@
 import { connectionSource } from '@DB/typeOrmConfig';
-import { JWTTokensRepository } from '@Repositories/JWTTokens.repository';
+import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
 import { DeleteResult, FindOptionsWhere, ObjectId } from 'typeorm';
 import SpyInstance = jest.SpyInstance;
 
-describe('jwtTokensRepository', (): void => {
-	let jwtTokensRepository: JWTTokensRepository;
+describe('passwordResetTokensRepository', (): void => {
+	let passwordResetTokensRepository: PasswordResetTokensRepository;
 
 	beforeEach((): void => {
-		jwtTokensRepository = new JWTTokensRepository(connectionSource);
+		passwordResetTokensRepository = new PasswordResetTokensRepository(connectionSource);
 	});
 
 	describe('deleteToken', (): void => {
@@ -18,7 +18,7 @@ describe('jwtTokensRepository', (): void => {
 
 		beforeEach((): void => {
 			deleteMock = jest
-				.spyOn(jwtTokensRepository, 'delete')
+				.spyOn(passwordResetTokensRepository, 'delete')
 				.mockImplementation(
 					async <T>(
 						criteria:
@@ -47,28 +47,28 @@ describe('jwtTokensRepository', (): void => {
 		});
 
 		it('should be declared', async (): Promise<void> => {
-			expect(jwtTokensRepository.deleteToken).toBeDefined();
+			expect(passwordResetTokensRepository.deleteToken).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(jwtTokensRepository.deleteToken).toBeInstanceOf(Function);
+			expect(passwordResetTokensRepository.deleteToken).toBeInstanceOf(Function);
 		});
 
 		it('should call delete method to delete token', async (): Promise<void> => {
-			await jwtTokensRepository.deleteToken(existingTokenId);
+			await passwordResetTokensRepository.deleteToken(existingTokenId);
 
 			expect(deleteMock).toHaveBeenCalledTimes(1);
 			expect(deleteMock).toHaveBeenCalledWith({ id: existingTokenId });
 		});
 
 		it('should return false if token with given id not exist', async (): Promise<void> => {
-			const result: boolean = await jwtTokensRepository.deleteToken(notExistingTokenId);
+			const result: boolean = await passwordResetTokensRepository.deleteToken(notExistingTokenId);
 
 			expect(result).toBe(false);
 		});
 
 		it('should return true if token with given id exist and was deleted', async (): Promise<void> => {
-			const result: boolean = await jwtTokensRepository.deleteToken(existingTokenId);
+			const result: boolean = await passwordResetTokensRepository.deleteToken(existingTokenId);
 
 			expect(result).toBe(true);
 		});

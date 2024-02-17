@@ -2,6 +2,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	Index,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -28,6 +29,7 @@ export class JWTToken {
 	})
 	createdAt: string;
 
+	@Index({ unique: true })
 	@Column({
 		type: 'varchar',
 		length: 500,

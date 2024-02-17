@@ -20,6 +20,7 @@ import { IAuthService } from '@Interfaces/auth/IAuthService';
 import { IEmailService } from '@Interfaces/emails/IEmailService';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
 import { IOTPCodesService } from '@Interfaces/OTPCodes/IOTPCodesService';
+import { IPasswordResetTokensService } from '@Interfaces/passwordResetTokens/IPasswordResetTokens.service';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import {
@@ -59,6 +60,9 @@ export class AuthController implements IAuthController {
 
 		@Inject(CustomProviders.I_JWT_TOKENS_SERVICE)
 		private readonly _jwtTokensService: IJWTTokensService,
+
+		@Inject(CustomProviders.I_PASSWORD_RESET_TOKENS_SERVICE)
+		private readonly _passwordResetTokensService: IPasswordResetTokensService,
 	) {}
 
 	@Post('/signup')
@@ -183,13 +187,18 @@ export class AuthController implements IAuthController {
 			ResponseStatus.SUCCESS,
 		);
 
-		const user: UserShortDto | null = await this._usersService.getByEmail(resetPasswordDto.email);
+		const user: UserFullDto | null = await this._usersService.getFullUserByEmail(
+			resetPasswordDto.email,
+		);
 
 		if (!user) {
 			throw new NotFoundException(['User with this email does not exist|email']);
 		}
 
-		const token: string | null = await this._usersService.createPasswordResetToken(user.id);
+		const token: string | null = await this._passwordResetTokensService.saveToken(
+			user.id,
+			user.passwordResetTokenId,
+		);
 
 		if (!token) {
 			throw new UnprocessableEntityException(['Failed to reset password. Please try again|email']);
