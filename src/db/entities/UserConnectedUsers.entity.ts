@@ -2,18 +2,20 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	Index,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
 
 /**
- * Domain entity representing junction table wo pair users with their connected users
+ * Domain entity representing junction table who pair users with their connected users
  */
 @Entity('UserConnectedUsers')
 export class UserConnectedUsers {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
+	@Index({ unique: true })
 	@Column({
 		type: 'varchar',
 		length: 255,
@@ -49,6 +51,7 @@ export class UserConnectedUsers {
 	})
 	updatedAt: string;
 
+	@Index({ unique: true })
 	@Column({
 		type: 'varchar',
 		length: 255,

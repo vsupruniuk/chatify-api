@@ -1,10 +1,12 @@
 import { connectionSource } from '@DB/typeOrmConfig';
+import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
 
 import { UsersService } from '@Services/users.service';
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
@@ -21,13 +23,20 @@ describe('usersService', (): void => {
 	let usersRepository: IUsersRepository;
 	let accountSettingsRepository: IAccountSettingsRepository;
 	let otpCodesRepository: IOTPCodesRepository;
+	let passwordResetTokensRepository: IPasswordResetTokensRepository;
 
 	beforeEach((): void => {
 		usersRepository = new UsersRepository(connectionSource);
 		accountSettingsRepository = new AccountSettingsRepository(connectionSource);
 		otpCodesRepository = new OTPCodesRepository(connectionSource);
+		passwordResetTokensRepository = new PasswordResetTokensRepository(connectionSource);
 
-		usersService = new UsersService(accountSettingsRepository, otpCodesRepository, usersRepository);
+		usersService = new UsersService(
+			accountSettingsRepository,
+			otpCodesRepository,
+			usersRepository,
+			passwordResetTokensRepository,
+		);
 	});
 
 	describe('getByEmail', (): void => {

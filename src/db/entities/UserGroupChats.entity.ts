@@ -2,6 +2,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	Index,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -14,6 +15,7 @@ export class UserGroupChats {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
+	@Index({ unique: true })
 	@Column({
 		type: 'varchar',
 		length: 255,
@@ -49,6 +51,7 @@ export class UserGroupChats {
 	})
 	updatedAt: string;
 
+	@Index({ unique: true })
 	@Column({
 		type: 'varchar',
 		length: 255,

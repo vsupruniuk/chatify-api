@@ -29,7 +29,7 @@ export class UserFullDto {
 	password: string;
 
 	@Expose()
-	passwordResetToken: string | null;
+	passwordResetTokenId: string | null;
 
 	@Expose()
 	accountSettingsId: string;

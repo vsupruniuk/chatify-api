@@ -18,12 +18,14 @@ describe('AuthController', (): void => {
 	let authController: AuthController;
 
 	const usersMock: UserFullDto[] = [...users];
+	const existingToken: string = '1662043c-4d4b-4424-ac31-45189dedd099';
+	const notExistingToken: string = '1662043c-4d4b-4424-ac31-45189dedd000';
 
 	const usersServiceMock: Partial<IUsersService> = {
 		getByResetPasswordToken: jest
 			.fn()
 			.mockImplementation(async (token: string): Promise<UserFullDto | null> => {
-				return usersMock.find((user: UserFullDto) => user.passwordResetToken === token) || null;
+				return token === existingToken ? usersMock[0] : null;
 			}),
 
 		updateUser: jest.fn().mockImplementation(async (userId: string): Promise<boolean> => {
@@ -237,7 +239,7 @@ describe('AuthController', (): void => {
 			} as ResetPasswordConfirmationDto;
 
 			await request(app.getHttpServer())
-				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd090')
+				.post(`/auth/reset-password/${notExistingToken}`)
 				.send(resetPasswordConfirmationDto)
 				.expect(HttpStatus.NOT_FOUND);
 		});
@@ -256,36 +258,33 @@ describe('AuthController', (): void => {
 			};
 
 			await request(app.getHttpServer())
-				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
+				.post(`/auth/reset-password/${existingToken}`)
 				.send(resetPasswordConfirmationDto)
 				.expect(HttpStatus.OK)
 				.expect(responseResult);
 		});
 
-		it('should call getByResetPasswordToken in users service to find user by ist reset token', async (): Promise<void> => {
+		it('should call getByResetPasswordToken in users service to find user by reset token', async (): Promise<void> => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
 			} as ResetPasswordConfirmationDto;
 
-			const resetToken: string = '1662043c-4d4b-4424-ac31-45189dedd099';
-
-			await authController.resetPasswordConfirmation(resetPasswordConfirmationDto, resetToken);
+			await authController.resetPasswordConfirmation(resetPasswordConfirmationDto, existingToken);
 
 			expect(usersServiceMock.getByResetPasswordToken).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.getByResetPasswordToken).toHaveBeenCalledWith(resetToken);
+			expect(usersServiceMock.getByResetPasswordToken).toHaveBeenCalledWith(existingToken);
 		});
 
-		it('should call updateUser in users service to find user by ist reset token', async (): Promise<void> => {
+		it('should call updateUser in users service to update user password', async (): Promise<void> => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
 			} as ResetPasswordConfirmationDto;
 
-			const resetToken: string = '1662043c-4d4b-4424-ac31-45189dedd099';
 			const userId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
 
-			await authController.resetPasswordConfirmation(resetPasswordConfirmationDto, resetToken);
+			await authController.resetPasswordConfirmation(resetPasswordConfirmationDto, existingToken);
 
 			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(userId, {
@@ -293,7 +292,7 @@ describe('AuthController', (): void => {
 			});
 		});
 
-		it('should return response as instance of', async (): Promise<void> => {
+		it('should return response as instance of ResponseResult', async (): Promise<void> => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',

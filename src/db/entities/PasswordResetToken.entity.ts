@@ -7,11 +7,8 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
-/**
- * Domain entity representing messages in direct chats
- */
-@Entity('DirectChatMessages')
-export class DirectChatMessage {
+@Entity('PasswordResetTokens')
+export class PasswordResetToken {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
@@ -31,7 +28,7 @@ export class DirectChatMessage {
 
 	@Column({
 		type: 'datetime',
-		nullable: false,
+		nullable: true,
 		transformer: {
 			from(date: string): string {
 				return new Date(date).toISOString();
@@ -41,29 +38,15 @@ export class DirectChatMessage {
 			},
 		},
 	})
-	dateTime: string;
+	expiresAt: string | null;
 
-	@Index({ unique: true })
+	@Index()
 	@Column({
 		type: 'varchar',
 		length: 255,
-		nullable: false,
+		nullable: true,
 	})
-	directChatId: string;
-
-	@Column({
-		type: 'varchar',
-		length: 1000,
-		nullable: false,
-	})
-	messageText: string;
-
-	@Column({
-		type: 'varchar',
-		length: 255,
-		nullable: false,
-	})
-	senderId: string;
+	token: string;
 
 	@UpdateDateColumn({
 		type: 'datetime',

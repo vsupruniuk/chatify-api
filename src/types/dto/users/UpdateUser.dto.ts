@@ -8,5 +8,5 @@ export class UpdateUserDto {
 	lastName: string | null;
 	nickname: string;
 	password: string;
-	passwordResetToken: string | null;
+	passwordResetTokenId: string | null;
 }

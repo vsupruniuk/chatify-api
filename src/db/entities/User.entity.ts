@@ -2,6 +2,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	Index,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -42,6 +43,7 @@ export class User {
 	})
 	createdAt: string;
 
+	@Index({ unique: true })
 	@Column({
 		type: 'varchar',
 		length: 255,
@@ -67,6 +69,7 @@ export class User {
 	})
 	lastName: string | null;
 
+	@Index({ unique: true })
 	@Column({
 		type: 'varchar',
 		length: 255,
@@ -81,13 +84,6 @@ export class User {
 		nullable: false,
 	})
 	password: string;
-
-	@Column({
-		type: 'varchar',
-		length: 255,
-		nullable: true,
-	})
-	passwordResetToken: string | null;
 
 	@UpdateDateColumn({
 		type: 'datetime',
@@ -123,4 +119,11 @@ export class User {
 		nullable: true,
 	})
 	OTPCodeId: string | null;
+
+	@Column({
+		type: 'varchar',
+		length: 255,
+		nullable: true,
+	})
+	passwordResetTokenId: string | null;
 }

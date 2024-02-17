@@ -1,4 +1,5 @@
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
+import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
@@ -10,6 +11,7 @@ import { DateHelper } from '@Helpers/date.helper';
 import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
+import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
@@ -17,7 +19,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 import { plainToInstance } from 'class-transformer';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -30,10 +31,13 @@ export class UsersService implements IUsersService {
 
 		@Inject(CustomProviders.I_USERS_REPOSITORY)
 		private readonly _usersRepository: IUsersRepository,
+
+		@Inject(CustomProviders.I_PASSWORD_RESET_TOKENS_REPOSITORY)
+		private readonly _passwordResetTokenRepository: IPasswordResetTokensRepository,
 	) {}
 
 	public async getFullUserByEmail(email: string): Promise<UserFullDto | null> {
-		return await this._usersRepository.getFullUserByEmail(email);
+		return await this._usersRepository.getFullUserByField('email', email);
 	}
 
 	public async getByEmail(email: string): Promise<UserShortDto | null> {
@@ -45,7 +49,14 @@ export class UsersService implements IUsersService {
 	}
 
 	public async getByResetPasswordToken(token: string): Promise<UserFullDto | null> {
-		return await this._usersRepository.getByResetPasswordToken(token);
+		const foundedToken: PasswordResetTokenDto | null =
+			await this._passwordResetTokenRepository.getByField('token', token);
+
+		if (!foundedToken) {
+			return null;
+		}
+
+		return await this._usersRepository.getFullUserByField('passwordResetTokenId', foundedToken.id);
 	}
 
 	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto | null> {
@@ -71,16 +82,6 @@ export class UsersService implements IUsersService {
 		const createdUserId: string = await this._usersRepository.createUser(userForCreation);
 
 		return await this._usersRepository.getByField('id', createdUserId);
-	}
-
-	public async createPasswordResetToken(userId: string): Promise<string | null> {
-		const passwordResetToken: string = uuidv4();
-
-		const isUpdated: boolean = await this._usersRepository.updateUser(userId, {
-			passwordResetToken,
-		});
-
-		return isUpdated ? passwordResetToken : null;
 	}
 
 	public async updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean> {

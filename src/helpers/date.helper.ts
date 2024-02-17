@@ -4,7 +4,7 @@
 export class DateHelper {
 	/**
 	 * Generate and return current date and time
-	 * @returns dateTime - current date and time in format "YYYY-MM-dd hh:mm:ss"
+	 * @returns dateTime - current date and time in ISO string format
 	 */
 	public static dateTimeNow(): string {
 		const dateNow: Date = new Date();
@@ -15,7 +15,7 @@ export class DateHelper {
 	/**
 	 * Generate and return date and time in future
 	 * @param milliseconds - milliseconds to add
-	 * @returns dateTime - future date and time in format "YYYY-MM-dd hh:mm:ss"
+	 * @returns dateTime - future date and time in ISO string format
 	 */
 	public static dateTimeFuture(milliseconds: number): string {
 		const dateNow: number = Date.now();

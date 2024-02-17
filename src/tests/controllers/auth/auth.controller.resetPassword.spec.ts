@@ -5,6 +5,7 @@ import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { IEmailService } from '@Interfaces/emails/IEmailService';
+import { IPasswordResetTokensService } from '@Interfaces/passwordResetTokens/IPasswordResetTokens.service';
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
@@ -22,24 +23,21 @@ describe('AuthController', (): void => {
 	const usersMock: UserFullDto[] = [...users];
 
 	const usersServiceMock: Partial<IUsersService> = {
-		getByEmail: jest
+		getFullUserByEmail: jest
 			.fn()
 			.mockImplementation(async (userEmail: string): Promise<UserShortDto | null> => {
 				return usersMock.find((user: UserShortDto) => user.email === userEmail) || null;
-			}),
-
-		createPasswordResetToken: jest
-			.fn()
-			.mockImplementation(async (userId: string): Promise<string | null> => {
-				const isUserExist: UserFullDto | null =
-					usersMock.find((user: UserFullDto) => user.id === userId) || null;
-
-				return isUserExist ? 'uuid-reset-token' : null;
 			}),
 	};
 
 	const emailServiceMock: Partial<IEmailService> = {
 		sendResetPasswordEmail: jest.fn(),
+	};
+
+	const passwordResetTokenServiceMock: Partial<IPasswordResetTokensService> = {
+		saveToken: jest.fn().mockImplementation(async (): Promise<string> => {
+			return 'password-reset-token';
+		}),
 	};
 
 	beforeAll(async (): Promise<void> => {
@@ -50,6 +48,8 @@ describe('AuthController', (): void => {
 			.useValue(usersServiceMock)
 			.overrideProvider(CustomProviders.I_EMAIL_SERVICE)
 			.useValue(emailServiceMock)
+			.overrideProvider(CustomProviders.I_PASSWORD_RESET_TOKENS_SERVICE)
+			.useValue(passwordResetTokenServiceMock)
 			.compile();
 
 		app = moduleFixture.createNestApplication();
@@ -146,15 +146,15 @@ describe('AuthController', (): void => {
 			expect(responseResult).toBeInstanceOf(ResponseResult);
 		});
 
-		it('should call getByEmail method in users service to find user', async (): Promise<void> => {
+		it('should call getFullUserByEmail method in users service to find user', async (): Promise<void> => {
 			const resetPasswordDto: ResetPasswordDto = {
 				email: 'tony@mail.com',
 			};
 
 			await authController.resetPassword(resetPasswordDto);
 
-			expect(usersServiceMock.getByEmail).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.getByEmail).toHaveBeenCalledWith(resetPasswordDto.email);
+			expect(usersServiceMock.getFullUserByEmail).toHaveBeenCalledTimes(1);
+			expect(usersServiceMock.getFullUserByEmail).toHaveBeenCalledWith(resetPasswordDto.email);
 		});
 
 		it('should call createPasswordResetToken method in users service to create token', async (): Promise<void> => {
@@ -163,11 +163,15 @@ describe('AuthController', (): void => {
 			};
 
 			const userId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
+			const passwordResetTokenId: string = '1';
 
 			await authController.resetPassword(resetPasswordDto);
 
-			expect(usersServiceMock.createPasswordResetToken).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.createPasswordResetToken).toHaveBeenCalledWith(userId);
+			expect(passwordResetTokenServiceMock.saveToken).toHaveBeenCalledTimes(1);
+			expect(passwordResetTokenServiceMock.saveToken).toHaveBeenCalledWith(
+				userId,
+				passwordResetTokenId,
+			);
 		});
 
 		it('should call sendResetPasswordEmail method in email service to send email with reset link', async (): Promise<void> => {
@@ -176,7 +180,7 @@ describe('AuthController', (): void => {
 			};
 
 			const userName: string = 'Tony';
-			const token: string = 'uuid-reset-token';
+			const token: string = 'password-reset-token';
 
 			await authController.resetPassword(resetPasswordDto);
 

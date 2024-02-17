@@ -42,9 +42,6 @@ export class GroupChat {
 	})
 	createdAt: string;
 
-	@Column({ type: 'boolean', default: true })
-	isEmpty: boolean;
-
 	@UpdateDateColumn({
 		type: 'datetime',
 		nullable: false,
