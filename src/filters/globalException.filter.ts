@@ -1,4 +1,6 @@
+import { Environments } from '@Enums/Environments.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
+import { DateHelper } from '@Helpers/date.helper';
 import { IValidationError } from '@Interfaces/errors/IValidationError';
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
@@ -43,6 +45,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 						field: null,
 					},
 			  ] as unknown as ValidationErrorField[]);
+
+		responseResult.errorsLength = responseResult.errors.length;
+
+		if (process.env.NODE_ENV === Environments.DEV) {
+			responseResult.stack = exception.stack;
+			responseResult.dateTime = DateHelper.dateTimeNow();
+		}
 
 		response.status(responseResult.code).json(responseResult);
 	}
