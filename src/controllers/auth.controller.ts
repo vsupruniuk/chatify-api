@@ -92,7 +92,7 @@ export class AuthController implements IAuthController {
 		const createdUser: UserShortDto | null = await this._usersService.createUser(signupUserDTO);
 
 		if (!createdUser) {
-			throw new UnprocessableEntityException(['Failed to create user. Please try again|email']);
+			throw new UnprocessableEntityException(['Failed to create user. Please try again']);
 		}
 
 		const userOTPCode: OTPCodeResponseDto | null = await this._otpCodesService.getUserOTPCode(
@@ -100,7 +100,7 @@ export class AuthController implements IAuthController {
 		);
 
 		if (!userOTPCode || !userOTPCode.code) {
-			throw new UnprocessableEntityException(['Failed to create user. Please try again|email']);
+			throw new UnprocessableEntityException(['Failed to create user. Please try again']);
 		}
 
 		await this._emailService.sendActivationEmail(createdUser.email, userOTPCode.code);
@@ -166,9 +166,7 @@ export class AuthController implements IAuthController {
 		);
 
 		if (!otpCode || !otpCode.code) {
-			throw new UnprocessableEntityException([
-				'Failed to create new OTP code. Please try again|email',
-			]);
+			throw new UnprocessableEntityException(['Failed to create new OTP code. Please try again']);
 		}
 
 		await this._emailService.sendActivationEmail(resendActivationCodeDto.email, otpCode.code);
@@ -201,7 +199,7 @@ export class AuthController implements IAuthController {
 		);
 
 		if (!token) {
-			throw new UnprocessableEntityException(['Failed to reset password. Please try again|email']);
+			throw new UnprocessableEntityException(['Failed to reset password. Please try again']);
 		}
 
 		await this._emailService.sendResetPasswordEmail(user.email, user.firstName, token);
@@ -226,7 +224,7 @@ export class AuthController implements IAuthController {
 		const user: UserFullDto | null = await this._usersService.getByResetPasswordToken(resetToken);
 
 		if (!user) {
-			throw new NotFoundException(['User related to this token not found|reset-token']);
+			throw new NotFoundException(['User related to this token not found']);
 		}
 
 		const isUpdated: boolean = await this._usersService.updateUser(user.id, {
@@ -234,9 +232,7 @@ export class AuthController implements IAuthController {
 		});
 
 		if (!isUpdated) {
-			throw new UnprocessableEntityException([
-				'Failed to update password. Please try again|password',
-			]);
+			throw new UnprocessableEntityException(['Failed to update password. Please try again']);
 		}
 
 		responseResult.data = [];
@@ -257,7 +253,7 @@ export class AuthController implements IAuthController {
 		const user: UserFullDto | null = await this._usersService.getFullUserByEmail(loginDto.email);
 
 		if (!user) {
-			throw new UnprocessableEntityException(['Invalid email or password|password']);
+			throw new UnprocessableEntityException(['Invalid email or password|email']);
 		}
 
 		const isPasswordValid: boolean = await this._authService.validatePassword(
@@ -266,7 +262,7 @@ export class AuthController implements IAuthController {
 		);
 
 		if (!isPasswordValid) {
-			throw new UnprocessableEntityException(['Invalid email or password|password']);
+			throw new UnprocessableEntityException(['Invalid email or password|email']);
 		}
 
 		const accessToken: string = await this._jwtTokensService.generateAccessToken(
@@ -287,7 +283,7 @@ export class AuthController implements IAuthController {
 		});
 
 		if (!isTokenIdUpdated) {
-			throw new UnprocessableEntityException(['Failed to login. Please try again|password']);
+			throw new UnprocessableEntityException(['Failed to login. Please try again']);
 		}
 
 		response.cookie(CookiesNames.REFRESH_TOKEN, refreshToken, {
@@ -323,7 +319,7 @@ export class AuthController implements IAuthController {
 			);
 
 			if (!fullUserData || !fullUserData.JWTTokenId) {
-				throw new UnprocessableEntityException(['Failed to log out. Please try again|email']);
+				throw new UnprocessableEntityException(['Failed to log out. Please try again']);
 			}
 
 			const isCookieDeleted: boolean = await this._jwtTokensService.deleteToken(
@@ -335,7 +331,7 @@ export class AuthController implements IAuthController {
 			});
 
 			if (!isCookieDeleted || !isUserUpdated) {
-				throw new UnprocessableEntityException(['Failed to log out. Please try again|email']);
+				throw new UnprocessableEntityException(['Failed to log out. Please try again']);
 			}
 		}
 
@@ -357,19 +353,19 @@ export class AuthController implements IAuthController {
 			await this._jwtTokensService.verifyRefreshToken(refreshToken);
 
 		if (!userData) {
-			throw new UnauthorizedException(['Please, login to perform this action|email']);
+			throw new UnauthorizedException(['Please, login to perform this action']);
 		}
 
 		const user: UserFullDto | null = await this._usersService.getFullUserByEmail(userData.email);
 
 		if (!user || !user.JWTTokenId) {
-			throw new UnauthorizedException(['Please, login to perform this action|email']);
+			throw new UnauthorizedException(['Please, login to perform this action']);
 		}
 
 		const token: JWTTokenFullDto | null = await this._jwtTokensService.getById(user.JWTTokenId);
 
 		if (!token) {
-			throw new UnauthorizedException(['Please, login to perform this action|email']);
+			throw new UnauthorizedException(['Please, login to perform this action']);
 		}
 
 		const newAccessToken: string = await this._jwtTokensService.generateAccessToken(
@@ -390,9 +386,7 @@ export class AuthController implements IAuthController {
 		});
 
 		if (!isTokenIdUpdated) {
-			throw new UnprocessableEntityException([
-				'Failed to refresh access token. Please try again|email',
-			]);
+			throw new UnprocessableEntityException(['Failed to refresh access token. Please try again']);
 		}
 
 		response.cookie(CookiesNames.REFRESH_TOKEN, newRefreshToken, {
