@@ -1,5 +1,5 @@
 import { connectionSource } from '@DB/typeOrmConfig';
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
+import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
 import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
 import { InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
@@ -15,7 +15,7 @@ describe('passwordResetTokensRepository', (): void => {
 	describe('createToken', (): void => {
 		let insertMock: SpyInstance;
 		const idMock: string = '10';
-		const createTokenMock: Omit<PasswordResetTokenDto, 'id'> = {
+		const createTokenMock: PasswordResetTokenInfoDto = {
 			token: 'password-reset-token',
 			expiresAt: '2024-02-12 16:00:00',
 		};

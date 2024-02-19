@@ -1,4 +1,5 @@
 import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
+import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
 import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
 import { Injectable } from '@nestjs/common';
@@ -29,7 +30,7 @@ export class PasswordResetTokensRepository
 			: null;
 	}
 
-	public async createToken(tokenDto: Omit<PasswordResetTokenDto, 'id'>): Promise<string> {
+	public async createToken(tokenDto: PasswordResetTokenInfoDto): Promise<string> {
 		const result: InsertResult = await this.insert(tokenDto);
 
 		return result.identifiers[0].id;

@@ -1,5 +1,6 @@
 import { connectionSource } from '@DB/typeOrmConfig';
 import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
+import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
 import { PasswordResetTokensHelper } from '@Helpers/passwordResetTokens.helper';
 import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
 import { UsersRepository } from '@Repositories/users.repository';
@@ -35,7 +36,7 @@ describe('passwordResetTokensService', (): void => {
 		const newTokenId: string = '4';
 		const userIdMock: string = '1';
 		const passwordResetTokensMock: PasswordResetTokenDto[] = [...passwordResetTokens];
-		const tokenMock: Omit<PasswordResetTokenDto, 'id'> = {
+		const tokenMock: PasswordResetTokenInfoDto = {
 			token: 'password-reset-token-1',
 			expiresAt: new Date('2024-02-12 18:00:00').toISOString(),
 		};
@@ -78,7 +79,7 @@ describe('passwordResetTokensService', (): void => {
 
 			generateTokenMock = jest
 				.spyOn(PasswordResetTokensHelper, 'generateToken')
-				.mockImplementation((): Omit<PasswordResetTokenDto, 'id'> => {
+				.mockImplementation((): PasswordResetTokenInfoDto => {
 					return tokenMock;
 				});
 

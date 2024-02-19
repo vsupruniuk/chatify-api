@@ -1,4 +1,5 @@
 import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
+import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
 import { TPasswordResetTokensGetFields } from '@Types/passwordResetTokens/TPasswordResetTokensGetFields';
 import { TUpdatePasswordResetToken } from '@Types/passwordResetTokens/TUpdatePasswordResetToken';
 
@@ -20,7 +21,7 @@ export interface IPasswordResetTokensRepository {
 	 * @param tokenDto - reset token and expiration date
 	 * @returns id - id of created token
 	 */
-	createToken(tokenDto: Omit<PasswordResetTokenDto, 'id'>): Promise<string>;
+	createToken(tokenDto: PasswordResetTokenInfoDto): Promise<string>;
 
 	/**
 	 * Method for updating password reset token

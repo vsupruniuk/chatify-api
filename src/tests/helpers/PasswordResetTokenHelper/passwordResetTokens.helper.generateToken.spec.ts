@@ -1,4 +1,4 @@
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
+import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
 import { DateHelper } from '@Helpers/date.helper';
 import { PasswordResetTokensHelper } from '@Helpers/passwordResetTokens.helper';
 import SpyInstance = jest.SpyInstance;
@@ -50,7 +50,7 @@ describe('passwordResetTokensHelper', (): void => {
 		});
 
 		it('should return correct result', (): void => {
-			const token: Omit<PasswordResetTokenDto, 'id'> = PasswordResetTokensHelper.generateToken();
+			const token: PasswordResetTokenInfoDto = PasswordResetTokensHelper.generateToken();
 
 			expect(token.token).toBe('uuid-v4');
 			expect(token.expiresAt).toBe(new Date(dateTimeMock).toISOString());
