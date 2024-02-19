@@ -1,4 +1,5 @@
 import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
+import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { PasswordResetTokensHelper } from '@Helpers/passwordResetTokens.helper';
 import { IPasswordResetTokensService } from '@Interfaces/passwordResetTokens/IPasswordResetTokens.service';
@@ -21,7 +22,7 @@ export class PasswordResetTokensService implements IPasswordResetTokensService {
 	): Promise<string | null> {
 		let newTokenId: string = userResetPasswordTokenId || '';
 
-		const newToken: Omit<PasswordResetTokenDto, 'id'> = PasswordResetTokensHelper.generateToken();
+		const newToken: PasswordResetTokenInfoDto = PasswordResetTokensHelper.generateToken();
 
 		if (userResetPasswordTokenId) {
 			const isUpdated: boolean = await this._passwordResetTokensRepository.updateToken(

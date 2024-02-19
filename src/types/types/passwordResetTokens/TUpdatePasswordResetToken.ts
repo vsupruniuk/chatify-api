@@ -1,3 +1,3 @@
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
+import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
 
-export type TUpdatePasswordResetToken = Partial<Omit<PasswordResetTokenDto, 'id'>>;
+export type TUpdatePasswordResetToken = Partial<PasswordResetTokenInfoDto>;

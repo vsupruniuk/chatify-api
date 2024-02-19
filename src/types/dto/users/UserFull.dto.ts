@@ -1,26 +1,9 @@
+import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { Expose } from 'class-transformer';
 
-export class UserFullDto {
-	@Expose()
-	id: string;
-
-	@Expose()
-	about: string | null;
-
-	@Expose()
-	avatarUrl: string | null;
-
-	@Expose()
-	email: string;
-
-	@Expose()
-	firstName: string;
-
+export class UserFullDto extends UserShortDto {
 	@Expose()
 	isActivated: boolean;
-
-	@Expose()
-	lastName: string | null;
 
 	@Expose()
 	nickname: string;
@@ -32,11 +15,5 @@ export class UserFullDto {
 	passwordResetTokenId: string | null;
 
 	@Expose()
-	accountSettingsId: string;
-
-	@Expose()
 	JWTTokenId: string | null;
-
-	@Expose()
-	OTPCodeId: string | null;
 }
