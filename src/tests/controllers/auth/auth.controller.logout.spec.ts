@@ -1,7 +1,7 @@
 import { AuthController } from '@Controllers/auth.controller';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
-import { CookiesNames } from '@Enums/CookiesNames';
+import { CookiesNames } from '@Enums/CookiesNames.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
 import { IUsersService } from '@Interfaces/users/IUsersService';
