@@ -1,3 +1,4 @@
+import { AppLogger } from '@Logger/app.logger';
 import { NestFactory } from '@nestjs/core';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 
@@ -12,7 +13,7 @@ async function bootstrap(): Promise<void> {
 	const port: number = Number(process.env.PORT) || 3000;
 
 	const app: INestApplication = await NestFactory.create(AppModule, {
-		logger: ['log', 'fatal', 'error', 'warn', 'debug'],
+		logger: new AppLogger(),
 	});
 
 	app.enableCors({ origin: process.env.CLIENT_URL || '', credentials: true });

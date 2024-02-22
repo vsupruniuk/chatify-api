@@ -1,3 +1,5 @@
+import { IAppLogger } from '@Interfaces/logger/IAppLogger';
+import { AppLogger } from '@Logger/app.logger';
 import { Injectable } from '@nestjs/common';
 
 import { DataSource, InsertResult, Repository, UpdateResult } from 'typeorm';
@@ -11,6 +13,8 @@ import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
 
 @Injectable()
 export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodesRepository {
+	private readonly _logger: IAppLogger = new AppLogger();
+
 	constructor(_dataSource: DataSource) {
 		super(OTPCode, _dataSource.createEntityManager());
 	}
@@ -18,11 +22,23 @@ export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodes
 	public async createOTPCode(createOTPCodeDto: CreateOTPCodeDto): Promise<string> {
 		const result: InsertResult = await this.insert(createOTPCodeDto);
 
+		this._logger.successfulDBQuery({
+			method: this.createOTPCode.name,
+			repository: 'OTPCodesRepository',
+			data: result,
+		});
+
 		return result.identifiers[0].id;
 	}
 
 	public async getUserOTPCodeById(userOTPCodeId: string): Promise<OTPCodeResponseDto | null> {
 		const otpCode: OTPCode | null = await this.findOne({ where: { id: userOTPCodeId } });
+
+		this._logger.successfulDBQuery({
+			method: this.getUserOTPCodeById.name,
+			repository: 'OTPCodesRepository',
+			data: otpCode,
+		});
 
 		return otpCode
 			? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
@@ -34,6 +50,12 @@ export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodes
 		updateOTPCodeDto: Partial<UpdateOTPCodeDto>,
 	): Promise<boolean> {
 		const updateResult: UpdateResult = await this.update({ id: userOTPCodeId }, updateOTPCodeDto);
+
+		this._logger.successfulDBQuery({
+			method: this.updateOTPCode.name,
+			repository: 'OTPCodesRepository',
+			data: updateResult,
+		});
 
 		return updateResult.affected ? updateResult.affected > 0 : false;
 	}

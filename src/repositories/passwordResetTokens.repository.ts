@@ -1,7 +1,9 @@
 import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
 import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
+import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
+import { AppLogger } from '@Logger/app.logger';
 import { Injectable } from '@nestjs/common';
 import { TPasswordResetTokensGetFields } from '@Types/passwordResetTokens/TPasswordResetTokensGetFields';
 import { TUpdatePasswordResetToken } from '@Types/passwordResetTokens/TUpdatePasswordResetToken';
@@ -13,6 +15,8 @@ export class PasswordResetTokensRepository
 	extends Repository<PasswordResetToken>
 	implements IPasswordResetTokensRepository
 {
+	private readonly _logger: IAppLogger = new AppLogger();
+
 	constructor(_dataSource: DataSource) {
 		super(PasswordResetToken, _dataSource.createEntityManager());
 	}
@@ -25,6 +29,12 @@ export class PasswordResetTokensRepository
 			where: { [fieldName]: fieldValue },
 		});
 
+		this._logger.successfulDBQuery({
+			method: this.getByField.name,
+			repository: 'PasswordResetTokensRepository',
+			data: token,
+		});
+
 		return token
 			? plainToInstance(PasswordResetTokenDto, token, { excludeExtraneousValues: true })
 			: null;
@@ -33,17 +43,35 @@ export class PasswordResetTokensRepository
 	public async createToken(tokenDto: PasswordResetTokenInfoDto): Promise<string> {
 		const result: InsertResult = await this.insert(tokenDto);
 
+		this._logger.successfulDBQuery({
+			method: this.createToken.name,
+			repository: 'PasswordResetTokensRepository',
+			data: result,
+		});
+
 		return result.identifiers[0].id;
 	}
 
 	public async updateToken(id: string, updateData: TUpdatePasswordResetToken): Promise<boolean> {
 		const result: UpdateResult = await this.update({ id }, updateData);
 
+		this._logger.successfulDBQuery({
+			method: this.updateToken.name,
+			repository: 'PasswordResetTokensRepository',
+			data: result,
+		});
+
 		return result.affected ? result.affected > 0 : false;
 	}
 
 	public async deleteToken(id: string): Promise<boolean> {
 		const result: DeleteResult = await this.delete({ id });
+
+		this._logger.successfulDBQuery({
+			method: this.deleteToken.name,
+			repository: 'PasswordResetTokensRepository',
+			data: result,
+		});
 
 		return result.affected ? result.affected > 0 : false;
 	}

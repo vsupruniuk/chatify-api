@@ -27,6 +27,7 @@
       "@Filters/*": ["src/filters/*"],
       "@Helpers/*": ["src/helpers/*"],
       "@Interfaces/*": ["src/types/interfaces/*"],
+      "@Logger/*": ["src/logger/*"],
       "@Migrations/*":  ["src/db/migrations/*"],
       "@Modules/*": ["src/modules/*"],
       "@Repositories/*": ["src/repositories/*"],
