@@ -14,6 +14,15 @@ export interface IUsersService {
 	 * @returns null - if user wasn't found
 	 */
 	getFullUserByEmail(email: string): Promise<UserFullDto | null>;
+
+	/**
+	 * Method for searching user by id. Return all user information (except service information of the DB)
+	 * @param id - user id for searching
+	 * @returns UserFullDto - if user was found. Not used as API public response
+	 * @returns null - if user wasn't found
+	 */
+	getFullUserById(id: string): Promise<UserFullDto | null>;
+
 	/**
 	 * Method for searching one specific user by email
 	 * @param email - user email for searching

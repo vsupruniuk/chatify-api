@@ -20,10 +20,14 @@ export interface IAuthController {
 
 	/**
 	 * Method for activating user account via OTP code
+	 * @param response - client response object
 	 * @param accountActivationDto - code and codeId for activation
 	 * @returns responseResult - successful result if user was activated
 	 */
-	activateAccount(accountActivationDto: AccountActivationDto): Promise<ResponseResult>;
+	activateAccount(
+		response: Response,
+		accountActivationDto: AccountActivationDto,
+	): Promise<ResponseResult>;
 
 	/**
 	 * Method for handling request to send activation code one more time for activation account
