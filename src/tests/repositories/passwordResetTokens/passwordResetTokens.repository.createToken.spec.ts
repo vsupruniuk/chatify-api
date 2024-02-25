@@ -1,19 +1,39 @@
-import { connectionSource } from '@DB/typeOrmConfig';
 import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
+import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
-import { InsertResult } from 'typeorm';
+import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
-import SpyInstance = jest.SpyInstance;
 
 describe('passwordResetTokensRepository', (): void => {
 	let passwordResetTokenRepository: PasswordResetTokensRepository;
 
+	const insertMock: jest.Mock = jest.fn().mockReturnThis();
+	const intoMock: jest.Mock = jest.fn().mockReturnThis();
+	const valuesMock: jest.Mock = jest.fn().mockReturnThis();
+	const executeMock: jest.Mock = jest.fn().mockImplementation(async (): Promise<InsertResult> => {
+		return <InsertResult>{
+			identifiers: <ObjectLiteral>[{ id: '10' }],
+		};
+	});
+
+	const dataSourceMock: jest.Mocked<DataSource> = {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		createQueryBuilder: jest.fn(() => {
+			return {
+				insert: insertMock,
+				into: intoMock,
+				values: valuesMock,
+				execute: executeMock,
+			};
+		}),
+	};
+
 	beforeEach((): void => {
-		passwordResetTokenRepository = new PasswordResetTokensRepository(connectionSource);
+		passwordResetTokenRepository = new PasswordResetTokensRepository(dataSourceMock);
 	});
 
 	describe('createToken', (): void => {
-		let insertMock: SpyInstance;
 		const idMock: string = '10';
 		const createTokenMock: PasswordResetTokenInfoDto = {
 			token: 'password-reset-token',
@@ -21,14 +41,6 @@ describe('passwordResetTokensRepository', (): void => {
 		};
 
 		beforeEach((): void => {
-			insertMock = jest.spyOn(passwordResetTokenRepository, 'insert').mockResolvedValue(
-				Promise.resolve(<InsertResult>{
-					identifiers: <ObjectLiteral>[{ id: idMock }],
-				}),
-			);
-		});
-
-		afterEach((): void => {
 			jest.clearAllMocks();
 		});
 
@@ -40,11 +52,15 @@ describe('passwordResetTokensRepository', (): void => {
 			expect(passwordResetTokenRepository.createToken).toBeInstanceOf(Function);
 		});
 
-		it('should call insert method to create a new token', async (): Promise<void> => {
+		it('should use queryBuilder to build query for creating token', async (): Promise<void> => {
 			await passwordResetTokenRepository.createToken(createTokenMock);
 
 			expect(insertMock).toHaveBeenCalledTimes(1);
-			expect(insertMock).toHaveBeenCalledWith(createTokenMock);
+			expect(intoMock).toHaveBeenCalledTimes(1);
+			expect(intoMock).toHaveBeenCalledWith(PasswordResetToken);
+			expect(valuesMock).toHaveBeenCalledTimes(1);
+			expect(valuesMock).toHaveBeenCalledWith(createTokenMock);
+			expect(executeMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('should return id of created token', async (): Promise<void> => {

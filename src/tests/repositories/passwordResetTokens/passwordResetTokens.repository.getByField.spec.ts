@@ -1,21 +1,39 @@
-import { connectionSource } from '@DB/typeOrmConfig';
 import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
 import { passwordResetTokens } from '@TestMocks/PasswordResetTokenDto/passwordResetTokens';
-import { FindOneOptions } from 'typeorm';
-import SpyInstance = jest.SpyInstance;
+import { DataSource } from 'typeorm';
 
 describe('passwordResetTokensRepository', (): void => {
 	let passwordResetTokensRepository: PasswordResetTokensRepository;
 
+	let resolvedValue: PasswordResetTokenDto | null = null;
+
+	const selectMock: jest.Mock = jest.fn().mockReturnThis();
+	const fromMock: jest.Mock = jest.fn().mockReturnThis();
+	const whereMock: jest.Mock = jest.fn().mockReturnThis();
+	const getOneMock: jest.Mock = jest
+		.fn()
+		.mockImplementation(async (): Promise<PasswordResetTokenDto | null> => resolvedValue);
+
+	const dataSourceMock: jest.Mocked<DataSource> = {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		createQueryBuilder: jest.fn(() => {
+			return {
+				select: selectMock,
+				from: fromMock,
+				where: whereMock,
+				getOne: getOneMock,
+			};
+		}),
+	};
+
 	beforeEach((): void => {
-		passwordResetTokensRepository = new PasswordResetTokensRepository(connectionSource);
+		passwordResetTokensRepository = new PasswordResetTokensRepository(dataSourceMock);
 	});
 
 	describe('getByField', (): void => {
-		let findMock: SpyInstance;
-
 		const tokensMock: PasswordResetTokenDto[] = [...passwordResetTokens];
 		const existingTokenId: string = '1';
 		const notExistingTokenId: string = '5';
@@ -23,26 +41,7 @@ describe('passwordResetTokensRepository', (): void => {
 		const notExistingTokenValue: string = 'password-reset-token-5';
 
 		beforeEach((): void => {
-			findMock = jest
-				.spyOn(passwordResetTokensRepository, 'findOne')
-				.mockImplementation(async (options: FindOneOptions): Promise<PasswordResetToken | null> => {
-					return (
-						(tokensMock.find((token: PasswordResetTokenDto) => {
-							if (options.where!['id']) {
-								return token.id === options.where!['id'];
-							}
-
-							if (options.where!['token']) {
-								return token.token === options.where!['token'];
-							}
-
-							return false;
-						}) as PasswordResetToken) || null
-					);
-				});
-		});
-
-		afterEach((): void => {
+			resolvedValue = null;
 			jest.clearAllMocks();
 		});
 
@@ -54,21 +53,38 @@ describe('passwordResetTokensRepository', (): void => {
 			expect(passwordResetTokensRepository.getByField).toBeInstanceOf(Function);
 		});
 
-		it('should call findOne method for searching token by id, if id was passed as search field', async (): Promise<void> => {
+		it('should use queryBuilder to build query and find token by id', async (): Promise<void> => {
 			await passwordResetTokensRepository.getByField('id', existingTokenId);
 
-			expect(findMock).toHaveBeenCalledTimes(1);
-			expect(findMock).toHaveBeenCalledWith({ where: { id: existingTokenId } });
+			expect(selectMock).toHaveBeenCalledTimes(1);
+			expect(selectMock).toHaveBeenCalledWith('passwordResetToken');
+			expect(fromMock).toHaveBeenCalledTimes(1);
+			expect(fromMock).toHaveBeenCalledWith(PasswordResetToken, 'passwordResetToken');
+			expect(whereMock).toHaveBeenCalledTimes(1);
+			expect(whereMock).toHaveBeenCalledWith('passwordResetToken.id = :fieldValue', {
+				fieldValue: existingTokenId,
+			});
+			expect(getOneMock).toHaveBeenCalledTimes(1);
 		});
 
-		it('should call findOne method for searching token by token value, if token was passed as search field', async (): Promise<void> => {
+		it('should use queryBuilder to build query and find token by token value', async (): Promise<void> => {
 			await passwordResetTokensRepository.getByField('token', existingTokenValue);
 
-			expect(findMock).toHaveBeenCalledTimes(1);
-			expect(findMock).toHaveBeenCalledWith({ where: { token: existingTokenValue } });
+			expect(selectMock).toHaveBeenCalledTimes(1);
+			expect(selectMock).toHaveBeenCalledWith('passwordResetToken');
+			expect(fromMock).toHaveBeenCalledTimes(1);
+			expect(fromMock).toHaveBeenCalledWith(PasswordResetToken, 'passwordResetToken');
+			expect(whereMock).toHaveBeenCalledTimes(1);
+			expect(whereMock).toHaveBeenCalledWith('passwordResetToken.token = :fieldValue', {
+				fieldValue: existingTokenValue,
+			});
+			expect(getOneMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('should return founded token as instance of PasswordResetTokenDto', async (): Promise<void> => {
+			resolvedValue =
+				tokensMock.find((token: PasswordResetTokenDto) => token.id === existingTokenId) || null;
+
 			const foundedToken: PasswordResetTokenDto | null =
 				await passwordResetTokensRepository.getByField('id', existingTokenId);
 
@@ -76,6 +92,9 @@ describe('passwordResetTokensRepository', (): void => {
 		});
 
 		it('should find token by id if it exist', async (): Promise<void> => {
+			resolvedValue =
+				tokensMock.find((token: PasswordResetTokenDto) => token.id === existingTokenId) || null;
+
 			const foundedToken: PasswordResetTokenDto | null =
 				await passwordResetTokensRepository.getByField('id', existingTokenId);
 
@@ -90,6 +109,10 @@ describe('passwordResetTokensRepository', (): void => {
 		});
 
 		it('should find token by token value if it exist', async (): Promise<void> => {
+			resolvedValue =
+				tokensMock.find((token: PasswordResetTokenDto) => token.token === existingTokenValue) ||
+				null;
+
 			const foundedToken: PasswordResetTokenDto | null =
 				await passwordResetTokensRepository.getByField('token', existingTokenValue);
 

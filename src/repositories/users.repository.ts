@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { TUserFullGetFields } from '@Types/users/TUserFullGetFields';
 import { TUserGetFields } from '@Types/users/TUserGetFields';
 
-import { DataSource, InsertResult, Repository, UpdateResult } from 'typeorm';
+import { DataSource, InsertResult, UpdateResult } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
@@ -15,20 +15,21 @@ import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 
 @Injectable()
-export class UsersRepository extends Repository<User> implements IUsersRepository {
+export class UsersRepository implements IUsersRepository {
 	private readonly _logger: IAppLogger = new AppLogger();
 
-	constructor(_dataSource: DataSource) {
-		super(User, _dataSource.createEntityManager());
-	}
+	constructor(private readonly _dataSource: DataSource) {}
 
 	public async getByField(
 		fieldName: TUserGetFields,
 		fieldValue: string,
 	): Promise<UserShortDto | null> {
-		const user: User | null = await this.findOne({
-			where: { [fieldName]: fieldValue },
-		});
+		const user: User | null = await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.where(`user.${fieldName} = :fieldValue`, { fieldValue })
+			.getOne();
 
 		this._logger.successfulDBQuery({
 			method: this.getByField.name,
@@ -43,9 +44,12 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 		fieldName: TUserFullGetFields,
 		fieldValue: string,
 	): Promise<UserFullDto | null> {
-		const user: User | null = await this.findOne({
-			where: { [fieldName]: fieldValue },
-		});
+		const user: User | null = await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.where(`user.${fieldName} = :fieldValue`, { fieldValue })
+			.getOne();
 
 		this._logger.successfulDBQuery({
 			method: this.getFullUserByField.name,
@@ -57,10 +61,15 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 	}
 
 	public async createUser(user: CreateUserDto): Promise<string> {
-		const result: InsertResult = await this.insert(user);
+		const result: InsertResult = await this._dataSource
+			.createQueryBuilder()
+			.insert()
+			.into(User)
+			.values(user)
+			.execute();
 
 		this._logger.successfulDBQuery({
-			method: this.getByField.name,
+			method: this.createUser.name,
 			repository: 'UsersRepository',
 			data: result,
 		});
@@ -69,7 +78,12 @@ export class UsersRepository extends Repository<User> implements IUsersRepositor
 	}
 
 	public async updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean> {
-		const updateResult: UpdateResult = await this.update({ id: userId }, updateUserDto);
+		const updateResult: UpdateResult = await this._dataSource
+			.createQueryBuilder()
+			.update(User)
+			.set(updateUserDto)
+			.where('id = :userId', { userId })
+			.execute();
 
 		this._logger.successfulDBQuery({
 			method: this.updateUser.name,

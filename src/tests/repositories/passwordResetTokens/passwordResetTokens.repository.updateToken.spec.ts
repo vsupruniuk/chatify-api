@@ -1,19 +1,42 @@
-import { connectionSource } from '@DB/typeOrmConfig';
+import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
 import { TUpdatePasswordResetToken } from '@Types/passwordResetTokens/TUpdatePasswordResetToken';
-import { FindOptionsWhere, ObjectId, UpdateResult } from 'typeorm';
-import SpyInstance = jest.SpyInstance;
+import { DataSource, UpdateResult } from 'typeorm';
 
 describe('passwordResetTokensRepository', (): void => {
 	let passwordResetTokensRepository: PasswordResetTokensRepository;
 
+	let resolvedAffectedValue: number = 0;
+
+	const updateMock: jest.Mock = jest.fn().mockReturnThis();
+	const setMock: jest.Mock = jest.fn().mockReturnThis();
+	const whereMock: jest.Mock = jest.fn().mockReturnThis();
+	const executeMock: jest.Mock = jest.fn().mockImplementation(async (): Promise<UpdateResult> => {
+		return <UpdateResult>{
+			raw: [],
+			affected: resolvedAffectedValue,
+			generatedMaps: [],
+		};
+	});
+
+	const dataSourceMock: jest.Mocked<DataSource> = {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		createQueryBuilder: jest.fn(() => {
+			return {
+				update: updateMock,
+				set: setMock,
+				where: whereMock,
+				execute: executeMock,
+			};
+		}),
+	};
+
 	beforeEach((): void => {
-		passwordResetTokensRepository = new PasswordResetTokensRepository(connectionSource);
+		passwordResetTokensRepository = new PasswordResetTokensRepository(dataSourceMock);
 	});
 
 	describe('updateToken', (): void => {
-		let updateMock: SpyInstance;
-
 		const existingTokenId: string = '1';
 		const notExistingTokenId: string = '5';
 		const updateTokenMock: TUpdatePasswordResetToken = {
@@ -22,33 +45,7 @@ describe('passwordResetTokensRepository', (): void => {
 		};
 
 		beforeEach((): void => {
-			updateMock = jest
-				.spyOn(passwordResetTokensRepository, 'update')
-				.mockImplementation(
-					async <T>(
-						criteria:
-							| string
-							| number
-							| string[]
-							| Date
-							| ObjectId
-							| number[]
-							| Date[]
-							| ObjectId[]
-							| FindOptionsWhere<T>,
-					): Promise<UpdateResult> => {
-						const { id } = criteria as unknown as { id: string };
-
-						return <UpdateResult>{
-							raw: [],
-							affected: id === existingTokenId ? 1 : 0,
-							generatedMaps: [],
-						};
-					},
-				);
-		});
-
-		afterEach((): void => {
+			resolvedAffectedValue = 0;
 			jest.clearAllMocks();
 		});
 
@@ -60,11 +57,16 @@ describe('passwordResetTokensRepository', (): void => {
 			expect(passwordResetTokensRepository.updateToken).toBeInstanceOf(Function);
 		});
 
-		it('should call update method to update token', async (): Promise<void> => {
+		it('should use queryBuilder to build query and update token', async (): Promise<void> => {
 			await passwordResetTokensRepository.updateToken(existingTokenId, updateTokenMock);
 
 			expect(updateMock).toHaveBeenCalledTimes(1);
-			expect(updateMock).toHaveBeenCalledWith({ id: existingTokenId }, updateTokenMock);
+			expect(updateMock).toHaveBeenCalledWith(PasswordResetToken);
+			expect(setMock).toHaveBeenCalledTimes(1);
+			expect(setMock).toHaveBeenCalledWith(updateTokenMock);
+			expect(whereMock).toHaveBeenCalledTimes(1);
+			expect(whereMock).toHaveBeenCalledWith('id = :id', { id: existingTokenId });
+			expect(executeMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('should return false if token with given id not exist', async (): Promise<void> => {
@@ -77,6 +79,8 @@ describe('passwordResetTokensRepository', (): void => {
 		});
 
 		it('should return true if token with given id exist and was updated', async (): Promise<void> => {
+			resolvedAffectedValue = 1;
+
 			const result: boolean = await passwordResetTokensRepository.updateToken(
 				existingTokenId,
 				updateTokenMock,

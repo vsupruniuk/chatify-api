@@ -1,18 +1,42 @@
-import { connectionSource } from '@DB/typeOrmConfig';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
+import { User } from '@Entities/User.entity';
 import { UsersRepository } from '@Repositories/users.repository';
-import { FindOptionsWhere, ObjectId, UpdateResult } from 'typeorm';
-import SpyInstance = jest.SpyInstance;
+import { DataSource, UpdateResult } from 'typeorm';
 
 describe('usersRepository', (): void => {
 	let usersRepository: UsersRepository;
 
+	let resolvedAffectedValue: number = 0;
+
+	const updateMock: jest.Mock = jest.fn().mockReturnThis();
+	const setMock: jest.Mock = jest.fn().mockReturnThis();
+	const whereMock: jest.Mock = jest.fn().mockReturnThis();
+	const executeMock: jest.Mock = jest.fn().mockImplementation(async (): Promise<UpdateResult> => {
+		return <UpdateResult>{
+			raw: [],
+			affected: resolvedAffectedValue,
+			generatedMaps: [],
+		};
+	});
+
+	const dataSourceMock: jest.Mocked<DataSource> = {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		createQueryBuilder: jest.fn(() => {
+			return {
+				update: updateMock,
+				set: setMock,
+				where: whereMock,
+				execute: executeMock,
+			};
+		}),
+	};
+
 	beforeEach((): void => {
-		usersRepository = new UsersRepository(connectionSource);
+		usersRepository = new UsersRepository(dataSourceMock);
 	});
 
 	describe('updateUser', (): void => {
-		let updateMock: SpyInstance;
 		const existingUserId: string = '1';
 		const notExistingUserId: string = '2';
 		const updateUserDto: Partial<UpdateUserDto> = {
@@ -24,34 +48,9 @@ describe('usersRepository', (): void => {
 			lastName: null,
 			nickname: 'hulk',
 		};
+
 		beforeEach((): void => {
-			updateMock = jest
-				.spyOn(usersRepository, 'update')
-				.mockImplementation(
-					async <T>(
-						criteria:
-							| string
-							| number
-							| string[]
-							| Date
-							| ObjectId
-							| number[]
-							| Date[]
-							| ObjectId[]
-							| FindOptionsWhere<T>,
-					): Promise<UpdateResult> => {
-						const { id } = criteria as unknown as { id: string };
-
-						return <UpdateResult>{
-							raw: [],
-							affected: id === existingUserId ? 1 : 0,
-							generatedMaps: [],
-						};
-					},
-				);
-		});
-
-		afterEach((): void => {
+			resolvedAffectedValue = 0;
 			jest.clearAllMocks();
 		});
 
@@ -63,11 +62,16 @@ describe('usersRepository', (): void => {
 			expect(usersRepository.updateUser).toBeInstanceOf(Function);
 		});
 
-		it('should call update method to update user', async (): Promise<void> => {
+		it('should user queryBuilder to build query and update user', async (): Promise<void> => {
 			await usersRepository.updateUser(existingUserId, updateUserDto);
 
 			expect(updateMock).toHaveBeenCalledTimes(1);
-			expect(updateMock).toHaveBeenCalledWith({ id: existingUserId }, updateUserDto);
+			expect(updateMock).toHaveBeenCalledWith(User);
+			expect(setMock).toHaveBeenCalledTimes(1);
+			expect(setMock).toHaveBeenCalledWith(updateUserDto);
+			expect(whereMock).toHaveBeenCalledTimes(1);
+			expect(whereMock).toHaveBeenCalledWith('id = :userId', { userId: existingUserId });
+			expect(executeMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('should return false if user with given id not exist', async (): Promise<void> => {
@@ -77,6 +81,8 @@ describe('usersRepository', (): void => {
 		});
 
 		it('should return true if user with given id exist and was updated', async (): Promise<void> => {
+			resolvedAffectedValue = 1;
+
 			const result: boolean = await usersRepository.updateUser(existingUserId, updateUserDto);
 
 			expect(result).toBe(true);

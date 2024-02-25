@@ -1,21 +1,39 @@
-import { connectionSource } from '@DB/typeOrmConfig';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { User } from '@Entities/User.entity';
 import { UsersRepository } from '@Repositories/users.repository';
 import { users } from '@TestMocks/UserFullDto/users';
-import { FindOneOptions } from 'typeorm';
-import SpyInstance = jest.SpyInstance;
+import { DataSource } from 'typeorm';
 
 describe('usersRepository', (): void => {
 	let usersRepository: UsersRepository;
 
+	let resolvedValue: UserFullDto | null = null;
+
+	const selectMock: jest.Mock = jest.fn().mockReturnThis();
+	const fromMock: jest.Mock = jest.fn().mockReturnThis();
+	const whereMock: jest.Mock = jest.fn().mockReturnThis();
+	const getOneMock: jest.Mock = jest
+		.fn()
+		.mockImplementation(async (): Promise<UserFullDto | null> => resolvedValue);
+
+	const dataSourceMock: jest.Mocked<DataSource> = {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		createQueryBuilder: jest.fn(() => {
+			return {
+				select: selectMock,
+				from: fromMock,
+				where: whereMock,
+				getOne: getOneMock,
+			};
+		}),
+	};
+
 	beforeEach((): void => {
-		usersRepository = new UsersRepository(connectionSource);
+		usersRepository = new UsersRepository(dataSourceMock);
 	});
 
 	describe('getFullUserByField', (): void => {
-		let findMock: SpyInstance;
-
 		const usersMock: UserFullDto[] = [...users];
 		const existingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
 		const notExistingUserId: string = 'f16845d7-90af-4c29-8e1a-227c90b33852';
@@ -27,34 +45,7 @@ describe('usersRepository', (): void => {
 		const notExistingPasswordResetTokenId: string = '5';
 
 		beforeEach((): void => {
-			findMock = jest
-				.spyOn(usersRepository, 'findOne')
-				.mockImplementation(async (options: FindOneOptions): Promise<User | null> => {
-					return (
-						(usersMock.find((user: UserFullDto) => {
-							if (options.where!['id']) {
-								return user.id === options.where!['id'];
-							}
-
-							if (options.where!['email']) {
-								return user.email === options.where!['email'];
-							}
-
-							if (options.where!['nickname']) {
-								return user.nickname === options.where!['nickname'];
-							}
-
-							if (options.where!['passwordResetTokenId']) {
-								return user.passwordResetTokenId === options.where!['passwordResetTokenId'];
-							}
-
-							return false;
-						}) as User) || null
-					);
-				});
-		});
-
-		afterEach((): void => {
+			resolvedValue = null;
 			jest.clearAllMocks();
 		});
 
@@ -66,40 +57,68 @@ describe('usersRepository', (): void => {
 			expect(usersRepository.getFullUserByField).toBeInstanceOf(Function);
 		});
 
-		it('should call findOne method for searching user by id, if id was passed as search field', async (): Promise<void> => {
+		it('should use queryBuilder to build query and find user by id', async (): Promise<void> => {
 			await usersRepository.getFullUserByField('id', existingUserId);
 
-			expect(findMock).toHaveBeenCalledTimes(1);
-			expect(findMock).toHaveBeenCalledWith({ where: { id: existingUserId } });
+			expect(selectMock).toHaveBeenCalledTimes(1);
+			expect(selectMock).toHaveBeenCalledWith('user');
+			expect(fromMock).toHaveBeenCalledTimes(1);
+			expect(fromMock).toHaveBeenCalledWith(User, 'user');
+			expect(whereMock).toHaveBeenCalledTimes(1);
+			expect(whereMock).toHaveBeenCalledWith('user.id = :fieldValue', {
+				fieldValue: existingUserId,
+			});
+			expect(getOneMock).toHaveBeenCalledTimes(1);
 		});
 
-		it('should call findOne method for searching user by email, if email was passed as search field', async (): Promise<void> => {
+		it('should use queryBuilder to build query and find user by email', async (): Promise<void> => {
 			await usersRepository.getFullUserByField('email', existingUserEmail);
 
-			expect(findMock).toHaveBeenCalledTimes(1);
-			expect(findMock).toHaveBeenCalledWith({ where: { email: existingUserEmail } });
+			expect(selectMock).toHaveBeenCalledTimes(1);
+			expect(selectMock).toHaveBeenCalledWith('user');
+			expect(fromMock).toHaveBeenCalledTimes(1);
+			expect(fromMock).toHaveBeenCalledWith(User, 'user');
+			expect(whereMock).toHaveBeenCalledTimes(1);
+			expect(whereMock).toHaveBeenCalledWith('user.email = :fieldValue', {
+				fieldValue: existingUserEmail,
+			});
+			expect(getOneMock).toHaveBeenCalledTimes(1);
 		});
 
-		it('should call findOne method for searching user by nickname, if nickname was passed as search field', async (): Promise<void> => {
+		it('should use queryBuilder to build query and find user by nickname', async (): Promise<void> => {
 			await usersRepository.getFullUserByField('nickname', existingUserNickname);
 
-			expect(findMock).toHaveBeenCalledTimes(1);
-			expect(findMock).toHaveBeenCalledWith({ where: { nickname: existingUserNickname } });
+			expect(selectMock).toHaveBeenCalledTimes(1);
+			expect(selectMock).toHaveBeenCalledWith('user');
+			expect(fromMock).toHaveBeenCalledTimes(1);
+			expect(fromMock).toHaveBeenCalledWith(User, 'user');
+			expect(whereMock).toHaveBeenCalledTimes(1);
+			expect(whereMock).toHaveBeenCalledWith('user.nickname = :fieldValue', {
+				fieldValue: existingUserNickname,
+			});
+			expect(getOneMock).toHaveBeenCalledTimes(1);
 		});
 
-		it('should call findOne method for searching user by passwordResetTokenId, if passwordResetTokenId was passed as search field', async (): Promise<void> => {
+		it('should use queryBuilder to build query and find user by passwordResetTokenId', async (): Promise<void> => {
 			await usersRepository.getFullUserByField(
 				'passwordResetTokenId',
 				existingPasswordResetTokenId,
 			);
 
-			expect(findMock).toHaveBeenCalledTimes(1);
-			expect(findMock).toHaveBeenCalledWith({
-				where: { passwordResetTokenId: existingPasswordResetTokenId },
+			expect(selectMock).toHaveBeenCalledTimes(1);
+			expect(selectMock).toHaveBeenCalledWith('user');
+			expect(fromMock).toHaveBeenCalledTimes(1);
+			expect(fromMock).toHaveBeenCalledWith(User, 'user');
+			expect(whereMock).toHaveBeenCalledTimes(1);
+			expect(whereMock).toHaveBeenCalledWith('user.passwordResetTokenId = :fieldValue', {
+				fieldValue: existingPasswordResetTokenId,
 			});
+			expect(getOneMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('should return founded user as instance of UserFullDto', async (): Promise<void> => {
+			resolvedValue = usersMock.find((user: UserFullDto) => user.id === existingUserId) || null;
+
 			const foundedUser: UserFullDto | null = await usersRepository.getFullUserByField(
 				'id',
 				existingUserId,
@@ -109,6 +128,8 @@ describe('usersRepository', (): void => {
 		});
 
 		it('should find user by id if it exist', async (): Promise<void> => {
+			resolvedValue = usersMock.find((user: UserFullDto) => user.id === existingUserId) || null;
+
 			const foundedUser: UserFullDto | null = await usersRepository.getFullUserByField(
 				'id',
 				existingUserId,
@@ -127,6 +148,9 @@ describe('usersRepository', (): void => {
 		});
 
 		it('should find user by email if it exist', async (): Promise<void> => {
+			resolvedValue =
+				usersMock.find((user: UserFullDto) => user.email === existingUserEmail) || null;
+
 			const foundedUser: UserFullDto | null = await usersRepository.getFullUserByField(
 				'email',
 				existingUserEmail,
@@ -145,6 +169,9 @@ describe('usersRepository', (): void => {
 		});
 
 		it('should find user by nickname if it exist', async (): Promise<void> => {
+			resolvedValue =
+				usersMock.find((user: UserFullDto) => user.nickname === existingUserNickname) || null;
+
 			const foundedUser: UserFullDto | null = await usersRepository.getFullUserByField(
 				'nickname',
 				existingUserNickname,
@@ -163,6 +190,11 @@ describe('usersRepository', (): void => {
 		});
 
 		it('should find user by passwordResetTokenId if it exist', async (): Promise<void> => {
+			resolvedValue =
+				usersMock.find(
+					(user: UserFullDto) => user.passwordResetTokenId === existingPasswordResetTokenId,
+				) || null;
+
 			const foundedUser: UserFullDto | null = await usersRepository.getFullUserByField(
 				'passwordResetTokenId',
 				existingPasswordResetTokenId,
