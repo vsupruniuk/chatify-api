@@ -1,25 +1,40 @@
-import { InsertResult } from 'typeorm';
+import { OTPCode } from '@Entities/OTPCode.entity';
+import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
-
 import { plainToInstance } from 'class-transformer';
-
-import { connectionSource } from '@DB/typeOrmConfig';
-
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
-
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-
-import SpyInstance = jest.SpyInstance;
 
 describe('OTPCodesRepository', (): void => {
 	let otpCodesRepository: OTPCodesRepository;
 
+	const insertMock: jest.Mock = jest.fn().mockReturnThis();
+	const intoMock: jest.Mock = jest.fn().mockReturnThis();
+	const valuesMock: jest.Mock = jest.fn().mockReturnThis();
+	const executeMock: jest.Mock = jest.fn().mockImplementation(async (): Promise<InsertResult> => {
+		return <InsertResult>{
+			identifiers: <ObjectLiteral>[{ id: '10' }],
+		};
+	});
+
+	const dataSourceMock: jest.Mocked<DataSource> = {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		createQueryBuilder: jest.fn(() => {
+			return {
+				insert: insertMock,
+				into: intoMock,
+				values: valuesMock,
+				execute: executeMock,
+			};
+		}),
+	};
+
 	beforeEach((): void => {
-		otpCodesRepository = new OTPCodesRepository(connectionSource);
+		otpCodesRepository = new OTPCodesRepository(dataSourceMock);
 	});
 
 	describe('createOTPCode', (): void => {
-		let insertMock: SpyInstance;
 		const id: string = '10';
 		const createOTPCodeDtoMock: CreateOTPCodeDto = plainToInstance(CreateOTPCodeDto, <
 			CreateOTPCodeDto
@@ -29,14 +44,6 @@ describe('OTPCodesRepository', (): void => {
 		});
 
 		beforeEach((): void => {
-			insertMock = jest.spyOn(otpCodesRepository, 'insert').mockResolvedValue(
-				Promise.resolve(<InsertResult>{
-					identifiers: <ObjectLiteral>[{ id }],
-				}),
-			);
-		});
-
-		afterEach((): void => {
 			jest.clearAllMocks();
 		});
 
@@ -48,11 +55,15 @@ describe('OTPCodesRepository', (): void => {
 			expect(otpCodesRepository.createOTPCode).toBeInstanceOf(Function);
 		});
 
-		it('should use insert method for creating new OTP code', async (): Promise<void> => {
+		it('should use queryBuilder to build query for creating OTP code', async (): Promise<void> => {
 			await otpCodesRepository.createOTPCode(createOTPCodeDtoMock);
 
 			expect(insertMock).toHaveBeenCalledTimes(1);
-			expect(insertMock).toHaveBeenCalledWith(createOTPCodeDtoMock);
+			expect(intoMock).toHaveBeenCalledTimes(1);
+			expect(intoMock).toHaveBeenCalledWith(OTPCode);
+			expect(valuesMock).toHaveBeenCalledTimes(1);
+			expect(valuesMock).toHaveBeenCalledWith(createOTPCodeDtoMock);
+			expect(executeMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('should return id of created OTP code', async (): Promise<void> => {

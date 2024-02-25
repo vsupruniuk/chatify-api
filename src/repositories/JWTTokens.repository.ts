@@ -5,18 +5,21 @@ import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { AppLogger } from '@Logger/app.logger';
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { DataSource, DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
+import { DataSource, DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 
 @Injectable()
-export class JWTTokensRepository extends Repository<JWTToken> implements IJWTTokensRepository {
+export class JWTTokensRepository implements IJWTTokensRepository {
 	private readonly _logger: IAppLogger = new AppLogger();
 
-	constructor(_dataSource: DataSource) {
-		super(JWTToken, _dataSource.createEntityManager());
-	}
+	constructor(private readonly _dataSource: DataSource) {}
 
 	public async getById(id: string): Promise<JWTTokenFullDto | null> {
-		const token: JWTToken | null = await this.findOne({ where: { id } });
+		const token: JWTToken | null = await this._dataSource
+			.createQueryBuilder()
+			.select('jwtToken')
+			.from(JWTToken, 'jwtToken')
+			.where('jwtToken.id = :id', { id })
+			.getOne();
 
 		this._logger.successfulDBQuery({
 			method: this.getById.name,
@@ -30,7 +33,12 @@ export class JWTTokensRepository extends Repository<JWTToken> implements IJWTTok
 	}
 
 	public async createToken(token: string): Promise<string> {
-		const result: InsertResult = await this.insert({ token });
+		const result: InsertResult = await this._dataSource
+			.createQueryBuilder()
+			.insert()
+			.into(JWTToken)
+			.values({ token })
+			.execute();
 
 		this._logger.successfulDBQuery({
 			method: this.createToken.name,
@@ -42,7 +50,12 @@ export class JWTTokensRepository extends Repository<JWTToken> implements IJWTTok
 	}
 
 	public async updateToken(id: string, token: string): Promise<boolean> {
-		const updateResult: UpdateResult = await this.update({ id }, { token });
+		const updateResult: UpdateResult = await this._dataSource
+			.createQueryBuilder()
+			.update(JWTToken)
+			.set({ token })
+			.where('id = :id', { id })
+			.execute();
 
 		this._logger.successfulDBQuery({
 			method: this.updateToken.name,
@@ -54,7 +67,12 @@ export class JWTTokensRepository extends Repository<JWTToken> implements IJWTTok
 	}
 
 	public async deleteToken(id: string): Promise<boolean> {
-		const result: DeleteResult = await this.delete({ id });
+		const result: DeleteResult = await this._dataSource
+			.createQueryBuilder()
+			.delete()
+			.from(JWTToken)
+			.where('id = :id', { id })
+			.execute();
 
 		this._logger.successfulDBQuery({
 			method: this.deleteToken.name,

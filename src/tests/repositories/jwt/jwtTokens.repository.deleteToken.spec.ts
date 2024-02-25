@@ -1,48 +1,45 @@
-import { connectionSource } from '@DB/typeOrmConfig';
+import { JWTToken } from '@Entities/JWTToken.entity';
 import { JWTTokensRepository } from '@Repositories/JWTTokens.repository';
-import { DeleteResult, FindOptionsWhere, ObjectId } from 'typeorm';
-import SpyInstance = jest.SpyInstance;
+import { DataSource, DeleteResult } from 'typeorm';
 
 describe('jwtTokensRepository', (): void => {
 	let jwtTokensRepository: JWTTokensRepository;
 
+	let resolvedAffectedValue: number = 0;
+
+	const deleteMock: jest.Mock = jest.fn().mockReturnThis();
+	const fromMock: jest.Mock = jest.fn().mockReturnThis();
+	const whereMock: jest.Mock = jest.fn().mockReturnThis();
+	const executeMock: jest.Mock = jest.fn().mockImplementation(async (): Promise<DeleteResult> => {
+		return <DeleteResult>{
+			raw: [],
+			affected: resolvedAffectedValue,
+		};
+	});
+
+	const dataSourceMock: jest.Mocked<DataSource> = {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		createQueryBuilder: jest.fn(() => {
+			return {
+				delete: deleteMock,
+				from: fromMock,
+				where: whereMock,
+				execute: executeMock,
+			};
+		}),
+	};
+
 	beforeEach((): void => {
-		jwtTokensRepository = new JWTTokensRepository(connectionSource);
+		jwtTokensRepository = new JWTTokensRepository(dataSourceMock);
 	});
 
 	describe('deleteToken', (): void => {
-		let deleteMock: SpyInstance;
-
 		const existingTokenId: string = '1';
 		const notExistingTokenId: string = '5';
 
 		beforeEach((): void => {
-			deleteMock = jest
-				.spyOn(jwtTokensRepository, 'delete')
-				.mockImplementation(
-					async <T>(
-						criteria:
-							| string
-							| number
-							| string[]
-							| Date
-							| ObjectId
-							| number[]
-							| Date[]
-							| ObjectId[]
-							| FindOptionsWhere<T>,
-					): Promise<DeleteResult> => {
-						const { id } = criteria as unknown as { id: string };
-
-						return {
-							raw: [],
-							affected: id === existingTokenId ? 1 : 0,
-						};
-					},
-				);
-		});
-
-		afterEach((): void => {
+			resolvedAffectedValue = 0;
 			jest.clearAllMocks();
 		});
 
@@ -54,11 +51,15 @@ describe('jwtTokensRepository', (): void => {
 			expect(jwtTokensRepository.deleteToken).toBeInstanceOf(Function);
 		});
 
-		it('should call delete method to delete token', async (): Promise<void> => {
+		it('should user queryBuilder to build query and delete JWT token', async (): Promise<void> => {
 			await jwtTokensRepository.deleteToken(existingTokenId);
 
 			expect(deleteMock).toHaveBeenCalledTimes(1);
-			expect(deleteMock).toHaveBeenCalledWith({ id: existingTokenId });
+			expect(fromMock).toHaveBeenCalledTimes(1);
+			expect(fromMock).toHaveBeenCalledWith(JWTToken);
+			expect(whereMock).toHaveBeenCalledTimes(1);
+			expect(whereMock).toHaveBeenCalledWith('id = :id', { id: existingTokenId });
+			expect(executeMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('should return false if token with given id not exist', async (): Promise<void> => {
@@ -68,6 +69,8 @@ describe('jwtTokensRepository', (): void => {
 		});
 
 		it('should return true if token with given id exist and was deleted', async (): Promise<void> => {
+			resolvedAffectedValue = 1;
+
 			const result: boolean = await jwtTokensRepository.deleteToken(existingTokenId);
 
 			expect(result).toBe(true);

@@ -2,7 +2,7 @@ import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { AppLogger } from '@Logger/app.logger';
 import { Injectable } from '@nestjs/common';
 
-import { DataSource, InsertResult, Repository, UpdateResult } from 'typeorm';
+import { DataSource, InsertResult, UpdateResult } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
@@ -12,15 +12,18 @@ import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
 
 @Injectable()
-export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodesRepository {
+export class OTPCodesRepository implements IOTPCodesRepository {
 	private readonly _logger: IAppLogger = new AppLogger();
 
-	constructor(_dataSource: DataSource) {
-		super(OTPCode, _dataSource.createEntityManager());
-	}
+	constructor(private readonly _dataSource: DataSource) {}
 
 	public async createOTPCode(createOTPCodeDto: CreateOTPCodeDto): Promise<string> {
-		const result: InsertResult = await this.insert(createOTPCodeDto);
+		const result: InsertResult = await this._dataSource
+			.createQueryBuilder()
+			.insert()
+			.into(OTPCode)
+			.values(createOTPCodeDto)
+			.execute();
 
 		this._logger.successfulDBQuery({
 			method: this.createOTPCode.name,
@@ -32,7 +35,12 @@ export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodes
 	}
 
 	public async getUserOTPCodeById(userOTPCodeId: string): Promise<OTPCodeResponseDto | null> {
-		const otpCode: OTPCode | null = await this.findOne({ where: { id: userOTPCodeId } });
+		const otpCode: OTPCode | null = await this._dataSource
+			.createQueryBuilder()
+			.select('otpCode')
+			.from(OTPCode, 'otpCode')
+			.where('otpCode.id = :userOTPCodeId', { userOTPCodeId })
+			.getOne();
 
 		this._logger.successfulDBQuery({
 			method: this.getUserOTPCodeById.name,
@@ -49,7 +57,12 @@ export class OTPCodesRepository extends Repository<OTPCode> implements IOTPCodes
 		userOTPCodeId: string,
 		updateOTPCodeDto: Partial<UpdateOTPCodeDto>,
 	): Promise<boolean> {
-		const updateResult: UpdateResult = await this.update({ id: userOTPCodeId }, updateOTPCodeDto);
+		const updateResult: UpdateResult = await this._dataSource
+			.createQueryBuilder()
+			.update(OTPCode)
+			.set(updateOTPCodeDto)
+			.where('id = :userOTPCodeId', { userOTPCodeId })
+			.execute();
 
 		this._logger.successfulDBQuery({
 			method: this.updateOTPCode.name,

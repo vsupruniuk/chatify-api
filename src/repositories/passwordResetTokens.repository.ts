@@ -8,26 +8,24 @@ import { Injectable } from '@nestjs/common';
 import { TPasswordResetTokensGetFields } from '@Types/passwordResetTokens/TPasswordResetTokensGetFields';
 import { TUpdatePasswordResetToken } from '@Types/passwordResetTokens/TUpdatePasswordResetToken';
 import { plainToInstance } from 'class-transformer';
-import { DataSource, DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
+import { DataSource, DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 
 @Injectable()
-export class PasswordResetTokensRepository
-	extends Repository<PasswordResetToken>
-	implements IPasswordResetTokensRepository
-{
+export class PasswordResetTokensRepository implements IPasswordResetTokensRepository {
 	private readonly _logger: IAppLogger = new AppLogger();
 
-	constructor(_dataSource: DataSource) {
-		super(PasswordResetToken, _dataSource.createEntityManager());
-	}
+	constructor(private readonly _dataSource: DataSource) {}
 
 	public async getByField(
 		fieldName: TPasswordResetTokensGetFields,
 		fieldValue: string,
 	): Promise<PasswordResetTokenDto | null> {
-		const token: PasswordResetToken | null = await this.findOne({
-			where: { [fieldName]: fieldValue },
-		});
+		const token: PasswordResetToken | null = await this._dataSource
+			.createQueryBuilder()
+			.select('passwordResetToken')
+			.from(PasswordResetToken, 'passwordResetToken')
+			.where(`passwordResetToken.${fieldName} = :fieldValue`, { fieldValue })
+			.getOne();
 
 		this._logger.successfulDBQuery({
 			method: this.getByField.name,
@@ -41,7 +39,12 @@ export class PasswordResetTokensRepository
 	}
 
 	public async createToken(tokenDto: PasswordResetTokenInfoDto): Promise<string> {
-		const result: InsertResult = await this.insert(tokenDto);
+		const result: InsertResult = await this._dataSource
+			.createQueryBuilder()
+			.insert()
+			.into(PasswordResetToken)
+			.values(tokenDto)
+			.execute();
 
 		this._logger.successfulDBQuery({
 			method: this.createToken.name,
@@ -53,7 +56,12 @@ export class PasswordResetTokensRepository
 	}
 
 	public async updateToken(id: string, updateData: TUpdatePasswordResetToken): Promise<boolean> {
-		const result: UpdateResult = await this.update({ id }, updateData);
+		const result: UpdateResult = await this._dataSource
+			.createQueryBuilder()
+			.update(PasswordResetToken)
+			.set(updateData)
+			.where('id = :id', { id })
+			.execute();
 
 		this._logger.successfulDBQuery({
 			method: this.updateToken.name,
@@ -65,7 +73,12 @@ export class PasswordResetTokensRepository
 	}
 
 	public async deleteToken(id: string): Promise<boolean> {
-		const result: DeleteResult = await this.delete({ id });
+		const result: DeleteResult = await this._dataSource
+			.createQueryBuilder()
+			.delete()
+			.from(PasswordResetToken)
+			.where('id = :id', { id })
+			.execute();
 
 		this._logger.successfulDBQuery({
 			method: this.deleteToken.name,

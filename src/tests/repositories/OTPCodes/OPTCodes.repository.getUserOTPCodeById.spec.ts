@@ -1,42 +1,46 @@
-import { FindOneOptions } from 'typeorm';
-
-import { connectionSource } from '@DB/typeOrmConfig';
-
+import { DataSource } from 'typeorm';
 import { OTPCode } from '@Entities/OTPCode.entity';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
-
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-
 import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
-
-import SpyInstance = jest.SpyInstance;
 
 describe('OTPCodesRepository', (): void => {
 	let otpCodesRepository: OTPCodesRepository;
 
+	let resolvedValue: OTPCode | null = null;
+
+	const selectMock: jest.Mock = jest.fn().mockReturnThis();
+	const fromMock: jest.Mock = jest.fn().mockReturnThis();
+	const whereMock: jest.Mock = jest.fn().mockReturnThis();
+	const getOneMock: jest.Mock = jest
+		.fn()
+		.mockImplementation(async (): Promise<OTPCode | null> => resolvedValue);
+
+	const dataSourceMock: jest.Mocked<DataSource> = {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		createQueryBuilder: jest.fn(() => {
+			return {
+				select: selectMock,
+				from: fromMock,
+				where: whereMock,
+				getOne: getOneMock,
+			};
+		}),
+	};
+
 	beforeEach((): void => {
-		otpCodesRepository = new OTPCodesRepository(connectionSource);
+		otpCodesRepository = new OTPCodesRepository(dataSourceMock);
 	});
 
 	describe('getUserOTPCodeById', (): void => {
-		let findOneMock: SpyInstance;
-
 		const otpCodesMock: OTPCode[] = [...otpCodes];
 		const existingId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
 		const notExistingId: string = '1662543c-4d4b-4424-ac31-45189dedd099';
 		const existingOtpCode: number = 111111;
 
 		beforeEach((): void => {
-			findOneMock = jest
-				.spyOn(otpCodesRepository, 'findOne')
-				.mockImplementation(async (options: FindOneOptions<OTPCode>): Promise<OTPCode | null> => {
-					return (
-						otpCodesMock.find((otpCode: OTPCode) => otpCode.id === options.where!['id']) || null
-					);
-				});
-		});
-
-		afterEach((): void => {
+			resolvedValue = null;
 			jest.clearAllMocks();
 		});
 
@@ -48,14 +52,23 @@ describe('OTPCodesRepository', (): void => {
 			expect(otpCodesRepository.getUserOTPCodeById).toBeInstanceOf(Function);
 		});
 
-		it('should use findOne method for searching OTP code', async (): Promise<void> => {
+		it('should use queryBuilder to build query and find OTP code by id', async (): Promise<void> => {
 			await otpCodesRepository.getUserOTPCodeById(existingId);
 
-			expect(findOneMock).toHaveBeenCalledTimes(1);
-			expect(findOneMock).toHaveBeenCalledWith({ where: { id: existingId } });
+			expect(selectMock).toHaveBeenCalledTimes(1);
+			expect(selectMock).toHaveBeenCalledWith('otpCode');
+			expect(fromMock).toHaveBeenCalledTimes(1);
+			expect(fromMock).toHaveBeenCalledWith(OTPCode, 'otpCode');
+			expect(whereMock).toHaveBeenCalledTimes(1);
+			expect(whereMock).toHaveBeenCalledWith('otpCode.id = :userOTPCodeId', {
+				userOTPCodeId: existingId,
+			});
+			expect(getOneMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('should return OTP code if it exist', async (): Promise<void> => {
+			resolvedValue = otpCodesMock.find((code: OTPCode) => code.id === existingId) || null;
+
 			const result: OTPCodeResponseDto | null =
 				await otpCodesRepository.getUserOTPCodeById(existingId);
 
@@ -63,6 +76,8 @@ describe('OTPCodesRepository', (): void => {
 		});
 
 		it('should return OTP code as instance of OTPCodeResponseDto', async (): Promise<void> => {
+			resolvedValue = otpCodesMock.find((code: OTPCode) => code.id === existingId) || null;
+
 			const result: OTPCodeResponseDto | null =
 				await otpCodesRepository.getUserOTPCodeById(existingId);
 

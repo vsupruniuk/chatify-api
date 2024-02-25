@@ -1,31 +1,42 @@
-import { connectionSource } from '@DB/typeOrmConfig';
+import { JWTToken } from '@Entities/JWTToken.entity';
 import { JWTTokensRepository } from '@Repositories/JWTTokens.repository';
-import { InsertResult } from 'typeorm';
+import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
-import SpyInstance = jest.SpyInstance;
 
 describe('jwtTokensRepository', (): void => {
 	let jwtTokensRepository: JWTTokensRepository;
 
+	const insertMock: jest.Mock = jest.fn().mockReturnThis();
+	const intoMock: jest.Mock = jest.fn().mockReturnThis();
+	const valuesMock: jest.Mock = jest.fn().mockReturnThis();
+	const executeMock: jest.Mock = jest.fn().mockImplementation(async (): Promise<InsertResult> => {
+		return <InsertResult>{
+			identifiers: <ObjectLiteral>[{ id: '4' }],
+		};
+	});
+
+	const dataSourceMock: jest.Mocked<DataSource> = {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		createQueryBuilder: jest.fn(() => {
+			return {
+				insert: insertMock,
+				into: intoMock,
+				values: valuesMock,
+				execute: executeMock,
+			};
+		}),
+	};
+
 	beforeEach((): void => {
-		jwtTokensRepository = new JWTTokensRepository(connectionSource);
+		jwtTokensRepository = new JWTTokensRepository(dataSourceMock);
 	});
 
 	describe('createToken', (): void => {
-		let insertMock: SpyInstance;
-
 		const id: string = '4';
 		const token: string = 'jwt-token-4';
 
 		beforeEach((): void => {
-			insertMock = jest.spyOn(jwtTokensRepository, 'insert').mockResolvedValue(
-				Promise.resolve(<InsertResult>{
-					identifiers: <ObjectLiteral>[{ id }],
-				}),
-			);
-		});
-
-		afterEach((): void => {
 			jest.clearAllMocks();
 		});
 
@@ -37,11 +48,15 @@ describe('jwtTokensRepository', (): void => {
 			expect(jwtTokensRepository.createToken).toBeInstanceOf(Function);
 		});
 
-		it('should use insert method for creating token', async (): Promise<void> => {
+		it('should use queryBuilder to build query for creating JWT token', async (): Promise<void> => {
 			await jwtTokensRepository.createToken(token);
 
 			expect(insertMock).toHaveBeenCalledTimes(1);
-			expect(insertMock).toHaveBeenCalledWith({ token });
+			expect(intoMock).toHaveBeenCalledTimes(1);
+			expect(intoMock).toHaveBeenCalledWith(JWTToken);
+			expect(valuesMock).toHaveBeenCalledTimes(1);
+			expect(valuesMock).toHaveBeenCalledWith({ token });
+			expect(executeMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('should return id of created token', async (): Promise<void> => {

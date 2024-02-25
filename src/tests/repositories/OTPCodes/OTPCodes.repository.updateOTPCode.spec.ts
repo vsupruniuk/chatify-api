@@ -1,19 +1,42 @@
-import { connectionSource } from '@DB/typeOrmConfig';
 import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
+import { OTPCode } from '@Entities/OTPCode.entity';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-import { FindOptionsWhere, ObjectId, UpdateResult } from 'typeorm';
-import SpyInstance = jest.SpyInstance;
+import { DataSource, UpdateResult } from 'typeorm';
 
 describe('OTPCodesRepository', (): void => {
 	let otpCodesRepository: OTPCodesRepository;
 
+	let resolvedAffectedValue: number = 0;
+
+	const updateMock: jest.Mock = jest.fn().mockReturnThis();
+	const setMock: jest.Mock = jest.fn().mockReturnThis();
+	const whereMock: jest.Mock = jest.fn().mockReturnThis();
+	const executeMock: jest.Mock = jest.fn().mockImplementation(async (): Promise<UpdateResult> => {
+		return <UpdateResult>{
+			raw: [],
+			affected: resolvedAffectedValue,
+			generatedMaps: [],
+		};
+	});
+
+	const dataSourceMock: jest.Mocked<DataSource> = {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		createQueryBuilder: jest.fn(() => {
+			return {
+				update: updateMock,
+				set: setMock,
+				where: whereMock,
+				execute: executeMock,
+			};
+		}),
+	};
+
 	beforeEach((): void => {
-		otpCodesRepository = new OTPCodesRepository(connectionSource);
+		otpCodesRepository = new OTPCodesRepository(dataSourceMock);
 	});
 
 	describe('updateOTPCode', (): void => {
-		let updateMock: SpyInstance;
-
 		const existingCodeId: string = '1662043c-4d4b-4424-ac31-35189dedd099';
 		const notExistingCodeId: string = '1662043c-4d4b-4424-ac31-35189dedd000';
 		const updateOTPCodeDto: UpdateOTPCodeDto = {
@@ -22,33 +45,7 @@ describe('OTPCodesRepository', (): void => {
 		};
 
 		beforeEach((): void => {
-			updateMock = jest
-				.spyOn(otpCodesRepository, 'update')
-				.mockImplementation(
-					async <T>(
-						criteria:
-							| string
-							| number
-							| string[]
-							| Date
-							| ObjectId
-							| number[]
-							| Date[]
-							| ObjectId[]
-							| FindOptionsWhere<T>,
-					): Promise<UpdateResult> => {
-						const { id } = criteria as unknown as { id: string };
-
-						return <UpdateResult>{
-							raw: [],
-							affected: id === existingCodeId ? 1 : 0,
-							generatedMaps: [],
-						};
-					},
-				);
-		});
-
-		afterEach((): void => {
+			resolvedAffectedValue = 0;
 			jest.clearAllMocks();
 		});
 
@@ -60,11 +57,18 @@ describe('OTPCodesRepository', (): void => {
 			expect(otpCodesRepository.updateOTPCode).toBeInstanceOf(Function);
 		});
 
-		it('should call update method to update otp code', async (): Promise<void> => {
+		it('should use queryBuilder to build query and update OTP code', async (): Promise<void> => {
 			await otpCodesRepository.updateOTPCode(existingCodeId, updateOTPCodeDto);
 
 			expect(updateMock).toHaveBeenCalledTimes(1);
-			expect(updateMock).toHaveBeenCalledWith({ id: existingCodeId }, updateOTPCodeDto);
+			expect(updateMock).toHaveBeenCalledWith(OTPCode);
+			expect(setMock).toHaveBeenCalledTimes(1);
+			expect(setMock).toHaveBeenCalledWith(updateOTPCodeDto);
+			expect(whereMock).toHaveBeenCalledTimes(1);
+			expect(whereMock).toHaveBeenCalledWith('id = :userOTPCodeId', {
+				userOTPCodeId: existingCodeId,
+			});
+			expect(executeMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('should return false if otp code with given id not exist', async (): Promise<void> => {
@@ -77,6 +81,8 @@ describe('OTPCodesRepository', (): void => {
 		});
 
 		it('should return true if otp code with given id exist and was updated', async (): Promise<void> => {
+			resolvedAffectedValue = 1;
+
 			const isUpdated: boolean = await otpCodesRepository.updateOTPCode(
 				existingCodeId,
 				updateOTPCodeDto,
