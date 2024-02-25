@@ -38,12 +38,12 @@ describe('usersService', (): void => {
 		);
 	});
 
-	describe('getFullUserByEmail', (): void => {
+	describe('getFullUserById', (): void => {
 		let getFullUserByFieldMock: SpyInstance;
 
 		const usersMock: UserFullDto[] = [...users];
-		const existingUserEmail: string = 'tony@mail.com';
-		const notExistingUserEmail: string = 'bruce@mail.com';
+		const existingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
+		const notExistingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b31111';
 
 		beforeEach((): void => {
 			getFullUserByFieldMock = jest
@@ -59,18 +59,6 @@ describe('usersService', (): void => {
 									return user.id === fieldValue;
 								}
 
-								if (fieldName === 'email') {
-									return user.email === fieldValue;
-								}
-
-								if (fieldName === 'nickname') {
-									return user.nickname === fieldValue;
-								}
-
-								if (fieldName === 'passwordResetTokenId') {
-									return user.passwordResetTokenId === fieldValue;
-								}
-
 								return false;
 							}) || null
 						);
@@ -83,37 +71,34 @@ describe('usersService', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(usersService.getFullUserByEmail).toBeDefined();
+			expect(usersService.getFullUserById).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(usersService.getFullUserByEmail).toBeInstanceOf(Function);
+			expect(usersService.getFullUserById).toBeInstanceOf(Function);
 		});
 
-		it('should use getFullUserById method from users repository for searching user', async (): Promise<void> => {
-			await usersService.getFullUserByEmail(existingUserEmail);
+		it('should use getFullUserByField method from users repository for searching user', async (): Promise<void> => {
+			await usersService.getFullUserById(existingUserId);
 
 			expect(getFullUserByFieldMock).toHaveBeenCalledTimes(1);
-			expect(getFullUserByFieldMock).toHaveBeenCalledWith('email', existingUserEmail);
+			expect(getFullUserByFieldMock).toHaveBeenCalledWith('id', existingUserId);
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {
-			const foundedUser: UserFullDto | null =
-				await usersService.getFullUserByEmail(existingUserEmail);
+			const foundedUser: UserFullDto | null = await usersService.getFullUserById(existingUserId);
 
-			expect(foundedUser?.email).toEqual(existingUserEmail);
+			expect(foundedUser?.id).toEqual(existingUserId);
 		});
 
 		it('should return founded user as instance of UserFullDto', async (): Promise<void> => {
-			const foundedUser: UserFullDto | null =
-				await usersService.getFullUserByEmail(existingUserEmail);
+			const foundedUser: UserFullDto | null = await usersService.getFullUserById(existingUserId);
 
 			expect(foundedUser).toBeInstanceOf(UserFullDto);
 		});
 
 		it('should return null, if user not exist', async (): Promise<void> => {
-			const foundedUser: UserFullDto | null =
-				await usersService.getFullUserByEmail(notExistingUserEmail);
+			const foundedUser: UserFullDto | null = await usersService.getFullUserById(notExistingUserId);
 
 			expect(foundedUser).toBeNull();
 		});

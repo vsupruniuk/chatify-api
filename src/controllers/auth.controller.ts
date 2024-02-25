@@ -126,6 +126,7 @@ export class AuthController implements IAuthController {
 	@Post('/activate-account')
 	@HttpCode(HttpStatus.OK)
 	public async activateAccount(
+		@Res({ passthrough: true }) response: Response,
 		@Body() accountActivationDto: AccountActivationDto,
 	): Promise<ResponseResult> {
 		this._logger.incomingRequest({
@@ -134,10 +135,8 @@ export class AuthController implements IAuthController {
 			body: accountActivationDto,
 		});
 
-		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			HttpStatus.OK,
-			ResponseStatus.SUCCESS,
-		);
+		const responseResult: SuccessfulResponseResult<LoginResponseDto> =
+			new SuccessfulResponseResult<LoginResponseDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
 
 		const isActivated: boolean = await this._authService.activateAccount(accountActivationDto);
 
@@ -149,7 +148,43 @@ export class AuthController implements IAuthController {
 
 		await this._otpCodesService.deactivateUserOTPCode(accountActivationDto.OTPCodeId);
 
-		responseResult.data = [];
+		const user: UserFullDto | null = await this._usersService.getFullUserById(
+			accountActivationDto.id,
+		);
+
+		if (!user) {
+			throw new UnprocessableEntityException(['Failed to activate account. Please try again']);
+		}
+
+		const accessToken: string = await this._jwtTokensService.generateAccessToken(
+			this.createJwtPayload(user),
+		);
+
+		const refreshToken: string = await this._jwtTokensService.generateRefreshToken(
+			this.createJwtPayload(user),
+		);
+
+		const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
+			user.JWTTokenId,
+			refreshToken,
+		);
+
+		const isTokenIdUpdated: boolean = await this._usersService.updateUser(user.id, {
+			JWTTokenId: savedTokenId,
+		});
+
+		if (!isTokenIdUpdated) {
+			throw new UnprocessableEntityException(['Failed to activate account. Please try again']);
+		}
+
+		response.cookie(CookiesNames.REFRESH_TOKEN, refreshToken, {
+			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) || 0,
+			secure: true,
+			sameSite: 'strict',
+			httpOnly: true,
+		});
+
+		responseResult.data = [{ accessToken }];
 		responseResult.dataLength = responseResult.data.length;
 
 		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });

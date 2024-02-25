@@ -40,6 +40,10 @@ export class UsersService implements IUsersService {
 		return await this._usersRepository.getFullUserByField('email', email);
 	}
 
+	public async getFullUserById(id: string): Promise<UserFullDto | null> {
+		return await this._usersRepository.getFullUserByField('id', id);
+	}
+
 	public async getByEmail(email: string): Promise<UserShortDto | null> {
 		return await this._usersRepository.getByField('email', email);
 	}
