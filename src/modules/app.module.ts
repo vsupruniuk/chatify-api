@@ -1,11 +1,9 @@
+import { throttlerGuardProvider } from '@Modules/providers/index';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
-
+import { ThrottlerModule } from '@nestjs/throttler';
 import { typeOrmConfig } from '@DB/typeOrmConfig';
-
 import { AuthModule } from '@Modules/auth.module';
 
 @Module({
@@ -21,6 +19,6 @@ import { AuthModule } from '@Modules/auth.module';
 		]),
 	],
 	controllers: [],
-	providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+	providers: [throttlerGuardProvider],
 })
 export class AppModule {}
