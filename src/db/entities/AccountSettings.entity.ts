@@ -1,7 +1,9 @@
+import { User } from '@Entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -15,7 +17,7 @@ export class AccountSettings {
 	id: string;
 
 	@CreateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -34,14 +36,11 @@ export class AccountSettings {
 	@Column({ type: 'boolean', default: false })
 	notification: boolean;
 
-	@Column({
-		type: 'boolean',
-		default: false,
-	})
+	@Column({ type: 'boolean', default: false })
 	twoStepVerification: boolean;
 
 	@UpdateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -53,4 +52,10 @@ export class AccountSettings {
 		},
 	})
 	updatedAt: string;
+
+	@OneToOne(() => User, (user: User) => user.accountSettings, {
+		nullable: false,
+		onDelete: 'CASCADE',
+	})
+	user: User;
 }

@@ -1,9 +1,9 @@
 import { connectionSource } from '@DB/typeOrmConfig';
-import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
+import { JWTToken } from '@Entities/JWTToken.entity';
 import { JwtService } from '@nestjs/jwt';
 import { JWTTokensRepository } from '@Repositories/JWTTokens.repository';
 import { JwtTokensService } from '@Services/jwtTokens.service';
-import { jwtTokens } from '@TestMocks/JWTTokenFullDto/jwtTokens';
+import { jwtTokens } from '@TestMocks/JWTToken/jwtTokens';
 import SpyInstance = jest.SpyInstance;
 
 describe('jwtTokensService', (): void => {
@@ -20,7 +20,7 @@ describe('jwtTokensService', (): void => {
 	describe('deleteToken', (): void => {
 		let deleteTokenMock: SpyInstance;
 
-		const jwtTokensMock: JWTTokenFullDto[] = [...jwtTokens];
+		const jwtTokensMock: JWTToken[] = [...jwtTokens];
 		const existingTokenId: string = '1';
 		const notExistingTokenId: string = '4';
 
@@ -28,7 +28,7 @@ describe('jwtTokensService', (): void => {
 			deleteTokenMock = jest
 				.spyOn(jwtTokensRepository, 'deleteToken')
 				.mockImplementation(async (id: string): Promise<boolean> => {
-					return jwtTokensMock.some((token: JWTTokenFullDto) => token.id === id);
+					return jwtTokensMock.some((token: JWTToken) => token.id === id);
 				});
 		});
 

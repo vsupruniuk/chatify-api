@@ -1,11 +1,13 @@
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
+import { OTPCode } from '@Entities/OTPCode.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { DateHelper } from '@Helpers/date.helper';
 import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { IOTPCodesService } from '@Interfaces/OTPCodes/IOTPCodesService';
 import { Inject, Injectable } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class OTPCodesService implements IOTPCodesService {
@@ -39,16 +41,14 @@ export class OTPCodesService implements IOTPCodesService {
 			return null;
 		}
 
-		const otpCode: OTPCodeResponseDto | null =
+		const otpCode: OTPCode | null =
 			await this._otpCodesRepository.getUserOTPCodeById(userOTPCodeId);
 
-		if (!otpCode) {
+		if (!otpCode || OTPCodesHelper.isExpired(otpCode)) {
 			return null;
 		}
 
-		const isExpired: boolean = OTPCodesHelper.isExpired(otpCode);
-
-		return !isExpired ? otpCode : null;
+		return plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true });
 	}
 
 	public async deactivateUserOTPCode(userOTPCodeId: string): Promise<boolean> {

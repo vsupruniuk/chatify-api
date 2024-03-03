@@ -1,8 +1,10 @@
+import { User } from '@Entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
 	Entity,
 	Index,
+	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -13,7 +15,7 @@ export class PasswordResetToken {
 	id: string;
 
 	@CreateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -27,7 +29,7 @@ export class PasswordResetToken {
 	createdAt: string;
 
 	@Column({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: true,
 		transformer: {
 			from(date: string): string {
@@ -49,7 +51,7 @@ export class PasswordResetToken {
 	token: string;
 
 	@UpdateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -61,4 +63,10 @@ export class PasswordResetToken {
 		},
 	})
 	updatedAt: string;
+
+	@OneToOne(() => User, (user: User) => user.passwordResetToken, {
+		nullable: false,
+		onDelete: 'CASCADE',
+	})
+	user: User;
 }

@@ -3,12 +3,10 @@ import { AppLogger } from '@Logger/app.logger';
 import { Injectable } from '@nestjs/common';
 
 import { DataSource, InsertResult, UpdateResult } from 'typeorm';
-import { plainToInstance } from 'class-transformer';
 
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { OTPCode } from '@Entities/OTPCode.entity';
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
 
 @Injectable()
@@ -34,7 +32,7 @@ export class OTPCodesRepository implements IOTPCodesRepository {
 		return result.identifiers[0].id;
 	}
 
-	public async getUserOTPCodeById(userOTPCodeId: string): Promise<OTPCodeResponseDto | null> {
+	public async getUserOTPCodeById(userOTPCodeId: string): Promise<OTPCode | null> {
 		const otpCode: OTPCode | null = await this._dataSource
 			.createQueryBuilder()
 			.select('otpCode')
@@ -48,9 +46,7 @@ export class OTPCodesRepository implements IOTPCodesRepository {
 			data: otpCode,
 		});
 
-		return otpCode
-			? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
-			: null;
+		return otpCode;
 	}
 
 	public async updateOTPCode(

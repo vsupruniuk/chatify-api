@@ -2,8 +2,11 @@ import { AuthController } from '@Controllers/auth.controller';
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
 import { LoginResponseDto } from '@DTO/auth/LoginResponse.dto';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
+import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { JWTToken } from '@Entities/JWTToken.entity';
 import { OTPCode } from '@Entities/OTPCode.entity';
+import { User } from '@Entities/User.entity';
 import { CookiesNames } from '@Enums/CookiesNames.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { Headers } from '@Enums/Headers.enum';
@@ -19,8 +22,9 @@ import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
+import { jwtTokens } from '@TestMocks/JWTToken/jwtTokens';
 import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
-import { users } from '@TestMocks/UserFullDto/users';
+import { users } from '@TestMocks/User/users';
 import { plainToInstance } from 'class-transformer';
 import { Response } from 'express';
 import * as request from 'supertest';
@@ -30,7 +34,8 @@ describe('AuthController', (): void => {
 	let authController: AuthController;
 
 	const otpCodesMock: OTPCode[] = [...otpCodes];
-	let usersMock: UserFullDto[] = [...users];
+	const jwtTokensMock: JWTToken[] = [...jwtTokens];
+	let usersMock: User[] = [...users];
 	const responceMock: Partial<Response> = {
 		cookie: jest.fn(),
 	};
@@ -39,6 +44,8 @@ describe('AuthController', (): void => {
 	const notExistingOTPCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd000';
 	const existingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
 	const notExistingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33333';
+	const existingTokenId: string = '1';
+	const newTokenId: string = '5';
 
 	const authServiceMock: Partial<IAuthService> = {
 		activateAccount: jest
@@ -62,9 +69,7 @@ describe('AuthController', (): void => {
 					return false;
 				}
 
-				const userIndex = usersMock.findIndex(
-					(user: UserFullDto) => user.id === accountActivationDto.id,
-				);
+				const userIndex = usersMock.findIndex((user: User) => user.id === accountActivationDto.id);
 
 				if (userIndex < 0) {
 					return false;
@@ -77,6 +82,15 @@ describe('AuthController', (): void => {
 	};
 
 	const jwtTokensServiceMock: Partial<IJWTTokensService> = {
+		getById: jest.fn().mockImplementation(async (id: string): Promise<JWTTokenFullDto | null> => {
+			const token: JWTToken | null =
+				jwtTokensMock.find((token: JWTToken) => token.id === id) || null;
+
+			return token
+				? plainToInstance(JWTTokenFullDto, token, { excludeExtraneousValues: true })
+				: null;
+		}),
+
 		generateAccessToken: jest.fn().mockImplementation(async (): Promise<string> => {
 			return 'jwt-access-token';
 		}),
@@ -85,14 +99,20 @@ describe('AuthController', (): void => {
 			return 'jwt-refresh-token';
 		}),
 
-		saveRefreshToken: jest.fn().mockImplementation(async (): Promise<boolean> => true),
+		saveRefreshToken: jest
+			.fn()
+			.mockImplementation(
+				async (id): Promise<string> => (id === existingTokenId ? existingTokenId : newTokenId),
+			),
 	};
 
 	const usersServiceMock: Partial<IUsersService> = {
 		getFullUserById: jest
 			.fn()
 			.mockImplementation(async (id: string): Promise<UserFullDto | null> => {
-				return usersMock.find((user: UserFullDto) => user.id === id) || null;
+				const user: User | null = usersMock.find((user: User) => user.id === id) || null;
+
+				return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
 			}),
 
 		updateUser: jest.fn().mockImplementation(async (): Promise<boolean> => true),
@@ -353,8 +373,7 @@ describe('AuthController', (): void => {
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			const user: UserFullDto | null =
-				usersMock.find((user: UserFullDto) => user.id === existingUserId) || null;
+			const user: User | null = usersMock.find((user: User) => user.id === existingUserId) || null;
 
 			await authController.activateAccount(responceMock as Response, accountActivationDto);
 
@@ -377,8 +396,7 @@ describe('AuthController', (): void => {
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			const user: UserFullDto | null =
-				usersMock.find((user: UserFullDto) => user.id === existingUserId) || null;
+			const user: User | null = usersMock.find((user: User) => user.id === existingUserId) || null;
 
 			await authController.activateAccount(responceMock as Response, accountActivationDto);
 
@@ -401,8 +419,7 @@ describe('AuthController', (): void => {
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			const user: UserFullDto | null =
-				usersMock.find((user: UserFullDto) => user.id === existingUserId) || null;
+			const user: User | null = usersMock.find((user: User) => user.id === existingUserId) || null;
 
 			const refreshToken: string = await jwtTokensServiceMock.generateRefreshToken!(
 				plainToInstance(JWTPayloadDto, user, { excludeExtraneousValues: true }),
@@ -412,7 +429,7 @@ describe('AuthController', (): void => {
 
 			expect(jwtTokensServiceMock.saveRefreshToken).toHaveBeenCalledTimes(1);
 			expect(jwtTokensServiceMock.saveRefreshToken).toHaveBeenCalledWith(
-				user?.JWTTokenId,
+				user?.JWTToken?.id,
 				refreshToken,
 			);
 		});
@@ -432,6 +449,32 @@ describe('AuthController', (): void => {
 			expect(usersServiceMock.getFullUserById).toHaveBeenCalledWith(existingUserId);
 		});
 
+		it('should call getGyId method in JWT tokens service to get created user JWT token', async (): Promise<void> => {
+			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
+
+			const accountActivationDto = <AccountActivationDto>{
+				id: existingUserId,
+				code: 111111,
+				OTPCodeId: existingOTPCodeId,
+			};
+
+			const user: User | null = usersMock.find((user: User) => user.id === existingUserId) || null;
+
+			const refreshToken: string = await jwtTokensServiceMock.generateRefreshToken!(
+				plainToInstance(JWTPayloadDto, user, { excludeExtraneousValues: true }),
+			);
+
+			const id: string = await jwtTokensServiceMock.saveRefreshToken!(
+				user!.JWTToken!.id,
+				refreshToken,
+			);
+
+			await authController.activateAccount(responceMock as Response, accountActivationDto);
+
+			expect(jwtTokensServiceMock.getById).toHaveBeenCalledTimes(1);
+			expect(jwtTokensServiceMock.getById).toHaveBeenCalledWith(id);
+		});
+
 		it('should call updateUser in usersService to update user JWT token id', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
@@ -441,22 +484,23 @@ describe('AuthController', (): void => {
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			const user: UserFullDto | null =
-				usersMock.find((user: UserFullDto) => user.id === existingUserId) || null;
+			const user: User | null = usersMock.find((user: User) => user.id === existingUserId) || null;
 
 			const refreshToken: string = await jwtTokensServiceMock.generateRefreshToken!(
 				plainToInstance(JWTPayloadDto, user, { excludeExtraneousValues: true }),
 			);
 
 			const id: string = await jwtTokensServiceMock.saveRefreshToken!(
-				user!.JWTTokenId,
+				user!.JWTToken!.id,
 				refreshToken,
 			);
+
+			const token: JWTTokenFullDto | null = await jwtTokensServiceMock.getById!(id);
 
 			await authController.activateAccount(responceMock as Response, accountActivationDto);
 
 			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(user?.id, { JWTTokenId: id });
+			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(user?.id, { JWTToken: token });
 		});
 
 		it('should return response as instance of SuccessfulResponseResult', async (): Promise<void> => {

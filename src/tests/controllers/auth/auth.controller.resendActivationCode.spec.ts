@@ -4,6 +4,7 @@ import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { OTPCode } from '@Entities/OTPCode.entity';
+import { User } from '@Entities/User.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { AppModule } from '@Modules/app.module';
@@ -16,21 +17,24 @@ import { EmailService } from '@Services/email.service';
 import { OTPCodesService } from '@Services/OTPCodes.service';
 import { UsersService } from '@Services/users.service';
 import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
-import { users } from '@TestMocks/UserFullDto/users';
+import { users } from '@TestMocks/User/users';
+import { plainToInstance } from 'class-transformer';
 import * as request from 'supertest';
 
 describe('AuthController', (): void => {
 	let app: INestApplication;
 	let authController: AuthController;
 
-	const usersMock: UserFullDto[] = [...users];
+	const usersMock: User[] = [...users];
 	const otpCodesMock: OTPCode[] = [...otpCodes];
 
 	const usersServiceMock: Partial<UsersService> = {
 		getFullUserByEmail: jest
 			.fn()
 			.mockImplementation(async (email: string): Promise<UserShortDto | null> => {
-				return usersMock.find((user: UserFullDto) => user.email === email) || null;
+				const user: User | null = usersMock.find((user: User) => user.email === email) || null;
+
+				return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
 			}),
 	};
 
@@ -43,7 +47,12 @@ describe('AuthController', (): void => {
 			.fn()
 			.mockImplementation(
 				async (userOTPCodeId: string | null): Promise<OTPCodeResponseDto | null> => {
-					return otpCodesMock.find((otpCode: OTPCode) => otpCode.id === userOTPCodeId) || null;
+					const otpCode: OTPCode | null =
+						otpCodesMock.find((otpCode: OTPCode) => otpCode.id === userOTPCodeId) || null;
+
+					return otpCode
+						? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
+						: null;
 				},
 			),
 	};

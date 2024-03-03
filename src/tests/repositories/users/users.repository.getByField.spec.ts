@@ -1,20 +1,20 @@
-import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { User } from '@Entities/User.entity';
 import { UsersRepository } from '@Repositories/users.repository';
-import { users } from '@TestMocks/UserShortDto/users';
+import { users } from '@TestMocks/User/users';
 import { DataSource } from 'typeorm';
 
 describe('usersRepository', (): void => {
 	let usersRepository: UsersRepository;
 
-	let resolvedValue: UserShortDto | null = null;
+	let resolvedValue: User | null = null;
 
 	const selectMock: jest.Mock = jest.fn().mockReturnThis();
 	const fromMock: jest.Mock = jest.fn().mockReturnThis();
+	const leftJoinAndSelectMock: jest.Mock = jest.fn().mockReturnThis();
 	const whereMock: jest.Mock = jest.fn().mockReturnThis();
 	const getOneMock: jest.Mock = jest
 		.fn()
-		.mockImplementation(async (): Promise<UserShortDto | null> => resolvedValue);
+		.mockImplementation(async (): Promise<User | null> => resolvedValue);
 
 	const dataSourceMock: jest.Mocked<DataSource> = {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -23,6 +23,7 @@ describe('usersRepository', (): void => {
 			return {
 				select: selectMock,
 				from: fromMock,
+				leftJoinAndSelect: leftJoinAndSelectMock,
 				where: whereMock,
 				getOne: getOneMock,
 			};
@@ -34,9 +35,9 @@ describe('usersRepository', (): void => {
 	});
 
 	describe('getByField', (): void => {
-		const usersMock: UserShortDto[] = [...users];
-		const existingUserId: string = '1';
-		const notExistingUserId: string = '5';
+		const usersMock: User[] = [...users];
+		const existingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
+		const notExistingUserId: string = 'f41845d7-90af-4c29-8e1a-227c90b31152';
 		const existingUserEmail: string = 'tony@mail.com';
 		const notExistingUserEmail: string = 'bruce@mail.com';
 		const existingUserNickname: string = 't.stark';
@@ -62,6 +63,19 @@ describe('usersRepository', (): void => {
 			expect(selectMock).toHaveBeenCalledWith('user');
 			expect(fromMock).toHaveBeenCalledTimes(1);
 			expect(fromMock).toHaveBeenCalledWith(User, 'user');
+			expect(leftJoinAndSelectMock).toHaveBeenCalledTimes(4);
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(
+				1,
+				'user.accountSettings',
+				'accountSettings',
+			);
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(2, 'user.OTPCode', 'OTPCode');
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(3, 'user.JWTToken', 'JWTToken');
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(
+				4,
+				'user.passwordResetToken',
+				'passwordResetToken',
+			);
 			expect(whereMock).toHaveBeenCalledTimes(1);
 			expect(whereMock).toHaveBeenCalledWith('user.id = :fieldValue', {
 				fieldValue: existingUserId,
@@ -76,6 +90,19 @@ describe('usersRepository', (): void => {
 			expect(selectMock).toHaveBeenCalledWith('user');
 			expect(fromMock).toHaveBeenCalledTimes(1);
 			expect(fromMock).toHaveBeenCalledWith(User, 'user');
+			expect(leftJoinAndSelectMock).toHaveBeenCalledTimes(4);
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(
+				1,
+				'user.accountSettings',
+				'accountSettings',
+			);
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(2, 'user.OTPCode', 'OTPCode');
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(3, 'user.JWTToken', 'JWTToken');
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(
+				4,
+				'user.passwordResetToken',
+				'passwordResetToken',
+			);
 			expect(whereMock).toHaveBeenCalledTimes(1);
 			expect(whereMock).toHaveBeenCalledWith('user.email = :fieldValue', {
 				fieldValue: existingUserEmail,
@@ -90,6 +117,19 @@ describe('usersRepository', (): void => {
 			expect(selectMock).toHaveBeenCalledWith('user');
 			expect(fromMock).toHaveBeenCalledTimes(1);
 			expect(fromMock).toHaveBeenCalledWith(User, 'user');
+			expect(leftJoinAndSelectMock).toHaveBeenCalledTimes(4);
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(
+				1,
+				'user.accountSettings',
+				'accountSettings',
+			);
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(2, 'user.OTPCode', 'OTPCode');
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(3, 'user.JWTToken', 'JWTToken');
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(
+				4,
+				'user.passwordResetToken',
+				'passwordResetToken',
+			);
 			expect(whereMock).toHaveBeenCalledTimes(1);
 			expect(whereMock).toHaveBeenCalledWith('user.nickname = :fieldValue', {
 				fieldValue: existingUserNickname,
@@ -97,51 +137,38 @@ describe('usersRepository', (): void => {
 			expect(getOneMock).toHaveBeenCalledTimes(1);
 		});
 
-		it('should return founded user as instance of UserShortDto', async (): Promise<void> => {
-			resolvedValue = usersMock.find((user: UserShortDto) => user.id === existingUserId) || null;
+		it('should return founded user as instance of User', async (): Promise<void> => {
+			resolvedValue = usersMock.find((user: User) => user.id === existingUserId) || null;
 
-			const foundedUser: UserShortDto | null = await usersRepository.getByField(
-				'id',
-				existingUserId,
-			);
+			const foundedUser: User | null = await usersRepository.getByField('id', existingUserId);
 
-			expect(foundedUser).toBeInstanceOf(UserShortDto);
+			expect(foundedUser).toBeInstanceOf(User);
 		});
 
 		it('should find user by id if it exist', async (): Promise<void> => {
-			resolvedValue = usersMock.find((user: UserShortDto) => user.id === existingUserId) || null;
+			resolvedValue = usersMock.find((user: User) => user.id === existingUserId) || null;
 
-			const foundedUser: UserShortDto | null = await usersRepository.getByField(
-				'id',
-				existingUserId,
-			);
+			const foundedUser: User | null = await usersRepository.getByField('id', existingUserId);
 
 			expect(foundedUser?.id).toBe(existingUserId);
 		});
 
 		it('should return null if user with given id not exist', async (): Promise<void> => {
-			const foundedUser: UserShortDto | null = await usersRepository.getByField(
-				'id',
-				notExistingUserId,
-			);
+			const foundedUser: User | null = await usersRepository.getByField('id', notExistingUserId);
 
 			expect(foundedUser).toBeNull();
 		});
 
 		it('should find user by email if it exist', async (): Promise<void> => {
-			resolvedValue =
-				usersMock.find((user: UserShortDto) => user.email === existingUserEmail) || null;
+			resolvedValue = usersMock.find((user: User) => user.email === existingUserEmail) || null;
 
-			const foundedUser: UserShortDto | null = await usersRepository.getByField(
-				'email',
-				existingUserEmail,
-			);
+			const foundedUser: User | null = await usersRepository.getByField('email', existingUserEmail);
 
 			expect(foundedUser?.email).toBe(existingUserEmail);
 		});
 
 		it('should return null if user with given email not exist', async (): Promise<void> => {
-			const foundedUser: UserShortDto | null = await usersRepository.getByField(
+			const foundedUser: User | null = await usersRepository.getByField(
 				'email',
 				notExistingUserEmail,
 			);
@@ -151,9 +178,9 @@ describe('usersRepository', (): void => {
 
 		it('should find user by nickname if it exist', async (): Promise<void> => {
 			resolvedValue =
-				usersMock.find((user: UserShortDto) => user.nickname === existingUserNickname) || null;
+				usersMock.find((user: User) => user.nickname === existingUserNickname) || null;
 
-			const foundedUser: UserShortDto | null = await usersRepository.getByField(
+			const foundedUser: User | null = await usersRepository.getByField(
 				'nickname',
 				existingUserNickname,
 			);
@@ -162,7 +189,7 @@ describe('usersRepository', (): void => {
 		});
 
 		it('should return null if user with given nickname not exist', async (): Promise<void> => {
-			const foundedUser: UserShortDto | null = await usersRepository.getByField(
+			const foundedUser: User | null = await usersRepository.getByField(
 				'nickname',
 				notExistingUserNickname,
 			);

@@ -1,10 +1,12 @@
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
+import { JWTToken } from '@Entities/JWTToken.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { IJWTTokensRepository } from '@Interfaces/jwt/IJWTTokensRepository';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
 import { Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { plainToInstance } from 'class-transformer';
 
 export class JwtTokensService implements IJWTTokensService {
 	constructor(
@@ -50,7 +52,11 @@ export class JwtTokensService implements IJWTTokensService {
 	}
 
 	public async getById(id: string): Promise<JWTTokenFullDto | null> {
-		return await this._jwtTokensRepository.getById(id);
+		const token: JWTToken | null = await this._jwtTokensRepository.getById(id);
+
+		return token
+			? plainToInstance(JWTTokenFullDto, token, { excludeExtraneousValues: true })
+			: null;
 	}
 
 	public async saveRefreshToken(id: string | null, token: string): Promise<string> {

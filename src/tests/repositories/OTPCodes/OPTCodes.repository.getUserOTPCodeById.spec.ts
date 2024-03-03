@@ -1,6 +1,5 @@
 import { DataSource } from 'typeorm';
 import { OTPCode } from '@Entities/OTPCode.entity';
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
 
@@ -69,24 +68,21 @@ describe('OTPCodesRepository', (): void => {
 		it('should return OTP code if it exist', async (): Promise<void> => {
 			resolvedValue = otpCodesMock.find((code: OTPCode) => code.id === existingId) || null;
 
-			const result: OTPCodeResponseDto | null =
-				await otpCodesRepository.getUserOTPCodeById(existingId);
+			const result: OTPCode | null = await otpCodesRepository.getUserOTPCodeById(existingId);
 
 			expect(result?.code).toEqual(existingOtpCode);
 		});
 
-		it('should return OTP code as instance of OTPCodeResponseDto', async (): Promise<void> => {
+		it('should return OTP code as instance of OTPCode', async (): Promise<void> => {
 			resolvedValue = otpCodesMock.find((code: OTPCode) => code.id === existingId) || null;
 
-			const result: OTPCodeResponseDto | null =
-				await otpCodesRepository.getUserOTPCodeById(existingId);
+			const result: OTPCode | null = await otpCodesRepository.getUserOTPCodeById(existingId);
 
-			expect(result).toBeInstanceOf(OTPCodeResponseDto);
+			expect(result).toBeInstanceOf(OTPCode);
 		});
 
 		it('should return null if OTP code not exist', async (): Promise<void> => {
-			const result: OTPCodeResponseDto | null =
-				await otpCodesRepository.getUserOTPCodeById(notExistingId);
+			const result: OTPCode | null = await otpCodesRepository.getUserOTPCodeById(notExistingId);
 
 			expect(result).toBeNull();
 		});

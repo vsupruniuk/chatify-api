@@ -1,20 +1,19 @@
-import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
 import { JWTToken } from '@Entities/JWTToken.entity';
 import { JWTTokensRepository } from '@Repositories/JWTTokens.repository';
-import { jwtTokens } from '@TestMocks/JWTTokenFullDto/jwtTokens';
+import { jwtTokens } from '@TestMocks/JWTToken/jwtTokens';
 import { DataSource } from 'typeorm';
 
 describe('jwtTokensRepository', (): void => {
 	let jwtTokensRepository: JWTTokensRepository;
 
-	let resolvedValue: JWTTokenFullDto | null = null;
+	let resolvedValue: JWTToken | null = null;
 
 	const selectMock: jest.Mock = jest.fn().mockReturnThis();
 	const fromMock: jest.Mock = jest.fn().mockReturnThis();
 	const whereMock: jest.Mock = jest.fn().mockReturnThis();
 	const getOneMock: jest.Mock = jest
 		.fn()
-		.mockImplementation(async (): Promise<JWTTokenFullDto | null> => resolvedValue);
+		.mockImplementation(async (): Promise<JWTToken | null> => resolvedValue);
 
 	const dataSourceMock: jest.Mocked<DataSource> = {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -34,7 +33,7 @@ describe('jwtTokensRepository', (): void => {
 	});
 
 	describe('getById', () => {
-		const jwtTokensMock: JWTTokenFullDto[] = [...jwtTokens];
+		const jwtTokensMock: JWTToken[] = [...jwtTokens];
 		const existingTokenId: string = '1';
 		const notExistingTokenId: string = '5';
 
@@ -66,28 +65,23 @@ describe('jwtTokensRepository', (): void => {
 		});
 
 		it('should find token, if it exist', async (): Promise<void> => {
-			resolvedValue =
-				jwtTokensMock.find((token: JWTTokenFullDto) => token.id === existingTokenId) || null;
+			resolvedValue = jwtTokensMock.find((token: JWTToken) => token.id === existingTokenId) || null;
 
-			const foundedToken: JWTTokenFullDto | null =
-				await jwtTokensRepository.getById(existingTokenId);
+			const foundedToken: JWTToken | null = await jwtTokensRepository.getById(existingTokenId);
 
 			expect(foundedToken?.id).toEqual(existingTokenId);
 		});
 
-		it('should return founded token as instance of JWTTokenFullDto', async (): Promise<void> => {
-			resolvedValue =
-				jwtTokensMock.find((token: JWTTokenFullDto) => token.id === existingTokenId) || null;
+		it('should return founded token as instance of JWTToken', async (): Promise<void> => {
+			resolvedValue = jwtTokensMock.find((token: JWTToken) => token.id === existingTokenId) || null;
 
-			const foundedToken: JWTTokenFullDto | null =
-				await jwtTokensRepository.getById(existingTokenId);
+			const foundedToken: JWTToken | null = await jwtTokensRepository.getById(existingTokenId);
 
-			expect(foundedToken).toBeInstanceOf(JWTTokenFullDto);
+			expect(foundedToken).toBeInstanceOf(JWTToken);
 		});
 
 		it('should return null, if token not exist', async (): Promise<void> => {
-			const foundedToken: JWTTokenFullDto | null =
-				await jwtTokensRepository.getById(notExistingTokenId);
+			const foundedToken: JWTToken | null = await jwtTokensRepository.getById(notExistingTokenId);
 
 			expect(foundedToken).toBeNull();
 		});

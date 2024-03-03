@@ -1,6 +1,6 @@
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
+import { OTPCode } from '@Entities/OTPCode.entity';
 
 /**
  * Interface representing public methods of OTP codes repository
@@ -16,10 +16,10 @@ export interface IOTPCodesRepository {
 	/**
 	 * Method for searching OTP code for user by id of the code
 	 * @param userOTPCodeId - OPT code id for specific user
-	 * @returns OTPCodeResponseDto - OTP code if code was found
+	 * @returns OTPCode - OTP code if code was found
 	 * @returns null - if code wasn't found
 	 */
-	getUserOTPCodeById(userOTPCodeId: string): Promise<OTPCodeResponseDto | null>;
+	getUserOTPCodeById(userOTPCodeId: string): Promise<OTPCode | null>;
 
 	/**
 	 * Method for updating specific OTP code

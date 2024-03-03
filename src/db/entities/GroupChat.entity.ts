@@ -1,7 +1,12 @@
+import { GroupChatMessage } from '@Entities/GroupChatMessage.entity';
+import { User } from '@Entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	JoinTable,
+	ManyToMany,
+	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -26,10 +31,10 @@ export class GroupChat {
 		length: 255,
 		nullable: false,
 	})
-	chatName: string;
+	name: string;
 
 	@CreateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -43,7 +48,7 @@ export class GroupChat {
 	createdAt: string;
 
 	@UpdateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -55,4 +60,25 @@ export class GroupChat {
 		},
 	})
 	updatedAt: string;
+
+	@OneToMany(
+		() => GroupChatMessage,
+		(groupChatMessage: GroupChatMessage) => groupChatMessage.groupChat,
+		{ nullable: false, onDelete: 'NO ACTION' },
+	)
+	messages: GroupChatMessage[];
+
+	@ManyToMany(() => User, (user: User) => user.groupChats, { onDelete: 'NO ACTION' })
+	@JoinTable({
+		name: 'GroupChatUsers',
+		joinColumn: {
+			name: 'groupChatId',
+			referencedColumnName: 'id',
+		},
+		inverseJoinColumn: {
+			name: 'userId',
+			referencedColumnName: 'id',
+		},
+	})
+	users: User[];
 }

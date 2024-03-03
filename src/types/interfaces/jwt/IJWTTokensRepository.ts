@@ -1,13 +1,13 @@
-import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
+import { JWTToken } from '@Entities/JWTToken.entity';
 
 export interface IJWTTokensRepository {
 	/**
 	 * Method for searching JWT token by id
 	 * @param id - token id
-	 * @returns JWTTokenFullDto - if token was found
+	 * @returns JWTToken - if token was found
 	 * @returns null - if token wasn't found
 	 */
-	getById(id: string): Promise<JWTTokenFullDto | null>;
+	getById(id: string): Promise<JWTToken | null>;
 
 	/**
 	 * Method for creating JWT token

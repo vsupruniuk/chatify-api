@@ -1,5 +1,10 @@
+import { AccountSettings } from '@Entities/AccountSettings.entity';
+import { OTPCode } from '@Entities/OTPCode.entity';
+import { User } from '@Entities/User.entity';
 import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
 import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
+import { accountSettings } from '@TestMocks/AccountSettings/accountSettings';
+import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
 import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 
@@ -46,10 +51,14 @@ describe('UsersService', (): void => {
 		let getUserByFieldMock: SpyInstance;
 		let createUserMock: SpyInstance;
 		let createDefaultSettingsMock: SpyInstance;
+		let getAccountSettingsMock: SpyInstance;
 		let createOTPCodeMock: SpyInstance;
+		let getOTPCodeMock: SpyInstance;
 		let generateOTPCodeMock: SpyInstance;
 		let hashMock: SpyInstance;
 
+		const accountSettingsMock: AccountSettings[] = [...accountSettings];
+		const otpCodesMock: OTPCode[] = [...otpCodes];
 		const otpCode: number = 123987;
 		const userId: string = '4';
 		const userAccountSettingsId: string = '001';
@@ -68,13 +77,13 @@ describe('UsersService', (): void => {
 			jest.useFakeTimers();
 
 			getUserByFieldMock = jest.spyOn(usersRepository, 'getByField').mockResolvedValue(
-				plainToInstance(UserShortDto, <UserShortDto>{
+				plainToInstance(User, {
 					...user,
 					id: userId,
 					about: null,
 					avatarUrl: null,
-					accountSettingsId: userAccountSettingsId,
-					OTPCodeId: userOTPCodeId,
+					accountSettings: { id: userAccountSettingsId },
+					OTPCode: { id: userOTPCodeId },
 				}),
 			);
 
@@ -84,9 +93,29 @@ describe('UsersService', (): void => {
 				.spyOn(accountSettingsRepository, 'createDefaultSettings')
 				.mockResolvedValue(userAccountSettingsId);
 
+			getAccountSettingsMock = jest
+				.spyOn(accountSettingsRepository, 'getById')
+				.mockImplementation(async (id: string): Promise<AccountSettings | null> => {
+					return (
+						accountSettingsMock.find((settings: AccountSettings) => settings.id === id) || null
+					);
+				});
+
 			createOTPCodeMock = jest
 				.spyOn(otpCodesRepository, 'createOTPCode')
 				.mockResolvedValue(userOTPCodeId);
+
+			getOTPCodeMock = jest
+				.spyOn(otpCodesRepository, 'getUserOTPCodeById')
+				.mockImplementation(async (userOTPCodeId: string): Promise<OTPCode | null> => {
+					const otpCode: OTPCode | undefined = otpCodesMock.find(
+						(otpCode: OTPCode) => otpCode.id === userOTPCodeId,
+					);
+
+					return otpCode
+						? plainToInstance(OTPCode, otpCode, { excludeExtraneousValues: true })
+						: null;
+				});
 
 			generateOTPCodeMock = jest.spyOn(OTPCodesHelper, 'generateOTPCode').mockReturnValue(otpCode);
 
@@ -136,15 +165,29 @@ describe('UsersService', (): void => {
 			);
 		});
 
+		it('should call getById method in account settings repository to get user account settings', async (): Promise<void> => {
+			await usersService.createUser(user);
+
+			expect(getAccountSettingsMock).toHaveBeenCalledTimes(1);
+			expect(getAccountSettingsMock).toHaveBeenCalledWith(userAccountSettingsId);
+		});
+
+		it('should call getUserOTPCodeById method in OTP codes repository to get user OTP code', async (): Promise<void> => {
+			await usersService.createUser(user);
+
+			expect(getOTPCodeMock).toHaveBeenCalledTimes(1);
+			expect(getOTPCodeMock).toHaveBeenCalledWith(userOTPCodeId);
+		});
+
 		it('should create a new user and return him as response', async (): Promise<void> => {
 			const createdUser: UserShortDto | null = await usersService.createUser(user);
 
 			expect(createUserMock).toHaveBeenCalledTimes(1);
 			expect(createUserMock).toHaveBeenCalledWith(<CreateUserDto>{
 				...user,
-				accountSettingsId: userAccountSettingsId,
+				accountSettings: await accountSettingsRepository.getById(userAccountSettingsId),
+				OTPCode: await otpCodesRepository.getUserOTPCodeById(userOTPCodeId),
 				password: userHashedPassword,
-				OTPCodeId: userOTPCodeId,
 			});
 
 			expect(createdUser?.firstName).toEqual(user.firstName);
@@ -159,8 +202,8 @@ describe('UsersService', (): void => {
 			expect((createdUser?.id || '').length >= 1).toBe(true);
 			expect(createdUser?.about).toBeNull();
 			expect(createdUser?.avatarUrl).toBeNull();
-			expect((createdUser?.accountSettingsId || '').length >= 1).toBe(true);
-			expect((createdUser?.OTPCodeId || '').length >= 1).toBe(true);
+			expect(createdUser?.accountSettings.id).toBe(userAccountSettingsId);
+			expect(createdUser?.OTPCode.id).toBe(userOTPCodeId);
 		});
 
 		it('should return created user as instance of UserShortDto', async (): Promise<void> => {

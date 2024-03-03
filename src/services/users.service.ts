@@ -1,10 +1,11 @@
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
+import { User } from '@Entities/User.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 
 import { DateHelper } from '@Helpers/date.helper';
@@ -37,30 +38,43 @@ export class UsersService implements IUsersService {
 	) {}
 
 	public async getFullUserByEmail(email: string): Promise<UserFullDto | null> {
-		return await this._usersRepository.getFullUserByField('email', email);
+		const user: User | null = await this._usersRepository.getByField('email', email);
+
+		return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async getFullUserById(id: string): Promise<UserFullDto | null> {
-		return await this._usersRepository.getFullUserByField('id', id);
+		const user: User | null = await this._usersRepository.getByField('id', id);
+
+		return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async getByEmail(email: string): Promise<UserShortDto | null> {
-		return await this._usersRepository.getByField('email', email);
+		const user: User | null = await this._usersRepository.getByField('email', email);
+
+		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async getByNickname(nickname: string): Promise<UserShortDto | null> {
-		return await this._usersRepository.getByField('nickname', nickname);
+		const user: User | null = await this._usersRepository.getByField('nickname', nickname);
+
+		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async getByResetPasswordToken(token: string): Promise<UserFullDto | null> {
-		const foundedToken: PasswordResetTokenDto | null =
+		const foundedToken: PasswordResetToken | null =
 			await this._passwordResetTokenRepository.getByField('token', token);
 
 		if (!foundedToken) {
 			return null;
 		}
 
-		return await this._usersRepository.getFullUserByField('passwordResetTokenId', foundedToken.id);
+		const user: User | null = await this._usersRepository.getByField(
+			'passwordResetTokenId',
+			foundedToken.id,
+		);
+
+		return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto | null> {
@@ -78,14 +92,16 @@ export class UsersService implements IUsersService {
 
 		const userForCreation: CreateUserDto = plainToInstance(CreateUserDto, <CreateUserDto>{
 			...signupUserDto,
-			accountSettingsId,
-			OTPCodeId: otpCodeId,
+			accountSettings: await this._accountSettingsRepository.getById(accountSettingsId),
+			OTPCode: await this._otpCodesRepository.getUserOTPCodeById(otpCodeId),
 			password: hashedPassword,
 		});
 
 		const createdUserId: string = await this._usersRepository.createUser(userForCreation);
 
-		return await this._usersRepository.getByField('id', createdUserId);
+		const user: User | null = await this._usersRepository.getByField('id', createdUserId);
+
+		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean> {

@@ -1,20 +1,19 @@
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
-import { passwordResetTokens } from '@TestMocks/PasswordResetTokenDto/passwordResetTokens';
+import { passwordResetTokens } from '@TestMocks/PasswordResetToken/passwordResetTokens';
 import { DataSource } from 'typeorm';
 
 describe('passwordResetTokensRepository', (): void => {
 	let passwordResetTokensRepository: PasswordResetTokensRepository;
 
-	let resolvedValue: PasswordResetTokenDto | null = null;
+	let resolvedValue: PasswordResetToken | null = null;
 
 	const selectMock: jest.Mock = jest.fn().mockReturnThis();
 	const fromMock: jest.Mock = jest.fn().mockReturnThis();
 	const whereMock: jest.Mock = jest.fn().mockReturnThis();
 	const getOneMock: jest.Mock = jest
 		.fn()
-		.mockImplementation(async (): Promise<PasswordResetTokenDto | null> => resolvedValue);
+		.mockImplementation(async (): Promise<PasswordResetToken | null> => resolvedValue);
 
 	const dataSourceMock: jest.Mocked<DataSource> = {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -34,7 +33,7 @@ describe('passwordResetTokensRepository', (): void => {
 	});
 
 	describe('getByField', (): void => {
-		const tokensMock: PasswordResetTokenDto[] = [...passwordResetTokens];
+		const tokensMock: PasswordResetToken[] = [...passwordResetTokens];
 		const existingTokenId: string = '1';
 		const notExistingTokenId: string = '5';
 		const existingTokenValue: string = 'password-reset-token-1';
@@ -81,28 +80,28 @@ describe('passwordResetTokensRepository', (): void => {
 			expect(getOneMock).toHaveBeenCalledTimes(1);
 		});
 
-		it('should return founded token as instance of PasswordResetTokenDto', async (): Promise<void> => {
+		it('should return founded token as instance of PasswordResetToken', async (): Promise<void> => {
 			resolvedValue =
-				tokensMock.find((token: PasswordResetTokenDto) => token.id === existingTokenId) || null;
+				tokensMock.find((token: PasswordResetToken) => token.id === existingTokenId) || null;
 
-			const foundedToken: PasswordResetTokenDto | null =
+			const foundedToken: PasswordResetToken | null =
 				await passwordResetTokensRepository.getByField('id', existingTokenId);
 
-			expect(foundedToken).toBeInstanceOf(PasswordResetTokenDto);
+			expect(foundedToken).toBeInstanceOf(PasswordResetToken);
 		});
 
 		it('should find token by id if it exist', async (): Promise<void> => {
 			resolvedValue =
-				tokensMock.find((token: PasswordResetTokenDto) => token.id === existingTokenId) || null;
+				tokensMock.find((token: PasswordResetToken) => token.id === existingTokenId) || null;
 
-			const foundedToken: PasswordResetTokenDto | null =
+			const foundedToken: PasswordResetToken | null =
 				await passwordResetTokensRepository.getByField('id', existingTokenId);
 
 			expect(foundedToken?.id).toBe(existingTokenId);
 		});
 
 		it('should return null if token with given id not exist', async (): Promise<void> => {
-			const foundedToken: PasswordResetTokenDto | null =
+			const foundedToken: PasswordResetToken | null =
 				await passwordResetTokensRepository.getByField('id', notExistingTokenId);
 
 			expect(foundedToken).toBeNull();
@@ -110,17 +109,16 @@ describe('passwordResetTokensRepository', (): void => {
 
 		it('should find token by token value if it exist', async (): Promise<void> => {
 			resolvedValue =
-				tokensMock.find((token: PasswordResetTokenDto) => token.token === existingTokenValue) ||
-				null;
+				tokensMock.find((token: PasswordResetToken) => token.token === existingTokenValue) || null;
 
-			const foundedToken: PasswordResetTokenDto | null =
+			const foundedToken: PasswordResetToken | null =
 				await passwordResetTokensRepository.getByField('token', existingTokenValue);
 
 			expect(foundedToken?.token).toBe(existingTokenValue);
 		});
 
 		it('should return null if token with given token value not exist', async (): Promise<void> => {
-			const foundedToken: PasswordResetTokenDto | null =
+			const foundedToken: PasswordResetToken | null =
 				await passwordResetTokensRepository.getByField('token', notExistingTokenValue);
 
 			expect(foundedToken).toBeNull();

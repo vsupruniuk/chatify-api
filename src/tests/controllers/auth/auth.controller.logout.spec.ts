@@ -1,6 +1,7 @@
 import { AuthController } from '@Controllers/auth.controller';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { User } from '@Entities/User.entity';
 import { CookiesNames } from '@Enums/CookiesNames.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
@@ -9,7 +10,8 @@ import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { users } from '@TestMocks/UserFullDto/users';
+import { users } from '@TestMocks/User/users';
+import { plainToInstance } from 'class-transformer';
 import { Response } from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as request from 'supertest';
@@ -21,7 +23,7 @@ describe('AuthController', (): void => {
 	const validToken: string = 'valid-jwt-token';
 	const invalidToken: string = 'invalid-jwt-token';
 	const validTokenId: string = '2';
-	const usersMock: UserFullDto[] = [...users];
+	const usersMock: User[] = [...users];
 
 	const responseMock: Partial<Response> = {
 		clearCookie: jest.fn().mockImplementation((): void => {}),
@@ -51,7 +53,9 @@ describe('AuthController', (): void => {
 		getFullUserByEmail: jest
 			.fn()
 			.mockImplementation(async (email: string): Promise<UserFullDto | null> => {
-				return usersMock.find((user: UserFullDto) => user.email === email) || null;
+				const user: User | null = usersMock.find((user: User) => user.email === email) || null;
+
+				return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
 			}),
 		updateUser: jest.fn().mockImplementation(async (): Promise<boolean> => true),
 	};
@@ -130,7 +134,7 @@ describe('AuthController', (): void => {
 			await authController.logout(responseMock as Response, validToken);
 
 			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(userData?.id, { JWTTokenId: null });
+			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(userData?.id, { JWTToken: null });
 		});
 
 		it('should not to call deleteToken and updateUser methods if refresh token invalid', async (): Promise<void> => {

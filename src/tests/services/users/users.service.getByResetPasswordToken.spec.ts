@@ -1,6 +1,7 @@
 import { connectionSource } from '@DB/typeOrmConfig';
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
+import { User } from '@Entities/User.entity';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
@@ -11,10 +12,10 @@ import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
 import { UsersRepository } from '@Repositories/users.repository';
 import { UsersService } from '@Services/users.service';
-import { passwordResetTokens } from '@TestMocks/PasswordResetTokenDto/passwordResetTokens';
-import { users } from '@TestMocks/UserFullDto/users';
+import { passwordResetTokens } from '@TestMocks/PasswordResetToken/passwordResetTokens';
+import { users } from '@TestMocks/User/users';
 import { TPasswordResetTokensGetFields } from '@Types/passwordResetTokens/TPasswordResetTokensGetFields';
-import { TUserFullGetFields } from '@Types/users/TUserFullGetFields';
+import { TUserGetFields } from '@Types/users/TUserGetFields';
 import SpyInstance = jest.SpyInstance;
 
 describe('UsersService', (): void => {
@@ -42,8 +43,8 @@ describe('UsersService', (): void => {
 		let getTokenByFieldMock: SpyInstance;
 		let getUserByField: SpyInstance;
 
-		const passwordResetTokensMock: PasswordResetTokenDto[] = [...passwordResetTokens];
-		const usersMock: UserFullDto[] = [...users];
+		const passwordResetTokensMock: PasswordResetToken[] = [...passwordResetTokens];
+		const usersMock: User[] = [...users];
 
 		const existingToken: string = 'password-reset-token-1';
 		const notExistingToken: string = 'password-reset-token-5';
@@ -56,13 +57,9 @@ describe('UsersService', (): void => {
 					async (
 						fieldName: TPasswordResetTokensGetFields,
 						fieldValue: string,
-					): Promise<PasswordResetTokenDto | null> => {
+					): Promise<PasswordResetToken | null> => {
 						return (
-							passwordResetTokensMock.find((token: PasswordResetTokenDto) => {
-								if (fieldName === 'id') {
-									return token.id === fieldValue;
-								}
-
+							passwordResetTokensMock.find((token: PasswordResetToken) => {
 								if (fieldName === 'token') {
 									return token.token === fieldValue;
 								}
@@ -74,16 +71,13 @@ describe('UsersService', (): void => {
 				);
 
 			getUserByField = jest
-				.spyOn(usersRepository, 'getFullUserByField')
+				.spyOn(usersRepository, 'getByField')
 				.mockImplementation(
-					async (
-						fieldName: TUserFullGetFields,
-						fieldValue: string,
-					): Promise<UserFullDto | null> => {
+					async (fieldName: TUserGetFields, fieldValue: string): Promise<User | null> => {
 						return (
-							usersMock.find((user: UserFullDto) => {
+							usersMock.find((user: User) => {
 								if (fieldName === 'passwordResetTokenId') {
-									return user.passwordResetTokenId === fieldValue;
+									return user.passwordResetToken?.id === fieldValue || false;
 								}
 
 								return false;
@@ -128,7 +122,7 @@ describe('UsersService', (): void => {
 		it('should return founded user if token with given value exist', async (): Promise<void> => {
 			const user: UserFullDto | null = await usersService.getByResetPasswordToken(existingToken);
 
-			expect(user?.passwordResetTokenId).toBe(existingTokenId);
+			expect(user?.passwordResetToken?.id).toBe(existingTokenId);
 		});
 
 		it('should return user as instance of UserFullDto', async (): Promise<void> => {
