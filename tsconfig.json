@@ -25,6 +25,7 @@
       "@Entities/*": ["src/db/entities/*"],
       "@Enums/*": ["src/types/enums/*"],
       "@Filters/*": ["src/filters/*"],
+      "@Guards/*": ["src/guards/*"],
       "@Helpers/*": ["src/helpers/*"],
       "@Interfaces/*": ["src/types/interfaces/*"],
       "@Logger/*": ["src/logger/*"],
