@@ -1,6 +1,7 @@
 import { AuthController } from '@Controllers/auth.controller';
 import { ResetPasswordConfirmationDto } from '@DTO/auth/ResetPasswordConfirmation.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { User } from '@Entities/User.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { IUsersService } from '@Interfaces/users/IUsersService';
@@ -10,14 +11,15 @@ import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
-import { users } from '@TestMocks/UserFullDto/users';
+import { users } from '@TestMocks/User/users';
+import { plainToInstance } from 'class-transformer';
 import * as request from 'supertest';
 
 describe('AuthController', (): void => {
 	let app: INestApplication;
 	let authController: AuthController;
 
-	const usersMock: UserFullDto[] = [...users];
+	const usersMock: User[] = [...users];
 	const existingToken: string = '1662043c-4d4b-4424-ac31-45189dedd099';
 	const notExistingToken: string = '1662043c-4d4b-4424-ac31-45189dedd000';
 
@@ -25,11 +27,13 @@ describe('AuthController', (): void => {
 		getByResetPasswordToken: jest
 			.fn()
 			.mockImplementation(async (token: string): Promise<UserFullDto | null> => {
-				return token === existingToken ? usersMock[0] : null;
+				return token === existingToken
+					? plainToInstance(UserFullDto, usersMock[0], { excludeExtraneousValues: true })
+					: null;
 			}),
 
 		updateUser: jest.fn().mockImplementation(async (userId: string): Promise<boolean> => {
-			return usersMock.some((user: UserFullDto) => user.id === userId);
+			return usersMock.some((user: User) => user.id === userId);
 		}),
 	};
 

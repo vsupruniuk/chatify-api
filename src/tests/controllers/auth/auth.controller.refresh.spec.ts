@@ -3,6 +3,8 @@ import { LoginResponseDto } from '@DTO/auth/LoginResponse.dto';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { JWTToken } from '@Entities/JWTToken.entity';
+import { User } from '@Entities/User.entity';
 import { CookiesNames } from '@Enums/CookiesNames.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { Headers } from '@Enums/Headers.enum';
@@ -15,8 +17,9 @@ import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { JwtTokensService } from '@Services/jwtTokens.service';
 import { UsersService } from '@Services/users.service';
-import { jwtTokens } from '@TestMocks/JWTTokenFullDto/jwtTokens';
-import { users } from '@TestMocks/UserFullDto/users';
+import { jwtTokens } from '@TestMocks/JWTToken/jwtTokens';
+import { users } from '@TestMocks/User/users';
+import { plainToInstance } from 'class-transformer';
 import * as cookieParser from 'cookie-parser';
 import { Response } from 'express';
 import * as request from 'supertest';
@@ -31,8 +34,8 @@ describe('AuthController', (): void => {
 	const newToken: string = 'jwt-access-token';
 	const newTokenId: string = '10';
 	const validTokenId: string = '2';
-	const usersMock: UserFullDto[] = [...users];
-	const jwtTokensMock: JWTTokenFullDto[] = [...jwtTokens];
+	const usersMock: User[] = [...users];
+	const jwtTokensMock: JWTToken[] = [...jwtTokens];
 	const notExistingTokenPayload: JWTPayloadDto = {
 		id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
 		email: 'tony@mail.com',
@@ -68,7 +71,12 @@ describe('AuthController', (): void => {
 			}),
 
 		getById: jest.fn().mockImplementation(async (id: string): Promise<JWTTokenFullDto | null> => {
-			return jwtTokensMock.find((token: JWTTokenFullDto) => token.id === id) || null;
+			const token: JWTTokenFullDto | null =
+				jwtTokensMock.find((token: JWTToken) => token.id === id) || null;
+
+			return token
+				? plainToInstance(JWTTokenFullDto, token, { excludeExtraneousValues: true })
+				: null;
 		}),
 
 		saveRefreshToken: jest.fn().mockImplementation(async (): Promise<string> => newTokenId),
@@ -78,7 +86,9 @@ describe('AuthController', (): void => {
 		getFullUserByEmail: jest
 			.fn()
 			.mockImplementation(async (email: string): Promise<UserFullDto | null> => {
-				return usersMock.find((user: UserFullDto) => user.email === email) || null;
+				const user: User | null = usersMock.find((user: User) => user.email === email) || null;
+
+				return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
 			}),
 
 		updateUser: jest.fn().mockImplementation(async (): Promise<boolean> => true),
@@ -215,15 +225,6 @@ describe('AuthController', (): void => {
 
 			expect(usersServiceMock.getFullUserByEmail).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getFullUserByEmail).toHaveBeenCalledWith(tokenPayload.email);
-		});
-
-		it('should call updateUser method to to save new token id to user', async (): Promise<void> => {
-			await authController.refresh(responseMock as Response, validToken);
-
-			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(tokenPayload.id, {
-				JWTTokenId: newTokenId,
-			});
 		});
 	});
 });

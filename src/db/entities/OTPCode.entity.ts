@@ -1,7 +1,9 @@
+import { User } from '@Entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -18,7 +20,7 @@ export class OTPCode {
 	code: number | null;
 
 	@CreateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -32,7 +34,7 @@ export class OTPCode {
 	createdAt: string;
 
 	@Column({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: true,
 		transformer: {
 			from(date: string): string {
@@ -46,7 +48,7 @@ export class OTPCode {
 	expiresAt: string | null;
 
 	@UpdateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -58,4 +60,7 @@ export class OTPCode {
 		},
 	})
 	updatedAt: string;
+
+	@OneToOne(() => User, (user: User) => user.OTPCode, { nullable: false, onDelete: 'CASCADE' })
+	user: User;
 }

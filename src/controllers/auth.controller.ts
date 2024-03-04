@@ -12,6 +12,7 @@ import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { JWTToken } from '@Entities/JWTToken.entity';
 import { CookiesNames } from '@Enums/CookiesNames.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
@@ -106,7 +107,7 @@ export class AuthController implements IAuthController {
 		}
 
 		const userOTPCode: OTPCodeResponseDto | null = await this._otpCodesService.getUserOTPCode(
-			createdUser.OTPCodeId,
+			createdUser.OTPCode.id,
 		);
 
 		if (!userOTPCode || !userOTPCode.code) {
@@ -165,12 +166,18 @@ export class AuthController implements IAuthController {
 		);
 
 		const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
-			user.JWTTokenId,
+			user.JWTToken?.id || null,
 			refreshToken,
 		);
 
+		const jwtToken: JWTTokenFullDto | null = await this._jwtTokensService.getById(savedTokenId);
+
+		if (!jwtToken) {
+			throw new UnprocessableEntityException(['Failed to activate account. Please try again']);
+		}
+
 		const isTokenIdUpdated: boolean = await this._usersService.updateUser(user.id, {
-			JWTTokenId: savedTokenId,
+			JWTToken: jwtToken as JWTToken,
 		});
 
 		if (!isTokenIdUpdated) {
@@ -220,10 +227,10 @@ export class AuthController implements IAuthController {
 			throw new UnprocessableEntityException(['This account is already activated|email']);
 		}
 
-		await this._otpCodesService.createNewOTPCode(user.OTPCodeId);
+		await this._otpCodesService.createNewOTPCode(user.OTPCode.id);
 
 		const otpCode: OTPCodeResponseDto | null = await this._otpCodesService.getUserOTPCode(
-			user.OTPCodeId,
+			user.OTPCode.id,
 		);
 
 		if (!otpCode || !otpCode.code) {
@@ -264,7 +271,7 @@ export class AuthController implements IAuthController {
 
 		const token: string | null = await this._passwordResetTokensService.saveToken(
 			user.id,
-			user.passwordResetTokenId,
+			user.passwordResetToken?.id || null,
 		);
 
 		if (!token) {
@@ -360,12 +367,18 @@ export class AuthController implements IAuthController {
 		);
 
 		const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
-			user.JWTTokenId,
+			user.JWTToken?.id || null,
 			refreshToken,
 		);
 
+		const token: JWTTokenFullDto | null = await this._jwtTokensService.getById(savedTokenId);
+
+		if (!token) {
+			throw new UnprocessableEntityException(['Failed to login. Please try again']);
+		}
+
 		const isTokenIdUpdated: boolean = await this._usersService.updateUser(user.id, {
-			JWTTokenId: savedTokenId,
+			JWTToken: token as JWTToken,
 		});
 
 		if (!isTokenIdUpdated) {
@@ -412,16 +425,16 @@ export class AuthController implements IAuthController {
 				userData.email,
 			);
 
-			if (!fullUserData || !fullUserData.JWTTokenId) {
+			if (!fullUserData || !fullUserData.JWTToken) {
 				throw new UnprocessableEntityException(['Failed to log out. Please try again']);
 			}
 
 			const isCookieDeleted: boolean = await this._jwtTokensService.deleteToken(
-				fullUserData.JWTTokenId,
+				fullUserData.JWTToken.id,
 			);
 
 			const isUserUpdated: boolean = await this._usersService.updateUser(userData.id, {
-				JWTTokenId: null,
+				JWTToken: null,
 			});
 
 			if (!isCookieDeleted || !isUserUpdated) {
@@ -460,11 +473,11 @@ export class AuthController implements IAuthController {
 
 		const user: UserFullDto | null = await this._usersService.getFullUserByEmail(userData.email);
 
-		if (!user || !user.JWTTokenId) {
+		if (!user || !user.JWTToken) {
 			throw new UnauthorizedException(['Please, login to perform this action']);
 		}
 
-		const token: JWTTokenFullDto | null = await this._jwtTokensService.getById(user.JWTTokenId);
+		const token: JWTTokenFullDto | null = await this._jwtTokensService.getById(user.JWTToken.id);
 
 		if (!token) {
 			throw new UnauthorizedException(['Please, login to perform this action']);
@@ -478,18 +491,7 @@ export class AuthController implements IAuthController {
 			this.createJwtPayload(user),
 		);
 
-		const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
-			user.JWTTokenId,
-			newRefreshToken,
-		);
-
-		const isTokenIdUpdated: boolean = await this._usersService.updateUser(user.id, {
-			JWTTokenId: savedTokenId,
-		});
-
-		if (!isTokenIdUpdated) {
-			throw new UnprocessableEntityException(['Failed to refresh access token. Please try again']);
-		}
+		await this._jwtTokensService.saveRefreshToken(user.JWTToken.id, newRefreshToken);
 
 		response.cookie(CookiesNames.REFRESH_TOKEN, newRefreshToken, {
 			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) || 0,

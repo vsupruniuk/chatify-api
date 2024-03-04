@@ -1,10 +1,8 @@
-import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
 import { JWTToken } from '@Entities/JWTToken.entity';
 import { IJWTTokensRepository } from '@Interfaces/jwt/IJWTTokensRepository';
 import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { AppLogger } from '@Logger/app.logger';
 import { Injectable } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
 import { DataSource, DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 
 @Injectable()
@@ -13,7 +11,7 @@ export class JWTTokensRepository implements IJWTTokensRepository {
 
 	constructor(private readonly _dataSource: DataSource) {}
 
-	public async getById(id: string): Promise<JWTTokenFullDto | null> {
+	public async getById(id: string): Promise<JWTToken | null> {
 		const token: JWTToken | null = await this._dataSource
 			.createQueryBuilder()
 			.select('jwtToken')
@@ -27,9 +25,7 @@ export class JWTTokensRepository implements IJWTTokensRepository {
 			data: token,
 		});
 
-		return token
-			? plainToInstance(JWTTokenFullDto, token, { excludeExtraneousValues: true })
-			: null;
+		return token;
 	}
 
 	public async createToken(token: string): Promise<string> {

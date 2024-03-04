@@ -1,5 +1,6 @@
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
+import { OTPCode } from '@Entities/OTPCode.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 import { IAuthService } from '@Interfaces/auth/IAuthService';
@@ -7,6 +8,7 @@ import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
 import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -19,7 +21,7 @@ export class AuthService implements IAuthService {
 	) {}
 
 	public async activateAccount(accountActivationDto: AccountActivationDto): Promise<boolean> {
-		const otpCode: OTPCodeResponseDto | null = await this._otpCodesRepository.getUserOTPCodeById(
+		const otpCode: OTPCode | null = await this._otpCodesRepository.getUserOTPCodeById(
 			accountActivationDto.OTPCodeId,
 		);
 
@@ -27,13 +29,11 @@ export class AuthService implements IAuthService {
 			return false;
 		}
 
-		const isExpired: boolean = OTPCodesHelper.isExpired(otpCode);
+		const isExpired: boolean = OTPCodesHelper.isExpired(
+			plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true }),
+		);
 
-		if (isExpired) {
-			return false;
-		}
-
-		if (accountActivationDto.code !== otpCode.code) {
+		if (isExpired || accountActivationDto.code !== otpCode.code) {
 			return false;
 		}
 

@@ -2,6 +2,8 @@ import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 import { User } from '@Entities/User.entity';
 
 import { UsersRepository } from '@Repositories/users.repository';
+import { accountSettings } from '@TestMocks/AccountSettings/accountSettings';
+import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
 import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 
@@ -42,8 +44,8 @@ describe('usersRepository', (): void => {
 			nickname: 'b.banner',
 			email: 'bruce@mail.com',
 			password: 'qwerty1A',
-			accountSettingsId: '01',
-			OTPCodeId: '10',
+			accountSettings: accountSettings[0],
+			OTPCode: otpCodes[0],
 		};
 
 		beforeEach((): void => {

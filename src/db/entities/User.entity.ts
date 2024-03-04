@@ -1,8 +1,18 @@
+import { AccountSettings } from '@Entities/AccountSettings.entity';
+import { DirectChat } from '@Entities/DirectChat.entity';
+import { GroupChat } from '@Entities/GroupChat.entity';
+import { JWTToken } from '@Entities/JWTToken.entity';
+import { OTPCode } from '@Entities/OTPCode.entity';
+import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import {
 	Column,
 	CreateDateColumn,
 	Entity,
 	Index,
+	JoinColumn,
+	JoinTable,
+	ManyToMany,
+	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -30,7 +40,7 @@ export class User {
 	avatarUrl: string | null;
 
 	@CreateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -86,7 +96,7 @@ export class User {
 	password: string;
 
 	@UpdateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -99,31 +109,54 @@ export class User {
 	})
 	updatedAt: string;
 
-	@Column({
-		type: 'varchar',
-		length: 255,
+	@OneToOne(() => AccountSettings, (accountSettings: AccountSettings) => accountSettings.user, {
 		nullable: false,
+		onDelete: 'NO ACTION',
 	})
-	accountSettingsId: string;
+	@JoinColumn({ name: 'accountSettingsId', referencedColumnName: 'id' })
+	accountSettings: AccountSettings;
 
-	@Column({
-		type: 'varchar',
-		length: 255,
+	@OneToOne(() => JWTToken, (jwtToken: JWTToken) => jwtToken.user, {
 		nullable: true,
+		onDelete: 'SET NULL',
 	})
-	JWTTokenId: string | null;
+	@JoinColumn({ name: 'jwtTokenId', referencedColumnName: 'id' })
+	JWTToken: JWTToken | null;
 
-	@Column({
-		type: 'varchar',
-		length: 255,
+	@OneToOne(() => OTPCode, (otpCode: OTPCode) => otpCode.user, {
 		nullable: true,
+		onDelete: 'SET NULL',
 	})
-	OTPCodeId: string | null;
+	@JoinColumn({ name: 'otpCodeId', referencedColumnName: 'id' })
+	OTPCode: OTPCode | null;
 
-	@Column({
-		type: 'varchar',
-		length: 255,
-		nullable: true,
+	@OneToOne(
+		() => PasswordResetToken,
+		(passwordResetToken: PasswordResetToken) => passwordResetToken.user,
+		{ nullable: true, onDelete: 'SET NULL' },
+	)
+	@JoinColumn({ name: 'passwordResetTokenId', referencedColumnName: 'id' })
+	passwordResetToken: PasswordResetToken | null;
+
+	@ManyToMany(() => DirectChat, (directChat: DirectChat) => directChat.users, {
+		onDelete: 'CASCADE',
 	})
-	passwordResetTokenId: string | null;
+	directChats: DirectChat[];
+
+	@ManyToMany(() => GroupChat, (groupChat: GroupChat) => groupChat.users, { onDelete: 'CASCADE' })
+	groupChats: GroupChat[];
+
+	@ManyToMany(() => User, (user: User) => user.blockedUsers, { onDelete: 'NO ACTION' })
+	@JoinTable({
+		name: 'UserBlockedUsers',
+		joinColumn: {
+			name: 'userId',
+			referencedColumnName: 'id',
+		},
+		inverseJoinColumn: {
+			name: 'blockedUserId',
+			referencedColumnName: 'id',
+		},
+	})
+	blockedUsers: User[];
 }

@@ -1,11 +1,11 @@
 import { connectionSource } from '@DB/typeOrmConfig';
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
+import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { PasswordResetTokensHelper } from '@Helpers/passwordResetTokens.helper';
 import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
 import { UsersRepository } from '@Repositories/users.repository';
 import { PasswordResetTokensService } from '@Services/passwordResetTokens.service';
-import { passwordResetTokens } from '@TestMocks/PasswordResetTokenDto/passwordResetTokens';
+import { passwordResetTokens } from '@TestMocks/PasswordResetToken/passwordResetTokens';
 import { TPasswordResetTokensGetFields } from '@Types/passwordResetTokens/TPasswordResetTokensGetFields';
 import SpyInstance = jest.SpyInstance;
 
@@ -35,7 +35,7 @@ describe('passwordResetTokensService', (): void => {
 		const notExistingTokenId: string = '5';
 		const newTokenId: string = '4';
 		const userIdMock: string = '1';
-		const passwordResetTokensMock: PasswordResetTokenDto[] = [...passwordResetTokens];
+		const passwordResetTokensMock: PasswordResetToken[] = [...passwordResetTokens];
 		const tokenMock: PasswordResetTokenInfoDto = {
 			token: 'password-reset-token-1',
 			expiresAt: new Date('2024-02-12 18:00:00').toISOString(),
@@ -60,9 +60,16 @@ describe('passwordResetTokensService', (): void => {
 					async (
 						fieldName: TPasswordResetTokensGetFields,
 						fieldValue: string,
-					): Promise<PasswordResetTokenDto | null> => {
+					): Promise<PasswordResetToken | null> => {
+						if (fieldName === 'id' && fieldValue === newTokenId) {
+							return {
+								id: newTokenId,
+								...tokenMock,
+							} as PasswordResetToken;
+						}
+
 						return (
-							passwordResetTokensMock.find((token: PasswordResetTokenDto) => {
+							passwordResetTokensMock.find((token: PasswordResetToken) => {
 								if (fieldName === 'id') {
 									return token.id === fieldValue;
 								}
@@ -102,7 +109,7 @@ describe('passwordResetTokensService', (): void => {
 			expect(passwordResetTokensService.saveToken).toBeInstanceOf(Function);
 		});
 
-		it('should call generateToken in passwordResetTokensHelper to generate', async (): Promise<void> => {
+		it('should call generateToken in passwordResetTokensHelper to generate token', async (): Promise<void> => {
 			await passwordResetTokensService.saveToken(userIdMock, existingTokenId);
 
 			expect(generateTokenMock).toHaveBeenCalledTimes(1);
@@ -142,7 +149,9 @@ describe('passwordResetTokensService', (): void => {
 			await passwordResetTokensService.saveToken(userIdMock, null);
 
 			expect(updateUserMock).toHaveBeenCalledTimes(1);
-			expect(updateUserMock).toHaveBeenCalledWith(userIdMock, { passwordResetTokenId: newTokenId });
+			expect(updateUserMock).toHaveBeenCalledWith(userIdMock, {
+				passwordResetToken: { id: newTokenId, ...tokenMock },
+			});
 		});
 
 		it('should not call updateUser in usersRepository if user already have token id', async (): Promise<void> => {

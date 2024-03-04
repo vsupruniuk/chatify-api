@@ -1,4 +1,6 @@
-import { Expose } from 'class-transformer';
+import { AccountSettingsIdDto } from '@DTO/accountSettings/accountSettingsId.dto';
+import { OTPCodeIdDto } from '@DTO/OTPCodes/OTPCodeId.dto';
+import { Expose, Type } from 'class-transformer';
 
 /**
  * DTO class representing response with user data
@@ -26,8 +28,10 @@ export class UserShortDto {
 	nickname: string;
 
 	@Expose()
-	accountSettingsId: string;
+	@Type(() => AccountSettingsIdDto)
+	accountSettings: AccountSettingsIdDto;
 
 	@Expose()
-	OTPCodeId: string | null;
+	@Type(() => OTPCodeIdDto)
+	OTPCode: OTPCodeIdDto;
 }

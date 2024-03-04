@@ -1,3 +1,5 @@
-import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { UserFullDto } from '@DTO/users/UserFull.dto';
 
-export type TUserGetFields = keyof Pick<UserShortDto, 'id' | 'email' | 'nickname'>;
+export type TUserGetFields =
+	| keyof Pick<UserFullDto, 'id' | 'email' | 'nickname'>
+	| 'passwordResetTokenId';

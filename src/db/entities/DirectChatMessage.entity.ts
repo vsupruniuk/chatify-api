@@ -1,8 +1,11 @@
+import { DirectChat } from '@Entities/DirectChat.entity';
+import { User } from '@Entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
 	Entity,
-	Index,
+	JoinColumn,
+	ManyToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -16,7 +19,7 @@ export class DirectChatMessage {
 	id: string;
 
 	@CreateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -30,7 +33,7 @@ export class DirectChatMessage {
 	createdAt: string;
 
 	@Column({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -43,14 +46,6 @@ export class DirectChatMessage {
 	})
 	dateTime: string;
 
-	@Index({ unique: true })
-	@Column({
-		type: 'varchar',
-		length: 255,
-		nullable: false,
-	})
-	directChatId: string;
-
 	@Column({
 		type: 'varchar',
 		length: 1000,
@@ -58,15 +53,8 @@ export class DirectChatMessage {
 	})
 	messageText: string;
 
-	@Column({
-		type: 'varchar',
-		length: 255,
-		nullable: false,
-	})
-	senderId: string;
-
 	@UpdateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -78,4 +66,15 @@ export class DirectChatMessage {
 		},
 	})
 	updatedAt: string;
+
+	@ManyToOne(() => DirectChat, (directChat: DirectChat) => directChat.messages, {
+		nullable: false,
+		onDelete: 'CASCADE',
+	})
+	@JoinColumn({ name: 'directChatId', referencedColumnName: 'id' })
+	directChat: DirectChat;
+
+	@ManyToOne(() => User, { nullable: false, onDelete: 'NO ACTION' })
+	@JoinColumn({ name: 'senderId', referencedColumnName: 'id' })
+	sender: User;
 }

@@ -1,5 +1,5 @@
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
+import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { PasswordResetTokensHelper } from '@Helpers/passwordResetTokens.helper';
 import { IPasswordResetTokensService } from '@Interfaces/passwordResetTokens/IPasswordResetTokens.service';
@@ -21,6 +21,7 @@ export class PasswordResetTokensService implements IPasswordResetTokensService {
 		userResetPasswordTokenId: string | null,
 	): Promise<string | null> {
 		let newTokenId: string = userResetPasswordTokenId || '';
+		let createdToken: PasswordResetToken | null;
 
 		const newToken: PasswordResetTokenInfoDto = PasswordResetTokensHelper.generateToken();
 
@@ -33,17 +34,18 @@ export class PasswordResetTokensService implements IPasswordResetTokensService {
 			if (!isUpdated) {
 				return null;
 			}
+
+			createdToken = await this._passwordResetTokensRepository.getByField('id', newTokenId);
 		} else {
 			newTokenId = await this._passwordResetTokensRepository.createToken(newToken);
 
+			createdToken = await this._passwordResetTokensRepository.getByField('id', newTokenId);
+
 			await this._usersRepository.updateUser(userId, {
-				passwordResetTokenId: newTokenId,
+				passwordResetToken: createdToken,
 			});
 		}
 
-		const createdToken: PasswordResetTokenDto | null =
-			await this._passwordResetTokensRepository.getByField('id', newTokenId);
-
-		return createdToken ? createdToken.token : newTokenId;
+		return createdToken ? createdToken.token : null;
 	}
 }

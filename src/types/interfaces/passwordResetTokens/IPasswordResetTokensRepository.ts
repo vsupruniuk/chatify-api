@@ -1,5 +1,5 @@
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
+import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { TPasswordResetTokensGetFields } from '@Types/passwordResetTokens/TPasswordResetTokensGetFields';
 import { TUpdatePasswordResetToken } from '@Types/passwordResetTokens/TUpdatePasswordResetToken';
 
@@ -8,13 +8,13 @@ export interface IPasswordResetTokensRepository {
 	 * Method for searching reset password token by id
 	 * @param fieldName - field name to search
 	 * @param fieldValue - field value to search
-	 * @returns PasswordResetTokenDto - if token was found
+	 * @returns PasswordResetToken - if token was found
 	 * @returns null - if token wasn't found
 	 */
 	getByField(
 		fieldName: TPasswordResetTokensGetFields,
 		fieldValue: string,
-	): Promise<PasswordResetTokenDto | null>;
+	): Promise<PasswordResetToken | null>;
 
 	/**
 	 * Method for creating password reset token in DB

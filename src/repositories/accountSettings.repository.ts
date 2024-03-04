@@ -11,6 +11,23 @@ export class AccountSettingsRepository implements IAccountSettingsRepository {
 
 	constructor(private readonly _dataSource: DataSource) {}
 
+	public async getById(id: string): Promise<AccountSettings | null> {
+		const accountSettings: AccountSettings | null = await this._dataSource
+			.createQueryBuilder()
+			.select('accountSettings')
+			.from(AccountSettings, 'accountSettings')
+			.where('accountSettings.id = :id', { id })
+			.getOne();
+
+		this._logger.successfulDBQuery({
+			method: this.getById.name,
+			repository: 'AccountSettingsRepository',
+			data: accountSettings,
+		});
+
+		return accountSettings;
+	}
+
 	public async createDefaultSettings(): Promise<string> {
 		const result: InsertResult = await this._dataSource
 			.createQueryBuilder()
@@ -21,7 +38,7 @@ export class AccountSettingsRepository implements IAccountSettingsRepository {
 
 		this._logger.successfulDBQuery({
 			method: this.createDefaultSettings.name,
-			repository: 'JWTTokensRepository',
+			repository: 'AccountSettingsRepository',
 			data: result,
 		});
 

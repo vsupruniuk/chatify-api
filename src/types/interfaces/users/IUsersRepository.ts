@@ -1,8 +1,6 @@
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
-import { UserFullDto } from '@DTO/users/UserFull.dto';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
-import { TUserFullGetFields } from '@Types/users/TUserFullGetFields';
+import { User } from '@Entities/User.entity';
 import { TUserGetFields } from '@Types/users/TUserGetFields';
 
 /**
@@ -13,22 +11,10 @@ export interface IUsersRepository {
 	 * Method for searching user by one of its fields
 	 * @param fieldName - acceptable field for searching
 	 * @param fieldValue - value of field for searching
-	 * @returns UserShortDto - if user was found
+	 * @returns User - if user was found
 	 * @returns null - if user wasn't found
 	 */
-	getByField(fieldName: TUserGetFields, fieldValue: string): Promise<UserShortDto | null>;
-
-	/**
-	 * Method for searching user by id. Return all user information (except service information of the DB)
-	 * @param fieldName - acceptable field for searching
-	 * @param fieldValue - value of field for searching
-	 * @returns UserFullDto - if user was found. Not used as API public response
-	 * @returns null - if user wasn't found
-	 */
-	getFullUserByField(
-		fieldName: TUserFullGetFields,
-		fieldValue: string,
-	): Promise<UserFullDto | null>;
+	getByField(fieldName: TUserGetFields, fieldValue: string): Promise<User | null>;
 
 	/**
 	 * Method for creating user

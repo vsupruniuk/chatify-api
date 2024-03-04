@@ -1,6 +1,5 @@
 import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 import { OTPCodesService } from '@Services/OTPCodes.service';
-import { plainToInstance } from 'class-transformer';
 import { connectionSource } from '@DB/typeOrmConfig';
 import { OTPCode } from '@Entities/OTPCode.entity';
 import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
@@ -31,17 +30,9 @@ describe('OTPCodesService', (): void => {
 		beforeEach((): void => {
 			getUserOTPCodeMock = jest
 				.spyOn(otpCodesRepository, 'getUserOTPCodeById')
-				.mockImplementation(
-					async (userOTPCodeId: string | null): Promise<OTPCodeResponseDto | null> => {
-						const otpCode: OTPCode | undefined = otpCodesMock.find(
-							(otpCode: OTPCode) => otpCode.id === userOTPCodeId,
-						);
-
-						return otpCode
-							? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
-							: null;
-					},
-				);
+				.mockImplementation(async (userOTPCodeId: string | null): Promise<OTPCode | null> => {
+					return otpCodesMock.find((otpCode: OTPCode) => otpCode.id === userOTPCodeId) || null;
+				});
 
 			isExpiredMock = jest.spyOn(OTPCodesHelper, 'isExpired');
 

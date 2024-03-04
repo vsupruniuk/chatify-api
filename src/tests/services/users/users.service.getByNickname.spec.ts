@@ -1,19 +1,17 @@
 import { connectionSource } from '@DB/typeOrmConfig';
+import { User } from '@Entities/User.entity';
 import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
-
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
-
 import { UsersService } from '@Services/users.service';
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
 import { UsersRepository } from '@Repositories/users.repository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-
-import { users } from '@TestMocks/UserShortDto/users';
+import { users } from '@TestMocks/User/users';
 import { TUserGetFields } from '@Types/users/TUserGetFields';
 
 import SpyInstance = jest.SpyInstance;
@@ -40,27 +38,19 @@ describe('UsersService', (): void => {
 	});
 
 	describe('getByNickname', (): void => {
-		let getUserByFieldMock: SpyInstance;
+		let getByFieldMock: SpyInstance;
 
-		const usersMock: UserShortDto[] = [...users];
+		const usersMock: User[] = [...users];
 		const existingUserNickname: string = 't.stark';
 		const notExistingUserNickname: string = 'b.banner';
 
 		beforeEach((): void => {
-			getUserByFieldMock = jest
+			getByFieldMock = jest
 				.spyOn(usersRepository, 'getByField')
 				.mockImplementation(
-					async (fieldName: TUserGetFields, fieldValue: string): Promise<UserShortDto | null> => {
+					async (fieldName: TUserGetFields, fieldValue: string): Promise<User | null> => {
 						return (
-							usersMock.find((user: UserShortDto) => {
-								if (fieldName === 'id') {
-									return user.id === fieldValue;
-								}
-
-								if (fieldName === 'email') {
-									return user.email === fieldValue;
-								}
-
+							usersMock.find((user: User) => {
 								if (fieldName === 'nickname') {
 									return user.nickname === fieldValue;
 								}
@@ -84,11 +74,11 @@ describe('UsersService', (): void => {
 			expect(usersService.getByNickname).toBeInstanceOf(Function);
 		});
 
-		it('should use getByEmail method from users repository for searching user', async (): Promise<void> => {
+		it('should use getByField method from users repository for searching user', async (): Promise<void> => {
 			await usersService.getByNickname(existingUserNickname);
 
-			expect(getUserByFieldMock).toHaveBeenCalledTimes(1);
-			expect(getUserByFieldMock).toHaveBeenCalledWith('nickname', existingUserNickname);
+			expect(getByFieldMock).toHaveBeenCalledTimes(1);
+			expect(getByFieldMock).toHaveBeenCalledWith('nickname', existingUserNickname);
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {

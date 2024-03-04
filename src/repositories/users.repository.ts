@@ -1,17 +1,11 @@
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
-import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { AppLogger } from '@Logger/app.logger';
 import { Injectable } from '@nestjs/common';
-import { TUserFullGetFields } from '@Types/users/TUserFullGetFields';
 import { TUserGetFields } from '@Types/users/TUserGetFields';
-
 import { DataSource, InsertResult, UpdateResult } from 'typeorm';
-import { plainToInstance } from 'class-transformer';
-
 import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
 import { User } from '@Entities/User.entity';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 
 @Injectable()
@@ -20,14 +14,15 @@ export class UsersRepository implements IUsersRepository {
 
 	constructor(private readonly _dataSource: DataSource) {}
 
-	public async getByField(
-		fieldName: TUserGetFields,
-		fieldValue: string,
-	): Promise<UserShortDto | null> {
+	public async getByField(fieldName: TUserGetFields, fieldValue: string): Promise<User | null> {
 		const user: User | null = await this._dataSource
 			.createQueryBuilder()
 			.select('user')
 			.from(User, 'user')
+			.leftJoinAndSelect('user.accountSettings', 'accountSettings')
+			.leftJoinAndSelect('user.OTPCode', 'OTPCode')
+			.leftJoinAndSelect('user.JWTToken', 'JWTToken')
+			.leftJoinAndSelect('user.passwordResetToken', 'passwordResetToken')
 			.where(`user.${fieldName} = :fieldValue`, { fieldValue })
 			.getOne();
 
@@ -37,27 +32,7 @@ export class UsersRepository implements IUsersRepository {
 			data: user,
 		});
 
-		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
-	}
-
-	public async getFullUserByField(
-		fieldName: TUserFullGetFields,
-		fieldValue: string,
-	): Promise<UserFullDto | null> {
-		const user: User | null = await this._dataSource
-			.createQueryBuilder()
-			.select('user')
-			.from(User, 'user')
-			.where(`user.${fieldName} = :fieldValue`, { fieldValue })
-			.getOne();
-
-		this._logger.successfulDBQuery({
-			method: this.getFullUserByField.name,
-			repository: 'UsersRepository',
-			data: user,
-		});
-
-		return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
+		return user;
 	}
 
 	public async createUser(user: CreateUserDto): Promise<string> {

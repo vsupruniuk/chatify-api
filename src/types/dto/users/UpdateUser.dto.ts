@@ -1,12 +1,15 @@
+import { JWTToken } from '@Entities/JWTToken.entity';
+import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
+
 export class UpdateUserDto {
 	about: string | null;
 	avatarUrl: string | null;
 	email: string;
 	firstName: string;
-	JWTTokenId: string | null;
+	JWTToken: JWTToken | null;
 	isActivated: boolean;
 	lastName: string | null;
 	nickname: string;
 	password: string;
-	passwordResetTokenId: string | null;
+	passwordResetToken: PasswordResetToken | null;
 }

@@ -1,4 +1,3 @@
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
 import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { IAppLogger } from '@Interfaces/logger/IAppLogger';
@@ -7,7 +6,6 @@ import { AppLogger } from '@Logger/app.logger';
 import { Injectable } from '@nestjs/common';
 import { TPasswordResetTokensGetFields } from '@Types/passwordResetTokens/TPasswordResetTokensGetFields';
 import { TUpdatePasswordResetToken } from '@Types/passwordResetTokens/TUpdatePasswordResetToken';
-import { plainToInstance } from 'class-transformer';
 import { DataSource, DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 
 @Injectable()
@@ -19,7 +17,7 @@ export class PasswordResetTokensRepository implements IPasswordResetTokensReposi
 	public async getByField(
 		fieldName: TPasswordResetTokensGetFields,
 		fieldValue: string,
-	): Promise<PasswordResetTokenDto | null> {
+	): Promise<PasswordResetToken | null> {
 		const token: PasswordResetToken | null = await this._dataSource
 			.createQueryBuilder()
 			.select('passwordResetToken')
@@ -33,9 +31,7 @@ export class PasswordResetTokensRepository implements IPasswordResetTokensReposi
 			data: token,
 		});
 
-		return token
-			? plainToInstance(PasswordResetTokenDto, token, { excludeExtraneousValues: true })
-			: null;
+		return token;
 	}
 
 	public async createToken(tokenDto: PasswordResetTokenInfoDto): Promise<string> {

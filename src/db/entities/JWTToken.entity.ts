@@ -1,8 +1,10 @@
+import { User } from '@Entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
 	Entity,
 	Index,
+	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -16,7 +18,7 @@ export class JWTToken {
 	id: string;
 
 	@CreateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -39,7 +41,7 @@ export class JWTToken {
 	token: string;
 
 	@UpdateDateColumn({
-		type: 'datetime',
+		type: 'timestamp',
 		nullable: false,
 		transformer: {
 			from(date: string): string {
@@ -51,4 +53,7 @@ export class JWTToken {
 		},
 	})
 	updatedAt: string;
+
+	@OneToOne(() => User, (user: User) => user.JWTToken, { nullable: false, onDelete: 'CASCADE' })
+	user: User;
 }

@@ -1,6 +1,6 @@
 import { connectionSource } from '@DB/typeOrmConfig';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
-import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { User } from '@Entities/User.entity';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
 import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
@@ -11,7 +11,7 @@ import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
 import { UsersRepository } from '@Repositories/users.repository';
 import { UsersService } from '@Services/users.service';
-import { users } from '@TestMocks/UserFullDto/users';
+import { users } from '@TestMocks/User/users';
 import * as bcrypt from 'bcrypt';
 import SpyInstance = jest.SpyInstance;
 
@@ -40,7 +40,7 @@ describe('UsersService', (): void => {
 		let updateUserMock: SpyInstance;
 		let hashMock: SpyInstance;
 
-		const usersMock: UserFullDto[] = [...users];
+		const usersMock: User[] = [...users];
 		const existingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
 		const notExistingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b44442';
 		const userHashedPassword: string = 'uuid-hash';
@@ -53,7 +53,7 @@ describe('UsersService', (): void => {
 			updateUserMock = jest
 				.spyOn(usersRepository, 'updateUser')
 				.mockImplementation(async (userId: string): Promise<boolean> => {
-					return usersMock.some((user: UserFullDto) => user.id === userId);
+					return usersMock.some((user: User) => user.id === userId);
 				});
 
 			hashMock = jest.spyOn(bcrypt, 'hash').mockResolvedValue(userHashedPassword as never);

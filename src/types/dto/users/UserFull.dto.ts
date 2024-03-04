@@ -1,5 +1,7 @@
+import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
+import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 export class UserFullDto extends UserShortDto {
 	@Expose()
@@ -12,8 +14,10 @@ export class UserFullDto extends UserShortDto {
 	password: string;
 
 	@Expose()
-	passwordResetTokenId: string | null;
+	@Type(() => PasswordResetTokenDto)
+	passwordResetToken?: PasswordResetTokenDto;
 
 	@Expose()
-	JWTTokenId: string | null;
+	@Type(() => JWTTokenFullDto)
+	JWTToken?: JWTTokenFullDto;
 }

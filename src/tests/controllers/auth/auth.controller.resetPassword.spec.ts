@@ -1,7 +1,7 @@
 import { AuthController } from '@Controllers/auth.controller';
 import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { User } from '@Entities/User.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { IEmailService } from '@Interfaces/emails/IEmailService';
@@ -13,20 +13,23 @@ import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
-import { users } from '@TestMocks/UserFullDto/users';
+import { users } from '@TestMocks/User/users';
+import { plainToInstance } from 'class-transformer';
 import * as request from 'supertest';
 
 describe('AuthController', (): void => {
 	let app: INestApplication;
 	let authController: AuthController;
 
-	const usersMock: UserFullDto[] = [...users];
+	const usersMock: User[] = [...users];
 
 	const usersServiceMock: Partial<IUsersService> = {
 		getFullUserByEmail: jest
 			.fn()
-			.mockImplementation(async (userEmail: string): Promise<UserShortDto | null> => {
-				return usersMock.find((user: UserShortDto) => user.email === userEmail) || null;
+			.mockImplementation(async (userEmail: string): Promise<UserFullDto | null> => {
+				const user: User | null = usersMock.find((user: User) => user.email === userEmail) || null;
+
+				return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
 			}),
 	};
 

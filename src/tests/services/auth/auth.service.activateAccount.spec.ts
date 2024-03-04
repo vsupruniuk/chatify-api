@@ -1,9 +1,8 @@
 import { connectionSource } from '@DB/typeOrmConfig';
 import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { OTPCode } from '@Entities/OTPCode.entity';
+import { User } from '@Entities/User.entity';
 import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
 import { IAuthService } from '@Interfaces/auth/IAuthService';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
@@ -12,8 +11,7 @@ import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 import { UsersRepository } from '@Repositories/users.repository';
 import { AuthService } from '@Services/auth.service';
 import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
-import { users } from '@TestMocks/UserShortDto/users';
-import { plainToInstance } from 'class-transformer';
+import { users } from '@TestMocks/User/users';
 import SpyInstance = jest.SpyInstance;
 
 describe('AuthService', (): void => {
@@ -34,30 +32,26 @@ describe('AuthService', (): void => {
 		let isExpiredMock: SpyInstance;
 
 		const otpCodesMock: OTPCode[] = [...otpCodes];
-		const usersMock: UserShortDto[] = [...users];
+		const usersMock: User[] = [...users];
 
 		const existingOTPCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
 		const notExistingOTPCodeId: string = '1632043c-4d4b-4424-ac31-45189dedd099';
 		const nullableOTPCodeId: string = '1662043c-4d4b-4424-ac31-55189dedd099';
-		const existingUserId: string = '1';
-		const notExistingUserId: string = '5';
+		const existingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
+		const notExistingUserId: string = 'f46816d7-90af-4c29-8e1a-227c90b33852';
 
 		beforeEach((): void => {
 			getUserOTPCodeByIdMock = jest
 				.spyOn(otpCodesRepository, 'getUserOTPCodeById')
-				.mockImplementation(async (id: string): Promise<OTPCodeResponseDto | null> => {
-					const otpCode: OTPCode | undefined = otpCodesMock.find((code: OTPCode) => code.id === id);
-
-					return otpCode
-						? plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true })
-						: null;
+				.mockImplementation(async (id: string): Promise<OTPCode | null> => {
+					return otpCodesMock.find((code: OTPCode) => code.id === id) || null;
 				});
 
 			updateUserMock = jest
 				.spyOn(usersRepository, 'updateUser')
 				.mockImplementation(
 					async (userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean> => {
-						const userIndex = usersMock.findIndex((user: UserShortDto) => user.id === userId);
+						const userIndex = usersMock.findIndex((user: User) => user.id === userId);
 
 						if (userIndex < 0) {
 							return false;

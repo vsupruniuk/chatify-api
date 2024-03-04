@@ -1,5 +1,6 @@
 import { connectionSource } from '@DB/typeOrmConfig';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { User } from '@Entities/User.entity';
 import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
@@ -12,8 +13,8 @@ import { UsersService } from '@Services/users.service';
 import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
 import { UsersRepository } from '@Repositories/users.repository';
 import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-import { users } from '@TestMocks/UserFullDto/users';
-import { TUserFullGetFields } from '@Types/users/TUserFullGetFields';
+import { users } from '@TestMocks/User/users';
+import { TUserGetFields } from '@Types/users/TUserGetFields';
 
 import SpyInstance = jest.SpyInstance;
 
@@ -39,22 +40,19 @@ describe('usersService', (): void => {
 	});
 
 	describe('getFullUserById', (): void => {
-		let getFullUserByFieldMock: SpyInstance;
+		let getByFieldMock: SpyInstance;
 
-		const usersMock: UserFullDto[] = [...users];
+		const usersMock: User[] = [...users];
 		const existingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
 		const notExistingUserId: string = 'f46845d7-90af-4c29-8e1a-227c90b31111';
 
 		beforeEach((): void => {
-			getFullUserByFieldMock = jest
-				.spyOn(usersRepository, 'getFullUserByField')
+			getByFieldMock = jest
+				.spyOn(usersRepository, 'getByField')
 				.mockImplementation(
-					async (
-						fieldName: TUserFullGetFields,
-						fieldValue: string,
-					): Promise<UserFullDto | null> => {
+					async (fieldName: TUserGetFields, fieldValue: string): Promise<User | null> => {
 						return (
-							usersMock.find((user: UserFullDto) => {
+							usersMock.find((user: User) => {
 								if (fieldName === 'id') {
 									return user.id === fieldValue;
 								}
@@ -78,11 +76,11 @@ describe('usersService', (): void => {
 			expect(usersService.getFullUserById).toBeInstanceOf(Function);
 		});
 
-		it('should use getFullUserByField method from users repository for searching user', async (): Promise<void> => {
+		it('should use getByField method from users repository for searching user', async (): Promise<void> => {
 			await usersService.getFullUserById(existingUserId);
 
-			expect(getFullUserByFieldMock).toHaveBeenCalledTimes(1);
-			expect(getFullUserByFieldMock).toHaveBeenCalledWith('id', existingUserId);
+			expect(getByFieldMock).toHaveBeenCalledTimes(1);
+			expect(getByFieldMock).toHaveBeenCalledWith('id', existingUserId);
 		});
 
 		it('should find user, if it exist', async (): Promise<void> => {
