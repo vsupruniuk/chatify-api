@@ -1,3 +1,4 @@
+import { AppUserDto } from '@DTO/appUser/appUser.dto';
 import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
 import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
@@ -75,6 +76,12 @@ export class UsersService implements IUsersService {
 		);
 
 		return user ? plainToInstance(UserFullDto, user, { excludeExtraneousValues: true }) : null;
+	}
+
+	public async getAppUser(id: string): Promise<AppUserDto | null> {
+		const user: AppUserDto | null = await this._usersRepository.getByField('id', id);
+
+		return user ? plainToInstance(AppUserDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
 	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto | null> {

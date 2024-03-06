@@ -1,3 +1,4 @@
+import { AppUserDto } from '@DTO/appUser/appUser.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
@@ -46,6 +47,14 @@ export interface IUsersService {
 	 * @returns null - if user wasn't found
 	 */
 	getByResetPasswordToken(token: string): Promise<UserFullDto | null>;
+
+	/**
+	 * Method for searching current authorized user
+	 * @param id - user id from access token
+	 * @returns AppUserDto - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	getAppUser(id: string): Promise<AppUserDto | null>;
 
 	/**
 	 * Method for creating user from signup data with some default settings

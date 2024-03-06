@@ -36,7 +36,7 @@ describe('AuthController', (): void => {
 	const otpCodesMock: OTPCode[] = [...otpCodes];
 	const jwtTokensMock: JWTToken[] = [...jwtTokens];
 	let usersMock: User[] = [...users];
-	const responceMock: Partial<Response> = {
+	const responseMock: Partial<Response> = {
 		cookie: jest.fn(),
 	};
 
@@ -334,6 +334,28 @@ describe('AuthController', (): void => {
 				.expect(Headers.SET_COOKIE, RegExp(CookiesNames.REFRESH_TOKEN));
 		});
 
+		it('should call cookie method to set refreshToken to cookie', async (): Promise<void> => {
+			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
+
+			const accountActivationDto = <AccountActivationDto>{
+				id: existingUserId,
+				code: 111111,
+				OTPCodeId: existingOTPCodeId,
+			};
+
+			const token: string = await jwtTokensServiceMock.generateRefreshToken!({} as JWTPayloadDto);
+
+			await authController.activateAccount(responseMock as Response, accountActivationDto);
+
+			expect(responseMock.cookie).toHaveBeenCalledTimes(1);
+			expect(responseMock.cookie).toHaveBeenCalledWith(CookiesNames.REFRESH_TOKEN, token, {
+				maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000 || 0,
+				secure: true,
+				sameSite: 'strict',
+				httpOnly: true,
+			});
+		});
+
 		it('should call activateAccount method in auth controller to handle account activation', async (): Promise<void> => {
 			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
 
@@ -343,7 +365,7 @@ describe('AuthController', (): void => {
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			await authController.activateAccount(responceMock as Response, accountActivationDto);
+			await authController.activateAccount(responseMock as Response, accountActivationDto);
 
 			expect(authServiceMock.activateAccount).toHaveBeenCalledTimes(1);
 			expect(authServiceMock.activateAccount).toHaveBeenCalledWith(accountActivationDto);
@@ -358,7 +380,7 @@ describe('AuthController', (): void => {
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			await authController.activateAccount(responceMock as Response, accountActivationDto);
+			await authController.activateAccount(responseMock as Response, accountActivationDto);
 
 			expect(otpCodesServiceMock.deactivateUserOTPCode).toHaveBeenCalledTimes(1);
 			expect(otpCodesServiceMock.deactivateUserOTPCode).toHaveBeenCalledWith(existingOTPCodeId);
@@ -375,7 +397,7 @@ describe('AuthController', (): void => {
 
 			const user: User | null = usersMock.find((user: User) => user.id === existingUserId) || null;
 
-			await authController.activateAccount(responceMock as Response, accountActivationDto);
+			await authController.activateAccount(responseMock as Response, accountActivationDto);
 
 			expect(jwtTokensServiceMock.generateAccessToken).toHaveBeenCalledTimes(1);
 			expect(jwtTokensServiceMock.generateAccessToken).toHaveBeenCalledWith({
@@ -398,7 +420,7 @@ describe('AuthController', (): void => {
 
 			const user: User | null = usersMock.find((user: User) => user.id === existingUserId) || null;
 
-			await authController.activateAccount(responceMock as Response, accountActivationDto);
+			await authController.activateAccount(responseMock as Response, accountActivationDto);
 
 			expect(jwtTokensServiceMock.generateRefreshToken).toHaveBeenCalledTimes(1);
 			expect(jwtTokensServiceMock.generateRefreshToken).toHaveBeenCalledWith({
@@ -425,7 +447,7 @@ describe('AuthController', (): void => {
 				plainToInstance(JWTPayloadDto, user, { excludeExtraneousValues: true }),
 			);
 
-			await authController.activateAccount(responceMock as Response, accountActivationDto);
+			await authController.activateAccount(responseMock as Response, accountActivationDto);
 
 			expect(jwtTokensServiceMock.saveRefreshToken).toHaveBeenCalledTimes(1);
 			expect(jwtTokensServiceMock.saveRefreshToken).toHaveBeenCalledWith(
@@ -443,7 +465,7 @@ describe('AuthController', (): void => {
 				OTPCodeId: existingOTPCodeId,
 			};
 
-			await authController.activateAccount(responceMock as Response, accountActivationDto);
+			await authController.activateAccount(responseMock as Response, accountActivationDto);
 
 			expect(usersServiceMock.getFullUserById).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getFullUserById).toHaveBeenCalledWith(existingUserId);
@@ -469,7 +491,7 @@ describe('AuthController', (): void => {
 				refreshToken,
 			);
 
-			await authController.activateAccount(responceMock as Response, accountActivationDto);
+			await authController.activateAccount(responseMock as Response, accountActivationDto);
 
 			expect(jwtTokensServiceMock.getById).toHaveBeenCalledTimes(1);
 			expect(jwtTokensServiceMock.getById).toHaveBeenCalledWith(id);
@@ -497,7 +519,7 @@ describe('AuthController', (): void => {
 
 			const token: JWTTokenFullDto | null = await jwtTokensServiceMock.getById!(id);
 
-			await authController.activateAccount(responceMock as Response, accountActivationDto);
+			await authController.activateAccount(responseMock as Response, accountActivationDto);
 
 			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(user?.id, { JWTToken: token });
@@ -513,7 +535,7 @@ describe('AuthController', (): void => {
 			};
 
 			const response: ResponseResult = await authController.activateAccount(
-				responceMock as Response,
+				responseMock as Response,
 				accountActivationDto,
 			);
 
