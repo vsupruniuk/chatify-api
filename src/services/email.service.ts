@@ -1,6 +1,6 @@
 import { accountActivationTemplate } from '@EmailTemplates/accountActivationTemplate';
 import { resetPasswordTemplate } from '@EmailTemplates/resetPasswordTemplate';
-import { EmailPriority } from '@Enums/EmailPrioriy.enum';
+import { EmailPriority } from '@Enums/EmailPriority.enum';
 
 import { IEmailService } from '@Interfaces/emails/IEmailService';
 import { Injectable } from '@nestjs/common';

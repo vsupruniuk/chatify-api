@@ -79,9 +79,13 @@ export class UsersService implements IUsersService {
 	}
 
 	public async getAppUser(id: string): Promise<AppUserDto | null> {
-		const user: AppUserDto | null = await this._usersRepository.getByField('id', id);
+		const user: User | null = await this._usersRepository.getByField('id', id);
 
-		return user ? plainToInstance(AppUserDto, user, { excludeExtraneousValues: true }) : null;
+		return user
+			? plainToInstance(AppUserDto, user, {
+					excludeExtraneousValues: true,
+				})
+			: null;
 	}
 
 	public async createUser(signupUserDto: SignupUserDto): Promise<UserShortDto | null> {
