@@ -33,7 +33,7 @@ describe('AuthController', (): void => {
 	const jwtTokensMock: JWTToken[] = [...jwtTokens];
 	const existingTokenId: string = '1';
 	const newTokenId: string = '1';
-	const responceMock: Partial<Response> = {
+	const responseMock: Partial<Response> = {
 		cookie: jest.fn(),
 	};
 
@@ -274,13 +274,32 @@ describe('AuthController', (): void => {
 				.expect(Headers.SET_COOKIE, RegExp(CookiesNames.REFRESH_TOKEN));
 		});
 
+		it('should call cookie method to set refreshToken to cookie', async (): Promise<void> => {
+			const loginDto = <LoginDto>{
+				email: 'tony@mail.com',
+				password: 'qwertyA1',
+			};
+
+			const token: string = await jwtTokensServiceMock.generateRefreshToken!({} as JWTPayloadDto);
+
+			await authController.login(responseMock as Response, loginDto);
+
+			expect(responseMock.cookie).toHaveBeenCalledTimes(1);
+			expect(responseMock.cookie).toHaveBeenCalledWith(CookiesNames.REFRESH_TOKEN, token, {
+				maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000 || 0,
+				secure: true,
+				sameSite: 'strict',
+				httpOnly: true,
+			});
+		});
+
 		it('should call getFullUserByEmail in usersService to find user', async (): Promise<void> => {
 			const loginDto = <LoginDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyA1',
 			};
 
-			await authController.login(responceMock as Response, loginDto);
+			await authController.login(responseMock as Response, loginDto);
 
 			expect(usersServiceMock.getFullUserByEmail).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getFullUserByEmail).toHaveBeenCalledWith(loginDto.email);
@@ -292,7 +311,7 @@ describe('AuthController', (): void => {
 				password: 'qwertyA1',
 			};
 
-			await authController.login(responceMock as Response, loginDto);
+			await authController.login(responseMock as Response, loginDto);
 
 			expect(authServiceMock.validatePassword).toHaveBeenCalledTimes(1);
 			expect(authServiceMock.validatePassword).toHaveBeenCalledWith(
@@ -309,7 +328,7 @@ describe('AuthController', (): void => {
 
 			const user: UserFullDto | null = await usersServiceMock.getFullUserByEmail!(loginDto.email);
 
-			await authController.login(responceMock as Response, loginDto);
+			await authController.login(responseMock as Response, loginDto);
 
 			expect(jwtTokensServiceMock.generateAccessToken).toHaveBeenCalledTimes(1);
 			expect(jwtTokensServiceMock.generateAccessToken).toHaveBeenCalledWith({
@@ -329,7 +348,7 @@ describe('AuthController', (): void => {
 
 			const user: UserFullDto | null = await usersServiceMock.getFullUserByEmail!(loginDto.email);
 
-			await authController.login(responceMock as Response, loginDto);
+			await authController.login(responseMock as Response, loginDto);
 
 			expect(jwtTokensServiceMock.generateRefreshToken).toHaveBeenCalledTimes(1);
 			expect(jwtTokensServiceMock.generateRefreshToken).toHaveBeenCalledWith({
@@ -352,7 +371,7 @@ describe('AuthController', (): void => {
 				plainToInstance(JWTPayloadDto, user, { excludeExtraneousValues: true }),
 			);
 
-			await authController.login(responceMock as Response, loginDto);
+			await authController.login(responseMock as Response, loginDto);
 
 			expect(jwtTokensServiceMock.saveRefreshToken).toHaveBeenCalledTimes(1);
 			expect(jwtTokensServiceMock.saveRefreshToken).toHaveBeenCalledWith(
@@ -369,7 +388,7 @@ describe('AuthController', (): void => {
 
 			const user: UserFullDto | null = await usersServiceMock.getFullUserByEmail!(loginDto.email);
 
-			await authController.login(responceMock as Response, loginDto);
+			await authController.login(responseMock as Response, loginDto);
 
 			expect(jwtTokensServiceMock.getById).toHaveBeenCalledTimes(1);
 			expect(jwtTokensServiceMock.getById).toHaveBeenCalledWith(user?.JWTToken?.id);
@@ -392,7 +411,7 @@ describe('AuthController', (): void => {
 
 			const token: JWTTokenFullDto | null = await jwtTokensServiceMock.getById!(id);
 
-			await authController.login(responceMock as Response, loginDto);
+			await authController.login(responseMock as Response, loginDto);
 
 			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(user?.id, { JWTToken: token });
@@ -405,7 +424,7 @@ describe('AuthController', (): void => {
 			};
 
 			const response: ResponseResult = await authController.login(
-				responceMock as Response,
+				responseMock as Response,
 				loginDto,
 			);
 

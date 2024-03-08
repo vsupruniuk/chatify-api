@@ -17,6 +17,7 @@ export default async (): Promise<Config> => {
 			'@Entities/(.*)': '<rootDir>/src/db/entities/$1',
 			'@Enums/(.*)': '<rootDir>/src/types/enums/$1',
 			'@Filters/(.*)': '<rootDir>/src/filters/$1',
+			'@Guards/(.*)': '<rootDir>/src/guards/$1',
 			'@Helpers/(.*)': '<rootDir>/src/helpers/$1',
 			'@Interfaces/(.*)': '<rootDir>/src/types/interfaces/$1',
 			'@Logger/(.*)': '<rootDir>/src/logger/$1',

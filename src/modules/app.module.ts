@@ -1,3 +1,4 @@
+import { AppUserModule } from '@Modules/appUser.module';
 import { throttlerGuardProvider } from '@Modules/providers/index';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -8,9 +9,10 @@ import { AuthModule } from '@Modules/auth.module';
 
 @Module({
 	imports: [
+		AuthModule,
+		AppUserModule,
 		ConfigModule.forRoot(),
 		TypeOrmModule.forRoot(typeOrmConfig),
-		AuthModule,
 		ThrottlerModule.forRoot([
 			{
 				ttl: Number(process.env.THROTTLE_TIME_TO_LIVE) || 1000000,
