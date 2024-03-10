@@ -114,7 +114,7 @@ describe('AppUserController', (): void => {
 			await request(app.getHttpServer()).get('/app-user').expect(HttpStatus.UNAUTHORIZED);
 		});
 
-		it('should return 401 status if access token not passed to authorization token', async (): Promise<void> => {
+		it('should return 401 status if access token not passed to authorization header', async (): Promise<void> => {
 			await request(app.getHttpServer())
 				.get('/app-user')
 				.set(Headers.AUTHORIZATION, 'Bearer')
