@@ -1,7 +1,8 @@
+import { UpdateAccountSettingsDto } from '@DTO/accountSettings/updateAccountSettings.dto';
 import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { AppLogger } from '@Logger/app.logger';
 import { Injectable } from '@nestjs/common';
-import { DataSource, InsertResult } from 'typeorm';
+import { DataSource, InsertResult, UpdateResult } from 'typeorm';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
 import { AccountSettings } from '@Entities/AccountSettings.entity';
 
@@ -43,5 +44,19 @@ export class AccountSettingsRepository implements IAccountSettingsRepository {
 		});
 
 		return result.identifiers[0].id;
+	}
+
+	public async updateAccountSettings(
+		id: string,
+		newSettings: Partial<UpdateAccountSettingsDto>,
+	): Promise<boolean> {
+		const result: UpdateResult = await this._dataSource
+			.createQueryBuilder()
+			.update(AccountSettings)
+			.set(newSettings)
+			.where('id = :id', { id })
+			.execute();
+
+		return result.affected ? result.affected > 0 : false;
 	}
 }
