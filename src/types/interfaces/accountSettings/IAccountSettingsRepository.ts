@@ -23,8 +23,8 @@ export interface IAccountSettingsRepository {
 	 * Method for updating user account settings
 	 * @param id - id of user account settings
 	 * @param newSettings - new settings for user account
-	 * @returns true - if settings was updated
-	 * @returns false - if settings wasn't updated
+	 * @returns true - if settings were updated
+	 * @returns false - if settings weren't updated
 	 */
 	updateAccountSettings(
 		id: string,

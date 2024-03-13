@@ -1,6 +1,7 @@
 import { AppUserController } from '@Controllers/appUser.controller';
 import {
 	accountSettingsRepositoryProvider,
+	accountSettingsServiceProvider,
 	jwtTokensRepositoryProvider,
 	jwtTokensServiceProvider,
 	otpCodesRepositoryProvider,
@@ -21,6 +22,7 @@ import { JwtService } from '@nestjs/jwt';
 		jwtTokensRepositoryProvider,
 		usersServiceProvider,
 		usersRepositoryProvider,
+		accountSettingsServiceProvider,
 		accountSettingsRepositoryProvider,
 		otpCodesRepositoryProvider,
 		passwordResetTokensRepositoryProvider,
