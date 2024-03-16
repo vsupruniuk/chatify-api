@@ -1,12 +1,15 @@
 import { AccessToken } from '@Decorators/AccessToken.decorator';
+import { UpdateAccountSettingsDto } from '@DTO/accountSettings/updateAccountSettings.dto';
 import { AppUserDto } from '@DTO/appUser/appUser.dto';
 import { UpdateAppUserDto } from '@DTO/appUser/UpdateAppUser.dto';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
+import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CacheKeys } from '@Enums/CacheKeys.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { AuthGuard } from '@Guards/auth.guard';
+import { IAccountSettingsService } from '@Interfaces/accountSettings/IAccountSettingsService';
 import { IAppUserController } from '@Interfaces/appUser/IAppUserController';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
 import { IAppLogger } from '@Interfaces/logger/IAppLogger';
@@ -44,6 +47,9 @@ export class AppUserController implements IAppUserController {
 
 		@Inject(CustomProviders.I_JWT_TOKENS_SERVICE)
 		private readonly _jwtTokensService: IJWTTokensService,
+
+		@Inject(CustomProviders.I_ACCOUNT_SETTINGS_SERVICE)
+		private readonly _accountSettingsService: IAccountSettingsService,
 	) {}
 
 	@Get()
@@ -145,6 +151,59 @@ export class AppUserController implements IAppUserController {
 		}
 
 		await this._cacheManager.del(CacheKeys.APP_USER + `_${userFromToken.id}`);
+
+		responseResult.data = [];
+		responseResult.dataLength = responseResult.data.length;
+
+		return responseResult;
+	}
+
+	@Patch('/account-settings')
+	@HttpCode(HttpStatus.OK)
+	public async updateAccountSettings(
+		@AccessToken() accessToken: string,
+		@Body() newSettings: UpdateAccountSettingsDto,
+	): Promise<ResponseResult> {
+		this._logger.incomingRequest({
+			requestMethod: this.updateAccountSettings.name,
+			controller: 'AppUserController',
+			body: newSettings,
+		});
+
+		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
+			HttpStatus.OK,
+			ResponseStatus.SUCCESS,
+		);
+
+		if (!newSettings || !Object.keys(newSettings).length) {
+			throw new BadRequestException(['At least 1 field to change should be passed']);
+		}
+
+		const userFromToken: JWTPayloadDto | null =
+			await this._jwtTokensService.verifyAccessToken(accessToken);
+
+		if (!userFromToken) {
+			throw new UnauthorizedException(['Please, login to perform this action']);
+		}
+
+		const fullUser: UserFullDto | null = await this._usersService.getFullUserById(userFromToken.id);
+
+		if (!fullUser) {
+			throw new UnauthorizedException(['Please, login to perform this action']);
+		}
+
+		const isAccountSettingsUpdated = await this._accountSettingsService.updateAccountSettings(
+			fullUser.accountSettings.id,
+			newSettings,
+		);
+
+		if (!isAccountSettingsUpdated) {
+			throw new UnprocessableEntityException([
+				'Failed to update account settings. Please, try again',
+			]);
+		}
+
+		await this._cacheManager.del(CacheKeys.APP_USER + `_${fullUser.id}`);
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;

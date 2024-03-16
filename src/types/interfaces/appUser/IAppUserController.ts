@@ -1,3 +1,4 @@
+import { UpdateAccountSettingsDto } from '@DTO/accountSettings/updateAccountSettings.dto';
 import { UpdateAppUserDto } from '@DTO/appUser/UpdateAppUser.dto';
 import { ResponseResult } from '@Responses/ResponseResult';
 
@@ -16,4 +17,15 @@ export interface IAppUserController {
 	 * @returns ResponseResult - successful response result
 	 */
 	updateUser(accessToken: string, updateAppUserDto: UpdateAppUserDto): Promise<ResponseResult>;
+
+	/**
+	 * Update user account settings
+	 * @param accessToken - user access token from authorization header
+	 * @param newSettings - new account settings
+	 * @returns ResponseResult - successful response result
+	 */
+	updateAccountSettings(
+		accessToken: string,
+		newSettings: UpdateAccountSettingsDto,
+	): Promise<ResponseResult>;
 }

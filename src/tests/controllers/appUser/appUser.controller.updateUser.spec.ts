@@ -101,11 +101,11 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should be defined', (): void => {
-			expect(appUserController.getUser).toBeDefined();
+			expect(appUserController.updateUser).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(appUserController.getUser).toBeInstanceOf(Function);
+			expect(appUserController.updateUser).toBeInstanceOf(Function);
 		});
 
 		it('should return 401 status if authorization header is not passed', async (): Promise<void> => {
@@ -400,7 +400,7 @@ describe('AppUserController', (): void => {
 			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(userId, updateAppUserDto);
 		});
 
-		it('should call del in cache service to delete cached user data', async (): Promise<void> => {
+		it('should call del method in cache service to delete cached user data', async (): Promise<void> => {
 			const updateAppUserDto: UpdateAppUserDto = {
 				about: 'Iron man',
 				firstName: 'Tony',

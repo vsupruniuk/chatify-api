@@ -3,7 +3,7 @@ import { UpdateAccountSettingsDto } from '@DTO/accountSettings/updateAccountSett
 export interface IAccountSettingsService {
 	/**
 	 * Method for updating app user account settings
-	 * @param id - user id
+	 * @param id - id of user account settings
 	 * @param newSettings - new account settings
 	 * @returns true - if account settings were updated
 	 * @returns false - if account settings weren't updated
