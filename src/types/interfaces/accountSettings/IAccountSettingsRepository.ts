@@ -1,3 +1,4 @@
+import { UpdateAccountSettingsDto } from '@DTO/accountSettings/updateAccountSettings.dto';
 import { AccountSettings } from '@Entities/AccountSettings.entity';
 
 /**
@@ -17,4 +18,16 @@ export interface IAccountSettingsRepository {
 	 * @returns id - of created settings
 	 */
 	createDefaultSettings(): Promise<string>;
+
+	/**
+	 * Method for updating user account settings
+	 * @param id - id of user account settings
+	 * @param newSettings - new settings for user account
+	 * @returns true - if settings were updated
+	 * @returns false - if settings weren't updated
+	 */
+	updateAccountSettings(
+		id: string,
+		newSettings: Partial<UpdateAccountSettingsDto>,
+	): Promise<boolean>;
 }
