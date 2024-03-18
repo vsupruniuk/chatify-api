@@ -26,12 +26,17 @@ import {
 	HttpStatus,
 	Inject,
 	Patch,
+	Post,
 	UnauthorizedException,
 	UnprocessableEntityException,
+	UploadedFile,
 	UseGuards,
+	UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
+import { Express } from 'express';
 
 @Controller('app-user')
 @UseGuards(AuthGuard)
@@ -209,5 +214,11 @@ export class AppUserController implements IAppUserController {
 		responseResult.dataLength = responseResult.data.length;
 
 		return responseResult;
+	}
+
+	@Post('upload-avatar')
+	@UseInterceptors(FileInterceptor('image'))
+	public async uploadAvatar(@UploadedFile() file: Express.Multer.File) {
+		console.log(file);
 	}
 }
