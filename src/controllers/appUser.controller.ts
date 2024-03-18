@@ -8,7 +8,6 @@ import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CacheKeys } from '@Enums/CacheKeys.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
-import { AuthGuard } from '@Guards/auth.guard';
 import { IAccountSettingsService } from '@Interfaces/accountSettings/IAccountSettingsService';
 import { IAppUserController } from '@Interfaces/appUser/IAppUserController';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
@@ -30,7 +29,6 @@ import {
 	UnauthorizedException,
 	UnprocessableEntityException,
 	UploadedFile,
-	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -39,7 +37,7 @@ import { SuccessfulResponseResult } from '@Responses/successfulResponses/Success
 import { Express } from 'express';
 
 @Controller('app-user')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class AppUserController implements IAppUserController {
 	private readonly _logger: IAppLogger = new AppLogger();
 
