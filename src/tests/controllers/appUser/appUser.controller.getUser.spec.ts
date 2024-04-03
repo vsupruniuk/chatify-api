@@ -6,12 +6,13 @@ import { CacheKeys } from '@Enums/CacheKeys.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { Headers } from '@Enums/Headers.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
-import { AuthGuard } from '@Guards/auth.guard';
-import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
+import { AuthInterceptor } from '@Interceptors/auth.interceptor';
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
 import {
+	CallHandler,
+	ExecutionContext,
 	HttpStatus,
 	INestApplication,
 	UnauthorizedException,
@@ -21,30 +22,40 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { users } from '@TestMocks/User/users';
+import { TUserPayload } from '@Types/users/TUserPayload';
 import { plainToInstance } from 'class-transformer';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Request } from 'express';
+import { Observable } from 'rxjs';
 import * as request from 'supertest';
 
 describe('AppUserController', (): void => {
 	let app: INestApplication;
 	let appUserController: AppUserController;
 
-	let canActivateMock: boolean = false;
+	let isAuthorized: boolean = false;
 	let isUserSavedToCache: boolean = false;
 
 	const validToken: string = 'valid-token';
 	const invalidToken: string = 'invalid-token';
 	const userId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
 	const usersMock: User[] = [...users];
+	const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, usersMock[0], {
+		excludeExtraneousValues: true,
+	});
 
-	const authGuardMock: Partial<AuthGuard> = {
-		canActivate: jest.fn().mockImplementation(async (): Promise<boolean> => {
-			if (!canActivateMock) {
-				throw new UnauthorizedException();
+	const authInterceptorMock: Partial<AuthInterceptor> = {
+		async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<unknown>> {
+			if (!isAuthorized) {
+				throw new UnauthorizedException(['Please, login to perform this action']);
 			}
 
-			return canActivateMock;
-		}),
+			const request: Request & TUserPayload = context.switchToHttp().getRequest();
+
+			request.user = appUserPayload;
+
+			return next.handle();
+		},
 	};
 	const usersServiceMock: Partial<IUsersService> = {
 		getAppUser: jest.fn().mockImplementation(async (id: string): Promise<AppUserDto | null> => {
@@ -52,13 +63,6 @@ describe('AppUserController', (): void => {
 
 			return user ? plainToInstance(AppUserDto, user, { excludeExtraneousValues: true }) : null;
 		}),
-	};
-	const jwtTokensServiceMock: Partial<IJWTTokensService> = {
-		verifyAccessToken: jest
-			.fn()
-			.mockImplementation(async (token: string): Promise<JWTPayloadDto | null> => {
-				return token === validToken ? ({ id: userId } as JWTPayloadDto) : null;
-			}),
 	};
 	const cacheMock: Partial<Cache> = {
 		get: jest.fn().mockImplementation(() => {
@@ -75,14 +79,12 @@ describe('AppUserController', (): void => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AppModule, AuthModule],
 		})
-			.overrideProvider(CustomProviders.I_JWT_TOKENS_SERVICE)
-			.useValue(jwtTokensServiceMock)
 			.overrideProvider(CustomProviders.I_USERS_SERVICE)
 			.useValue(usersServiceMock)
 			.overrideProvider(CACHE_MANAGER)
 			.useValue(cacheMock)
-			.overrideGuard(AuthGuard)
-			.useValue(authGuardMock)
+			.overrideInterceptor(AuthInterceptor)
+			.useValue(authInterceptorMock)
 			.compile();
 
 		app = moduleFixture.createNestApplication();
@@ -129,7 +131,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 200 status and current authorized user if access token valid', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const responseResult = <SuccessfulResponseResult<AppUserDto>>{
 				code: HttpStatus.OK,
@@ -161,27 +163,20 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return response as instance of ResponseResult', async (): Promise<void> => {
-			const response: ResponseResult = await appUserController.getUser(validToken);
+			const response: ResponseResult = await appUserController.getUser(appUserPayload);
 
 			expect(response).toBeInstanceOf(ResponseResult);
 		});
 
-		it('should call verifyAccessToken from jwt tokens service to get user data from access token', async (): Promise<void> => {
-			await appUserController.getUser(validToken);
-
-			expect(jwtTokensServiceMock.verifyAccessToken).toHaveBeenCalledTimes(1);
-			expect(jwtTokensServiceMock.verifyAccessToken).toHaveBeenCalledWith(validToken);
-		});
-
 		it('should call getAppUser from users service to get user', async (): Promise<void> => {
-			await appUserController.getUser(validToken);
+			await appUserController.getUser(appUserPayload);
 
 			expect(usersServiceMock.getAppUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getAppUser).toHaveBeenCalledWith(userId);
 		});
 
 		it('should call try to search user in cache', async (): Promise<void> => {
-			await appUserController.getUser(validToken);
+			await appUserController.getUser(appUserPayload);
 
 			expect(cacheMock.get).toHaveBeenCalledTimes(1);
 			expect(cacheMock.get).toHaveBeenCalledWith(CacheKeys.APP_USER + `_${userId}`);
@@ -190,11 +185,11 @@ describe('AppUserController', (): void => {
 		it('should set founded user to cache', async (): Promise<void> => {
 			const user: AppUserDto | null = await usersServiceMock.getAppUser!(userId);
 
-			await appUserController.getUser(validToken);
+			await appUserController.getUser(appUserPayload);
 
 			isUserSavedToCache = true;
 
-			await appUserController.getUser(validToken);
+			await appUserController.getUser(appUserPayload);
 
 			expect(cacheMock.set).toHaveBeenCalledTimes(1);
 			expect(cacheMock.set).toHaveBeenCalledWith(

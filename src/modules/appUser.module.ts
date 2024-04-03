@@ -8,30 +8,13 @@ import {
 	passwordResetTokensRepositoryProvider,
 	usersRepositoryProvider,
 	usersServiceProvider,
-} from '@Modules/providers/index';
+} from '@Modules/providers';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { MulterModule } from '@nestjs/platform-express';
-import { Request } from 'express';
-import { diskStorage } from 'multer';
 
 @Module({
-	imports: [
-		CacheModule.register(),
-		MulterModule.register({
-			storage: diskStorage({
-				destination: './public',
-				filename(
-					req: Request,
-					file: Express.Multer.File,
-					callback: (error: Error | null, filename: string) => void,
-				) {
-					callback(null, 'image.png');
-				},
-			}),
-		}),
-	],
+	imports: [CacheModule.register()],
 	controllers: [AppUserController],
 	providers: [
 		JwtService,

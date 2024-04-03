@@ -1,21 +1,27 @@
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
-import { CanActivate, ExecutionContext, Inject, UnauthorizedException } from '@nestjs/common';
+import {
+	CallHandler,
+	ExecutionContext,
+	Inject,
+	Injectable,
+	NestInterceptor,
+	UnauthorizedException,
+} from '@nestjs/common';
+import { TUserPayload } from '@Types/users/TUserPayload';
 import { Request } from 'express';
+import { Observable } from 'rxjs';
 
-/**
- * Guard that check if user authorized or not.
- * If user authorizer - next action will be executed. If not - Unauthorized exception will be thrown
- */
-export class AuthGuard implements CanActivate {
+@Injectable()
+export class AuthInterceptor implements NestInterceptor {
 	constructor(
 		@Inject(CustomProviders.I_JWT_TOKENS_SERVICE)
 		private readonly _jwtTokensService: IJWTTokensService,
 	) {}
 
-	public async canActivate(context: ExecutionContext): Promise<boolean> {
-		const request: Request = context.switchToHttp().getRequest();
+	async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<unknown>> {
+		const request: Request & TUserPayload = context.switchToHttp().getRequest();
 
 		const authHeader: string | undefined = request.headers['authorization'];
 
@@ -36,6 +42,8 @@ export class AuthGuard implements CanActivate {
 			throw new UnauthorizedException(['Please, login to perform this action']);
 		}
 
-		return true;
+		request.user = userData;
+
+		return next.handle();
 	}
 }
