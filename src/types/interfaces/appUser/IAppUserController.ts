@@ -1,31 +1,43 @@
 import { UpdateAccountSettingsDto } from '@DTO/accountSettings/updateAccountSettings.dto';
 import { UpdateAppUserDto } from '@DTO/appUser/UpdateAppUser.dto';
+import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { ResponseResult } from '@Responses/ResponseResult';
 
 export interface IAppUserController {
 	/**
 	 * Returns information about current logged-in user
-	 * @param accessToken - user access token from authorization header
+	 * @param appUserPayload - user data from access token
 	 * @returns ResponseResult - current user information
 	 */
-	getUser(accessToken: string): Promise<ResponseResult>;
+	getUser(appUserPayload: JWTPayloadDto): Promise<ResponseResult>;
 
 	/**
 	 * Update user public information
-	 * @param accessToken - user access token from authorization header
+	 * @param appUserPayload - user data from access token
 	 * @param updateAppUserDto - new information about user
 	 * @returns ResponseResult - successful response result
 	 */
-	updateUser(accessToken: string, updateAppUserDto: UpdateAppUserDto): Promise<ResponseResult>;
+	updateUser(
+		appUserPayload: JWTPayloadDto,
+		updateAppUserDto: UpdateAppUserDto,
+	): Promise<ResponseResult>;
 
 	/**
 	 * Update user account settings
-	 * @param accessToken - user access token from authorization header
+	 * @param appUserPayload - user data from access token
 	 * @param newSettings - new account settings
 	 * @returns ResponseResult - successful response result
 	 */
 	updateAccountSettings(
-		accessToken: string,
+		appUserPayload: JWTPayloadDto,
 		newSettings: UpdateAccountSettingsDto,
 	): Promise<ResponseResult>;
+
+	/**
+	 * Upload and save user avatar
+	 * @param appUserPayload - user data from access token
+	 * @param file - avatar uploaded by user
+	 * @returns ResponseResult - successful response result
+	 */
+	uploadAvatar(appUserPayload: JWTPayloadDto, file: Express.Multer.File): Promise<ResponseResult>;
 }

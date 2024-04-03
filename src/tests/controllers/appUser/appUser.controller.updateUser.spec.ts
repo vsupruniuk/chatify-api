@@ -6,13 +6,14 @@ import { User } from '@Entities/User.entity';
 import { CacheKeys } from '@Enums/CacheKeys.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { Headers } from '@Enums/Headers.enum';
-import { AuthGuard } from '@Guards/auth.guard';
-import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
+import { AuthInterceptor } from '@Interceptors/auth.interceptor';
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+	CallHandler,
+	ExecutionContext,
 	HttpStatus,
 	INestApplication,
 	UnauthorizedException,
@@ -21,28 +22,38 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import { ResponseResult } from '@Responses/ResponseResult';
 import { users } from '@TestMocks/User/users';
+import { TUserPayload } from '@Types/users/TUserPayload';
 import { plainToInstance } from 'class-transformer';
+import { Request } from 'express';
+import { Observable } from 'rxjs';
 import * as request from 'supertest';
 
 describe('AppUserController', (): void => {
 	let app: INestApplication;
 	let appUserController: AppUserController;
 
-	let canActivateMock: boolean = false;
+	let isAuthorized: boolean = false;
 
 	const validToken: string = 'valid-token';
 	const invalidToken: string = 'invalid-token';
 	const userId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
 	const usersMock: User[] = [...users];
+	const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, usersMock[0], {
+		excludeExtraneousValues: true,
+	});
 
-	const authGuardMock: Partial<AuthGuard> = {
-		canActivate: jest.fn().mockImplementation(async (): Promise<boolean> => {
-			if (!canActivateMock) {
-				throw new UnauthorizedException();
+	const authInterceptorMock: Partial<AuthInterceptor> = {
+		async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<unknown>> {
+			if (!isAuthorized) {
+				throw new UnauthorizedException(['Please, login to perform this action']);
 			}
 
-			return canActivateMock;
-		}),
+			const request: Request & TUserPayload = context.switchToHttp().getRequest();
+
+			request.user = appUserPayload;
+
+			return next.handle();
+		},
 	};
 	const usersServiceMock: Partial<IUsersService> = {
 		updateUser: jest.fn().mockImplementation(async (id: string): Promise<boolean> => {
@@ -58,13 +69,6 @@ describe('AppUserController', (): void => {
 				return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 			}),
 	};
-	const jwtTokensServiceMock: Partial<IJWTTokensService> = {
-		verifyAccessToken: jest
-			.fn()
-			.mockImplementation(async (token: string): Promise<JWTPayloadDto | null> => {
-				return token === validToken ? ({ id: userId } as JWTPayloadDto) : null;
-			}),
-	};
 	const cacheMock: Partial<Cache> = {
 		del: jest.fn(),
 	};
@@ -73,14 +77,12 @@ describe('AppUserController', (): void => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AppModule, AuthModule],
 		})
-			.overrideProvider(CustomProviders.I_JWT_TOKENS_SERVICE)
-			.useValue(jwtTokensServiceMock)
 			.overrideProvider(CustomProviders.I_USERS_SERVICE)
 			.useValue(usersServiceMock)
 			.overrideProvider(CACHE_MANAGER)
 			.useValue(cacheMock)
-			.overrideGuard(AuthGuard)
-			.useValue(authGuardMock)
+			.overrideInterceptor(AuthInterceptor)
+			.useValue(authInterceptorMock)
 			.compile();
 
 		app = moduleFixture.createNestApplication();
@@ -127,7 +129,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if body is not passed to request', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			await request(app.getHttpServer())
 				.patch('/app-user')
@@ -136,7 +138,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if empty body is passed to request', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			await request(app.getHttpServer())
 				.patch('/app-user')
@@ -146,7 +148,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if about present in body, but its not a string', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto = {
 				about: 1,
@@ -160,7 +162,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if about present in body, but its too long', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto: UpdateAppUserDto = {
 				about: 'Iron man'.padEnd(256, 'n'),
@@ -174,7 +176,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if firstName present in body, but its not a string', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto = {
 				firstName: 1,
@@ -188,7 +190,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if firstName present in body, but its too short', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto: UpdateAppUserDto = {
 				firstName: 'To',
@@ -202,7 +204,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if firstName present in body, but its too long', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto: UpdateAppUserDto = {
 				firstName: 'Tony'.padEnd(256, 'y'),
@@ -216,7 +218,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if lastName present in body, but its not a string', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto = {
 				lastName: 1,
@@ -230,7 +232,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if lastName present in body, but its too short', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto: UpdateAppUserDto = {
 				lastName: 'St',
@@ -244,7 +246,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if lastName present in body, but its too long', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto: UpdateAppUserDto = {
 				lastName: 'Stark'.padEnd(256, 'k'),
@@ -258,7 +260,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if nickname present in body, but its not a string', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto = {
 				nickname: 1,
@@ -272,7 +274,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if nickname present in body, but its too short', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto: UpdateAppUserDto = {
 				nickname: 'st',
@@ -286,7 +288,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 400 status if nickname present in body, but its too long', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto: UpdateAppUserDto = {
 				nickname: 't.stark'.padEnd(256, 'k'),
@@ -300,7 +302,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 409 status if nickname present in body, but its already taken', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto: UpdateAppUserDto = {
 				nickname: 't.stark',
@@ -314,7 +316,7 @@ describe('AppUserController', (): void => {
 		});
 
 		it('should return 200 status if all data valid', async (): Promise<void> => {
-			canActivateMock = true;
+			isAuthorized = true;
 
 			const updateAppUserDto: UpdateAppUserDto = {
 				about: 'Iron man',
@@ -339,25 +341,11 @@ describe('AppUserController', (): void => {
 			};
 
 			const result: ResponseResult = await appUserController.updateUser(
-				validToken,
+				appUserPayload,
 				updateAppUserDto,
 			);
 
 			expect(result).toBeInstanceOf(ResponseResult);
-		});
-
-		it('should call verifyAccessToken in JWT tokens service to get user data from access token', async (): Promise<void> => {
-			const updateAppUserDto: UpdateAppUserDto = {
-				about: 'Iron man',
-				firstName: 'Tony',
-				lastName: 'Stark',
-				nickname: 'tony.stark',
-			};
-
-			await appUserController.updateUser(validToken, updateAppUserDto);
-
-			expect(jwtTokensServiceMock.verifyAccessToken).toHaveBeenCalledTimes(1);
-			expect(jwtTokensServiceMock.verifyAccessToken).toHaveBeenCalledWith(validToken);
 		});
 
 		it('should call getByNickname in users service to check if user with given nickname already exist', async (): Promise<void> => {
@@ -368,7 +356,7 @@ describe('AppUserController', (): void => {
 				nickname: 'tony.stark',
 			};
 
-			await appUserController.updateUser(validToken, updateAppUserDto);
+			await appUserController.updateUser(appUserPayload, updateAppUserDto);
 
 			expect(usersServiceMock.getByNickname).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getByNickname).toHaveBeenCalledWith(updateAppUserDto.nickname);
@@ -381,7 +369,7 @@ describe('AppUserController', (): void => {
 				lastName: 'Stark',
 			};
 
-			await appUserController.updateUser(validToken, updateAppUserDto);
+			await appUserController.updateUser(appUserPayload, updateAppUserDto);
 
 			expect(usersServiceMock.getByNickname).not.toHaveBeenCalled();
 		});
@@ -394,7 +382,7 @@ describe('AppUserController', (): void => {
 				nickname: 'tony.stark',
 			};
 
-			await appUserController.updateUser(validToken, updateAppUserDto);
+			await appUserController.updateUser(appUserPayload, updateAppUserDto);
 
 			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(userId, updateAppUserDto);
@@ -408,7 +396,7 @@ describe('AppUserController', (): void => {
 				nickname: 'tony.stark',
 			};
 
-			await appUserController.updateUser(validToken, updateAppUserDto);
+			await appUserController.updateUser(appUserPayload, updateAppUserDto);
 
 			expect(cacheMock.del).toHaveBeenCalledTimes(1);
 			expect(cacheMock.del).toHaveBeenCalledWith(CacheKeys.APP_USER + `_${userId}`);

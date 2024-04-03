@@ -8,7 +8,7 @@ import {
 	passwordResetTokensRepositoryProvider,
 	usersRepositoryProvider,
 	usersServiceProvider,
-} from '@Modules/providers/index';
+} from '@Modules/providers';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
