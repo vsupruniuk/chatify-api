@@ -22,10 +22,12 @@ import {
 	Body,
 	ConflictException,
 	Controller,
+	Delete,
 	Get,
 	HttpCode,
 	HttpStatus,
 	Inject,
+	NotFoundException,
 	Patch,
 	Post,
 	UnauthorizedException,
@@ -200,7 +202,7 @@ export class AppUserController implements IAppUserController {
 		return responseResult;
 	}
 
-	@Post('/upload-avatar')
+	@Post('/user-avatar')
 	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(
 		FileInterceptor(FileFields.USER_AVATAR, {
@@ -262,7 +264,7 @@ export class AppUserController implements IAppUserController {
 		});
 
 		if (!isUserAvatarUrlUpdated) {
-			throw new BadRequestException(['Failed to save avatar. Please, try again']);
+			throw new UnprocessableEntityException(['Failed to save avatar. Please, try again']);
 		}
 
 		await this._cacheManager.del(CacheKeys.APP_USER + `_${appUserPayload.id}`);
@@ -273,5 +275,58 @@ export class AppUserController implements IAppUserController {
 		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
 
 		return responseResult;
+	}
+
+	@Delete('user-avatar')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	public async deleteAvatar(
+		@AppUserPayload() appUserPayload: JWTPayloadDto,
+	): Promise<ResponseResult> {
+		this._logger.incomingRequest({
+			requestMethod: this.deleteAvatar.name,
+			controller: 'AppUserController',
+		});
+
+		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
+			HttpStatus.NO_CONTENT,
+			ResponseStatus.SUCCESS,
+		);
+
+		const fullUser: UserFullDto | null = await this._usersService.getFullUserById(
+			appUserPayload.id,
+		);
+
+		if (!fullUser) {
+			throw new UnauthorizedException(['Please, login to perform this action']);
+		}
+
+		if (!fullUser.avatarUrl) {
+			throw new NotFoundException(['User does not have saved avatar|user-avatar']);
+		}
+
+		FileHelper.deleteFile(fullUser.avatarUrl);
+
+		const isUpdated: boolean = await this._usersService.updateUser(fullUser.id, {
+			avatarUrl: null,
+		});
+
+		if (!isUpdated) {
+			throw new UnprocessableEntityException(['Failed to delete avatar, please try again']);
+		}
+
+		await this._cacheManager.del(CacheKeys.APP_USER + `_${appUserPayload.id}`);
+
+		responseResult.data = [];
+		responseResult.dataLength = responseResult.data.length;
+
+		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
+
+		return responseResult;
+
+		//	Workflow
+		//  1. Check if user has avatar
+		//	2. Delete file
+		//  3. Update user avatar field
+		// 	P.S. Protect static files with authorization, change upload-avatar to user-avatar
 	}
 }

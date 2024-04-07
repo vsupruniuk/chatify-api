@@ -12,6 +12,8 @@ import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+	CallHandler,
+	ExecutionContext,
 	HttpStatus,
 	INestApplication,
 	UnauthorizedException,
@@ -20,7 +22,9 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import { ResponseResult } from '@Responses/ResponseResult';
 import { users } from '@TestMocks/User/users';
+import { TUserPayload } from '@Types/users/TUserPayload';
 import { plainToInstance } from 'class-transformer';
+import { Request } from 'express';
 import { Observable } from 'rxjs';
 import * as request from 'supertest';
 import SpyInstance = jest.SpyInstance;
@@ -30,7 +34,9 @@ describe('AppUserController', (): void => {
 	let appUserController: AppUserController;
 
 	let userWithAvatar: boolean = false;
+	let isAuthorized: boolean = false;
 
+	const validToken: string = 'valid-token';
 	const invalidToken: string = 'invalid-token';
 	const userId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
 	const usersMock: User[] = [...users];
@@ -39,10 +45,19 @@ describe('AppUserController', (): void => {
 	});
 
 	const authInterceptorMock: Partial<AuthInterceptor> = {
-		async intercept(): Promise<Observable<unknown>> {
-			throw new UnauthorizedException(['Please, login to perform this action']);
+		async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<unknown>> {
+			if (!isAuthorized) {
+				throw new UnauthorizedException(['Please, login to perform this action']);
+			}
+
+			const request: Request & TUserPayload = context.switchToHttp().getRequest();
+
+			request.user = appUserPayload;
+
+			return next.handle();
 		},
 	};
+
 	const usersServiceMock: Partial<IUsersService> = {
 		updateUser: jest.fn().mockImplementation(async (id: string): Promise<boolean> => {
 			return id === userId;
@@ -71,17 +86,6 @@ describe('AppUserController', (): void => {
 
 	let deleteFileMock: SpyInstance;
 
-	const fileMock = {
-		fieldname: 'user-avatar',
-		originalname: 'user-avatar.png',
-		encoding: '7bit',
-		mimetype: 'image/png',
-		destination: 'public',
-		filename: 'f46845d7-90af-4c29-8e1a-227c90b33852.png',
-		path: 'public/f46845d7-90af-4c29-8e1a-227c90b33852-1712088543513.png',
-		size: 54707,
-	} as Express.Multer.File;
-
 	beforeAll(async (): Promise<void> => {
 		deleteFileMock = jest.spyOn(FileHelper, 'deleteFile').mockImplementation(() => {});
 
@@ -108,80 +112,93 @@ describe('AppUserController', (): void => {
 		await app.close();
 	});
 
-	describe('POST /app-user/user-avatar', (): void => {
+	describe('DELETE /app-user/user-avatar', (): void => {
 		beforeEach((): void => {
 			jest.clearAllMocks();
 		});
 
 		it('should be defined', (): void => {
-			expect(appUserController.uploadAvatar).toBeDefined();
+			expect(appUserController.deleteAvatar).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(appUserController.uploadAvatar).toBeInstanceOf(Function);
+			expect(appUserController.deleteAvatar).toBeInstanceOf(Function);
 		});
 
 		it('should return 401 status if authorization header is not passed', async (): Promise<void> => {
 			await request(app.getHttpServer())
-				.post('/app-user/user-avatar')
+				.del('/app-user/user-avatar')
 				.expect(HttpStatus.UNAUTHORIZED);
 		});
 
 		it('should return 401 status if access token not passed to authorization header', async (): Promise<void> => {
 			await request(app.getHttpServer())
-				.post('/app-user/user-avatar')
+				.del('/app-user/user-avatar')
 				.set(Headers.AUTHORIZATION, 'Bearer')
 				.expect(HttpStatus.UNAUTHORIZED);
 		});
 
 		it('should return 401 status if access token invalid', async (): Promise<void> => {
 			await request(app.getHttpServer())
-				.post('/app-user/user-avatar')
+				.del('/app-user/user-avatar')
 				.set(Headers.AUTHORIZATION, `Bearer ${invalidToken}`)
 				.expect(HttpStatus.UNAUTHORIZED);
 		});
 
+		it('should return 404 status if user does not have avatar', async (): Promise<void> => {
+			isAuthorized = true;
+
+			await request(app.getHttpServer())
+				.del('/app-user/user-avatar')
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.NOT_FOUND);
+		});
+
+		it('should return 204 status if user avatar was deleted', async (): Promise<void> => {
+			isAuthorized = true;
+			userWithAvatar = true;
+
+			await request(app.getHttpServer())
+				.del('/app-user/user-avatar')
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.NO_CONTENT);
+		});
+
 		it('should return response as instance of ResponseResult', async (): Promise<void> => {
-			const result: ResponseResult = await appUserController.uploadAvatar(appUserPayload, fileMock);
+			const result: ResponseResult = await appUserController.deleteAvatar(appUserPayload);
 
 			expect(result).toBeInstanceOf(ResponseResult);
 		});
 
-		it('should call getFullUserById method in users service to get full user information', async (): Promise<void> => {
-			await appUserController.uploadAvatar(appUserPayload, fileMock);
+		it('should call getFullUserById in users service to get full user', async (): Promise<void> => {
+			await appUserController.deleteAvatar(appUserPayload);
 
 			expect(usersServiceMock.getFullUserById).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getFullUserById).toHaveBeenCalledWith(userId);
 		});
 
-		it('should call updateUser method in users service to update user avatar url', async (): Promise<void> => {
-			await appUserController.uploadAvatar(appUserPayload, fileMock);
-
-			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(userId, {
-				avatarUrl: fileMock.filename,
-			});
-		});
-
-		it('should not to call deleteFile method from FileHelper if user does not have avatar', async (): Promise<void> => {
-			await appUserController.uploadAvatar(appUserPayload, fileMock);
-
-			expect(deleteFileMock).not.toHaveBeenCalled();
-		});
-
-		it('should call deleteFile method from FileHelper if user already have avatar', async (): Promise<void> => {
+		it('should call deleteFile in files helper to delete user avatar', async (): Promise<void> => {
 			userWithAvatar = true;
 
 			const user: UserFullDto | null = await usersServiceMock.getFullUserById!(userId);
 
-			await appUserController.uploadAvatar(appUserPayload, fileMock);
+			await appUserController.deleteAvatar(appUserPayload);
 
 			expect(deleteFileMock).toHaveBeenCalledTimes(1);
 			expect(deleteFileMock).toHaveBeenCalledWith(user?.avatarUrl);
 		});
 
+		it('should call updateUser in users service to set avatar url to null', async (): Promise<void> => {
+			userWithAvatar = true;
+
+			await appUserController.deleteAvatar(appUserPayload);
+
+			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
+			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(userId, { avatarUrl: null });
+		});
+
 		it('should call del method in cache service to delete cached user data', async (): Promise<void> => {
-			await appUserController.uploadAvatar(appUserPayload, fileMock);
+			await appUserController.deleteAvatar(appUserPayload);
 
 			expect(cacheMock.del).toHaveBeenCalledTimes(1);
 			expect(cacheMock.del).toHaveBeenCalledWith(CacheKeys.APP_USER + `_${userId}`);
