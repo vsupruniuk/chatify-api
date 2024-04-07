@@ -322,11 +322,5 @@ export class AppUserController implements IAppUserController {
 		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
 
 		return responseResult;
-
-		//	Workflow
-		//  1. Check if user has avatar
-		//	2. Delete file
-		//  3. Update user avatar field
-		// 	P.S. Protect static files with authorization, change upload-avatar to user-avatar
 	}
 }
