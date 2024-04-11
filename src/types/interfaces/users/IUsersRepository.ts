@@ -8,6 +8,14 @@ import { TUserGetFields } from '@Types/users/TUserGetFields';
  */
 export interface IUsersRepository {
 	/**
+	 * Get activated users by nickname
+	 * @param nickname - partial or full user nickname
+	 * @param skip - number of records to skip (default - 0)
+	 * @param take - number of records to take (default - 10)
+	 */
+	getPublicUsers(nickname: string, skip?: number, take?: number): Promise<User[]>;
+
+	/**
 	 * Method for searching user by one of its fields
 	 * @param fieldName - acceptable field for searching
 	 * @param fieldValue - value of field for searching

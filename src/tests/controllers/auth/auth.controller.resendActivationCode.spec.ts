@@ -88,7 +88,7 @@ describe('AuthController', (): void => {
 	describe('POST /auth/resend-activation-code', (): void => {
 		const existingUserEmail: string = 'tony@mail.com';
 		const existingUserWithoutOTPCodeEmail: string = 'thor@mail.com';
-		const notExistingUserEmail: string = 'vision@mail.com';
+		const notExistingUserEmail: string = 'bruce@mail.com';
 		const userOTPCodeId: string = '1662043c-4d4b-4424-ac31-45189dedd099';
 
 		afterEach((): void => {
