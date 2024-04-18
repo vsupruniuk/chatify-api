@@ -14,23 +14,25 @@ export class UsersRepository implements IUsersRepository {
 
 	constructor(private readonly _dataSource: DataSource) {}
 
-	public async getPublicUsers(
-		nickname: string,
-		skip: number = 0,
-		take: number = 10,
-	): Promise<User[]> {
-		console.log(nickname, skip, take);
-		// const users = await this._dataSource
-		// 	.createQueryBuilder()
-		// 	.select('user')
-		// 	.from(User, 'user')
-		// 	.where('user.nickname LIKE :nickname', { nickname: '%a%' })
-		// 	.andWhere('user.isActivated = :isActivated', { isActivated: true })
-		// 	.skip(0)
-		// 	.take(10)
-		// 	.getMany();
+	public async getPublicUsers(nickname: string, skip: number, take: number): Promise<User[]> {
+		const users: User[] = await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.where('user.nickname LIKE :nickname', { nickname: `%${nickname}%` })
+			.andWhere('user.isActivated = :isActivated', { isActivated: true })
+			.orderBy('user.nickname')
+			.skip(skip)
+			.take(take)
+			.getMany();
 
-		return [];
+		this._logger.successfulDBQuery({
+			method: this.getPublicUsers.name,
+			repository: 'UsersRepository',
+			data: users,
+		});
+
+		return users;
 	}
 
 	public async getByField(fieldName: TUserGetFields, fieldValue: string): Promise<User | null> {
