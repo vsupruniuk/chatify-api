@@ -10,10 +10,12 @@ export interface IUsersRepository {
 	/**
 	 * Get activated users by nickname
 	 * @param nickname - partial or full user nickname
-	 * @param skip - number of records to skip (default - 0)
-	 * @param take - number of records to take (default - 10)
+	 * @param skip - number of records to skip
+	 * @param take - number of records to take
+	 * @returns User[] - array of founded users
+	 * @returns [] - empty array if no users found
 	 */
-	getPublicUsers(nickname: string, skip?: number, take?: number): Promise<User[]>;
+	getPublicUsers(nickname: string, skip: number, take: number): Promise<User[]>;
 
 	/**
 	 * Method for searching user by one of its fields

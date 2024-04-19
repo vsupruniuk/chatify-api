@@ -37,7 +37,7 @@ export class EmailService implements IEmailService {
 		const emailSubject: string = 'Chatify Account Activation';
 		const emailContent: string = accountActivationTemplate(otpCode);
 
-		return this.sendMail(
+		return this._sendMail(
 			receiverEmail,
 			emailSubject,
 			emailContent,
@@ -56,7 +56,7 @@ export class EmailService implements IEmailService {
 
 		const emailContent: string = resetPasswordTemplate(userName, this.APP_EMAIL, link);
 
-		return this.sendMail(
+		return this._sendMail(
 			receiverEmail,
 			emailSubject,
 			emailContent,
@@ -65,7 +65,7 @@ export class EmailService implements IEmailService {
 		);
 	}
 
-	private async sendMail(
+	private async _sendMail(
 		receiverEmail: string,
 		emailSubject: string,
 		emailText: string,

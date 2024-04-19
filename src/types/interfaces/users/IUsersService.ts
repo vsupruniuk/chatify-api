@@ -9,6 +9,16 @@ import { UserShortDto } from '@DTO/users/UserShort.dto';
  */
 export interface IUsersService {
 	/**
+	 * Method for searching users by their nicknames
+	 * @param nickname - user nickname
+	 * @param page - number of skipped record sets. Default: 1
+	 * @param take - number of records to take. Default: 10
+	 * @returns UserShortDto[] - array of founded users
+	 * @returns [] - empty array if no users found
+	 */
+	getPublicUsers(nickname: string, page?: number, take?: number): Promise<UserShortDto[]>;
+
+	/**
 	 * Method for searching user by id. Return all user information (except service information of the DB)
 	 * @param email - user id for searching
 	 * @returns UserFullDto - if user was found. Not used as API public response

@@ -9,7 +9,7 @@ export class DateHelper {
 	public static dateTimeNow(): string {
 		const dateNow: Date = new Date();
 
-		return this.formatDate(dateNow);
+		return this._formatDate(dateNow);
 	}
 
 	/**
@@ -20,7 +20,7 @@ export class DateHelper {
 	public static dateTimeFuture(milliseconds: number): string {
 		const dateNow: number = Date.now();
 
-		return this.formatDate(new Date(dateNow + milliseconds));
+		return this._formatDate(new Date(dateNow + milliseconds));
 	}
 
 	/**
@@ -33,10 +33,10 @@ export class DateHelper {
 		const currentDate: Date = new Date();
 		const targetDate: Date = new Date(date);
 
-		return this.formatDate(targetDate) < this.formatDate(currentDate);
+		return this._formatDate(targetDate) < this._formatDate(currentDate);
 	}
 
-	private static formatDate(date: Date): string {
+	private static _formatDate(date: Date): string {
 		return date.toISOString();
 	}
 }

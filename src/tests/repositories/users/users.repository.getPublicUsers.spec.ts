@@ -96,10 +96,12 @@ describe('usersRepository', (): void => {
 			const skip: number = 0;
 			const take: number = 10;
 
-			resolvedValue = usersMock.filter(
-				(user: User) =>
-					user.nickname.toLowerCase().includes(nickname.toLowerCase()) && user.isActivated,
-			);
+			resolvedValue = usersMock
+				.filter(
+					(user: User) =>
+						user.nickname.toLowerCase().includes(nickname.toLowerCase()) && user.isActivated,
+				)
+				.slice(skip, take);
 
 			const users: User[] = await usersRepository.getPublicUsers(nickname, skip, take);
 
@@ -116,7 +118,7 @@ describe('usersRepository', (): void => {
 					(user: User) =>
 						user.nickname.toLowerCase().includes(nickname.toLowerCase()) && user.isActivated,
 				)
-				.slice(skip * take, take);
+				.slice(skip, take);
 
 			const users: User[] = await usersRepository.getPublicUsers(nickname, skip, take);
 
@@ -135,7 +137,7 @@ describe('usersRepository', (): void => {
 					(user: User) =>
 						user.nickname.toLowerCase().includes(nickname.toLowerCase()) && user.isActivated,
 				)
-				.slice(skip * take, take);
+				.slice(skip, take);
 
 			const users: User[] = await usersRepository.getPublicUsers(nickname, skip, take);
 
@@ -154,7 +156,7 @@ describe('usersRepository', (): void => {
 					(user: User) =>
 						user.nickname.toLowerCase().includes(nickname.toLowerCase()) && user.isActivated,
 				)
-				.slice(skip * take, take);
+				.slice(skip, take);
 
 			const users: User[] = await usersRepository.getPublicUsers(nickname, skip, take);
 
@@ -173,7 +175,7 @@ describe('usersRepository', (): void => {
 					(user: User) =>
 						user.nickname.toLowerCase().includes(nickname.toLowerCase()) && user.isActivated,
 				)
-				.slice(skip * take, take);
+				.slice(skip, take);
 
 			const users: User[] = await usersRepository.getPublicUsers(nickname, skip, take);
 
@@ -181,14 +183,16 @@ describe('usersRepository', (): void => {
 		});
 
 		it('should search users case-insensitive', async (): Promise<void> => {
-			const nickname: string = 'groot';
+			const nickname: string = 'GROOT';
 			const skip: number = 0;
 			const take: number = 10;
 
-			resolvedValue = usersMock.filter(
-				(user: User) =>
-					user.nickname.toLowerCase().includes(nickname.toLowerCase()) && user.isActivated,
-			);
+			resolvedValue = usersMock
+				.filter(
+					(user: User) =>
+						user.nickname.toLowerCase().includes(nickname.toLowerCase()) && user.isActivated,
+				)
+				.slice(skip, take);
 
 			const users: User[] = await usersRepository.getPublicUsers(nickname, skip, take);
 

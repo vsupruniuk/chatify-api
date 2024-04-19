@@ -38,6 +38,24 @@ export class UsersService implements IUsersService {
 		private readonly _passwordResetTokenRepository: IPasswordResetTokensRepository,
 	) {}
 
+	public async getPublicUsers(
+		nickname: string,
+		page?: number,
+		take?: number,
+	): Promise<UserShortDto[]> {
+		const { skip: skipRecords, take: takeRecords } = this._getUsersSearchPagination(page, take);
+
+		const users: User[] = await this._usersRepository.getPublicUsers(
+			nickname,
+			skipRecords,
+			takeRecords,
+		);
+
+		return users.map((user: User) => {
+			return plainToInstance(UserShortDto, user, { excludeExtraneousValues: true });
+		});
+	}
+
 	public async getFullUserByEmail(email: string): Promise<UserFullDto | null> {
 		const user: User | null = await this._usersRepository.getByField('email', email);
 
@@ -126,5 +144,15 @@ export class UsersService implements IUsersService {
 		}
 
 		return await this._usersRepository.updateUser(userId, updateUserDtoCopy);
+	}
+
+	private _getUsersSearchPagination(
+		page?: number,
+		take: number = 10,
+	): { skip: number; take: number } {
+		return {
+			skip: !page ? 0 : page * take - take,
+			take,
+		};
 	}
 }
