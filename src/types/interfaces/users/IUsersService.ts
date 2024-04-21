@@ -2,6 +2,7 @@ import { AppUserDto } from '@DTO/appUser/appUser.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { UserPublicDto } from '@DTO/users/UserPublic.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 
 /**
@@ -13,10 +14,10 @@ export interface IUsersService {
 	 * @param nickname - user nickname
 	 * @param page - number of skipped record sets. Default: 1
 	 * @param take - number of records to take. Default: 10
-	 * @returns UserShortDto[] - array of founded users
+	 * @returns UserPublicDto[] - array of founded users
 	 * @returns [] - empty array if no users found
 	 */
-	getPublicUsers(nickname: string, page?: number, take?: number): Promise<UserShortDto[]>;
+	getPublicUsers(nickname: string, page?: number, take?: number): Promise<UserPublicDto[]>;
 
 	/**
 	 * Method for searching user by id. Return all user information (except service information of the DB)

@@ -1,5 +1,5 @@
 import { connectionSource } from '@DB/typeOrmConfig';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { UserPublicDto } from '@DTO/users/UserPublic.dto';
 import { User } from '@Entities/User.entity';
 import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
 import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
@@ -90,25 +90,25 @@ describe('usersService', (): void => {
 		it('should return response as instance of Array', async (): Promise<void> => {
 			const nickname: string = 't.stark';
 
-			const users: UserShortDto[] = await usersService.getPublicUsers(nickname);
+			const users: UserPublicDto[] = await usersService.getPublicUsers(nickname);
 
 			expect(users).toBeInstanceOf(Array);
 		});
 
-		it('should return each user as instance of UserShortDto', async (): Promise<void> => {
+		it('should return each user as instance of UserPublicDto', async (): Promise<void> => {
 			const nickname: string = 't.stark';
 
-			const users: UserShortDto[] = await usersService.getPublicUsers(nickname);
+			const users: UserPublicDto[] = await usersService.getPublicUsers(nickname);
 
-			users.forEach((user: UserShortDto) => {
-				expect(user).toBeInstanceOf(UserShortDto);
+			users.forEach((user: UserPublicDto) => {
+				expect(user).toBeInstanceOf(UserPublicDto);
 			});
 		});
 
 		it('should return empty array if no users found', async (): Promise<void> => {
 			const nickname: string = 't.stark';
 
-			const users: UserShortDto[] = await usersService.getPublicUsers(nickname);
+			const users: UserPublicDto[] = await usersService.getPublicUsers(nickname);
 
 			expect(users).toStrictEqual([]);
 		});

@@ -4,6 +4,7 @@ import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { UserPublicDto } from '@DTO/users/UserPublic.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { User } from '@Entities/User.entity';
@@ -42,7 +43,7 @@ export class UsersService implements IUsersService {
 		nickname: string,
 		page?: number,
 		take?: number,
-	): Promise<UserShortDto[]> {
+	): Promise<UserPublicDto[]> {
 		const { skip: skipRecords, take: takeRecords } = this._getUsersSearchPagination(page, take);
 
 		const users: User[] = await this._usersRepository.getPublicUsers(
@@ -52,7 +53,7 @@ export class UsersService implements IUsersService {
 		);
 
 		return users.map((user: User) => {
-			return plainToInstance(UserShortDto, user, { excludeExtraneousValues: true });
+			return plainToInstance(UserPublicDto, user, { excludeExtraneousValues: true });
 		});
 	}
 
