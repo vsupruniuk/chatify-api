@@ -158,11 +158,11 @@ export class AuthController implements IAuthController {
 		}
 
 		const accessToken: string = await this._jwtTokensService.generateAccessToken(
-			this.createJwtPayload(user),
+			this._createJwtPayload(user),
 		);
 
 		const refreshToken: string = await this._jwtTokensService.generateRefreshToken(
-			this.createJwtPayload(user),
+			this._createJwtPayload(user),
 		);
 
 		const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
@@ -359,11 +359,11 @@ export class AuthController implements IAuthController {
 		}
 
 		const accessToken: string = await this._jwtTokensService.generateAccessToken(
-			this.createJwtPayload(user),
+			this._createJwtPayload(user),
 		);
 
 		const refreshToken: string = await this._jwtTokensService.generateRefreshToken(
-			this.createJwtPayload(user),
+			this._createJwtPayload(user),
 		);
 
 		const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
@@ -484,11 +484,11 @@ export class AuthController implements IAuthController {
 		}
 
 		const newAccessToken: string = await this._jwtTokensService.generateAccessToken(
-			this.createJwtPayload(user),
+			this._createJwtPayload(user),
 		);
 
 		const newRefreshToken: string = await this._jwtTokensService.generateRefreshToken(
-			this.createJwtPayload(user),
+			this._createJwtPayload(user),
 		);
 
 		await this._jwtTokensService.saveRefreshToken(user.JWTToken.id, newRefreshToken);
@@ -508,7 +508,7 @@ export class AuthController implements IAuthController {
 		return responseResult;
 	}
 
-	private createJwtPayload(user: UserFullDto): JWTPayloadDto {
+	private _createJwtPayload(user: UserFullDto): JWTPayloadDto {
 		return {
 			id: user.id,
 			email: user.email,

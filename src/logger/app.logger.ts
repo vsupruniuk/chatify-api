@@ -30,16 +30,18 @@ export class AppLogger extends ConsoleLogger implements IAppLogger {
 			queryParams
 				? green(
 						`\n${yellow('Query Parameters:')} ${JSON.stringify(
-							this.formatData(queryParams),
+							this._formatData(queryParams),
 							null,
 							2,
 						)}\n`,
-				  )
+					)
 				: null,
 			cookies
-				? green(`\n${yellow('Cookies:')} ${JSON.stringify(this.formatData(cookies), null, 2)}\n`)
+				? green(`\n${yellow('Cookies:')} ${JSON.stringify(this._formatData(cookies), null, 2)}\n`)
 				: null,
-			body ? green(`\n${yellow('Body:')} ${JSON.stringify(this.formatData(body), null, 2)}`) : null,
+			body
+				? green(`\n${yellow('Body:')} ${JSON.stringify(this._formatData(body), null, 2)}`)
+				: null,
 		];
 
 		const logMessage: string = logMessageParts.join('');
@@ -84,13 +86,13 @@ export class AppLogger extends ConsoleLogger implements IAppLogger {
 			data
 				? green(
 						`${JSON.stringify(
-							this.formatData(
-								data.map((dataEntry: T | null) => dataEntry && this.formatData(dataEntry)),
+							this._formatData(
+								data.map((dataEntry: T | null) => dataEntry && this._formatData(dataEntry)),
 							),
 							null,
 							2,
 						)}`,
-				  )
+					)
 				: null,
 		];
 
@@ -114,7 +116,9 @@ export class AppLogger extends ConsoleLogger implements IAppLogger {
 			whiteBright(` ${dateTime}`),
 			'       ',
 			yellow(`[${repository}]\n`),
-			data ? green(`\n${yellow('Body:')} ${JSON.stringify(this.formatData(data), null, 2)}`) : null,
+			data
+				? green(`\n${yellow('Body:')} ${JSON.stringify(this._formatData(data), null, 2)}`)
+				: null,
 		];
 
 		const logMessage: string = logMessageParts.join('');
@@ -122,7 +126,7 @@ export class AppLogger extends ConsoleLogger implements IAppLogger {
 		console.log(logMessage);
 	}
 
-	private formatData<T extends object>(data: T): T {
+	private _formatData<T extends object>(data: T): T {
 		const newData: T = { ...data };
 
 		if (process.env.NODE_ENV !== Environments.DEV) {

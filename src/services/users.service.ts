@@ -4,6 +4,7 @@ import { CreateUserDto } from '@DTO/users/CreateUser.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
+import { UserPublicDto } from '@DTO/users/UserPublic.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { User } from '@Entities/User.entity';
@@ -37,6 +38,24 @@ export class UsersService implements IUsersService {
 		@Inject(CustomProviders.I_PASSWORD_RESET_TOKENS_REPOSITORY)
 		private readonly _passwordResetTokenRepository: IPasswordResetTokensRepository,
 	) {}
+
+	public async getPublicUsers(
+		nickname: string,
+		page?: number,
+		take?: number,
+	): Promise<UserPublicDto[]> {
+		const { skip: skipRecords, take: takeRecords } = this._getUsersSearchPagination(page, take);
+
+		const users: User[] = await this._usersRepository.getPublicUsers(
+			nickname,
+			skipRecords,
+			takeRecords,
+		);
+
+		return users.map((user: User) => {
+			return plainToInstance(UserPublicDto, user, { excludeExtraneousValues: true });
+		});
+	}
 
 	public async getFullUserByEmail(email: string): Promise<UserFullDto | null> {
 		const user: User | null = await this._usersRepository.getByField('email', email);
@@ -126,5 +145,15 @@ export class UsersService implements IUsersService {
 		}
 
 		return await this._usersRepository.updateUser(userId, updateUserDtoCopy);
+	}
+
+	private _getUsersSearchPagination(
+		page?: number,
+		take: number = 10,
+	): { skip: number; take: number } {
+		return {
+			skip: !page ? 0 : page * take - take,
+			take,
+		};
 	}
 }

@@ -1,14 +1,10 @@
-import { AuthController } from '@Controllers/auth.controller';
+import { SearchController } from '@Controllers/searchController';
 import {
 	accountSettingsRepositoryProvider,
-	authServiceProvider,
-	emailServiceProvider,
 	jwtTokensRepositoryProvider,
 	jwtTokensServiceProvider,
 	otpCodesRepositoryProvider,
-	otpCodesServiceProvider,
 	passwordResetTokensRepositoryProvider,
-	passwordResetTokensServiceProvider,
 	usersRepositoryProvider,
 	usersServiceProvider,
 } from '@Modules/providers/index';
@@ -17,20 +13,16 @@ import { JwtService } from '@nestjs/jwt';
 
 @Module({
 	imports: [],
-	controllers: [AuthController],
+	controllers: [SearchController],
 	providers: [
 		JwtService,
-		usersServiceProvider,
-		usersRepositoryProvider,
-		otpCodesServiceProvider,
-		otpCodesRepositoryProvider,
-		authServiceProvider,
-		accountSettingsRepositoryProvider,
-		emailServiceProvider,
 		jwtTokensServiceProvider,
 		jwtTokensRepositoryProvider,
-		passwordResetTokensServiceProvider,
+		usersServiceProvider,
+		usersRepositoryProvider,
+		accountSettingsRepositoryProvider,
+		otpCodesRepositoryProvider,
 		passwordResetTokensRepositoryProvider,
 	],
 })
-export class AuthModule {}
+export class SearchModule {}

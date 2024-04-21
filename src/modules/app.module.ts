@@ -1,5 +1,6 @@
 import { AppUserModule } from '@Modules/appUser.module';
 import { throttlerGuardProvider } from '@Modules/providers/index';
+import { SearchModule } from '@Modules/search.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -13,6 +14,7 @@ import { join } from 'path';
 	imports: [
 		AuthModule,
 		AppUserModule,
+		SearchModule,
 		ConfigModule.forRoot(),
 		TypeOrmModule.forRoot(typeOrmConfig),
 		ThrottlerModule.forRoot([
