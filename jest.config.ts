@@ -4,7 +4,7 @@ export default async (): Promise<Config> => {
 	return {
 		rootDir: '.',
 		roots: ['./src'],
-		maxWorkers: 1,
+		maxWorkers: 6,
 		transform: {
 			'^.+\\.ts?$': 'ts-jest',
 		},
