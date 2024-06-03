@@ -25,6 +25,7 @@
       "@Entities/*": ["src/db/entities/*"],
       "@Enums/*": ["src/types/enums/*"],
       "@Filters/*": ["src/filters/*"],
+      "@Gateways/*": ["src/gateways/*"],
       "@Helpers/*": ["src/helpers/*"],
       "@Interceptors/*": ["src/interceptors/*"],
       "@Interfaces/*": ["src/types/interfaces/*"],

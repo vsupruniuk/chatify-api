@@ -4,7 +4,6 @@ export default async (): Promise<Config> => {
 	return {
 		rootDir: '.',
 		roots: ['./src'],
-		maxWorkers: 6,
 		transform: {
 			'^.+\\.ts?$': 'ts-jest',
 		},
@@ -17,6 +16,7 @@ export default async (): Promise<Config> => {
 			'@Entities/(.*)': '<rootDir>/src/db/entities/$1',
 			'@Enums/(.*)': '<rootDir>/src/types/enums/$1',
 			'@Filters/(.*)': '<rootDir>/src/filters/$1',
+			'@Gateways/(.*)': '<rootDir>/src/gateways/$1',
 			'@Helpers/(.*)': '<rootDir>/src/helpers/$1',
 			'@Interceptors/(.*)': '<rootDir>/src/interceptors/$1',
 			'@Interfaces/(.*)': '<rootDir>/src/types/interfaces/$1',
