@@ -1,1 +1,3 @@
-export interface IDirectChatsService {}
+export interface IDirectChatsService {
+	createChat(): void;
+}

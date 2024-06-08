@@ -33,5 +33,6 @@ export default async (): Promise<Config> => {
 		preset: 'ts-jest',
 		testEnvironment: 'node',
 		moduleDirectories: ['node_modules', 'src', 'dist'],
+		setupFiles: ['dotenv/config'],
 	};
 };

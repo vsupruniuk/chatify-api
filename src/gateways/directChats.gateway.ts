@@ -48,6 +48,8 @@ export class DirectChatsGateway
 
 	@SubscribeMessage(WSEvents.CREATE_CHAT)
 	async createDirectChat(): Promise<WsResponse> {
+		this._directChatsService.createChat();
+
 		return {
 			event: WSEvents.ON_CREATE_CHAT,
 			data: 'Success',
