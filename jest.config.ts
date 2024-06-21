@@ -4,7 +4,6 @@ export default async (): Promise<Config> => {
 	return {
 		rootDir: '.',
 		roots: ['./src'],
-		maxWorkers: 6,
 		transform: {
 			'^.+\\.ts?$': 'ts-jest',
 		},
@@ -17,10 +16,12 @@ export default async (): Promise<Config> => {
 			'@Entities/(.*)': '<rootDir>/src/db/entities/$1',
 			'@Enums/(.*)': '<rootDir>/src/types/enums/$1',
 			'@Filters/(.*)': '<rootDir>/src/filters/$1',
+			'@Gateways/(.*)': '<rootDir>/src/gateways/$1',
 			'@Helpers/(.*)': '<rootDir>/src/helpers/$1',
 			'@Interceptors/(.*)': '<rootDir>/src/interceptors/$1',
 			'@Interfaces/(.*)': '<rootDir>/src/types/interfaces/$1',
 			'@Logger/(.*)': '<rootDir>/src/logger/$1',
+			'@Middlewares/(.*)': '<rootDir>/src/middlewares/$1',
 			'@Migrations/(.*)': '<rootDir>/src/db/migrations/$1',
 			'@Modules/(.*)': '<rootDir>/src/modules/$1',
 			'@Repositories/(.*)': '<rootDir>/src/repositories/$1',
@@ -33,5 +34,6 @@ export default async (): Promise<Config> => {
 		preset: 'ts-jest',
 		testEnvironment: 'node',
 		moduleDirectories: ['node_modules', 'src', 'dist'],
+		setupFiles: ['dotenv/config'],
 	};
 };

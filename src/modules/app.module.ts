@@ -1,4 +1,5 @@
 import { AppUserModule } from '@Modules/appUser.module';
+import { DirectChatsModule } from '@Modules/directChats.module';
 import { throttlerGuardProvider } from '@Modules/providers/index';
 import { SearchModule } from '@Modules/search.module';
 import { Module } from '@nestjs/common';
@@ -15,6 +16,7 @@ import { join } from 'path';
 		AuthModule,
 		AppUserModule,
 		SearchModule,
+		DirectChatsModule,
 		ConfigModule.forRoot(),
 		TypeOrmModule.forRoot(typeOrmConfig),
 		ThrottlerModule.forRoot([

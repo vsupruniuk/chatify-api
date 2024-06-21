@@ -41,13 +41,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 					const [message, field = null] = error.split('|');
 
 					return { message, field };
-			  }) || []
+				}) || []
 			: ([
 					{
 						message: (exception as unknown as IValidationError).response?.message || '',
 						field: null,
 					},
-			  ] as unknown as ValidationErrorField[]);
+				] as unknown as ValidationErrorField[]);
 
 		responseResult.errorsLength = responseResult.errors.length;
 
