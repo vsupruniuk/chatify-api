@@ -30,6 +30,7 @@
       "@Interceptors/*": ["src/interceptors/*"],
       "@Interfaces/*": ["src/types/interfaces/*"],
       "@Logger/*": ["src/logger/*"],
+      "@Middlewares/*":  ["src/middlewares/*"],
       "@Migrations/*":  ["src/db/migrations/*"],
       "@Modules/*": ["src/modules/*"],
       "@Repositories/*": ["src/repositories/*"],

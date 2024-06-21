@@ -21,6 +21,7 @@ export default async (): Promise<Config> => {
 			'@Interceptors/(.*)': '<rootDir>/src/interceptors/$1',
 			'@Interfaces/(.*)': '<rootDir>/src/types/interfaces/$1',
 			'@Logger/(.*)': '<rootDir>/src/logger/$1',
+			'@Middlewares/(.*)': '<rootDir>/src/middlewares/$1',
 			'@Migrations/(.*)': '<rootDir>/src/db/migrations/$1',
 			'@Modules/(.*)': '<rootDir>/src/modules/$1',
 			'@Repositories/(.*)': '<rootDir>/src/repositories/$1',

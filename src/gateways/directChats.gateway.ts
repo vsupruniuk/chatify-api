@@ -1,10 +1,17 @@
+import { CreateDirectChatDto } from '@DTO/directChat/CreateDIrectChat.dto';
+import { CreateDirectChatResponseDto } from '@DTO/directChat/CreateDirectChatResponse.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
+import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { WSEvents } from '@Enums/WSEvents.enum';
-import { WsExceptionFilter } from '@Filters/WsException.filter';
+import { wsExceptionFilter } from '@Filters/wsExceptionFilter';
 import { IDirectChatsGateway } from '@Interfaces/directChats/IDirectChatsGateway';
 import { IDirectChatsService } from '@Interfaces/directChats/IDirectChatsService';
+import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
+import { WsAuthMiddleware } from '@Middlewares/wsAuth.middleware';
 import { Inject, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
+	ConnectedSocket,
+	MessageBody,
 	OnGatewayConnection,
 	OnGatewayDisconnect,
 	OnGatewayInit,
@@ -13,6 +20,9 @@ import {
 	WebSocketServer,
 	WsResponse,
 } from '@nestjs/websockets';
+import { SuccessfulWSResponseResult } from '@Responses/successfulResponses/SuccessfulWSResponseResult';
+import { WSResponseResult } from '@Responses/WSResponseResult';
+import { TUserPayload } from '@Types/users/TUserPayload';
 import { Server, Socket } from 'socket.io';
 
 @UsePipes(
@@ -21,7 +31,7 @@ import { Server, Socket } from 'socket.io';
 		stopAtFirstError: false,
 	}),
 )
-@UseFilters(WsExceptionFilter)
+@UseFilters(wsExceptionFilter)
 @WebSocketGateway()
 export class DirectChatsGateway
 	implements IDirectChatsGateway, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -32,25 +42,47 @@ export class DirectChatsGateway
 	constructor(
 		@Inject(CustomProviders.I_DIRECT_CHATS_SERVICE_PROVIDER)
 		private readonly _directChatsService: IDirectChatsService,
+
+		@Inject(CustomProviders.I_JWT_TOKENS_SERVICE)
+		private readonly _jwtTokenService: IJWTTokensService,
 	) {}
 
-	public afterInit(): void {
+	public afterInit(@ConnectedSocket() client: Socket): void {
+		client.use(WsAuthMiddleware(this._jwtTokenService));
 		console.log(`${DirectChatsGateway.name} is ready to listening events`);
 	}
 
-	public handleConnection(client: Socket): void {
-		console.log(client.id);
+	public handleConnection(@ConnectedSocket() client: Socket & TUserPayload): void {
+		this._clients.set(client.user.id, client);
+
+		console.log(`Client with user id: ${client.user.id} connected`);
+		console.log(`Number of connected clients: ${this._server.sockets.sockets.size}`);
 	}
 
-	public handleDisconnect(client: Socket): void {
-		console.log(client.id);
+	public handleDisconnect(@ConnectedSocket() client: Socket & TUserPayload): void {
+		this._clients.delete(client.user.id);
 	}
 
 	@SubscribeMessage(WSEvents.CREATE_CHAT)
-	async createDirectChat(): Promise<WsResponse> {
+	async createDirectChat(
+		@MessageBody() createDirectChatDto: CreateDirectChatDto,
+	): Promise<WsResponse<WSResponseResult>> {
+		const responseResult: SuccessfulWSResponseResult<CreateDirectChatResponseDto> =
+			new SuccessfulWSResponseResult<CreateDirectChatResponseDto>(ResponseStatus.SUCCESS);
+
+		const createdChatId: string = await this._directChatsService.createChat(createDirectChatDto);
+
+		responseResult.data = { directChatId: createdChatId };
+
+		const receiverClient: Socket | undefined = this._clients.get(createDirectChatDto.receiverId);
+
+		if (receiverClient) {
+			receiverClient.emit(WSEvents.ON_CREATE_CHAT, responseResult);
+		}
+
 		return {
 			event: WSEvents.ON_CREATE_CHAT,
-			data: 'Success',
+			data: responseResult,
 		};
 	}
 }
