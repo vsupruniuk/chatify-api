@@ -27,7 +27,7 @@
     "migration:generate": "cross-env NODE_ENV=dev npm run typeorm -- -d src/db/typeOrmConfig.ts migration:generate src/db/migrations/$npm_config_name",
     "migration:create": "npm run typeorm -- migration:create src/db/migrations/$npm_config_name",
     "migration:revert": "npm run typeorm -- -d src/db/typeOrmConfig.ts migration:revert",
-    "prepare": "husky && husky install"
+    "prepare": "husky"
   },
   "dependencies": {
     "@nestjs/cache-manager": "2.2.1",
