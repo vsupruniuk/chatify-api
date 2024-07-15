@@ -27,6 +27,7 @@ import { IPasswordResetTokensService } from '@Interfaces/passwordResetTokens/IPa
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { AppLogger } from '@Logger/app.logger';
 import {
+	BadRequestException,
 	Body,
 	ConflictException,
 	Controller,
@@ -142,7 +143,7 @@ export class AuthController implements IAuthController {
 		const isActivated: boolean = await this._authService.activateAccount(accountActivationDto);
 
 		if (!isActivated) {
-			throw new UnprocessableEntityException([
+			throw new BadRequestException([
 				'Invalid or expired code. Please check the entered code or request a new one|otpCode',
 			]);
 		}

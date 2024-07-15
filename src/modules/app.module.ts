@@ -1,6 +1,5 @@
 import { AppUserModule } from '@Modules/appUser.module';
 import { DirectChatsModule } from '@Modules/directChats.module';
-import { throttlerGuardProvider } from '@Modules/providers/index';
 import { SearchModule } from '@Modules/search.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -10,6 +9,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { typeOrmConfig } from '@DB/typeOrmConfig';
 import { AuthModule } from '@Modules/auth.module';
 import { join } from 'path';
+import { throttlerGuardProvider } from '@Modules/providers';
 
 @Module({
 	imports: [
