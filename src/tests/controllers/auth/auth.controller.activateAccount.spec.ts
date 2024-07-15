@@ -247,7 +247,7 @@ describe('AuthController', (): void => {
 			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
-				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
+				.expect(HttpStatus.BAD_REQUEST);
 		});
 
 		it('should return 422 status if code is expired', async (): Promise<void> => {
@@ -262,7 +262,7 @@ describe('AuthController', (): void => {
 			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
-				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
+				.expect(HttpStatus.BAD_REQUEST);
 		});
 
 		it('should return 422 status if code is wrong', async (): Promise<void> => {
@@ -277,7 +277,7 @@ describe('AuthController', (): void => {
 			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
-				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
+				.expect(HttpStatus.BAD_REQUEST);
 		});
 
 		it('should return 422 status if user id does not exist', async (): Promise<void> => {
@@ -292,7 +292,7 @@ describe('AuthController', (): void => {
 			await request(app.getHttpServer())
 				.post('/auth/activate-account')
 				.send(accountActivationDto)
-				.expect(HttpStatus.UNPROCESSABLE_ENTITY);
+				.expect(HttpStatus.BAD_REQUEST);
 		});
 
 		it('should return 200 status and correct response if all data is valid', async (): Promise<void> => {

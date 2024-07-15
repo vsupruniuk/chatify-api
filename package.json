@@ -13,9 +13,9 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "cross-env NODE_ENV=dev nest start PORT=5555 --watch",
+    "start:dev": "cross-env NODE_ENV=dev nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/src/main",
+    "start:prod": "cross-env NODE_ENV=prod node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "cross-env NODE_ENV=dev jest",
     "test:watch": "jest --watch",
@@ -23,11 +23,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
-    "migration:run": "npm run typeorm migration:run -- -d src/db/typeOrmConfig.ts",
+    "migration:run": "npm run typeorm migration:run -- -d dist/src/db/typeOrmConfig.js",
     "migration:generate": "cross-env NODE_ENV=dev npm run typeorm -- -d src/db/typeOrmConfig.ts migration:generate src/db/migrations/$npm_config_name",
     "migration:create": "npm run typeorm -- migration:create src/db/migrations/$npm_config_name",
-    "migration:revert": "npm run typeorm -- -d src/db/typeOrmConfig.ts migration:revert",
-    "prepare": "husky && husky install"
+    "migration:revert": "npm run typeorm -- -d dist/src/db/typeOrmConfig.js migration:revert",
+    "prepare": "husky"
   },
   "dependencies": {
     "@nestjs/cache-manager": "2.2.1",
