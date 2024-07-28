@@ -1,0 +1,20 @@
+services:
+  chatify-api:
+    image: vsupruniuk/chatify-api
+    container_name: chatify-api
+    build:
+      context: .
+    env_file:
+      .env
+    environment:
+      NODE_ENV: $NODE_ENV
+    ports:
+      - $PORT:$PORT
+    volumes:
+      - ./src:/app/src
+      - public_files:/app/public
+    command: >
+      sh -c "npm run build && npm run migration:run && npm run start:$NODE_ENV"
+
+volumes:
+  public_files:

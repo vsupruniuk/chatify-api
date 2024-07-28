@@ -1,0 +1,16 @@
+.github
+.husky
+.git
+dist
+node_modules
+public
+.dockerignore
+.eslintrc.json
+.gitignore
+.prettierrc.json
+docker-compose.yaml
+Dockerfile
+LICENSE
+package-lock.json
+Procfile
+README.md

@@ -1,6 +1,6 @@
 {
   "name": "chatify-api",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "description": "Chatify API is a powerful NestJS-based backend service for a real-time messenger application. It provides features like user management, group chats, direct messaging, user search, and more.",
   "author": "Vladyslav Supruniuk",
   "private": false,
@@ -13,9 +13,9 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "cross-env NODE_ENV=dev nest start --watch",
+    "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "cross-env NODE_ENV=prod node dist/src/main",
+    "start:prod": "node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "cross-env NODE_ENV=dev jest",
     "test:watch": "jest --watch",
@@ -24,7 +24,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "migration:run": "npm run typeorm migration:run -- -d dist/src/db/typeOrmConfig.js",
-    "migration:generate": "cross-env NODE_ENV=dev npm run typeorm -- -d src/db/typeOrmConfig.ts migration:generate src/db/migrations/$npm_config_name",
+    "migration:generate": "npm run typeorm -- -d src/db/typeOrmConfig.ts migration:generate src/db/migrations/$npm_config_name",
     "migration:create": "npm run typeorm -- migration:create src/db/migrations/$npm_config_name",
     "migration:revert": "npm run typeorm -- -d dist/src/db/typeOrmConfig.js migration:revert",
     "prepare": "husky"
