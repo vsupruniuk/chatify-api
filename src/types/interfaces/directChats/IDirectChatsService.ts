@@ -7,4 +7,6 @@ export interface IDirectChatsService {
 	 * @returns id of created chat
 	 */
 	createChat(createDirectChatDto: CreateDirectChatDto): Promise<string>;
+
+	getChats(): Promise<string>;
 }

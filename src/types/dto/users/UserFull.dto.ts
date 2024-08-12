@@ -8,9 +8,6 @@ export class UserFullDto extends UserShortDto {
 	isActivated: boolean;
 
 	@Expose()
-	nickname: string;
-
-	@Expose()
 	password: string;
 
 	@Expose()

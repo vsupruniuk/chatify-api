@@ -8,8 +8,10 @@ import {
 } from '@Modules/providers';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { DirectChatsController } from '@Controllers/directChats.controller';
 
 @Module({
+	controllers: [DirectChatsController],
 	providers: [
 		DirectChatsGateway,
 		JwtService,

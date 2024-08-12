@@ -4,7 +4,7 @@ import { User } from '@Entities/User.entity';
 import { DateHelper } from '@Helpers/date.helper';
 import { NotFoundException } from '@nestjs/common';
 import { DirectChatsRepository } from '@Repositories/directChats.repository';
-import { directChat } from '@TestMocks/DirectChat/directChat';
+import { directChats } from '@TestMocks/DirectChat/directChats';
 import { users } from '@TestMocks/User/users';
 import {
 	DataSource,
@@ -25,7 +25,7 @@ describe('directChatRepository', (): void => {
 		selectedEntity: '',
 		whereValue: '',
 	};
-	const directChatsMock: DirectChat[] = [...directChat];
+	const directChatsMock: DirectChat[] = [...directChats];
 	const usersMock: User[] = [...users];
 
 	const createQueryBuilderMock: jest.Mock = jest.fn().mockReturnThis();

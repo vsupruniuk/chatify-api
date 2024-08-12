@@ -4,6 +4,7 @@ import { OTPCode } from '@Entities/OTPCode.entity';
 import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import { User } from '@Entities/User.entity';
 import { plainToInstance } from 'class-transformer';
+import { directChats } from '@TestMocks/DirectChat/directChats';
 
 export const users: User[] = [
 	plainToInstance(User, <User>{
@@ -130,7 +131,7 @@ export const users: User[] = [
 			expiresAt: '2024-02-12 16:00:00',
 			updatedAt: '2024-02-28 17:00:00',
 		}),
-		directChats: [],
+		directChats: [directChats[0]],
 		groupChats: [],
 		blockedUsers: [],
 	}),
@@ -175,7 +176,7 @@ export const users: User[] = [
 			expiresAt: '2024-02-12 16:00:00',
 			updatedAt: '2024-02-28 17:00:00',
 		}),
-		directChats: [],
+		directChats: [directChats[0]],
 		groupChats: [],
 		blockedUsers: [],
 	}),
@@ -220,7 +221,7 @@ export const users: User[] = [
 			expiresAt: '2024-02-12 16:00:00',
 			updatedAt: '2024-02-28 17:00:00',
 		}),
-		directChats: [],
+		directChats: [directChats[1]],
 		groupChats: [],
 		blockedUsers: [],
 	}),
@@ -265,7 +266,7 @@ export const users: User[] = [
 			expiresAt: '2024-02-12 16:00:00',
 			updatedAt: '2024-02-28 17:00:00',
 		}),
-		directChats: [],
+		directChats: [directChats[1]],
 		groupChats: [],
 		blockedUsers: [],
 	}),
