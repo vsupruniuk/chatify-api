@@ -90,7 +90,7 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 		return createdChatId;
 	}
 
-	public async getChats(skip: number, take: number, userId: string): Promise<DirectChat[]> {
+	public async getLastChats(userId: string, skip: number, take: number): Promise<DirectChat[]> {
 		const lastMessageSubQuery: string = this._dataSource
 			.createQueryBuilder()
 			.select('directChatMessage.id')
@@ -118,6 +118,7 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 				'lastMessage',
 				`lastMessage.id = (${lastMessageSubQuery})`,
 			)
+			.leftJoinAndSelect('lastMessage.sender', 'sender')
 			.where(`directChat.id IN (${userDirectChatsSubQuery})`)
 			.setParameter('userId', userId)
 			.orderBy('lastMessage.updatedAt', 'DESC')
@@ -126,7 +127,7 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 			.getMany();
 
 		this._logger.successfulDBQuery({
-			method: this.getChats.name,
+			method: this.getLastChats.name,
 			repository: 'DirectChatsRepository',
 			data: { directChats },
 		});

@@ -5,6 +5,10 @@ import { ICryptoService } from '@Interfaces/crypto/ICryptoService';
 import { IDirectChatsRepository } from '@Interfaces/directChats/IDirectChatsRepository';
 import { IDirectChatsService } from '@Interfaces/directChats/IDirectChatsService';
 import { Inject, Injectable } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import { DirectChatShortDto } from '@DTO/directChat/DirectChatsList.dto';
+import { DirectChat } from '@Entities/DirectChat.entity';
+import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
 
 @Injectable()
 export class DirectChatsService implements IDirectChatsService {
@@ -24,11 +28,47 @@ export class DirectChatsService implements IDirectChatsService {
 		);
 	}
 
-	public async getChats(): Promise<string> {
-		const chats = await this._directChatsRepository.getChats(0, 10, '2');
+	public async getLastChats(
+		userId: string,
+		page?: number,
+		take?: number,
+	): Promise<DirectChatShortDto[]> {
+		const { skip: skipRecords, take: takeRecords } = this._getDirectChatsPagination(page, take);
 
-		console.log(chats);
+		const chats: DirectChat[] = await this._directChatsRepository.getLastChats(
+			userId,
+			skipRecords,
+			takeRecords,
+		);
 
-		return '';
+		const decryptedChats: DirectChat[] = await Promise.all(
+			chats.map(async (directChat: DirectChat) => {
+				const decryptedMessages: DirectChatMessage[] = await Promise.all(
+					directChat.messages.map(async (directChatsMessage: DirectChatMessage) => {
+						return {
+							...directChatsMessage,
+							messageText: await this._cryptoService.decryptText(directChatsMessage.messageText),
+						};
+					}),
+				);
+
+				return {
+					...directChat,
+					messages: decryptedMessages,
+				};
+			}),
+		);
+
+		return plainToInstance(DirectChatShortDto, decryptedChats, { excludeExtraneousValues: true });
+	}
+
+	private _getDirectChatsPagination(
+		page?: number,
+		take: number = 10,
+	): { skip: number; take: number } {
+		return {
+			skip: !page ? 0 : page * take - take,
+			take,
+		};
 	}
 }

@@ -84,15 +84,15 @@ describe('directChatRepository', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(directChatRepository.getChats).toBeDefined();
+			expect(directChatRepository.getLastChats).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(directChatRepository.getChats).toBeInstanceOf(Function);
+			expect(directChatRepository.getLastChats).toBeInstanceOf(Function);
 		});
 
 		it('should create sub query for retrieving chat last message id', async (): Promise<void> => {
-			await directChatRepository.getChats(1, 1, userIdMock);
+			await directChatRepository.getLastChats(userIdMock, 1, 1);
 
 			expect(createQueryBuilderMock).toHaveBeenCalledTimes(3);
 
@@ -118,7 +118,7 @@ describe('directChatRepository', (): void => {
 		});
 
 		it('should create sub query for retrieving user direct chats ids', async (): Promise<void> => {
-			await directChatRepository.getChats(1, 1, userIdMock);
+			await directChatRepository.getLastChats(userIdMock, 1, 1);
 
 			expect(createQueryBuilderMock).toHaveBeenCalledTimes(3);
 
@@ -138,7 +138,7 @@ describe('directChatRepository', (): void => {
 			const skip: number = 10;
 			const take: number = 10;
 
-			await directChatRepository.getChats(skip, take, userIdMock);
+			await directChatRepository.getLastChats(userIdMock, skip, take);
 
 			expect(createQueryBuilderMock).toHaveBeenCalledTimes(3);
 
@@ -148,8 +148,9 @@ describe('directChatRepository', (): void => {
 			expect(fromMock).toHaveBeenCalledTimes(3);
 			expect(fromMock).toHaveBeenNthCalledWith(3, DirectChat, 'directChat');
 
-			expect(leftJoinAndSelectMock).toHaveBeenCalledTimes(1);
+			expect(leftJoinAndSelectMock).toHaveBeenCalledTimes(2);
 			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(1, 'directChat.users', 'users');
+			expect(leftJoinAndSelectMock).toHaveBeenNthCalledWith(2, 'lastMessage.sender', 'sender');
 
 			expect(leftJoinAndMapManyMock).toHaveBeenCalledTimes(1);
 			expect(leftJoinAndMapManyMock).toHaveBeenNthCalledWith(
@@ -185,7 +186,11 @@ describe('directChatRepository', (): void => {
 			const skip: number = 10;
 			const take: number = 10;
 
-			const directChats: DirectChat[] = await directChatRepository.getChats(skip, take, userIdMock);
+			const directChats: DirectChat[] = await directChatRepository.getLastChats(
+				userIdMock,
+				skip,
+				take,
+			);
 
 			expect(directChats).toBeInstanceOf(Array);
 

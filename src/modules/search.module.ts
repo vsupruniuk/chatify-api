@@ -1,4 +1,4 @@
-import { SearchController } from '@Controllers/searchController';
+import { SearchController } from '@Controllers/search.controller';
 import {
 	accountSettingsRepositoryProvider,
 	jwtTokensRepositoryProvider,

@@ -22,7 +22,8 @@ export interface IDirectChatsRepository {
 	 * Get last user direct chats
 	 * @param skip - number of records to skip
 	 * @param take - number of records to take
+	 * @param userId - user id in UUID format
 	 * @returns DirectChat list
 	 */
-	getChats(skip: number, take: number, userId: string): Promise<DirectChat[]>;
+	getLastChats(userId: string, skip: number, take: number): Promise<DirectChat[]>;
 }

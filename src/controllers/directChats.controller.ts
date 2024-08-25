@@ -26,7 +26,13 @@ export class DirectChatsController implements IDirectChatController {
 			ResponseStatus.SUCCESS,
 		);
 
-		await this._directChatsService.getChats();
+		const chats = await this._directChatsService.getLastChats(
+			'15da7bd3-2051-4b83-bac4-638be25d985e',
+			0,
+			10,
+		);
+
+		console.log(chats[0].messages);
 
 		return responseResult;
 	}
