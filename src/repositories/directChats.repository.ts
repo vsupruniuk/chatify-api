@@ -1,14 +1,14 @@
 import { DirectChat } from '@Entities/DirectChat.entity';
 import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
 import { User } from '@Entities/User.entity';
-import { IDirectChatRepository } from '@Interfaces/directChats/IDirectChatRepository';
+import { IDirectChatsRepository } from '@Interfaces/directChats/IDirectChatsRepository';
 import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { AppLogger } from '@Logger/app.logger';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, EntityManager, InsertResult } from 'typeorm';
 
 @Injectable()
-export class DirectChatsRepository implements IDirectChatRepository {
+export class DirectChatsRepository implements IDirectChatsRepository {
 	private readonly _logger: IAppLogger = new AppLogger();
 
 	constructor(private readonly _dataSource: DataSource) {}
@@ -83,10 +83,55 @@ export class DirectChatsRepository implements IDirectChatRepository {
 
 		this._logger.successfulDBQuery({
 			method: this.createChat.name,
-			repository: 'AccountSettingsRepository',
+			repository: 'DirectChatsRepository',
 			data: { id: createdChatId },
 		});
 
 		return createdChatId;
+	}
+
+	public async getLastChats(userId: string, skip: number, take: number): Promise<DirectChat[]> {
+		const lastMessageSubQuery: string = this._dataSource
+			.createQueryBuilder()
+			.select('directChatMessage.id')
+			.from(DirectChatMessage, 'directChatMessage')
+			.where('directChatMessage.directChatId = directChat.id')
+			.orderBy('directChatMessage.updatedAt', 'DESC')
+			.limit(1)
+			.getQuery();
+
+		const userDirectChatsSubQuery: string = this._dataSource
+			.createQueryBuilder()
+			.select('DirectChatUsers.directChatId')
+			.from('DirectChatUsers', 'DirectChatUsers')
+			.where('DirectChatUsers.userId = :userId')
+			.getQuery();
+
+		const directChats: DirectChat[] = await this._dataSource
+			.createQueryBuilder()
+			.select('directChat')
+			.from(DirectChat, 'directChat')
+			.leftJoinAndSelect('directChat.users', 'users')
+			.leftJoinAndMapMany(
+				'directChat.messages',
+				DirectChatMessage,
+				'lastMessage',
+				`lastMessage.id = (${lastMessageSubQuery})`,
+			)
+			.leftJoinAndSelect('lastMessage.sender', 'sender')
+			.where(`directChat.id IN (${userDirectChatsSubQuery})`)
+			.setParameter('userId', userId)
+			.orderBy('lastMessage.updatedAt', 'DESC')
+			.skip(skip)
+			.take(take)
+			.getMany();
+
+		this._logger.successfulDBQuery({
+			method: this.getLastChats.name,
+			repository: 'DirectChatsRepository',
+			data: { directChats },
+		});
+
+		return directChats;
 	}
 }

@@ -1,4 +1,4 @@
-import { SearchController } from '@Controllers/searchController';
+import { SearchController } from '@Controllers/search.controller';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { UserPublicDto } from '@DTO/users/UserPublic.dto';
 import { User } from '@Entities/User.entity';

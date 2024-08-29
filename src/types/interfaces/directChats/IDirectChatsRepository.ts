@@ -1,4 +1,6 @@
-export interface IDirectChatRepository {
+import { DirectChat } from '@Entities/DirectChat.entity';
+
+export interface IDirectChatsRepository {
 	/**
 	 * Creating direct chat between 2 users with initial message
 	 * @param senderId - id of user which initialize this chat
@@ -15,4 +17,13 @@ export interface IDirectChatRepository {
 		messageText: string,
 		messageDateTime: string,
 	): Promise<string>;
+
+	/**
+	 * Get last user direct chats
+	 * @param skip - number of records to skip
+	 * @param take - number of records to take
+	 * @param userId - user id in UUID format
+	 * @returns DirectChat list
+	 */
+	getLastChats(userId: string, skip: number, take: number): Promise<DirectChat[]>;
 }

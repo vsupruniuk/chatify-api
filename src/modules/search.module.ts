@@ -1,4 +1,4 @@
-import { SearchController } from '@Controllers/searchController';
+import { SearchController } from '@Controllers/search.controller';
 import {
 	accountSettingsRepositoryProvider,
 	jwtTokensRepositoryProvider,
@@ -12,7 +12,6 @@ import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
-	imports: [],
 	controllers: [SearchController],
 	providers: [
 		JwtService,
