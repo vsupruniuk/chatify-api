@@ -62,6 +62,16 @@ export class DirectChatsService implements IDirectChatsService {
 		return plainToInstance(DirectChatShortDto, decryptedChats, { excludeExtraneousValues: true });
 	}
 
+	public async getChatMessages(): Promise<void> {
+		console.log(
+			await this._directChatsRepository.getChatMessages(
+				'a1e94a3e-911e-4d8e-bf4f-8da509f77d6c',
+				0,
+				10,
+			),
+		);
+	}
+
 	private _getDirectChatsPagination(
 		page?: number,
 		take: number = 10,

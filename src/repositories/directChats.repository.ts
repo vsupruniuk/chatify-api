@@ -134,4 +134,22 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 
 		return directChats;
 	}
+
+	public async getChatMessages(
+		directChatId: string,
+		skip: number,
+		take: number,
+	): Promise<DirectChatMessage[]> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('directChatMessage')
+			.from(DirectChatMessage, 'directChatMessage')
+			.leftJoinAndSelect('directChatMessage.directChat', 'directChat')
+			.leftJoinAndSelect('directChatMessage.sender', 'sender')
+			.where('directChatMessage.directChatId = :directChatId', { directChatId })
+			.orderBy('directChatMessage.createdAt', 'DESC')
+			.skip(skip)
+			.take(take)
+			.getMany();
+	}
 }

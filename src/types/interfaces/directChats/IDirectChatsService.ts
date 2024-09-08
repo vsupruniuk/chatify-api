@@ -17,4 +17,6 @@ export interface IDirectChatsService {
 	 * @returns DirectChatShortDto[] - array of direct chats with decrypted messages and without sensitive data
 	 */
 	getLastChats(userId: string, page?: number, take?: number): Promise<DirectChatShortDto[]>;
+
+	getChatMessages(): Promise<void>;
 }

@@ -59,4 +59,17 @@ export class DirectChatsController implements IDirectChatsController {
 
 		return responseResult;
 	}
+
+	@Get('/chat-messages')
+	@HttpCode(HttpStatus.OK)
+	public async getChatMessages(): Promise<ResponseResult> {
+		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
+			HttpStatus.OK,
+			ResponseStatus.SUCCESS,
+		);
+
+		await this._directChatsService.getChatMessages();
+
+		return responseResult;
+	}
 }

@@ -14,4 +14,6 @@ export interface IDirectChatsController {
 		page?: number,
 		take?: number,
 	): Promise<ResponseResult>;
+
+	getChatMessages(): Promise<ResponseResult>;
 }

@@ -1,4 +1,5 @@
 import { DirectChat } from '@Entities/DirectChat.entity';
+import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
 
 export interface IDirectChatsRepository {
 	/**
@@ -26,4 +27,12 @@ export interface IDirectChatsRepository {
 	 * @returns DirectChat list
 	 */
 	getLastChats(userId: string, skip: number, take: number): Promise<DirectChat[]>;
+
+	/**
+	 * Get last messages for direct chat
+	 * @param directChatId - id of chat for retrieving messages
+	 * @param skip - number of records to skip
+	 * @param take - number of records to take
+	 */
+	getChatMessages(directChatId: string, skip: number, take: number): Promise<DirectChatMessage[]>;
 }
