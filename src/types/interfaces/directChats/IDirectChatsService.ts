@@ -1,5 +1,6 @@
 import { CreateDirectChatDto } from '@DTO/directChat/CreateDIrectChat.dto';
-import { DirectChatShortDto } from '@DTO/directChat/DirectChatsList.dto';
+import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
+import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
 
 export interface IDirectChatsService {
 	/**
@@ -18,5 +19,16 @@ export interface IDirectChatsService {
 	 */
 	getLastChats(userId: string, page?: number, take?: number): Promise<DirectChatShortDto[]>;
 
-	getChatMessages(): Promise<void>;
+	/**
+	 * Retrieve chat messages
+	 * @param directChatId - chat id to get messages
+	 * @param page - page of records
+	 * @param take - number of records to take
+	 * @returns DirectChatMessageWithChatDto decrypted chat messages
+	 */
+	getChatMessages(
+		directChatId: string,
+		page?: number,
+		take?: number,
+	): Promise<DirectChatMessageWithChatDto[]>;
 }

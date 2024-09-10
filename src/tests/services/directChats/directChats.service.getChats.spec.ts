@@ -9,7 +9,7 @@ import { DirectChat } from '@Entities/DirectChat.entity';
 import { directChats } from '@TestMocks/DirectChat/directChats';
 import SpyInstance = jest.SpyInstance;
 import { users } from '@TestMocks/User/users';
-import { DirectChatShortDto } from '@DTO/directChat/DirectChatsList.dto';
+import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 
 describe('directChatsService', (): void => {
 	let directChatsService: IDirectChatsService;

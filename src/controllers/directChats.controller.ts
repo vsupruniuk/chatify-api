@@ -19,7 +19,7 @@ import { IDirectChatsService } from '@Interfaces/directChats/IDirectChatsService
 import { AppUserPayload } from '@Decorators/AppUser.decorator';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { ResponseResult } from '@Responses/ResponseResult';
-import { DirectChatShortDto } from '@DTO/directChat/DirectChatsList.dto';
+import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 
 @Controller('direct-chats')
 @UseInterceptors(AuthInterceptor)
@@ -68,7 +68,9 @@ export class DirectChatsController implements IDirectChatsController {
 			ResponseStatus.SUCCESS,
 		);
 
-		await this._directChatsService.getChatMessages();
+		console.log(
+			await this._directChatsService.getChatMessages('a1e94a3e-911e-4d8e-bf4f-8da509f77d6c', 1, 10),
+		);
 
 		return responseResult;
 	}

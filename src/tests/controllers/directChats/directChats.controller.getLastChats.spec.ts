@@ -18,7 +18,7 @@ import { Observable } from 'rxjs';
 import { Request } from 'express';
 import { TUserPayload } from '@Types/users/TUserPayload';
 import { IDirectChatsService } from '@Interfaces/directChats/IDirectChatsService';
-import { DirectChatShortDto } from '@DTO/directChat/DirectChatsList.dto';
+import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@Modules/app.module';
 import { CustomProviders } from '@Enums/CustomProviders.enum';

@@ -6,9 +6,10 @@ import { IDirectChatsRepository } from '@Interfaces/directChats/IDirectChatsRepo
 import { IDirectChatsService } from '@Interfaces/directChats/IDirectChatsService';
 import { Inject, Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { DirectChatShortDto } from '@DTO/directChat/DirectChatsList.dto';
+import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 import { DirectChat } from '@Entities/DirectChat.entity';
 import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
+import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
 
 @Injectable()
 export class DirectChatsService implements IDirectChatsService {
@@ -33,7 +34,7 @@ export class DirectChatsService implements IDirectChatsService {
 		page?: number,
 		take?: number,
 	): Promise<DirectChatShortDto[]> {
-		const { skip: skipRecords, take: takeRecords } = this._getDirectChatsPagination(page, take);
+		const { skip: skipRecords, take: takeRecords } = this._getPagination(page, take);
 
 		const chats: DirectChat[] = await this._directChatsRepository.getLastChats(
 			userId,
@@ -62,20 +63,34 @@ export class DirectChatsService implements IDirectChatsService {
 		return plainToInstance(DirectChatShortDto, decryptedChats, { excludeExtraneousValues: true });
 	}
 
-	public async getChatMessages(): Promise<void> {
-		console.log(
-			await this._directChatsRepository.getChatMessages(
-				'a1e94a3e-911e-4d8e-bf4f-8da509f77d6c',
-				0,
-				10,
-			),
+	public async getChatMessages(
+		directChatId: string,
+		page?: number,
+		take?: number,
+	): Promise<DirectChatMessageWithChatDto[]> {
+		const { skip: skipRecords, take: takeRecords } = this._getPagination(page, take);
+
+		const messages: DirectChatMessage[] = await this._directChatsRepository.getChatMessages(
+			directChatId,
+			skipRecords,
+			takeRecords,
 		);
+
+		const decryptedMessages: DirectChatMessage[] = await Promise.all(
+			messages.map(async (message: DirectChatMessage) => {
+				return {
+					...message,
+					messageText: await this._cryptoService.decryptText(message.messageText),
+				};
+			}),
+		);
+
+		return plainToInstance(DirectChatMessageWithChatDto, decryptedMessages, {
+			excludeExtraneousValues: true,
+		});
 	}
 
-	private _getDirectChatsPagination(
-		page?: number,
-		take: number = 10,
-	): { skip: number; take: number } {
+	private _getPagination(page?: number, take: number = 10): { skip: number; take: number } {
 		return {
 			skip: !page ? 0 : page * take - take,
 			take,
