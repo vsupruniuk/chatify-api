@@ -21,12 +21,14 @@ export interface IDirectChatsService {
 
 	/**
 	 * Retrieve chat messages
+	 * @param userId - user id that send request for messages
 	 * @param directChatId - chat id to get messages
 	 * @param page - page of records
 	 * @param take - number of records to take
 	 * @returns DirectChatMessageWithChatDto decrypted chat messages
 	 */
 	getChatMessages(
+		userId: string,
 		directChatId: string,
 		page?: number,
 		take?: number,

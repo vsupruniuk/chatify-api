@@ -20,6 +20,8 @@ import { AppUserPayload } from '@Decorators/AppUser.decorator';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { ResponseResult } from '@Responses/ResponseResult';
 import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
+import { QueryRequired } from '@Decorators/QueryRequired.decorator';
+import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
 
 @Controller('direct-chats')
 @UseInterceptors(AuthInterceptor)
@@ -62,15 +64,25 @@ export class DirectChatsController implements IDirectChatsController {
 
 	@Get('/chat-messages')
 	@HttpCode(HttpStatus.OK)
-	public async getChatMessages(): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			HttpStatus.OK,
-			ResponseStatus.SUCCESS,
-		);
+	public async getChatMessages(
+		@AppUserPayload() appUserPayload: JWTPayloadDto,
+		@QueryRequired('chatId') chatId: string,
+		page?: number,
+		take?: number,
+	): Promise<ResponseResult> {
+		const responseResult: SuccessfulResponseResult<DirectChatMessageWithChatDto> =
+			new SuccessfulResponseResult<DirectChatMessageWithChatDto>(
+				HttpStatus.OK,
+				ResponseStatus.SUCCESS,
+			);
 
-		console.log(
-			await this._directChatsService.getChatMessages('a1e94a3e-911e-4d8e-bf4f-8da509f77d6c', 1, 10),
+		responseResult.data = await this._directChatsService.getChatMessages(
+			appUserPayload.id,
+			chatId,
+			page,
+			take,
 		);
+		responseResult.dataLength = responseResult.data.length;
 
 		return responseResult;
 	}

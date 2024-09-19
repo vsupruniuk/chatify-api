@@ -64,6 +64,7 @@ export class DirectChatsService implements IDirectChatsService {
 	}
 
 	public async getChatMessages(
+		userId: string,
 		directChatId: string,
 		page?: number,
 		take?: number,
@@ -71,6 +72,7 @@ export class DirectChatsService implements IDirectChatsService {
 		const { skip: skipRecords, take: takeRecords } = this._getPagination(page, take);
 
 		const messages: DirectChatMessage[] = await this._directChatsRepository.getChatMessages(
+			userId,
 			directChatId,
 			skipRecords,
 			takeRecords,

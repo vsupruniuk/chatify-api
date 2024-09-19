@@ -10,6 +10,7 @@ import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
 import { directChatsMessages } from '@TestMocks/DirectChatMessage/directChatsMessages';
 import { directChats } from '@TestMocks/DirectChat/directChats';
 import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
+import { users } from '@TestMocks/User/users';
 
 describe('directChatsService', (): void => {
 	let directChatsService: IDirectChatsService;
@@ -29,6 +30,7 @@ describe('directChatsService', (): void => {
 
 		const directChatMessagesMock: DirectChatMessage[] = [...directChatsMessages];
 		const directChatIdMock: string = directChats[0].id;
+		const userIdMock: string = users[2].id;
 
 		beforeEach((): void => {
 			getChatMessagesMock = jest
@@ -56,19 +58,25 @@ describe('directChatsService', (): void => {
 			const page: number = 1;
 			const take: number = 10;
 
-			await directChatsService.getChatMessages(directChatIdMock, page, take);
+			await directChatsService.getChatMessages(userIdMock, directChatIdMock, page, take);
 
 			expect(getChatMessagesMock).toHaveBeenCalledTimes(1);
-			expect(getChatMessagesMock).toHaveBeenCalledWith(directChatIdMock, page * take - take, take);
+			expect(getChatMessagesMock).toHaveBeenCalledWith(
+				userIdMock,
+				directChatIdMock,
+				page * take - take,
+				take,
+			);
 		});
 
 		it('should use decryptText method from crypto service for each message to decrypt messages', async (): Promise<void> => {
 			const page: number = 1;
 			const take: number = 10;
 
-			await directChatsService.getChatMessages(directChatIdMock, page, take);
+			await directChatsService.getChatMessages(userIdMock, directChatIdMock, page, take);
 
 			const chatMessages: DirectChatMessage[] = await directChatsRepository.getChatMessages(
+				userIdMock,
 				directChatIdMock,
 				page * take - take,
 				take,
@@ -82,22 +90,26 @@ describe('directChatsService', (): void => {
 		});
 
 		it('should provide default values for getChatMessages method if page or take not provided', async (): Promise<void> => {
-			await directChatsService.getChatMessages(directChatIdMock);
+			await directChatsService.getChatMessages(userIdMock, directChatIdMock);
 
 			expect(getChatMessagesMock).toHaveBeenCalledTimes(1);
-			expect(getChatMessagesMock).toHaveBeenCalledWith(directChatIdMock, 0, 10);
+			expect(getChatMessagesMock).toHaveBeenCalledWith(userIdMock, directChatIdMock, 0, 10);
 		});
 
 		it('should return response as instance of Array', async (): Promise<void> => {
-			const chatMessages: DirectChatMessageWithChatDto[] =
-				await directChatsService.getChatMessages(directChatIdMock);
+			const chatMessages: DirectChatMessageWithChatDto[] = await directChatsService.getChatMessages(
+				userIdMock,
+				directChatIdMock,
+			);
 
 			expect(chatMessages).toBeInstanceOf(Array);
 		});
 
 		it('should return each chat as instance of DirectChatMessageWithChatDto', async (): Promise<void> => {
-			const chatMessages: DirectChatMessageWithChatDto[] =
-				await directChatsService.getChatMessages(directChatIdMock);
+			const chatMessages: DirectChatMessageWithChatDto[] = await directChatsService.getChatMessages(
+				userIdMock,
+				directChatIdMock,
+			);
 
 			chatMessages.forEach((message: DirectChatMessageWithChatDto) => {
 				expect(message).toBeInstanceOf(DirectChatMessageWithChatDto);

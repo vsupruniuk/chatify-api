@@ -30,9 +30,16 @@ export interface IDirectChatsRepository {
 
 	/**
 	 * Get last messages for direct chat
+	 * @param userId - user id that send request for messages
 	 * @param directChatId - id of chat for retrieving messages
 	 * @param skip - number of records to skip
 	 * @param take - number of records to take
+	 * @throws UnprocessableEntityException - if chat not belongs to this user
 	 */
-	getChatMessages(directChatId: string, skip: number, take: number): Promise<DirectChatMessage[]>;
+	getChatMessages(
+		userId: string,
+		directChatId: string,
+		skip: number,
+		take: number,
+	): Promise<DirectChatMessage[]>;
 }

@@ -4,7 +4,7 @@ import { User } from '@Entities/User.entity';
 import { IDirectChatsRepository } from '@Interfaces/directChats/IDirectChatsRepository';
 import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { AppLogger } from '@Logger/app.logger';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { DataSource, EntityManager, InsertResult } from 'typeorm';
 
 @Injectable()
@@ -136,20 +136,32 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 	}
 
 	public async getChatMessages(
+		userId: string,
 		directChatId: string,
 		skip: number,
 		take: number,
 	): Promise<DirectChatMessage[]> {
-		return await this._dataSource
+		const messages: DirectChatMessage[] = await this._dataSource
 			.createQueryBuilder()
 			.select('directChatMessage')
 			.from(DirectChatMessage, 'directChatMessage')
 			.leftJoinAndSelect('directChatMessage.directChat', 'directChat')
+			.leftJoinAndSelect('directChat.users', 'directChatUsers')
 			.leftJoinAndSelect('directChatMessage.sender', 'sender')
 			.where('directChatMessage.directChatId = :directChatId', { directChatId })
 			.orderBy('directChatMessage.createdAt', 'DESC')
 			.skip(skip)
 			.take(take)
 			.getMany();
+
+		const directChat: DirectChat = messages[0].directChat;
+
+		if (!directChat.users.some((user: User) => user.id === userId)) {
+			throw new UnprocessableEntityException(
+				'Cannot retrieve messages from the chat that not belongs to user',
+			);
+		}
+
+		return messages;
 	}
 }
