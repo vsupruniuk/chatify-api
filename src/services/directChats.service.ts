@@ -92,6 +92,23 @@ export class DirectChatsService implements IDirectChatsService {
 		});
 	}
 
+	public async sendMessage(
+		senderId: string,
+		directChatId: string,
+		messageText: string,
+	): Promise<string> {
+		const chatId: string = await this._directChatsRepository.createMessage(
+			senderId,
+			directChatId,
+			messageText,
+			DateHelper.dateTimeNow(),
+		);
+
+		console.log(chatId);
+
+		return '';
+	}
+
 	private _getPagination(page?: number, take: number = 10): { skip: number; take: number } {
 		return {
 			skip: !page ? 0 : page * take - take,

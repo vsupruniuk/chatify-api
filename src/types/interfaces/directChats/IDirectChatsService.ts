@@ -33,4 +33,6 @@ export interface IDirectChatsService {
 		page?: number,
 		take?: number,
 	): Promise<DirectChatMessageWithChatDto[]>;
+
+	sendMessage(senderId: string, directChatId: string, messageText: string): Promise<string>;
 }

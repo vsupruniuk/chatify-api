@@ -42,4 +42,20 @@ export interface IDirectChatsRepository {
 		skip: number,
 		take: number,
 	): Promise<DirectChatMessage[]>;
+
+	/**
+	 * Create message for direct chat
+	 * @param senderId - id of user that send message
+	 * @param directChatId - id of chat to create message
+	 * @param messageText - message text to send
+	 * @param messageDateTime - message date and times
+	 * @throws NotFoundException - if message sender or chat not found
+	 * @returns created chat id
+	 */
+	createMessage(
+		senderId: string,
+		directChatId: string,
+		messageText: string,
+		messageDateTime: string,
+	): Promise<string>;
 }
