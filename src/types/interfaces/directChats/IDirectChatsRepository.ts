@@ -58,4 +58,11 @@ export interface IDirectChatsRepository {
 		messageText: string,
 		messageDateTime: string,
 	): Promise<string>;
+
+	/**
+	 * Retrieve message by id
+	 * @param messageId - message id for searching
+	 * @returns DirectChatMessage | null
+	 */
+	getMessageById(messageId: string): Promise<DirectChatMessage | null>;
 }

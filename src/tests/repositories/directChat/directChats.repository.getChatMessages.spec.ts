@@ -7,7 +7,7 @@ import { DataSource } from 'typeorm';
 import { users } from '@TestMocks/User/users';
 import { UnprocessableEntityException } from '@nestjs/common';
 
-describe('directChatsMock', (): void => {
+describe('directChatsRepository', (): void => {
 	let queryBuilderMock: QueryBuilderMock<never>;
 	let directChatRepository: DirectChatsRepository;
 

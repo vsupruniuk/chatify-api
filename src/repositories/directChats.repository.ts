@@ -202,4 +202,13 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 
 		return result.identifiers[0].id;
 	}
+
+	public async getMessageById(messageId: string): Promise<DirectChatMessage | null> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('directChatMessage')
+			.from(DirectChatMessage, 'directChatMessage')
+			.where('directChatMessage.id = :id', { id: messageId })
+			.getOne();
+	}
 }
