@@ -4,7 +4,7 @@ import { DateHelper } from '@Helpers/date.helper';
 import { ICryptoService } from '@Interfaces/crypto/ICryptoService';
 import { IDirectChatsRepository } from '@Interfaces/directChats/IDirectChatsRepository';
 import { IDirectChatsService } from '@Interfaces/directChats/IDirectChatsService';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 import { DirectChat } from '@Entities/DirectChat.entity';
@@ -20,6 +20,7 @@ export class DirectChatsService implements IDirectChatsService {
 		@Inject(CustomProviders.I_CRYPTO_SERVICE_PROVIDER)
 		private readonly _cryptoService: ICryptoService,
 	) {}
+
 	public async createChat(createDirectChatDto: CreateDirectChatDto): Promise<string> {
 		return await this._directChatsRepository.createChat(
 			createDirectChatDto.senderId,
@@ -96,17 +97,26 @@ export class DirectChatsService implements IDirectChatsService {
 		senderId: string,
 		directChatId: string,
 		messageText: string,
-	): Promise<string> {
-		const chatId: string = await this._directChatsRepository.createMessage(
+	): Promise<DirectChatMessageWithChatDto> {
+		const createdMessageId: string = await this._directChatsRepository.createMessage(
 			senderId,
 			directChatId,
-			messageText,
+			await this._cryptoService.encryptText(messageText),
 			DateHelper.dateTimeNow(),
 		);
 
-		console.log(chatId);
+		const createdMessage: DirectChatMessage | null =
+			await this._directChatsRepository.getMessageById(createdMessageId);
 
-		return '';
+		if (!createdMessage) {
+			throw new UnprocessableEntityException('Failed to create message. Please try again');
+		}
+
+		createdMessage.messageText = await this._cryptoService.decryptText(createdMessage.messageText);
+
+		return plainToInstance(DirectChatMessageWithChatDto, createdMessage, {
+			excludeExtraneousValues: true,
+		});
 	}
 
 	private _getPagination(page?: number, take: number = 10): { skip: number; take: number } {

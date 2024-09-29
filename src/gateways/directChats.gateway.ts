@@ -90,10 +90,12 @@ export class DirectChatsGateway
 
 	@SubscribeMessage(WSEvents.SEND_MESSAGE)
 	async sendMessage(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<WsResponse<string>> {
-		await this._directChatsService.sendMessage(
-			appUserPayload.id,
-			'a1e94a3e-911e-4d8e-bf4f-8da509f77d6c',
-			'Hello. How are you?',
+		console.log(
+			await this._directChatsService.sendMessage(
+				appUserPayload.id,
+				'a1e94a3e-911e-4d8e-bf4f-8da509f77d6c',
+				'Hello. How are you?',
+			),
 		);
 
 		return {

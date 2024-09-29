@@ -208,6 +208,8 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 			.createQueryBuilder()
 			.select('directChatMessage')
 			.from(DirectChatMessage, 'directChatMessage')
+			.leftJoinAndSelect('directChatMessage.directChat', 'directChat')
+			.leftJoinAndSelect('directChatMessage.sender', 'sender')
 			.where('directChatMessage.id = :id', { id: messageId })
 			.getOne();
 	}
