@@ -164,4 +164,54 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 
 		return messages;
 	}
+
+	public async createMessage(
+		senderId: string,
+		directChatId: string,
+		messageText: string,
+		messageDateTime: string,
+	): Promise<string> {
+		const sender: User | null = await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.where('user.id = :id', { id: senderId })
+			.getOne();
+
+		if (!sender) {
+			throw new NotFoundException('Message sender does not exist');
+		}
+
+		const directChat: DirectChat | null = await this._dataSource
+			.createQueryBuilder()
+			.select('directChat')
+			.from(DirectChat, 'directChat')
+			.where('directChat.id = :id', { id: directChatId })
+			.getOne();
+
+		if (!directChat) {
+			throw new NotFoundException('Direct chat with this id does not exist');
+		}
+
+		const result: InsertResult = await this._dataSource
+			.createQueryBuilder()
+			.insert()
+			.into(DirectChatMessage)
+			.values({ dateTime: messageDateTime, messageText, directChat, sender })
+			.execute();
+
+		return result.identifiers[0].id;
+	}
+
+	public async getMessageById(messageId: string): Promise<DirectChatMessage | null> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('directChatMessage')
+			.from(DirectChatMessage, 'directChatMessage')
+			.leftJoinAndSelect('directChatMessage.directChat', 'directChat')
+			.leftJoinAndSelect('directChatMessage.sender', 'sender')
+			.leftJoinAndSelect('directChat.users', 'directChatUsers')
+			.where('directChatMessage.id = :id', { id: messageId })
+			.getOne();
+	}
 }

@@ -33,4 +33,18 @@ export interface IDirectChatsService {
 		page?: number,
 		take?: number,
 	): Promise<DirectChatMessageWithChatDto[]>;
+
+	/**
+	 * Create message for direct chat and retrieve it back
+	 * @param senderId - id of user who send this message
+	 * @param directChatId - id of chat for creating message
+	 * @param messageText - message text to send
+	 * @throws UnprocessableEntityException - if failed to create message
+	 * @returns DirectChatMessageWithChatDto
+	 */
+	sendMessage(
+		senderId: string,
+		directChatId: string,
+		messageText: string,
+	): Promise<DirectChatMessageWithChatDto>;
 }

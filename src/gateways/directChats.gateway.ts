@@ -3,7 +3,7 @@ import { CreateDirectChatResponseDto } from '@DTO/directChat/CreateDirectChatRes
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { WSEvents } from '@Enums/WSEvents.enum';
-import { wsExceptionFilter } from '@Filters/wsExceptionFilter';
+import { wsExceptionFilter } from '@Filters/wsException.filter';
 import { IDirectChatsGateway } from '@Interfaces/directChats/IDirectChatsGateway';
 import { IDirectChatsService } from '@Interfaces/directChats/IDirectChatsService';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
@@ -24,6 +24,11 @@ import { SuccessfulWSResponseResult } from '@Responses/successfulResponses/Succe
 import { WSResponseResult } from '@Responses/WSResponseResult';
 import { TUserPayload } from '@Types/users/TUserPayload';
 import { Server, Socket } from 'socket.io';
+import { AppUserPayload } from '@Decorators/AppUser.decorator';
+import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
+import { SendDirectMessageDto } from '@DTO/directChatMessages/SendDirectMessage.dto';
+import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
+import { UserPublicDto } from '@DTO/users/UserPublic.dto';
 
 @UsePipes(
 	new ValidationPipe({
@@ -82,6 +87,39 @@ export class DirectChatsGateway
 
 		return {
 			event: WSEvents.ON_CREATE_CHAT,
+			data: responseResult,
+		};
+	}
+
+	@SubscribeMessage(WSEvents.SEND_MESSAGE)
+	async sendMessage(
+		@AppUserPayload() appUserPayload: JWTPayloadDto,
+		@MessageBody() sendDirectMessageDto: SendDirectMessageDto,
+	): Promise<WsResponse<WSResponseResult>> {
+		const responseResult: SuccessfulWSResponseResult<DirectChatMessageWithChatDto> =
+			new SuccessfulWSResponseResult<DirectChatMessageWithChatDto>(ResponseStatus.SUCCESS);
+
+		const createdMessage: DirectChatMessageWithChatDto = await this._directChatsService.sendMessage(
+			appUserPayload.id,
+			sendDirectMessageDto.directChatId,
+			sendDirectMessageDto.messageText,
+		);
+
+		responseResult.data = createdMessage;
+
+		const messageReceiver: UserPublicDto =
+			createdMessage.directChat.users[0].id === appUserPayload.id
+				? createdMessage.directChat.users[1]
+				: createdMessage.directChat.users[0];
+
+		const receiverClient: Socket | undefined = this._clients.get(messageReceiver.id);
+
+		if (receiverClient) {
+			receiverClient.emit(WSEvents.ON_RECEIVE_MESSAGE, responseResult);
+		}
+
+		return {
+			event: WSEvents.SEND_MESSAGE,
 			data: responseResult,
 		};
 	}
