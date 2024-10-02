@@ -26,6 +26,9 @@ import { TUserPayload } from '@Types/users/TUserPayload';
 import { Server, Socket } from 'socket.io';
 import { AppUserPayload } from '@Decorators/AppUser.decorator';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
+import { SendDirectMessageDto } from '@DTO/directChatMessages/SendDirectMessage.dto';
+import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
+import { UserPublicDto } from '@DTO/users/UserPublic.dto';
 
 @UsePipes(
 	new ValidationPipe({
@@ -89,18 +92,35 @@ export class DirectChatsGateway
 	}
 
 	@SubscribeMessage(WSEvents.SEND_MESSAGE)
-	async sendMessage(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<WsResponse<string>> {
-		console.log(
-			await this._directChatsService.sendMessage(
-				appUserPayload.id,
-				'a1e94a3e-911e-4d8e-bf4f-8da509f77d6c',
-				'Hello. How are you?',
-			),
+	async sendMessage(
+		@AppUserPayload() appUserPayload: JWTPayloadDto,
+		@MessageBody() sendDirectMessageDto: SendDirectMessageDto,
+	): Promise<WsResponse<WSResponseResult>> {
+		const responseResult: SuccessfulWSResponseResult<DirectChatMessageWithChatDto> =
+			new SuccessfulWSResponseResult<DirectChatMessageWithChatDto>(ResponseStatus.SUCCESS);
+
+		const createdMessage: DirectChatMessageWithChatDto = await this._directChatsService.sendMessage(
+			appUserPayload.id,
+			sendDirectMessageDto.directChatId,
+			sendDirectMessageDto.messageText,
 		);
+
+		responseResult.data = createdMessage;
+
+		const messageReceiver: UserPublicDto =
+			createdMessage.directChat.users[0].id === appUserPayload.id
+				? createdMessage.directChat.users[1]
+				: createdMessage.directChat.users[0];
+
+		const receiverClient: Socket | undefined = this._clients.get(messageReceiver.id);
+
+		if (receiverClient) {
+			receiverClient.emit(WSEvents.ON_RECEIVE_MESSAGE, responseResult);
+		}
 
 		return {
 			event: WSEvents.SEND_MESSAGE,
-			data: '',
+			data: responseResult,
 		};
 	}
 }

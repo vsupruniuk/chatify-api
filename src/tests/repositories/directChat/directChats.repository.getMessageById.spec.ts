@@ -82,7 +82,7 @@ describe('Direct chats repository', (): void => {
 				'directChatMessage',
 			);
 
-			expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenCalledTimes(2);
+			expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenCalledTimes(3);
 			expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenNthCalledWith(
 				1,
 				'directChatMessage.directChat',
@@ -92,6 +92,11 @@ describe('Direct chats repository', (): void => {
 				2,
 				'directChatMessage.sender',
 				'sender',
+			);
+			expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenNthCalledWith(
+				3,
+				'directChat.users',
+				'directChatUsers',
 			);
 
 			expect(queryBuilderMock.where).toHaveBeenCalledTimes(1);

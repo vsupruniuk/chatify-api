@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer';
 import { UserPublicDto } from '@DTO/users/UserPublic.dto';
-import { DirectChatIdDto } from '@DTO/directChat/DirectChatId.dto';
+import { DirectChatUsersDto } from '@DTO/directChat/DirectChatUsers.dto';
 
 export class DirectChatMessageWithChatDto {
 	@Expose()
@@ -13,8 +13,8 @@ export class DirectChatMessageWithChatDto {
 	messageText: string;
 
 	@Expose()
-	@Type(() => DirectChatIdDto)
-	directChat: DirectChatIdDto;
+	@Type(() => DirectChatUsersDto)
+	directChat: DirectChatUsersDto;
 
 	@Expose()
 	@Type(() => UserPublicDto)
