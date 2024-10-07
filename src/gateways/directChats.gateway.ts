@@ -70,12 +70,17 @@ export class DirectChatsGateway
 
 	@SubscribeMessage(WSEvents.CREATE_CHAT)
 	async createDirectChat(
+		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@MessageBody() createDirectChatDto: CreateDirectChatDto,
 	): Promise<WsResponse<WSResponseResult>> {
 		const responseResult: SuccessfulWSResponseResult<CreateDirectChatResponseDto> =
 			new SuccessfulWSResponseResult<CreateDirectChatResponseDto>(ResponseStatus.SUCCESS);
 
-		const createdChatId: string = await this._directChatsService.createChat(createDirectChatDto);
+		const createdChatId: string = await this._directChatsService.createChat(
+			appUserPayload.id,
+			createDirectChatDto.receiverId,
+			createDirectChatDto.messageText,
+		);
 
 		responseResult.data = { directChatId: createdChatId };
 

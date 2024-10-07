@@ -1,5 +1,4 @@
 import { connectionSource } from '@DB/typeOrmConfig';
-import { CreateDirectChatDto } from '@DTO/directChat/CreateDIrectChat.dto';
 import { DateHelper } from '@Helpers/date.helper';
 import { DirectChatsRepository } from '@Repositories/directChats.repository';
 import { CryptoService } from '@Services/crypto.service';
@@ -61,28 +60,16 @@ describe('Direct chats', (): void => {
 		it('should call encryptText method in crypto service to encrypt message text', async (): Promise<void> => {
 			jest.setSystemTime(new Date(dateTimeMock));
 
-			const createDirectChatDto: CreateDirectChatDto = {
-				senderId: senderId,
-				receiverId: receiverId,
-				messageText,
-			};
-
-			await directChatsService.createChat(createDirectChatDto);
+			await directChatsService.createChat(senderId, receiverId, messageText);
 
 			expect(encryptTextMock).toHaveBeenCalledTimes(1);
-			expect(encryptTextMock).toHaveBeenCalledWith(createDirectChatDto.messageText);
+			expect(encryptTextMock).toHaveBeenCalledWith(messageText);
 		});
 
 		it('should call dateTimeNow method in date helper to set current date and time to message', async (): Promise<void> => {
 			jest.setSystemTime(new Date(dateTimeMock));
 
-			const createDirectChatDto: CreateDirectChatDto = {
-				senderId: senderId,
-				receiverId: receiverId,
-				messageText,
-			};
-
-			await directChatsService.createChat(createDirectChatDto);
+			await directChatsService.createChat(senderId, receiverId, messageText);
 
 			expect(dateTimeNowMock).toHaveBeenCalledTimes(1);
 		});
@@ -90,19 +77,13 @@ describe('Direct chats', (): void => {
 		it('should call createChat method in direct chat repository to create direct chat', async (): Promise<void> => {
 			jest.setSystemTime(new Date(dateTimeMock));
 
-			const createDirectChatDto: CreateDirectChatDto = {
-				senderId: senderId,
-				receiverId: receiverId,
-				messageText,
-			};
-
-			await directChatsService.createChat(createDirectChatDto);
+			await directChatsService.createChat(senderId, receiverId, messageText);
 
 			expect(createChatMock).toHaveBeenCalledTimes(1);
 			expect(createChatMock).toHaveBeenCalledWith(
-				createDirectChatDto.senderId,
-				createDirectChatDto.receiverId,
-				await cryptoService.encryptText(createDirectChatDto.messageText),
+				senderId,
+				receiverId,
+				await cryptoService.encryptText(messageText),
 				DateHelper.dateTimeNow(),
 			);
 		});
@@ -110,13 +91,7 @@ describe('Direct chats', (): void => {
 		it('should return id of created chat', async (): Promise<void> => {
 			jest.setSystemTime(new Date(dateTimeMock));
 
-			const createDirectChatDto: CreateDirectChatDto = {
-				senderId: senderId,
-				receiverId: receiverId,
-				messageText,
-			};
-
-			const chatId: string = await directChatsService.createChat(createDirectChatDto);
+			const chatId: string = await directChatsService.createChat(senderId, receiverId, messageText);
 
 			expect(chatId).toBe(createdChatId);
 		});
