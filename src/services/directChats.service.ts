@@ -1,4 +1,3 @@
-import { CreateDirectChatDto } from '@DTO/directChat/CreateDIrectChat.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { DateHelper } from '@Helpers/date.helper';
 import { ICryptoService } from '@Interfaces/crypto/ICryptoService';
@@ -21,11 +20,15 @@ export class DirectChatsService implements IDirectChatsService {
 		private readonly _cryptoService: ICryptoService,
 	) {}
 
-	public async createChat(createDirectChatDto: CreateDirectChatDto): Promise<string> {
+	public async createChat(
+		senderId: string,
+		receiverId: string,
+		messageText: string,
+	): Promise<string> {
 		return await this._directChatsRepository.createChat(
-			createDirectChatDto.senderId,
-			createDirectChatDto.receiverId,
-			await this._cryptoService.encryptText(createDirectChatDto.messageText),
+			senderId,
+			receiverId,
+			await this._cryptoService.encryptText(messageText),
 			DateHelper.dateTimeNow(),
 		);
 	}
