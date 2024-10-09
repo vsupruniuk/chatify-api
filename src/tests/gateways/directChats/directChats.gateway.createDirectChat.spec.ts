@@ -16,6 +16,9 @@ import { SuccessfulWSResponseResult } from '@Responses/successfulResponses/Succe
 import { users } from '@TestMocks/User/users';
 import { plainToInstance } from 'class-transformer';
 import { io, Socket } from 'socket.io-client';
+import { directChats } from '@TestMocks/DirectChat/directChats';
+import { DirectChat } from '@Entities/DirectChat.entity';
+import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 
 describe('Direct chat gateway', (): void => {
 	let app: INestApplication;
@@ -25,7 +28,7 @@ describe('Direct chat gateway', (): void => {
 	const validAccessToken: string = 'validAccessToken';
 	const validAccessTokenReceiver: string = 'validAccessTokenReceiver';
 	const invalidAccessToken: string = 'invalidAccessToken';
-	const createdChatId: string = 'createdChatId';
+	const createdChat: DirectChat = directChats[0];
 
 	const jwtServiceMock: Partial<IJWTTokensService> = {
 		verifyAccessToken: jest
@@ -44,7 +47,11 @@ describe('Direct chat gateway', (): void => {
 	};
 
 	const directChatsServiceMock: Partial<IDirectChatsService> = {
-		createChat: jest.fn().mockReturnValue(createdChatId),
+		createChat: jest
+			.fn()
+			.mockImplementation(() =>
+				plainToInstance(DirectChatShortDto, createdChat, { excludeExtraneousValues: true }),
+			),
 	};
 
 	beforeAll(async (): Promise<void> => {
@@ -454,7 +461,11 @@ describe('Direct chat gateway', (): void => {
 
 			const successfulResponse: SuccessfulWSResponseResult<CreateDirectChatResponseDto> = {
 				status: ResponseStatus.SUCCESS,
-				data: { directChatId: createdChatId },
+				data: {
+					directChat: plainToInstance(DirectChatShortDto, createdChat, {
+						excludeExtraneousValues: true,
+					}),
+				},
 			};
 
 			socket.connect();
@@ -486,7 +497,11 @@ describe('Direct chat gateway', (): void => {
 
 			const successfulResponse: SuccessfulWSResponseResult<CreateDirectChatResponseDto> = {
 				status: ResponseStatus.SUCCESS,
-				data: { directChatId: createdChatId },
+				data: {
+					directChat: plainToInstance(DirectChatShortDto, createdChat, {
+						excludeExtraneousValues: true,
+					}),
+				},
 			};
 
 			socket.connect();

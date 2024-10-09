@@ -24,13 +24,34 @@ export class DirectChatsService implements IDirectChatsService {
 		senderId: string,
 		receiverId: string,
 		messageText: string,
-	): Promise<string> {
-		return await this._directChatsRepository.createChat(
+	): Promise<DirectChatShortDto> {
+		const createdChatId: string = await this._directChatsRepository.createChat(
 			senderId,
 			receiverId,
 			await this._cryptoService.encryptText(messageText),
 			DateHelper.dateTimeNow(),
 		);
+
+		const createdChat: DirectChat | null =
+			await this._directChatsRepository.getChatById(createdChatId);
+
+		if (!createdChat) {
+			throw new UnprocessableEntityException('Failed to create chat. Please, try again');
+		}
+
+		const decryptedChat: DirectChat = {
+			...createdChat,
+			messages: await Promise.all(
+				createdChat.messages.map(async (message: DirectChatMessage) => {
+					return {
+						...message,
+						messageText: await this._cryptoService.decryptText(message.messageText),
+					};
+				}),
+			),
+		};
+
+		return plainToInstance(DirectChatShortDto, decryptedChat, { excludeExtraneousValues: true });
 	}
 
 	public async getLastChats(

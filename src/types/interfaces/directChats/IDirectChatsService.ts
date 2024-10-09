@@ -7,9 +7,14 @@ export interface IDirectChatsService {
 	 * @param senderId - id of user who send want to create chat
 	 * @param receiverId - id of another user in the chat
 	 * @param messageText - initial message text
-	 * @returns id of created chat
+	 * @throws UnprocessableEntityException - if failed to create chat
+	 * @returns created chat
 	 */
-	createChat(senderId: string, receiverId: string, messageText: string): Promise<string>;
+	createChat(
+		senderId: string,
+		receiverId: string,
+		messageText: string,
+	): Promise<DirectChatShortDto>;
 
 	/**
 	 * Retrieve last direct chat, decrypt their last messages and return in public form
