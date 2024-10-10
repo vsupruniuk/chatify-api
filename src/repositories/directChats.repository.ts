@@ -214,4 +214,30 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 			.where('directChatMessage.id = :id', { id: messageId })
 			.getOne();
 	}
+
+	public async getChatById(chatId: string): Promise<DirectChat | null> {
+		const lastMessageSubQuery: string = this._dataSource
+			.createQueryBuilder()
+			.select('directChatMessage.id')
+			.from(DirectChatMessage, 'directChatMessage')
+			.where('directChatMessage.directChatId = directChat.id')
+			.orderBy('directChatMessage.updatedAt', 'DESC')
+			.limit(1)
+			.getQuery();
+
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('directChat')
+			.from(DirectChat, 'directChat')
+			.leftJoinAndSelect('directChat.users', 'users')
+			.leftJoinAndMapMany(
+				'directChat.messages',
+				DirectChatMessage,
+				'lastMessage',
+				`lastMessage.id = (${lastMessageSubQuery})`,
+			)
+			.leftJoinAndSelect('lastMessage.sender', 'sender')
+			.where('directChat.id = :id', { id: chatId })
+			.getOne();
+	}
 }
