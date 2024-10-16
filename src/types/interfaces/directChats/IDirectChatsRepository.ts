@@ -73,4 +73,13 @@ export interface IDirectChatsRepository {
 	 * @returns null - if direct chat was not found
 	 */
 	getChatById(chatId: string): Promise<DirectChat | null>;
+
+	/**
+	 * Retrieve direct chat by both of its users
+	 * @param firstUserId - first user id
+	 * @param secondUserId - second user id
+	 * @returns direct chat if it was found
+	 * @returns null if direct chat wasn't found
+	 */
+	getChatByUsers(firstUserId: string, secondUserId: string): Promise<DirectChat | null>;
 }

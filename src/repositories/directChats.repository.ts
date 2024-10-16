@@ -6,6 +6,8 @@ import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { AppLogger } from '@Logger/app.logger';
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { DataSource, EntityManager, InsertResult } from 'typeorm';
+import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
+import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 
 @Injectable()
 export class DirectChatsRepository implements IDirectChatsRepository {
@@ -238,6 +240,33 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 			)
 			.leftJoinAndSelect('lastMessage.sender', 'sender')
 			.where('directChat.id = :id', { id: chatId })
+			.getOne();
+	}
+
+	public async getChatByUsers(
+		firstUserId: string,
+		secondUserId: string,
+	): Promise<DirectChat | null> {
+		const chatWithFirstUserExistCondition: SelectQueryBuilder<ObjectLiteral> = this._dataSource
+			.createQueryBuilder()
+			.select('*')
+			.from('DirectChatUsers', 'directChatUsers')
+			.where('directChatUsers.directChatId = directChat.id')
+			.andWhere('directChatUsers.userId = :userId', { userId: firstUserId });
+
+		const chatWithSecondUserExistCondition: SelectQueryBuilder<ObjectLiteral> = this._dataSource
+			.createQueryBuilder()
+			.select('*')
+			.from('DirectChatUsers', 'directChatUsers')
+			.where('directChatUsers.directChatId = directChat.id')
+			.andWhere('directChatUsers.userId = :userId', { userId: secondUserId });
+
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('directChat')
+			.from(DirectChat, 'directChat')
+			.whereExists(chatWithFirstUserExistCondition)
+			.andWhereExists(chatWithSecondUserExistCondition)
 			.getOne();
 	}
 }
