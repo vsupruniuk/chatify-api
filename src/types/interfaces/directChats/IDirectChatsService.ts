@@ -7,7 +7,7 @@ export interface IDirectChatsService {
 	 * @param senderId - id of user who send want to create chat
 	 * @param receiverId - id of another user in the chat
 	 * @param messageText - initial message text
-	 * @throws UnprocessableEntityException - if failed to create chat
+	 * @throws UnprocessableEntityException - if chat for these users already exist or failed to create chat
 	 * @returns created chat
 	 */
 	createChat(

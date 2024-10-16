@@ -30,4 +30,7 @@ export class QueryBuilderMock<T extends ObjectLiteral>
 	public relation: jest.Mock = jest.fn().mockReturnThis();
 	public of: jest.Mock = jest.fn().mockReturnThis();
 	public add: jest.Mock = jest.fn().mockReturnThis();
+	public andWhere: jest.Mock = jest.fn().mockReturnThis();
+	public whereExists: jest.Mock = jest.fn().mockReturnThis();
+	public andWhereExists: jest.Mock = jest.fn().mockReturnThis();
 }

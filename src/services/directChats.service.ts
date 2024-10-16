@@ -25,6 +25,15 @@ export class DirectChatsService implements IDirectChatsService {
 		receiverId: string,
 		messageText: string,
 	): Promise<DirectChatShortDto> {
+		const existingChat: DirectChat | null = await this._directChatsRepository.getChatByUsers(
+			senderId,
+			receiverId,
+		);
+
+		if (existingChat) {
+			throw new UnprocessableEntityException('Direct chat between these users already exists');
+		}
+
 		const createdChatId: string = await this._directChatsRepository.createChat(
 			senderId,
 			receiverId,

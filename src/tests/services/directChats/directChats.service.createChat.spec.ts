@@ -23,6 +23,7 @@ describe('Direct chats', (): void => {
 
 	describe('createChat', (): void => {
 		let createChatMock: SpyInstance;
+		let getChatByUsersMock: SpyInstance;
 		let getChatByIdMock: SpyInstance;
 		let encryptTextMock: SpyInstance;
 		let decryptTextMock: SpyInstance;
@@ -33,13 +34,31 @@ describe('Direct chats', (): void => {
 		const notExistingChatId: string = '63609e44-5a3d-41e6-96ad-7d0242260172';
 		const createdChatId: string = directChats[2].id;
 		const createdChat: DirectChat = directChats[2];
+		const existingChat: DirectChat = directChats[0];
 		const senderId: string = 'f42845d7-90af-4c29-8e1a-227c90b33852';
 		const receiverId: string = '699901e8-653f-4ac2-841e-b85388c4b89c';
+		const existingChatFirstUser: string = 'eeae9eae-32c2-4a19-981d-fd4b92860337';
+		const existingChatSecondUser: string = '376dc6ad-3763-4008-9af5-1aeee27468d4';
 		const messageText: string = 'Hello, world!';
 		const dateTimeMock: string = '2024-06-10 23:25:00';
 
 		beforeEach((): void => {
 			jest.useFakeTimers();
+
+			getChatByUsersMock = jest
+				.spyOn(directChatsRepository, 'getChatByUsers')
+				.mockImplementation(
+					async (firstUserId: string, secondUserId: string): Promise<DirectChat | null> => {
+						if (
+							(firstUserId === existingChatFirstUser || firstUserId === existingChatSecondUser) &&
+							(secondUserId === existingChatFirstUser || secondUserId === existingChatSecondUser)
+						) {
+							return existingChat;
+						}
+
+						return null;
+					},
+				);
 
 			createChatMock = jest
 				.spyOn(directChatsRepository, 'createChat')
@@ -81,6 +100,15 @@ describe('Direct chats', (): void => {
 			expect(directChatsService.createChat).toBeInstanceOf(Function);
 		});
 
+		it('should call getChatByUsers method to check if direct chat between these users exist', async (): Promise<void> => {
+			jest.setSystemTime(new Date(dateTimeMock));
+
+			await directChatsService.createChat(senderId, receiverId, messageText);
+
+			expect(getChatByUsersMock).toHaveBeenCalledTimes(1);
+			expect(getChatByUsersMock).toHaveBeenNthCalledWith(1, senderId, receiverId);
+		});
+
 		it('should call encryptText method in crypto service to encrypt message text', async (): Promise<void> => {
 			jest.setSystemTime(new Date(dateTimeMock));
 
@@ -119,6 +147,14 @@ describe('Direct chats', (): void => {
 
 			expect(getChatByIdMock).toHaveBeenCalledTimes(1);
 			expect(getChatByIdMock).toHaveBeenNthCalledWith(1, createdChatId);
+		});
+
+		it('should throw UnprocessableEntityException if chat between users already exist', async (): Promise<void> => {
+			jest.setSystemTime(new Date(dateTimeMock));
+
+			await expect(
+				directChatsService.createChat(existingChatFirstUser, existingChatSecondUser, messageText),
+			).rejects.toThrow(UnprocessableEntityException);
 		});
 
 		it('should throw UnprocessableEntityException if repository cannot get created chat', async (): Promise<void> => {
