@@ -29,6 +29,7 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 				.select('user')
 				.from(User, 'user')
 				.where('user.id = :id', { id: senderId })
+				.andWhere('user.isActivated = :isActivated', { isActivated: true })
 				.getOne();
 
 			const receiver: User | null = await transactionalEntityManager
@@ -36,6 +37,7 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 				.select('user')
 				.from(User, 'user')
 				.where('user.id = :id', { id: receiverId })
+				.andWhere('user.isActivated = :isActivated', { isActivated: true })
 				.getOne();
 
 			if (!sender || !receiver) {
