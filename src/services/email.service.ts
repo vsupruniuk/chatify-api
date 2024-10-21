@@ -24,10 +24,8 @@ export class EmailService implements IEmailService {
 			},
 		});
 
-		this._transporter.verify((error: Error | null, success: true): void => {
-			if (success) {
-				console.log('Server is ready to take messages');
-			} else {
+		this._transporter.verify((error: Error | null): void => {
+			if (error) {
 				console.log(error);
 			}
 		});
