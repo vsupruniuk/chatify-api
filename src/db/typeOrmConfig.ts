@@ -23,4 +23,10 @@ if (process.env.NODE_ENV !== Environments.DEV) {
 	typeOrmConfig = { ...typeOrmConfig, ssl: { rejectUnauthorized: false } };
 }
 
+export const typeOrmConfigMock: TypeOrmModuleOptions = {
+	type: 'sqlite',
+	database: ':memory:',
+	synchronize: true,
+};
+
 export const connectionSource = new DataSource(typeOrmConfig as DataSourceOptions);
