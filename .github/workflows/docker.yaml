@@ -1,0 +1,35 @@
+name: Docker image build and deploy
+
+on:
+  push:
+    branches: ["master", "release/*"]
+  pull_request:
+    branches: ["master", "release/*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for code delivery action finish
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: vsupruniuk
+          repo: chatify-api
+          github_token: ${{ secrets.GH_ACCESS_TOKEN_CI_CD }}
+          workflow_file_name: node.js.yaml
+          wait_interval: 30
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
+
+      - name: Extract branch name
+        shell: bash
+        id: extract_branch
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
+      - uses: actions/checkout@v4
+      - name: Build and push the Docker image
+        run: |
+          docker build -t vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.branch }} . \
+          docker push vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.branch }} .
+
