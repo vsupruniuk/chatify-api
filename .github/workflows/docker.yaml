@@ -7,9 +7,14 @@ on:
     branches: ["master", "release/*"]
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
+      - name: Extract branch name
+        shell: bash
+        id: extract_branch
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
       - name: Wait for code delivery action finish
         uses: convictional/trigger-workflow-and-wait@v1.6.1
         with:
@@ -21,11 +26,7 @@ jobs:
           propagate_failure: true
           trigger_workflow: true
           wait_workflow: true
-
-      - name: Extract branch name
-        shell: bash
-        id: extract_branch
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+          ref: ${{ steps.extract_branch.outputs.branch }}
 
       - uses: actions/checkout@v4
       - name: Build and push the Docker image
