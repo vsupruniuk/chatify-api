@@ -34,7 +34,7 @@ jobs:
           propagate_failure: true
           trigger_workflow: true
           wait_workflow: true
-          ref: ${{ steps.extract_branch.outputs.branch }}
+          ref: ${{ github.ref }}
 
         env:
           REGISTRY: docker.io
