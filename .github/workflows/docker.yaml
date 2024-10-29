@@ -19,8 +19,13 @@ jobs:
         shell: bash
         id: extract_branch
         run: |
-          branch=${GITHUB_REF#refs/heads/}
-          clean_branch=${branch#release/}
+          if [[ "${GITHUB_REF}" == refs/pull/* ]]; then
+            branch="${GITHUB_HEAD_REF}"
+          else
+            branch="${GITHUB_REF#refs/heads/}"
+          fi
+          clean_branch="${branch#release/}"
+          echo "branch=$branch" >> $GITHUB_OUTPUT
           echo "clean_branch=$clean_branch" >> $GITHUB_OUTPUT
 
       - name: Wait for code delivery action finish
@@ -34,11 +39,11 @@ jobs:
           propagate_failure: true
           trigger_workflow: true
           wait_workflow: true
-          ref: ${{ github.ref }}
+          ref: ${{ steps.extract_branch.outputs.branch }}
 
         env:
           REGISTRY: docker.io
-          IMAGE_NAME: vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.branch }}
+          IMAGE_NAME: vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.clean_branch }}
 
       - name: Checkout repository
         uses: actions/checkout@v4
