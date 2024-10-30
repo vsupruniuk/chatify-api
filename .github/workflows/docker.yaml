@@ -45,7 +45,6 @@ jobs:
 
         env:
           REGISTRY: docker.io
-          REPO_NAME: vsupruniuk/chatify-api
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -76,14 +75,14 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.REPO_NAME }}:${{ steps.extract_branch.outputs.docker_image_branch }}
+          tags: vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.docker_image_branch }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Sign the published Docker image
         env:
-          TAGS: ${{ env.REPO_NAME }}:${{ steps.extract_branch.outputs.docker_image_branch }}
+          TAGS: vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.docker_image_branch }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
 
