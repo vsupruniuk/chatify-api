@@ -27,8 +27,8 @@ jobs:
             target_branch="${GITHUB_REF#refs/heads/}"
           fi
           docker_image_branch="${target_branch#release/}"
-          echo "source_branch=source_branch" >> $GITHUB_OUTPUT
-          echo "docker_image_branch=docker_image_branch" >> $GITHUB_OUTPUT
+          echo "source_branch=$source_branch" >> $GITHUB_OUTPUT
+          echo "docker_image_branch=$docker_image_branch" >> $GITHUB_OUTPUT
 
       - name: Wait for code delivery action finish
         uses: convictional/trigger-workflow-and-wait@v1.6.1
