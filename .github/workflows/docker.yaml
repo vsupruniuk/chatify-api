@@ -45,7 +45,6 @@ jobs:
 
         env:
           REGISTRY: docker.io
-          IMAGE_NAME: vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.docker_image_branch }}
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -68,7 +67,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5.5.1
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ steps.extract_branch.outputs.docker_image_branch }}
 
       - name: Build and push Docker image
         id: build-and-push
@@ -76,7 +75,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: ${{ env.REGISTRY }}/${{ steps.extract_branch.outputs.docker_image_branch }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
