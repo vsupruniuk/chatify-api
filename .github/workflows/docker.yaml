@@ -73,8 +73,8 @@ jobs:
         uses: docker/build-push-action@v6.9.0
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          push: true
+          tags: ${{ steps.extract_branch.outputs.clean_branch }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
