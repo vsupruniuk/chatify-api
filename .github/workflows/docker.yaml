@@ -20,7 +20,7 @@ jobs:
         id: extract_branch
         run: |
           if [[ "${GITHUB_REF}" == refs/pull/* ]]; then
-            branch="${GITHUB_HEAD_REF}"
+            branch="${GITHUB_BASE_REF}"
           else
             branch="${GITHUB_REF#refs/heads/}"
           fi
@@ -74,7 +74,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.extract_branch.outputs.clean_branch }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
