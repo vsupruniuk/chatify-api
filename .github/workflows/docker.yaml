@@ -20,13 +20,15 @@ jobs:
         id: extract_branch
         run: |
           if [[ "${GITHUB_REF}" == refs/pull/* ]]; then
-            branch="${GITHUB_BASE_REF}"
+            source_branch="${GITHUB_HEAD_REF}"
+            target_branch="${GITHUB_BASE_REF}"
           else
-            branch="${GITHUB_REF#refs/heads/}"
+            source_branch="${GITHUB_REF#refs/heads/}"
+            target_branch="${GITHUB_REF#refs/heads/}"
           fi
-          clean_branch="${branch#release/}"
-          echo "branch=$branch" >> $GITHUB_OUTPUT
-          echo "clean_branch=$clean_branch" >> $GITHUB_OUTPUT
+          docker_image_branch="${target_branch#release/}"
+          echo "source_branch=source_branch" >> $GITHUB_OUTPUT
+          echo "docker_image_branch=docker_image_branch" >> $GITHUB_OUTPUT
 
       - name: Wait for code delivery action finish
         uses: convictional/trigger-workflow-and-wait@v1.6.1
@@ -39,11 +41,11 @@ jobs:
           propagate_failure: true
           trigger_workflow: true
           wait_workflow: true
-          ref: ${{ steps.extract_branch.outputs.branch }}
+          ref: ${{ steps.extract_branch.outputs.source_branch }}
 
         env:
           REGISTRY: docker.io
-          IMAGE_NAME: vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.clean_branch }}
+          IMAGE_NAME: vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.docker_image_branch }}
 
       - name: Checkout repository
         uses: actions/checkout@v4
