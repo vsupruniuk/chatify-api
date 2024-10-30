@@ -49,6 +49,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set Docker image name
+        run: echo "DOCKER_IMAGE=vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.docker_image_branch }}" >> $GITHUB_ENV
+
       - name: Install cosign
         uses: sigstore/cosign-installer@v3.7.0
         with:
@@ -75,14 +78,14 @@ jobs:
         with:
           context: .
           push: true
-          tags: vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.docker_image_branch }}
+          tags: ${{ env.DOCKER_IMAGE }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Sign the published Docker image
         env:
-          TAGS: vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.docker_image_branch }}
+          TAGS: ${{ env.DOCKER_IMAGE }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
 
