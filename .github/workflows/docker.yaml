@@ -83,20 +83,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Check for existing Cosign signature
-        id: check-signature
-        run: |
-          SIGNING_TAG="${{ env.IMAGE_NAME }}:sha256-${{ steps.build-and-push.outputs.digest }}.sig"
-          if docker manifest inspect "${SIGNING_TAG}" > /dev/null 2>&1; then
-            echo "Signature tag ${SIGNING_TAG} exists. Deleting..."
-            docker rmi "${SIGNING_TAG}"
-          else
-            echo "No existing signature tag found for ${SIGNING_TAG}."
-          fi
-
-      - name: Sign the published Docker image
+      - name: Sign the published Docker image with Rekor
         env:
           TAGS: ${{ env.DOCKER_IMAGE }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
-        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+        run: |
+          cosign sign --yes --rekor-url https://rekor.sigstore.dev ${TAGS}@${DIGEST}
 
+      - name: Verify signature with Rekor
+        run: |
+          cosign verify --rekor-url https://rekor.sigstore.dev ${{ env.DOCKER_IMAGE }}
