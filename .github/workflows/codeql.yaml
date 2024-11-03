@@ -28,6 +28,30 @@ jobs:
             build-mode: none
 
     steps:
+      - name: Extract branch name
+        shell: bash
+        id: extract_branch
+        run: |
+          if [[ "${GITHUB_REF}" == refs/pull/* ]]; then
+            source_branch="${GITHUB_HEAD_REF}"
+          else
+            source_branch="${GITHUB_REF#refs/heads/}"
+          fi
+          echo "source_branch=$source_branch" >> $GITHUB_OUTPUT
+
+      - name: Wait for dependency review finish
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: vsupruniuk
+          repo: chatify-api
+          github_token: ${{ secrets.GH_ACCESS_TOKEN_CI_CD }}
+          workflow_file_name: dependency-review.yaml
+          wait_interval: 30
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
+          ref: ${{ steps.extract_branch.outputs.source_branch }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
