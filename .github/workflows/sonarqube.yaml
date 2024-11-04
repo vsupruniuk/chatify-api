@@ -1,0 +1,50 @@
+name: SonarQube analysis
+
+on:
+  push:
+    branches: ["master", "release/*"]
+  pull_request:
+    branches: ["master", "release/*"]
+  workflow_dispatch:
+
+permissions:
+  pull-requests: read
+
+jobs:
+  Analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract branch name
+        shell: bash
+        id: extract_branch
+        run: |
+          if [[ "${GITHUB_REF}" == refs/pull/* ]]; then
+            source_branch="${GITHUB_HEAD_REF}"
+          else
+            source_branch="${GITHUB_REF#refs/heads/}"
+          fi
+          echo "source_branch=$source_branch" >> $GITHUB_OUTPUT
+
+      - name: Wait for codeql scanning finish
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: vsupruniuk
+          repo: chatify-api
+          github_token: ${{ secrets.GH_ACCESS_TOKEN_CI_CD }}
+          workflow_file_name: codeql.yaml
+          wait_interval: 30
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
+          ref: ${{ steps.extract_branch.outputs.source_branch }}
+
+      - name: Analyze with SonarQube
+        uses: SonarSource/sonarqube-scan-action@v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN_CI_CD }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args:
+            -Dsonar.projectKey=vsupruniuk_chatify-api
