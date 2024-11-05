@@ -46,7 +46,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
-          projectBaseDir: /src
           args: >
             -Dsonar.projectKey=vsupruniuk_chatify-api
             -Dsonar.organization=vsupruniuk
+            -Dsonar.sources=src
