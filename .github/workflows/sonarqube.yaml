@@ -39,6 +39,11 @@ jobs:
           wait_workflow: true
           ref: ${{ steps.extract_branch.outputs.source_branch }}
 
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - name: Analyze with SonarQube
         uses: SonarSource/sonarqube-scan-action@v3.0.0
         env:
@@ -50,3 +55,4 @@ jobs:
             -Dsonar.projectKey=vsupruniuk_chatify-api
             -Dsonar.organization=vsupruniuk
             -Dsonar.sources=src
+            -Dsonar.verbose=true
