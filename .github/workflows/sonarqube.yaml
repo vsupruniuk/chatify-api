@@ -2,9 +2,13 @@ name: SonarQube analysis
 
 on:
   push:
-    branches: ["master", "release/*"]
+    branches:
+      - master
+      - release/*
   pull_request:
-    branches: ["master", "release/*"]
+    branches:
+      - master
+      - release/*
   workflow_dispatch:
 
 permissions:
@@ -55,4 +59,3 @@ jobs:
             -Dsonar.projectKey=vsupruniuk_chatify-api
             -Dsonar.organization=vsupruniuk
             -Dsonar.sources=src
-            -Dsonar.verbose=true
