@@ -4,8 +4,6 @@ services:
     container_name: chatify-api
     build:
       context: .
-    env_file:
-      .env
     environment:
       NODE_ENV: $NODE_ENV
     ports:
