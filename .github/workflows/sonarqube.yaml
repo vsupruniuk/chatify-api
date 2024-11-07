@@ -50,6 +50,40 @@ jobs:
         run: npm ci
 
       - name: Test and coverage
+        env:
+          PORT: ${{ secrets.PORT }}
+          TESTS_PORT: ${{ secrets.TESTS_PORT }}
+          CLIENT_URL: ${{ secrets.CLIENT_URL }}
+
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+
+          THROTTLE_TIME_TO_LIVE: ${{ secrets.THROTTLE_TIME_TO_LIVE }}
+          THROTTLE_REQUESTS_LIMIT: ${{ secrets.THROTTLE_REQUESTS_LIMIT }}
+
+          PASSWORD_SALT_HASH_ROUNDS: ${{ secrets.PASSWORD_SALT_HASH_ROUNDS }}
+
+          JWT_ACCESS_TOKEN_SECRET: ${{ secrets.JWT_ACCESS_TOKEN_SECRET }}
+          JWT_ACCESS_TOKEN_EXPIRES_IN: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRES_IN }}
+          JWT_REFRESH_TOKEN_SECRET: ${{ secrets.JWT_REFRESH_TOKEN_SECRET }}
+          JWT_REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.JWT_REFRESH_TOKEN_EXPIRES_IN }}
+
+          CACHE_TIME_APP_USER: ${{ secrets.CACHE_TIME_APP_USER }}
+
+          CRYPTO_IV_LENGTH: ${{ secrets.CRYPTO_IV_LENGTH }}
+          CRYPTO_SALT_LENGTH: ${{ secrets.CRYPTO_SALT_LENGTH }}
+          CRYPTO_KEY_LENGTH: ${{ secrets.CRYPTO_KEY_LENGTH }}
+          CRYPTO_PASSWORD: ${{ secrets.CRYPTO_PASSWORD }}
+          CRYPTO_CIPHER_ALGORITHM: ${{ secrets.CRYPTO_CIPHER_ALGORITHM }}
+          CRYPTO_ENCRYPTION_ENCODING: ${{ secrets.CRYPTO_ENCRYPTION_ENCODING }}
         run: npm run test:cov
 
       - name: Analyze with SonarQube
