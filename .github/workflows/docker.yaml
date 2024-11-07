@@ -1,10 +1,11 @@
 name: Docker image build and deploy
 
 on:
-  push:
-    branches: ["release/*"]
   pull_request:
-    branches: ["release/*"]
+    types:
+      - closed
+    branches:
+      - release/*
 
 jobs:
   build-and-push:
@@ -21,28 +22,12 @@ jobs:
         id: extract_branch
         run: |
           if [[ "${GITHUB_REF}" == refs/pull/* ]]; then
-            source_branch="${GITHUB_HEAD_REF}"
             target_branch="${GITHUB_BASE_REF}"
           else
-            source_branch="${GITHUB_REF#refs/heads/}"
             target_branch="${GITHUB_REF#refs/heads/}"
           fi
           docker_image_branch="${target_branch#release/}"
-          echo "source_branch=$source_branch" >> $GITHUB_OUTPUT
           echo "docker_image_branch=$docker_image_branch" >> $GITHUB_OUTPUT
-
-      - name: Wait for code delivery action finish
-        uses: convictional/trigger-workflow-and-wait@v1.6.1
-        with:
-          owner: vsupruniuk
-          repo: chatify-api
-          github_token: ${{ secrets.GH_ACCESS_TOKEN_CI_CD }}
-          workflow_file_name: node.js.yaml
-          wait_interval: 30
-          propagate_failure: true
-          trigger_workflow: true
-          wait_workflow: true
-          ref: ${{ steps.extract_branch.outputs.source_branch }}
 
         env:
           REGISTRY: docker.io
