@@ -1,20 +1,34 @@
 services:
   chatify-api:
-    image: vsupruniuk/chatify-api
+    image: vsupruniuk/chatify-api:local
     container_name: chatify-api
     build:
       context: .
     env_file:
-      .env
-    environment:
-      NODE_ENV: $NODE_ENV
+      - .env.docker
     ports:
       - $PORT:$PORT
     volumes:
       - ./src:/app/src
       - public_files:/app/public
+    depends_on:
+      - chatify-api-database
     command: >
       sh -c "npm run build && npm run migration:run && npm run start:$NODE_ENV"
 
+  chatify-api-database:
+    image: postgres:16.3-alpine
+    container_name: chatify-api-database
+    environment:
+      POSTGRES_DB: $DATABASE_NAME
+      POSTGRES_USER: $DATABASE_USERNAME
+      POSTGRES_PASSWORD: $DATABASE_PASSWORD
+    ports:
+      - $DATABASE_PORT:$DATABASE_PORT
+    volumes:
+      - chatify_api_database_data:/var/lib/postgresql/data
+    restart: on-failure
+
 volumes:
   public_files:
+  chatify_api_database_data:

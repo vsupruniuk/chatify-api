@@ -1,8 +1,8 @@
 up:
-	NODE_ENV=dev docker-compose up --build
+	docker-compose up --build -d
 
 down:
-	NODE_ENV=dev docker-compose down
+	docker-compose down
 
 build-image:
 	docker build -t vsupruniuk/chatify-api:latest .
