@@ -35,5 +35,6 @@ export default async (): Promise<Config> => {
 		testEnvironment: 'node',
 		moduleDirectories: ['node_modules', 'src', 'dist'],
 		setupFiles: ['dotenv/config'],
+		coveragePathIgnorePatterns: ['node_modules', 'types', 'db', 'logger', 'tests', '.mock.ts'],
 	};
 };

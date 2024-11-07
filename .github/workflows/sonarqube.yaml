@@ -45,8 +45,12 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test and coverage
+        run: npm run test:cov
 
       - name: Analyze with SonarQube
         uses: SonarSource/sonarqube-scan-action@v3.0.0
@@ -56,6 +60,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
+            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
             -Dsonar.projectKey=vsupruniuk_chatify-api
             -Dsonar.organization=vsupruniuk
             -Dsonar.sources=src
