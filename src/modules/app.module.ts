@@ -6,10 +6,11 @@ import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { typeOrmConfig } from '@DB/typeOrmConfig';
+import { typeOrmConfig, typeOrmConfigMock } from '@DB/typeOrmConfig';
 import { AuthModule } from '@Modules/auth.module';
 import { join } from 'path';
 import { throttlerGuardProvider } from '@Modules/providers';
+import { Environments } from '@Enums/Environments.enum';
 
 @Module({
 	imports: [
@@ -18,7 +19,15 @@ import { throttlerGuardProvider } from '@Modules/providers';
 		SearchModule,
 		DirectChatsModule,
 		ConfigModule.forRoot(),
-		TypeOrmModule.forRoot(typeOrmConfig),
+		TypeOrmModule.forRootAsync({
+			useFactory: () => {
+				if (process.env.NODE_ENV === Environments.TEST) {
+					return typeOrmConfigMock;
+				}
+
+				return typeOrmConfig;
+			},
+		}),
 		ThrottlerModule.forRoot([
 			{
 				ttl: Number(process.env.THROTTLE_TIME_TO_LIVE) || 1000000,

@@ -1,6 +1,6 @@
 {
   "name": "chatify-api",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "Chatify API is a powerful NestJS-based backend service for a real-time messenger application. It provides features like user management, group chats, direct messaging, user search, and more.",
   "author": "Vladyslav Supruniuk",
   "private": false,
@@ -17,9 +17,9 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "cross-env NODE_ENV=dev jest",
+    "test": "cross-env NODE_ENV=test jest --runInBand",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test:cov": "cross-env NODE_ENV=test jest --coverage --runInBand",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
@@ -54,6 +54,7 @@
     "reflect-metadata": "0.2.1",
     "rxjs": "7.8.1",
     "socket.io-client": "4.7.5",
+    "sqlite3": "5.1.7",
     "typeorm": "0.3.20",
     "uuid": "9.0.1"
   },

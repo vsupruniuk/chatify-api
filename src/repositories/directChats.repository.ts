@@ -6,6 +6,8 @@ import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { AppLogger } from '@Logger/app.logger';
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { DataSource, EntityManager, InsertResult } from 'typeorm';
+import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
+import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 
 @Injectable()
 export class DirectChatsRepository implements IDirectChatsRepository {
@@ -27,6 +29,7 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 				.select('user')
 				.from(User, 'user')
 				.where('user.id = :id', { id: senderId })
+				.andWhere('user.isActivated = :isActivated', { isActivated: true })
 				.getOne();
 
 			const receiver: User | null = await transactionalEntityManager
@@ -34,6 +37,7 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 				.select('user')
 				.from(User, 'user')
 				.where('user.id = :id', { id: receiverId })
+				.andWhere('user.isActivated = :isActivated', { isActivated: true })
 				.getOne();
 
 			if (!sender || !receiver) {
@@ -212,6 +216,59 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 			.leftJoinAndSelect('directChatMessage.sender', 'sender')
 			.leftJoinAndSelect('directChat.users', 'directChatUsers')
 			.where('directChatMessage.id = :id', { id: messageId })
+			.getOne();
+	}
+
+	public async getChatById(chatId: string): Promise<DirectChat | null> {
+		const lastMessageSubQuery: string = this._dataSource
+			.createQueryBuilder()
+			.select('directChatMessage.id')
+			.from(DirectChatMessage, 'directChatMessage')
+			.where('directChatMessage.directChatId = directChat.id')
+			.orderBy('directChatMessage.updatedAt', 'DESC')
+			.limit(1)
+			.getQuery();
+
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('directChat')
+			.from(DirectChat, 'directChat')
+			.leftJoinAndSelect('directChat.users', 'users')
+			.leftJoinAndMapMany(
+				'directChat.messages',
+				DirectChatMessage,
+				'lastMessage',
+				`lastMessage.id = (${lastMessageSubQuery})`,
+			)
+			.leftJoinAndSelect('lastMessage.sender', 'sender')
+			.where('directChat.id = :id', { id: chatId })
+			.getOne();
+	}
+
+	public async getChatByUsers(
+		firstUserId: string,
+		secondUserId: string,
+	): Promise<DirectChat | null> {
+		const chatWithFirstUserExistCondition: SelectQueryBuilder<ObjectLiteral> = this._dataSource
+			.createQueryBuilder()
+			.select('*')
+			.from('DirectChatUsers', 'directChatUsers')
+			.where('directChatUsers.directChatId = directChat.id')
+			.andWhere('directChatUsers.userId = :userId', { userId: firstUserId });
+
+		const chatWithSecondUserExistCondition: SelectQueryBuilder<ObjectLiteral> = this._dataSource
+			.createQueryBuilder()
+			.select('*')
+			.from('DirectChatUsers', 'directChatUsers')
+			.where('directChatUsers.directChatId = directChat.id')
+			.andWhere('directChatUsers.userId = :userId', { userId: secondUserId });
+
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('directChat')
+			.from(DirectChat, 'directChat')
+			.whereExists(chatWithFirstUserExistCondition)
+			.andWhereExists(chatWithSecondUserExistCondition)
 			.getOne();
 	}
 }

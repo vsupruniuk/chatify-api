@@ -1,14 +1,20 @@
-import { CreateDirectChatDto } from '@DTO/directChat/CreateDIrectChat.dto';
 import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
 
 export interface IDirectChatsService {
 	/**
 	 * Method for creating direct chat with initial message
-	 * @param createDirectChatDto - users information for creating chat and initial message
-	 * @returns id of created chat
+	 * @param senderId - id of user who send want to create chat
+	 * @param receiverId - id of another user in the chat
+	 * @param messageText - initial message text
+	 * @throws UnprocessableEntityException - if chat for these users already exist or failed to create chat
+	 * @returns created chat
 	 */
-	createChat(createDirectChatDto: CreateDirectChatDto): Promise<string>;
+	createChat(
+		senderId: string,
+		receiverId: string,
+		messageText: string,
+	): Promise<DirectChatShortDto>;
 
 	/**
 	 * Retrieve last direct chat, decrypt their last messages and return in public form

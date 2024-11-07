@@ -1,4 +1,3 @@
-import { CreateDirectChatDto } from '@DTO/directChat/CreateDIrectChat.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { DateHelper } from '@Helpers/date.helper';
 import { ICryptoService } from '@Interfaces/crypto/ICryptoService';
@@ -21,13 +20,47 @@ export class DirectChatsService implements IDirectChatsService {
 		private readonly _cryptoService: ICryptoService,
 	) {}
 
-	public async createChat(createDirectChatDto: CreateDirectChatDto): Promise<string> {
-		return await this._directChatsRepository.createChat(
-			createDirectChatDto.senderId,
-			createDirectChatDto.receiverId,
-			await this._cryptoService.encryptText(createDirectChatDto.messageText),
+	public async createChat(
+		senderId: string,
+		receiverId: string,
+		messageText: string,
+	): Promise<DirectChatShortDto> {
+		const existingChat: DirectChat | null = await this._directChatsRepository.getChatByUsers(
+			senderId,
+			receiverId,
+		);
+
+		if (existingChat) {
+			throw new UnprocessableEntityException('Direct chat between these users already exists');
+		}
+
+		const createdChatId: string = await this._directChatsRepository.createChat(
+			senderId,
+			receiverId,
+			await this._cryptoService.encryptText(messageText),
 			DateHelper.dateTimeNow(),
 		);
+
+		const createdChat: DirectChat | null =
+			await this._directChatsRepository.getChatById(createdChatId);
+
+		if (!createdChat) {
+			throw new UnprocessableEntityException('Failed to create chat. Please, try again');
+		}
+
+		const decryptedChat: DirectChat = {
+			...createdChat,
+			messages: await Promise.all(
+				createdChat.messages.map(async (message: DirectChatMessage) => {
+					return {
+						...message,
+						messageText: await this._cryptoService.decryptText(message.messageText),
+					};
+				}),
+			),
+		};
+
+		return plainToInstance(DirectChatShortDto, decryptedChat, { excludeExtraneousValues: true });
 	}
 
 	public async getLastChats(

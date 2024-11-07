@@ -110,6 +110,18 @@ describe('directChatRepository', (): void => {
 				id: receiverId,
 			});
 
+			expect(queryBuilderMock.andWhere).toHaveBeenCalledTimes(2);
+			expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(
+				1,
+				'user.isActivated = :isActivated',
+				{ isActivated: true },
+			);
+			expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(
+				2,
+				'user.isActivated = :isActivated',
+				{ isActivated: true },
+			);
+
 			expect(queryBuilderMock.getOne).toHaveBeenCalledTimes(3);
 		});
 

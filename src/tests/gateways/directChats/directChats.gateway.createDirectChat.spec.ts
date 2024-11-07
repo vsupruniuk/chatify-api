@@ -16,6 +16,9 @@ import { SuccessfulWSResponseResult } from '@Responses/successfulResponses/Succe
 import { users } from '@TestMocks/User/users';
 import { plainToInstance } from 'class-transformer';
 import { io, Socket } from 'socket.io-client';
+import { directChats } from '@TestMocks/DirectChat/directChats';
+import { DirectChat } from '@Entities/DirectChat.entity';
+import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 
 describe('Direct chat gateway', (): void => {
 	let app: INestApplication;
@@ -25,7 +28,7 @@ describe('Direct chat gateway', (): void => {
 	const validAccessToken: string = 'validAccessToken';
 	const validAccessTokenReceiver: string = 'validAccessTokenReceiver';
 	const invalidAccessToken: string = 'invalidAccessToken';
-	const createdChatId: string = 'createdChatId';
+	const createdChat: DirectChat = directChats[0];
 
 	const jwtServiceMock: Partial<IJWTTokensService> = {
 		verifyAccessToken: jest
@@ -44,7 +47,11 @@ describe('Direct chat gateway', (): void => {
 	};
 
 	const directChatsServiceMock: Partial<IDirectChatsService> = {
-		createChat: jest.fn().mockReturnValue(createdChatId),
+		createChat: jest
+			.fn()
+			.mockImplementation(() =>
+				plainToInstance(DirectChatShortDto, createdChat, { excludeExtraneousValues: true }),
+			),
 	};
 
 	beforeAll(async (): Promise<void> => {
@@ -209,75 +216,6 @@ describe('Direct chat gateway', (): void => {
 			expect(jwtServiceMock.verifyAccessToken).toHaveBeenCalledWith(validAccessToken);
 		});
 
-		it('should emit error event with Bad Request Exception if sender id is not provided in event data', async (): Promise<void> => {
-			socket = io(`http://localhost:${port}`, {
-				transports: ['websocket'],
-				extraHeaders: { [Headers.AUTHORIZATION]: `Bearer ${validAccessToken}` },
-			});
-
-			const createDirectChatDto = {
-				receiverId: '083dc6f8-cbfb-4f0f-8f15-87410aa8ea21',
-				messageText: 'Hello, world!',
-			} as CreateDirectChatDto;
-
-			const errorResponse: ErrorWSResponseResult<ValidationErrorField> = {
-				status: ResponseStatus.ERROR,
-				title: 'Bad Request',
-				errors: [{ message: 'Wrong senderId format. UUID is expected', field: null }],
-				errorsLength: 1,
-			};
-
-			socket.connect();
-			socket.emit(WSEvents.CREATE_CHAT, createDirectChatDto);
-
-			await new Promise<void>((resolve, reject) => {
-				socket.on(WSEvents.ON_CREATE_CHAT, () => {
-					reject('Error event was not triggered');
-				});
-
-				socket.on(WSEvents.ON_ERROR, (error: ErrorWSResponseResult<ValidationErrorField>) => {
-					expect(error.title).toEqual(errorResponse.title);
-					expect(error.errors).toEqual(errorResponse.errors);
-					resolve();
-				});
-			});
-		});
-
-		it('should emit error event with Bad Request Exception if sender id is invalid uuid', async (): Promise<void> => {
-			socket = io(`http://localhost:${port}`, {
-				transports: ['websocket'],
-				extraHeaders: { [Headers.AUTHORIZATION]: `Bearer ${validAccessToken}` },
-			});
-
-			const createDirectChatDto = {
-				senderId: '123',
-				receiverId: '083dc6f8-cbfb-4f0f-8f15-87410aa8ea21',
-				messageText: 'Hello, world!',
-			} as CreateDirectChatDto;
-
-			const errorResponse: ErrorWSResponseResult<ValidationErrorField> = {
-				status: ResponseStatus.ERROR,
-				title: 'Bad Request',
-				errors: [{ message: 'Wrong senderId format. UUID is expected', field: null }],
-				errorsLength: 1,
-			};
-
-			socket.connect();
-			socket.emit(WSEvents.CREATE_CHAT, createDirectChatDto);
-
-			await new Promise<void>((resolve, reject) => {
-				socket.on(WSEvents.ON_CREATE_CHAT, () => {
-					reject('Error event was not triggered');
-				});
-
-				socket.on(WSEvents.ON_ERROR, (error: ErrorWSResponseResult<ValidationErrorField>) => {
-					expect(error.title).toEqual(errorResponse.title);
-					expect(error.errors).toEqual(errorResponse.errors);
-					resolve();
-				});
-			});
-		});
-
 		it('should emit error event with Bad Request Exception if receiver id is not provided in event data', async (): Promise<void> => {
 			socket = io(`http://localhost:${port}`, {
 				transports: ['websocket'],
@@ -285,7 +223,6 @@ describe('Direct chat gateway', (): void => {
 			});
 
 			const createDirectChatDto = {
-				senderId: '2e2a2ccd-94c6-42b1-842d-2d05a45bf8c0',
 				messageText: 'Hello, world!',
 			} as CreateDirectChatDto;
 
@@ -319,7 +256,6 @@ describe('Direct chat gateway', (): void => {
 			});
 
 			const createDirectChatDto = {
-				senderId: '2e2a2ccd-94c6-42b1-842d-2d05a45bf8c0',
 				receiverId: '123',
 				messageText: 'Hello, world!',
 			} as CreateDirectChatDto;
@@ -354,7 +290,6 @@ describe('Direct chat gateway', (): void => {
 			});
 
 			const createDirectChatDto = {
-				senderId: '2e2a2ccd-94c6-42b1-842d-2d05a45bf8c0',
 				receiverId: '083dc6f8-cbfb-4f0f-8f15-87410aa8ea21',
 			} as CreateDirectChatDto;
 
@@ -398,7 +333,6 @@ describe('Direct chat gateway', (): void => {
 			});
 
 			const createDirectChatDto = {
-				senderId: '2e2a2ccd-94c6-42b1-842d-2d05a45bf8c0',
 				receiverId: '083dc6f8-cbfb-4f0f-8f15-87410aa8ea21',
 				messageText: 2,
 			};
@@ -443,7 +377,6 @@ describe('Direct chat gateway', (): void => {
 			});
 
 			const createDirectChatDto = {
-				senderId: '2e2a2ccd-94c6-42b1-842d-2d05a45bf8c0',
 				receiverId: '083dc6f8-cbfb-4f0f-8f15-87410aa8ea21',
 				messageText: '',
 			} as CreateDirectChatDto;
@@ -483,7 +416,6 @@ describe('Direct chat gateway', (): void => {
 			});
 
 			const createDirectChatDto = {
-				senderId: '2e2a2ccd-94c6-42b1-842d-2d05a45bf8c0',
 				receiverId: '083dc6f8-cbfb-4f0f-8f15-87410aa8ea21',
 				messageText: 'H'.padEnd(501, 'H'),
 			} as CreateDirectChatDto;
@@ -523,14 +455,17 @@ describe('Direct chat gateway', (): void => {
 			});
 
 			const createDirectChatDto = {
-				senderId: '2e2a2ccd-94c6-42b1-842d-2d05a45bf8c0',
 				receiverId: '083dc6f8-cbfb-4f0f-8f15-87410aa8ea21',
 				messageText: 'Hello, world!',
 			} as CreateDirectChatDto;
 
 			const successfulResponse: SuccessfulWSResponseResult<CreateDirectChatResponseDto> = {
 				status: ResponseStatus.SUCCESS,
-				data: { directChatId: createdChatId },
+				data: {
+					directChat: plainToInstance(DirectChatShortDto, createdChat, {
+						excludeExtraneousValues: true,
+					}),
+				},
 			};
 
 			socket.connect();
@@ -556,14 +491,17 @@ describe('Direct chat gateway', (): void => {
 			});
 
 			const createDirectChatDto = {
-				senderId: '2e2a2ccd-94c6-42b1-842d-2d05a45bf8c0',
 				receiverId: '699901e8-653f-4ac2-841e-b85388c4b89c',
 				messageText: 'Hello, world!',
 			} as CreateDirectChatDto;
 
 			const successfulResponse: SuccessfulWSResponseResult<CreateDirectChatResponseDto> = {
 				status: ResponseStatus.SUCCESS,
-				data: { directChatId: createdChatId },
+				data: {
+					directChat: plainToInstance(DirectChatShortDto, createdChat, {
+						excludeExtraneousValues: true,
+					}),
+				},
 			};
 
 			socket.connect();
@@ -586,7 +524,6 @@ describe('Direct chat gateway', (): void => {
 			});
 
 			const createDirectChatDto = {
-				senderId: '2e2a2ccd-94c6-42b1-842d-2d05a45bf8c0',
 				receiverId: '699901e8-653f-4ac2-841e-b85388c4b89c',
 				messageText: 'Hello, world!',
 			} as CreateDirectChatDto;
@@ -598,7 +535,11 @@ describe('Direct chat gateway', (): void => {
 			await new Promise<void>((resolve) => {
 				socket.on(WSEvents.ON_CREATE_CHAT, () => {
 					expect(directChatsServiceMock.createChat).toHaveBeenCalledTimes(1);
-					expect(directChatsServiceMock.createChat).toHaveBeenCalledWith(createDirectChatDto);
+					expect(directChatsServiceMock.createChat).toHaveBeenCalledWith(
+						users[2].id,
+						createDirectChatDto.receiverId,
+						createDirectChatDto.messageText,
+					);
 
 					resolve();
 				});

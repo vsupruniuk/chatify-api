@@ -1,0 +1,65 @@
+name: Docker image build and deploy
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - release/*
+
+jobs:
+  build-and-push:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Extract branch name
+        shell: bash
+        id: extract_branch
+        run: |
+          if [[ "${GITHUB_REF}" == refs/pull/* ]]; then
+            target_branch="${GITHUB_BASE_REF}"
+          else
+            target_branch="${GITHUB_REF#refs/heads/}"
+          fi
+          docker_image_branch="${target_branch#release/}"
+          echo "docker_image_branch=$docker_image_branch" >> $GITHUB_OUTPUT
+
+        env:
+          REGISTRY: docker.io
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set Docker image name
+        run: echo "DOCKER_IMAGE=vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.docker_image_branch }}" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.7.1
+
+      - name: Log into Docker Hub
+        uses: docker/login-action@v3.3.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5.5.1
+        with:
+          images: ${{ env.REGISTRY }}/${{ steps.extract_branch.outputs.docker_image_branch }}
+
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v6.9.0
+        with:
+          context: .
+          push: true
+          tags: ${{ env.DOCKER_IMAGE }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
