@@ -3,7 +3,7 @@ name: CodeQL Advanced scanning
 on:
   pull_request:
     branches:
-    - master,
+    - master
     - release/*
   schedule:
     - cron: '00 14 * * 5'

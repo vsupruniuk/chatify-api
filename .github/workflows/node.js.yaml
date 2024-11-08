@@ -3,7 +3,7 @@ name: Chatify API code delivery
 on:
   pull_request:
     branches:
-    - master,
+    - master
     - release/*
   workflow_dispatch:
 
