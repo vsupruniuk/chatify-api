@@ -1,10 +1,10 @@
 name: Chatify API code delivery
 
 on:
-  push:
-    branches: ["master", "release/*"]
   pull_request:
-    branches: ["master", "release/*"]
+    branches:
+    - master
+    - release/*
   workflow_dispatch:
 
 jobs:
@@ -27,13 +27,13 @@ jobs:
         fi
         echo "source_branch=$source_branch" >> $GITHUB_OUTPUT
 
-    - name: Wait for sonarqube analyse finish
+    - name: Wait for codeql scanning finish
       uses: convictional/trigger-workflow-and-wait@v1.6.1
       with:
         owner: vsupruniuk
         repo: chatify-api
         github_token: ${{ secrets.GH_ACCESS_TOKEN_CI_CD }}
-        workflow_file_name: sonarqube.yaml
+        workflow_file_name: codeql.yaml
         wait_interval: 30
         propagate_failure: true
         trigger_workflow: true
