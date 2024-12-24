@@ -23,7 +23,7 @@ describe('Direct chats gateway', (): void => {
 	let app: INestApplication;
 	let directChatsGateway: DirectChatsGateway;
 
-	const port: number = Number(process.env.PORT) || 3000;
+	const port: number = Number(process.env.TESTS_PORT) || 3000;
 	const validAccessToken: string = 'validAccessToken';
 	const validAccessTokenReceiver: string = 'validAccessTokenReceiver';
 	const invalidAccessToken: string = 'invalidAccessToken';
