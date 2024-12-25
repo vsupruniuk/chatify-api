@@ -11,13 +11,19 @@ import { UserShortDto } from '@DTO/users/UserShort.dto';
 export interface IUsersService {
 	/**
 	 * Method for searching users by their nicknames
-	 * @param nickname - user nickname
+	 * @param userNickname - logged-in user nickname
+	 * @param nickname - user nickname for search
 	 * @param page - number of skipped record sets. Default: 1
 	 * @param take - number of records to take. Default: 10
 	 * @returns UserPublicDto[] - array of founded users
 	 * @returns [] - empty array if no users found
 	 */
-	getPublicUsers(nickname: string, page?: number, take?: number): Promise<UserPublicDto[]>;
+	getPublicUsers(
+		userNickname: string,
+		nickname: string,
+		page?: number,
+		take?: number,
+	): Promise<UserPublicDto[]>;
 
 	/**
 	 * Method for searching user by id. Return all user information (except service information of the DB)
