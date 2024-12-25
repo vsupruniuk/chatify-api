@@ -53,7 +53,12 @@ export class SearchController implements ISearchController {
 		const responseResult: SuccessfulResponseResult<UserPublicDto> =
 			new SuccessfulResponseResult<UserPublicDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
 
-		responseResult.data = await this._usersService.getPublicUsers(nickname, page, take);
+		responseResult.data = await this._usersService.getPublicUsers(
+			appUserPayload.nickname,
+			nickname,
+			page,
+			take,
+		);
 		responseResult.dataLength = responseResult.data.length;
 
 		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });

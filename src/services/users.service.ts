@@ -40,6 +40,7 @@ export class UsersService implements IUsersService {
 	) {}
 
 	public async getPublicUsers(
+		userNickname: string,
 		nickname: string,
 		page?: number,
 		take?: number,
@@ -52,9 +53,11 @@ export class UsersService implements IUsersService {
 			takeRecords,
 		);
 
-		return users.map((user: User) => {
-			return plainToInstance(UserPublicDto, user, { excludeExtraneousValues: true });
-		});
+		return users
+			.filter((user: User) => user.nickname !== userNickname)
+			.map((user: User) => {
+				return plainToInstance(UserPublicDto, user, { excludeExtraneousValues: true });
+			});
 	}
 
 	public async getFullUserByEmail(email: string): Promise<UserFullDto | null> {

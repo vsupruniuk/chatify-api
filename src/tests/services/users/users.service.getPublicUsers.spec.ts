@@ -39,6 +39,7 @@ describe('usersService', (): void => {
 		let getPublicUsersMock: SpyInstance;
 
 		const usersMock: User[] = [...users];
+		const userNickname: string = 's.rogers';
 
 		beforeEach((): void => {
 			getPublicUsersMock = jest
@@ -46,10 +47,11 @@ describe('usersService', (): void => {
 				.mockImplementation(
 					async (nickname: string, skip: number, take: number): Promise<User[]> => {
 						return usersMock
-							.filter(
-								(user: User) =>
-									user.nickname.toLowerCase().includes(nickname.toLowerCase()) && user.isActivated,
-							)
+							.filter((user: User) => {
+								return (
+									user.nickname.toLowerCase().includes(nickname.toLowerCase()) && user.isActivated
+								);
+							})
 							.slice(skip, take);
 					},
 				);
@@ -72,7 +74,7 @@ describe('usersService', (): void => {
 			const page: number = 1;
 			const take: number = 10;
 
-			await usersService.getPublicUsers(nickname, page, take);
+			await usersService.getPublicUsers(userNickname, nickname, page, take);
 
 			expect(getPublicUsersMock).toHaveBeenCalledTimes(1);
 			expect(getPublicUsersMock).toHaveBeenCalledWith(nickname, page * take - take, take);
@@ -81,7 +83,7 @@ describe('usersService', (): void => {
 		it('should provide default values for getPublicUsers method if page or take not provided', async (): Promise<void> => {
 			const nickname: string = 't.stark';
 
-			await usersService.getPublicUsers(nickname);
+			await usersService.getPublicUsers(userNickname, nickname);
 
 			expect(getPublicUsersMock).toHaveBeenCalledTimes(1);
 			expect(getPublicUsersMock).toHaveBeenCalledWith(nickname, 0, 10);
@@ -90,25 +92,35 @@ describe('usersService', (): void => {
 		it('should return response as instance of Array', async (): Promise<void> => {
 			const nickname: string = 't.stark';
 
-			const users: UserPublicDto[] = await usersService.getPublicUsers(nickname);
+			const users: UserPublicDto[] = await usersService.getPublicUsers(userNickname, nickname);
 
 			expect(users).toBeInstanceOf(Array);
 		});
 
 		it('should return each user as instance of UserPublicDto', async (): Promise<void> => {
-			const nickname: string = 't.stark';
+			const nickname: string = 'ro';
 
-			const users: UserPublicDto[] = await usersService.getPublicUsers(nickname);
+			const users: UserPublicDto[] = await usersService.getPublicUsers(userNickname, nickname);
 
 			users.forEach((user: UserPublicDto) => {
 				expect(user).toBeInstanceOf(UserPublicDto);
 			});
 		});
 
+		it('should exclude current logged-in user from the result', async (): Promise<void> => {
+			const nickname: string = 'ro';
+
+			const users: UserPublicDto[] = await usersService.getPublicUsers(userNickname, nickname);
+
+			users.forEach((user: UserPublicDto) => {
+				expect(user.nickname).not.toBe(userNickname);
+			});
+		});
+
 		it('should return empty array if no users found', async (): Promise<void> => {
 			const nickname: string = 't.stark';
 
-			const users: UserPublicDto[] = await usersService.getPublicUsers(nickname);
+			const users: UserPublicDto[] = await usersService.getPublicUsers(userNickname, nickname);
 
 			expect(users).toStrictEqual([]);
 		});
