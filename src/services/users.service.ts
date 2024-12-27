@@ -22,6 +22,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 import { plainToInstance } from 'class-transformer';
+import { PasswordResetTokensHelper } from '@Helpers/passwordResetTokens.helper';
+import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -89,6 +91,14 @@ export class UsersService implements IUsersService {
 			await this._passwordResetTokenRepository.getByField('token', token);
 
 		if (!foundedToken) {
+			return null;
+		}
+
+		const isTokenExpired: boolean = PasswordResetTokensHelper.isExpired(
+			plainToInstance(PasswordResetTokenDto, foundedToken, { excludeExtraneousValues: true }),
+		);
+
+		if (isTokenExpired) {
 			return null;
 		}
 

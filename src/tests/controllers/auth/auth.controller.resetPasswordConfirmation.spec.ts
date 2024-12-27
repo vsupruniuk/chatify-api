@@ -14,14 +14,19 @@ import { SuccessfulResponseResult } from '@Responses/successfulResponses/Success
 import { users } from '@TestMocks/User/users';
 import { plainToInstance } from 'class-transformer';
 import * as request from 'supertest';
+import { IPasswordResetTokensService } from '@Interfaces/passwordResetTokens/IPasswordResetTokens.service';
+import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
+import { passwordResetTokens } from '@TestMocks/PasswordResetToken/passwordResetTokens';
 
 describe('AuthController', (): void => {
 	let app: INestApplication;
 	let authController: AuthController;
 
 	const usersMock: User[] = [...users];
-	const existingToken: string = '1662043c-4d4b-4424-ac31-45189dedd099';
-	const notExistingToken: string = '1662043c-4d4b-4424-ac31-45189dedd000';
+	const passwordResetTokensMock: PasswordResetToken[] = [...passwordResetTokens];
+	const existingToken: string = '35b61c45-f134-4e6c-af56-3a72982d3d9e';
+	const notExistingToken: string = '809843c4-dab7-4ed3-8de8-71e8c7ba0050';
+	const existingTokenId: string = '1';
 
 	const usersServiceMock: Partial<IUsersService> = {
 		getByResetPasswordToken: jest
@@ -37,12 +42,20 @@ describe('AuthController', (): void => {
 		}),
 	};
 
+	const passwordResetTokensService: Partial<IPasswordResetTokensService> = {
+		deleteToken: jest.fn().mockImplementation(async (tokenId: string): Promise<boolean> => {
+			return passwordResetTokensMock.some((token: PasswordResetToken) => token.id === tokenId);
+		}),
+	};
+
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AppModule, AuthModule],
 		})
 			.overrideProvider(CustomProviders.I_USERS_SERVICE)
 			.useValue(usersServiceMock)
+			.overrideProvider(CustomProviders.I_PASSWORD_RESET_TOKENS_SERVICE)
+			.useValue(passwordResetTokensService)
 			.compile();
 
 		app = moduleFixture.createNestApplication();
@@ -296,17 +309,27 @@ describe('AuthController', (): void => {
 			});
 		});
 
+		it('should call delete token in password reset tokens to delete used password reset token', async (): Promise<void> => {
+			const resetPasswordConfirmationDto = {
+				password: 'qwerty1A',
+				passwordConfirmation: 'qwerty1A',
+			} as ResetPasswordConfirmationDto;
+
+			await authController.resetPasswordConfirmation(resetPasswordConfirmationDto, existingToken);
+
+			expect(passwordResetTokensService.deleteToken).toHaveBeenCalledTimes(1);
+			expect(passwordResetTokensService.deleteToken).toHaveBeenCalledWith(existingTokenId);
+		});
+
 		it('should return response as instance of ResponseResult', async (): Promise<void> => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
 			} as ResetPasswordConfirmationDto;
 
-			const resetToken: string = '1662043c-4d4b-4424-ac31-45189dedd099';
-
 			const result: ResponseResult = await authController.resetPasswordConfirmation(
 				resetPasswordConfirmationDto,
-				resetToken,
+				existingToken,
 			);
 
 			expect(result).toBeInstanceOf(SuccessfulResponseResult);
