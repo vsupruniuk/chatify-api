@@ -51,6 +51,8 @@ describe('UsersService', (): void => {
 		const existingTokenId: string = '1';
 
 		beforeEach((): void => {
+			jest.useFakeTimers();
+
 			getTokenByFieldMock = jest
 				.spyOn(passwordResetTokensRepository, 'getByField')
 				.mockImplementation(
@@ -89,6 +91,7 @@ describe('UsersService', (): void => {
 
 		afterEach((): void => {
 			jest.clearAllMocks();
+			jest.useRealTimers();
 		});
 
 		it('should be defined', (): void => {
@@ -100,6 +103,8 @@ describe('UsersService', (): void => {
 		});
 
 		it('should call getByField method in usersRepository to get user by token id', async (): Promise<void> => {
+			jest.setSystemTime(new Date('2024-02-12 15:55:00'));
+
 			await usersService.getByResetPasswordToken(existingToken);
 
 			expect(getUserByField).toHaveBeenCalledTimes(1);
@@ -119,13 +124,25 @@ describe('UsersService', (): void => {
 			expect(user).toBeNull();
 		});
 
+		it('should return null if token expired', async (): Promise<void> => {
+			jest.setSystemTime(new Date('2024-02-12 17:00:00'));
+
+			const user: UserFullDto | null = await usersService.getByResetPasswordToken(existingToken);
+
+			expect(user).toBeNull();
+		});
+
 		it('should return founded user if token with given value exist', async (): Promise<void> => {
+			jest.setSystemTime(new Date('2024-02-12 15:55:00'));
+
 			const user: UserFullDto | null = await usersService.getByResetPasswordToken(existingToken);
 
 			expect(user?.passwordResetToken?.id).toBe(existingTokenId);
 		});
 
 		it('should return user as instance of UserFullDto', async (): Promise<void> => {
+			jest.setSystemTime(new Date('2024-02-12 15:55:00'));
+
 			const user: UserFullDto | null = await usersService.getByResetPasswordToken(existingToken);
 
 			expect(user).toBeInstanceOf(UserFullDto);

@@ -308,8 +308,9 @@ export class AuthController implements IAuthController {
 		);
 
 		const user: UserFullDto | null = await this._usersService.getByResetPasswordToken(resetToken);
+		console.log(user);
 
-		if (!user) {
+		if (!user || !user.passwordResetToken) {
 			throw new NotFoundException(['User related to this token not found']);
 		}
 
@@ -320,6 +321,8 @@ export class AuthController implements IAuthController {
 		if (!isUpdated) {
 			throw new UnprocessableEntityException(['Failed to update password. Please try again']);
 		}
+
+		await this._passwordResetTokensService.deleteToken(user.passwordResetToken.id);
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
