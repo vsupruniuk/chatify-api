@@ -20,7 +20,7 @@ export class StaticController implements IStaticController {
 	public getFile(@Param('fileName') fileName: string): StreamableFile {
 		const filePath: string = resolve(this._publicFolderPath, fileName);
 
-		if (!existsSync(filePath)) {
+		if (!filePath.startsWith(this._publicFolderPath) || !existsSync(filePath)) {
 			throw new NotFoundException();
 		}
 
