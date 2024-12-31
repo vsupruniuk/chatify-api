@@ -50,6 +50,7 @@ jobs:
           PORT: ${{ secrets.PORT }}
           TESTS_PORT: ${{ secrets.TESTS_PORT }}
           CLIENT_URL: ${{ secrets.CLIENT_URL }}
+          APP_LOGO_URL: ${{ secrets.APP_LOGO_URL }}
 
           DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
           DATABASE_HOST: ${{ secrets.DATABASE_HOST }}

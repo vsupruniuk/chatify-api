@@ -7,4 +7,12 @@ export interface IPasswordResetTokensService {
 	 * @returns null - if token wasn't created or updated
 	 */
 	saveToken(userId: string, userResetPasswordTokenId: string | null): Promise<string | null>;
+
+	/**
+	 * Method for deleting password reset token by its id
+	 * @param tokenId - token id to delete
+	 * @returns true - if token was deleted
+	 * @returns false - if token wasn't deleted
+	 */
+	deleteToken(tokenId: string): Promise<boolean>;
 }

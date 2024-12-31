@@ -48,4 +48,8 @@ export class PasswordResetTokensService implements IPasswordResetTokensService {
 
 		return createdToken ? createdToken.token : null;
 	}
+
+	public async deleteToken(tokenId: string): Promise<boolean> {
+		return this._passwordResetTokensRepository.deleteToken(tokenId);
+	}
 }

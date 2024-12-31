@@ -57,11 +57,18 @@ describe('SearchController', (): void => {
 		getPublicUsers: jest
 			.fn()
 			.mockImplementation(
-				async (nickname: string, page: number = 1, take: number = 10): Promise<UserPublicDto[]> => {
+				async (
+					userNickName: string,
+					nickname: string,
+					page: number = 1,
+					take: number = 10,
+				): Promise<UserPublicDto[]> => {
 					return usersMock
 						.filter(
 							(user: User) =>
-								user.nickname.toLowerCase().includes(nickname.toLowerCase()) && user.isActivated,
+								user.nickname.toLowerCase().includes(nickname.toLowerCase()) &&
+								user.nickname !== userNickName &&
+								user.isActivated,
 						)
 						.slice(page * take - take, take)
 						.map((user: User) =>
@@ -208,7 +215,12 @@ describe('SearchController', (): void => {
 			await searchController.findUsers(appUserPayload, nickname, page, take);
 
 			expect(usersServiceMock.getPublicUsers).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.getPublicUsers).toHaveBeenCalledWith(nickname, page, take);
+			expect(usersServiceMock.getPublicUsers).toHaveBeenCalledWith(
+				appUserPayload.nickname,
+				nickname,
+				page,
+				take,
+			);
 		});
 
 		it('should return response as instance of ResponseResult', async (): Promise<void> => {
