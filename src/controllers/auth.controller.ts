@@ -308,7 +308,6 @@ export class AuthController implements IAuthController {
 		);
 
 		const user: UserFullDto | null = await this._usersService.getByResetPasswordToken(resetToken);
-		console.log(user);
 
 		if (!user || !user.passwordResetToken) {
 			throw new NotFoundException(['User related to this token not found']);
