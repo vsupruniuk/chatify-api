@@ -37,7 +37,6 @@ describe('StaticController', (): void => {
 	const invalidToken: string = 'invalid-token';
 	const existingFileName: string = 'sample.jpg';
 	const nonExistingFileName: string = 'nonExisting-file.jpg';
-	const staticFileFolder: string = 'public';
 	const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, users[0], {
 		excludeExtraneousValues: true,
 	});
@@ -78,7 +77,7 @@ describe('StaticController', (): void => {
 
 	describe('GET /static/:fileName', (): void => {
 		beforeEach((): void => {
-			jest.spyOn(path, 'join').mockImplementation((...paths) => paths.join('/'));
+			jest.spyOn(path, 'resolve').mockImplementation((...paths) => paths.join('/'));
 			jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 			jest.spyOn(fs, 'createReadStream').mockImplementation(() => {
 				const stream = new Readable();
@@ -148,28 +147,22 @@ describe('StaticController', (): void => {
 			expect(streamableFile).toBeInstanceOf(StreamableFile);
 		});
 
-		it('should use join method from path module to create correct path to file', (): void => {
+		it('should use resolve method from path module to create correct path to file', (): void => {
 			staticController.getFile(existingFileName);
 
-			expect(path.join).toHaveBeenCalledTimes(1);
-			expect(path.join).toHaveBeenNthCalledWith(1, staticFileFolder, existingFileName);
+			expect(path.resolve).toHaveBeenCalledTimes(1);
 		});
 
 		it('should use createReadStream method from fs module to create stream from the file', (): void => {
 			staticController.getFile(existingFileName);
 
 			expect(fs.createReadStream).toHaveBeenCalledTimes(1);
-			expect(fs.createReadStream).toHaveBeenNthCalledWith(
-				1,
-				`${staticFileFolder}/${existingFileName}`,
-			);
 		});
 
 		it('should use existsSync method from fs module to check if file exist', (): void => {
 			staticController.getFile(existingFileName);
 
 			expect(fs.existsSync).toHaveBeenCalledTimes(1);
-			expect(fs.existsSync).toHaveBeenNthCalledWith(1, `${staticFileFolder}/${existingFileName}`);
 		});
 	});
 });

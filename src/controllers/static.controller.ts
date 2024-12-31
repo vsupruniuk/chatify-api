@@ -8,17 +8,17 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { AuthInterceptor } from '@Interceptors/auth.interceptor';
-import { join } from 'path';
+import { resolve } from 'path';
 import { createReadStream, existsSync, ReadStream } from 'fs';
 
 @Controller('static')
 @UseInterceptors(AuthInterceptor)
 export class StaticController implements IStaticController {
-	private readonly _publicFolderPath: string = join('.', 'public');
+	private readonly _publicFolderPath: string = resolve('.', 'public');
 
 	@Get(':fileName')
 	public getFile(@Param('fileName') fileName: string): StreamableFile {
-		const filePath: string = join(this._publicFolderPath, fileName);
+		const filePath: string = resolve(this._publicFolderPath, fileName);
 
 		if (!existsSync(filePath)) {
 			throw new NotFoundException();
