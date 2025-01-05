@@ -5,7 +5,6 @@ import { UpdateAppUserDto } from '@DTO/appUser/UpdateAppUser.dto';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { CacheKeys } from '@Enums/CacheKeys.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { FileFields } from '@Enums/FileFields.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
@@ -16,7 +15,6 @@ import { IAppUserController } from '@Interfaces/appUser/IAppUserController';
 import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { AppLogger } from '@Logger/app.logger';
-import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
 	BadRequestException,
 	Body,
@@ -48,9 +46,6 @@ export class AppUserController implements IAppUserController {
 	private readonly _logger: IAppLogger = new AppLogger();
 
 	constructor(
-		@Inject(CACHE_MANAGER)
-		private readonly _cacheManager: Cache,
-
 		@Inject(CustomProviders.I_USERS_SERVICE)
 		private readonly _usersService: IUsersService,
 
@@ -69,28 +64,11 @@ export class AppUserController implements IAppUserController {
 		const responseResult: SuccessfulResponseResult<AppUserDto> =
 			new SuccessfulResponseResult<AppUserDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
 
-		const userFromCache: AppUserDto | undefined = await this._cacheManager.get<AppUserDto>(
-			CacheKeys.APP_USER + `_${appUserPayload.id}`,
-		);
-
-		if (userFromCache) {
-			responseResult.data = [userFromCache];
-			responseResult.dataLength = responseResult.data.length;
-
-			return responseResult;
-		}
-
 		const user: AppUserDto | null = await this._usersService.getAppUser(appUserPayload.id);
 
 		if (!user) {
 			throw new UnauthorizedException(['Please, login to perform this action']);
 		}
-
-		await this._cacheManager.set(
-			CacheKeys.APP_USER + `_${appUserPayload.id}`,
-			user,
-			Number(process.env.CACHE_TIME_APP_USER),
-		);
 
 		responseResult.data = [user];
 		responseResult.dataLength = responseResult.data.length;
@@ -142,8 +120,6 @@ export class AppUserController implements IAppUserController {
 			]);
 		}
 
-		await this._cacheManager.del(CacheKeys.APP_USER + `_${appUserPayload.id}`);
-
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
 
@@ -191,8 +167,6 @@ export class AppUserController implements IAppUserController {
 				'Failed to update account settings. Please, try again',
 			]);
 		}
-
-		await this._cacheManager.del(CacheKeys.APP_USER + `_${fullUser.id}`);
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
@@ -267,8 +241,6 @@ export class AppUserController implements IAppUserController {
 			throw new UnprocessableEntityException(['Failed to save avatar. Please, try again']);
 		}
 
-		await this._cacheManager.del(CacheKeys.APP_USER + `_${appUserPayload.id}`);
-
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
 
@@ -313,8 +285,6 @@ export class AppUserController implements IAppUserController {
 		if (!isUpdated) {
 			throw new UnprocessableEntityException(['Failed to delete avatar, please try again']);
 		}
-
-		await this._cacheManager.del(CacheKeys.APP_USER + `_${appUserPayload.id}`);
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;

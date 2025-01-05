@@ -2,7 +2,6 @@ import { AppUserController } from '@Controllers/appUser.controller';
 import { AppUserDto } from '@DTO/appUser/appUser.dto';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { User } from '@Entities/User.entity';
-import { CacheKeys } from '@Enums/CacheKeys.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { Headers } from '@Enums/Headers.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
@@ -24,7 +23,6 @@ import { SuccessfulResponseResult } from '@Responses/successfulResponses/Success
 import { users } from '@TestMocks/User/users';
 import { TUserPayload } from '@Types/users/TUserPayload';
 import { plainToInstance } from 'class-transformer';
-import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import * as request from 'supertest';
@@ -34,7 +32,6 @@ describe('AppUserController', (): void => {
 	let appUserController: AppUserController;
 
 	let isAuthorized: boolean = false;
-	let isUserSavedToCache: boolean = false;
 
 	const validToken: string = 'valid-token';
 	const invalidToken: string = 'invalid-token';
@@ -64,16 +61,6 @@ describe('AppUserController', (): void => {
 			return user ? plainToInstance(AppUserDto, user, { excludeExtraneousValues: true }) : null;
 		}),
 	};
-	const cacheMock: Partial<Cache> = {
-		get: jest.fn().mockImplementation(() => {
-			if (isUserSavedToCache) {
-				return usersMock.find((user: User) => user.id === userId);
-			}
-
-			return undefined;
-		}),
-		set: jest.fn().mockImplementation(() => {}),
-	};
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -81,8 +68,6 @@ describe('AppUserController', (): void => {
 		})
 			.overrideProvider(CustomProviders.I_USERS_SERVICE)
 			.useValue(usersServiceMock)
-			.overrideProvider(CACHE_MANAGER)
-			.useValue(cacheMock)
 			.overrideInterceptor(AuthInterceptor)
 			.useValue(authInterceptorMock)
 			.compile();
@@ -173,30 +158,6 @@ describe('AppUserController', (): void => {
 
 			expect(usersServiceMock.getAppUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.getAppUser).toHaveBeenCalledWith(userId);
-		});
-
-		it('should call try to search user in cache', async (): Promise<void> => {
-			await appUserController.getUser(appUserPayload);
-
-			expect(cacheMock.get).toHaveBeenCalledTimes(1);
-			expect(cacheMock.get).toHaveBeenCalledWith(CacheKeys.APP_USER + `_${userId}`);
-		});
-
-		it('should set founded user to cache', async (): Promise<void> => {
-			const user: AppUserDto | null = await usersServiceMock.getAppUser!(userId);
-
-			await appUserController.getUser(appUserPayload);
-
-			isUserSavedToCache = true;
-
-			await appUserController.getUser(appUserPayload);
-
-			expect(cacheMock.set).toHaveBeenCalledTimes(1);
-			expect(cacheMock.set).toHaveBeenCalledWith(
-				CacheKeys.APP_USER + `_${userId}`,
-				user,
-				Number(process.env.CACHE_TIME_APP_USER),
-			);
 		});
 	});
 });

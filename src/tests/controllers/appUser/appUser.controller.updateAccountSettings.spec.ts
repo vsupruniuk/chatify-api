@@ -3,7 +3,6 @@ import { UpdateAccountSettingsDto } from '@DTO/accountSettings/updateAccountSett
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { User } from '@Entities/User.entity';
-import { CacheKeys } from '@Enums/CacheKeys.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { Headers } from '@Enums/Headers.enum';
 import { AuthInterceptor } from '@Interceptors/auth.interceptor';
@@ -11,7 +10,6 @@ import { IAccountSettingsService } from '@Interfaces/accountSettings/IAccountSet
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
-import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
 	CallHandler,
 	ExecutionContext,
@@ -72,9 +70,6 @@ describe('AppUserController', (): void => {
 			return id === accountSettingsId;
 		}),
 	};
-	const cacheMock: Partial<Cache> = {
-		del: jest.fn(),
-	};
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -84,8 +79,6 @@ describe('AppUserController', (): void => {
 			.useValue(usersServiceMock)
 			.overrideProvider(CustomProviders.I_ACCOUNT_SETTINGS_SERVICE)
 			.useValue(accountSettingsServiceMock)
-			.overrideProvider(CACHE_MANAGER)
-			.useValue(cacheMock)
 			.overrideGuard(AuthInterceptor)
 			.useValue(authInterceptorMock)
 			.compile();
@@ -254,19 +247,6 @@ describe('AppUserController', (): void => {
 				userAccountSettingsId,
 				updateAccountSettingsDto,
 			);
-		});
-
-		it('should call del method in cache service to delete cached user data', async (): Promise<void> => {
-			const updateAccountSettingsDto: UpdateAccountSettingsDto = {
-				enterIsSend: false,
-				notification: true,
-				twoStepVerification: true,
-			};
-
-			await appUserController.updateAccountSettings(appUserPayload, updateAccountSettingsDto);
-
-			expect(cacheMock.del).toHaveBeenCalledTimes(1);
-			expect(cacheMock.del).toHaveBeenCalledWith(CacheKeys.APP_USER + `_${userId}`);
 		});
 	});
 });

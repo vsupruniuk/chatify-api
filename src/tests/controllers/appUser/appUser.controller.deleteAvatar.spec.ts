@@ -2,7 +2,6 @@ import { AppUserController } from '@Controllers/appUser.controller';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { User } from '@Entities/User.entity';
-import { CacheKeys } from '@Enums/CacheKeys.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { Headers } from '@Enums/Headers.enum';
 import { FileHelper } from '@Helpers/file.helper';
@@ -10,7 +9,6 @@ import { AuthInterceptor } from '@Interceptors/auth.interceptor';
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
-import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
 	CallHandler,
 	ExecutionContext,
@@ -80,10 +78,6 @@ describe('AppUserController', (): void => {
 			}),
 	};
 
-	const cacheMock: Partial<Cache> = {
-		del: jest.fn(),
-	};
-
 	let deleteFileMock: SpyInstance;
 
 	beforeAll(async (): Promise<void> => {
@@ -94,8 +88,6 @@ describe('AppUserController', (): void => {
 		})
 			.overrideProvider(CustomProviders.I_USERS_SERVICE)
 			.useValue(usersServiceMock)
-			.overrideProvider(CACHE_MANAGER)
-			.useValue(cacheMock)
 			.overrideInterceptor(AuthInterceptor)
 			.useValue(authInterceptorMock)
 			.compile();
@@ -195,13 +187,6 @@ describe('AppUserController', (): void => {
 
 			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(userId, { avatarUrl: null });
-		});
-
-		it('should call del method in cache service to delete cached user data', async (): Promise<void> => {
-			await appUserController.deleteAvatar(appUserPayload);
-
-			expect(cacheMock.del).toHaveBeenCalledTimes(1);
-			expect(cacheMock.del).toHaveBeenCalledWith(CacheKeys.APP_USER + `_${userId}`);
 		});
 	});
 });
