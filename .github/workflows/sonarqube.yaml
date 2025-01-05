@@ -73,8 +73,6 @@ jobs:
           JWT_REFRESH_TOKEN_SECRET: ${{ secrets.JWT_REFRESH_TOKEN_SECRET }}
           JWT_REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.JWT_REFRESH_TOKEN_EXPIRES_IN }}
 
-          CACHE_TIME_APP_USER: ${{ secrets.CACHE_TIME_APP_USER }}
-
           CRYPTO_IV_LENGTH: ${{ secrets.CRYPTO_IV_LENGTH }}
           CRYPTO_SALT_LENGTH: ${{ secrets.CRYPTO_SALT_LENGTH }}
           CRYPTO_KEY_LENGTH: ${{ secrets.CRYPTO_KEY_LENGTH }}
