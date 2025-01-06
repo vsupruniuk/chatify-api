@@ -1,4 +1,3 @@
-import { AppLogger } from '@Logger/app.logger';
 import { NestFactory } from '@nestjs/core';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 
@@ -12,9 +11,7 @@ import { GlobalExceptionFilter } from '@Filters/globalException.filter';
 async function bootstrap(): Promise<void> {
 	const port: number = Number(process.env.PORT) || 3000;
 
-	const app: INestApplication = await NestFactory.create(AppModule, {
-		logger: new AppLogger(),
-	});
+	const app: INestApplication = await NestFactory.create(AppModule);
 
 	app.enableCors({ origin: process.env.CLIENT_URL || '', credentials: true });
 	app.use(helmet());

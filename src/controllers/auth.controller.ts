@@ -20,12 +20,10 @@ import { IAuthController } from '@Interfaces/auth/IAuthController';
 import { IAuthService } from '@Interfaces/auth/IAuthService';
 import { IEmailService } from '@Interfaces/emails/IEmailService';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
-import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { IOTPCodesService } from '@Interfaces/OTPCodes/IOTPCodesService';
 import { IPasswordResetTokensService } from '@Interfaces/passwordResetTokens/IPasswordResetTokens.service';
 
 import { IUsersService } from '@Interfaces/users/IUsersService';
-import { AppLogger } from '@Logger/app.logger';
 import {
 	BadRequestException,
 	Body,
@@ -49,8 +47,6 @@ import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController implements IAuthController {
-	private readonly _logger: IAppLogger = new AppLogger();
-
 	constructor(
 		@Inject(CustomProviders.I_USERS_SERVICE)
 		private readonly _usersService: IUsersService,
@@ -74,12 +70,6 @@ export class AuthController implements IAuthController {
 	@Post('/signup')
 	@HttpCode(HttpStatus.CREATED)
 	public async signup(@Body() signupUserDTO: SignupUserDto): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.signup.name,
-			controller: 'AuthController',
-			body: signupUserDTO,
-		});
-
 		const responseResult: SuccessfulResponseResult<UserShortDto> = new SuccessfulResponseResult(
 			HttpStatus.CREATED,
 			ResponseStatus.SUCCESS,
@@ -120,8 +110,6 @@ export class AuthController implements IAuthController {
 		responseResult.data = [createdUser];
 		responseResult.dataLength = responseResult.data.length;
 
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
-
 		return responseResult;
 	}
 
@@ -131,12 +119,6 @@ export class AuthController implements IAuthController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() accountActivationDto: AccountActivationDto,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.activateAccount.name,
-			controller: 'AuthController',
-			body: accountActivationDto,
-		});
-
 		const responseResult: SuccessfulResponseResult<LoginResponseDto> =
 			new SuccessfulResponseResult<LoginResponseDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
 
@@ -195,8 +177,6 @@ export class AuthController implements IAuthController {
 		responseResult.data = [{ accessToken }];
 		responseResult.dataLength = responseResult.data.length;
 
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
-
 		return responseResult;
 	}
 
@@ -205,12 +185,6 @@ export class AuthController implements IAuthController {
 	public async resendActivationCode(
 		@Body() resendActivationCodeDto: ResendActivationCodeDto,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.resendActivationCode.name,
-			controller: 'AuthController',
-			body: resendActivationCodeDto,
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
@@ -243,20 +217,12 @@ export class AuthController implements IAuthController {
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
 
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
-
 		return responseResult;
 	}
 
 	@Post('/reset-password')
 	@HttpCode(HttpStatus.OK)
 	public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.resetPassword.name,
-			controller: 'AuthController',
-			body: resetPasswordDto,
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
@@ -284,8 +250,6 @@ export class AuthController implements IAuthController {
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
 
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
-
 		return responseResult;
 	}
 
@@ -295,13 +259,6 @@ export class AuthController implements IAuthController {
 		@Body() resetPasswordConfirmationDto: ResetPasswordConfirmationDto,
 		@Param('resetToken', ParseUUIDPipe) resetToken: string,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.resetPasswordConfirmation.name,
-			controller: 'AuthController',
-			body: resetPasswordConfirmationDto,
-			queryParams: { resetToken: resetToken },
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
@@ -326,8 +283,6 @@ export class AuthController implements IAuthController {
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
 
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
-
 		return responseResult;
 	}
 
@@ -337,12 +292,6 @@ export class AuthController implements IAuthController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() loginDto: LoginDto,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.login.name,
-			controller: 'AuthController',
-			body: loginDto,
-		});
-
 		const responseResult: SuccessfulResponseResult<LoginResponseDto> =
 			new SuccessfulResponseResult<LoginResponseDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
 
@@ -398,8 +347,6 @@ export class AuthController implements IAuthController {
 		responseResult.data = [{ accessToken }];
 		responseResult.dataLength = responseResult.data.length;
 
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
-
 		return responseResult;
 	}
 
@@ -409,12 +356,6 @@ export class AuthController implements IAuthController {
 		@Res({ passthrough: true }) response: Response,
 		@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.logout.name,
-			controller: 'AuthController',
-			cookies: { refreshToken: 'refreshToken' },
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.NO_CONTENT,
 			ResponseStatus.SUCCESS,
@@ -447,8 +388,6 @@ export class AuthController implements IAuthController {
 
 		response.clearCookie(CookiesNames.REFRESH_TOKEN);
 
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
-
 		return responseResult;
 	}
 
@@ -458,12 +397,6 @@ export class AuthController implements IAuthController {
 		@Res({ passthrough: true }) response: Response,
 		@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.refresh.name,
-			controller: 'AuthController',
-			cookies: { refreshToken: 'refreshToken' },
-		});
-
 		const responseResult: SuccessfulResponseResult<LoginResponseDto> =
 			new SuccessfulResponseResult<LoginResponseDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
 
@@ -505,8 +438,6 @@ export class AuthController implements IAuthController {
 
 		responseResult.data = [{ accessToken: newAccessToken }];
 		responseResult.dataLength = responseResult.data.length;
-
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
 
 		return responseResult;
 	}

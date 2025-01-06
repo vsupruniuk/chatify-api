@@ -5,10 +5,8 @@ import { UserPublicDto } from '@DTO/users/UserPublic.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { AuthInterceptor } from '@Interceptors/auth.interceptor';
-import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { ISearchController } from '@Interfaces/search/ISearchController';
 import { IUsersService } from '@Interfaces/users/IUsersService';
-import { AppLogger } from '@Logger/app.logger';
 import {
 	Controller,
 	Get,
@@ -25,8 +23,6 @@ import { SuccessfulResponseResult } from '@Responses/successfulResponses/Success
 @Controller('search')
 @UseInterceptors(AuthInterceptor)
 export class SearchController implements ISearchController {
-	private readonly _logger: IAppLogger = new AppLogger();
-
 	constructor(
 		@Inject(CustomProviders.I_USERS_SERVICE)
 		private readonly _usersService: IUsersService,
@@ -40,16 +36,6 @@ export class SearchController implements ISearchController {
 		@Query('page', new ParseIntPipe({ optional: true })) page?: number,
 		@Query('take', new ParseIntPipe({ optional: true })) take?: number,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.findUsers.name,
-			controller: 'SearchController',
-			queryParams: {
-				nickname,
-				page,
-				take,
-			},
-		});
-
 		const responseResult: SuccessfulResponseResult<UserPublicDto> =
 			new SuccessfulResponseResult<UserPublicDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
 
@@ -60,8 +46,6 @@ export class SearchController implements ISearchController {
 			take,
 		);
 		responseResult.dataLength = responseResult.data.length;
-
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
 
 		return responseResult;
 	}

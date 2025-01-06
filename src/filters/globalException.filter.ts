@@ -2,7 +2,6 @@ import { Environments } from '@Enums/Environments.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { DateHelper } from '@Helpers/date.helper';
 import { IValidationError } from '@Interfaces/errors/IValidationError';
-import { AppLogger } from '@Logger/app.logger';
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 
@@ -16,8 +15,6 @@ import { Response } from 'express';
  */
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-	private readonly _logger: AppLogger = new AppLogger();
-
 	catch(exception: Error, host: ArgumentsHost) {
 		const ctx: HttpArgumentsHost = host.switchToHttp();
 		const response: Response = ctx.getResponse<Response>();
@@ -55,12 +52,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 			responseResult.stack = exception.stack;
 			responseResult.dateTime = DateHelper.dateTimeNow();
 		}
-
-		this._logger.failedRequest({
-			code: responseResult.code,
-			title: responseResult.title,
-			errors: responseResult.errors,
-		});
 
 		response.status(responseResult.code).json(responseResult);
 	}

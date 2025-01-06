@@ -2,8 +2,6 @@ import { DirectChat } from '@Entities/DirectChat.entity';
 import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
 import { User } from '@Entities/User.entity';
 import { IDirectChatsRepository } from '@Interfaces/directChats/IDirectChatsRepository';
-import { IAppLogger } from '@Interfaces/logger/IAppLogger';
-import { AppLogger } from '@Logger/app.logger';
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { DataSource, EntityManager, InsertResult } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
@@ -11,8 +9,6 @@ import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 
 @Injectable()
 export class DirectChatsRepository implements IDirectChatsRepository {
-	private readonly _logger: IAppLogger = new AppLogger();
-
 	constructor(private readonly _dataSource: DataSource) {}
 
 	public async createChat(
@@ -85,12 +81,6 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 				.execute();
 		});
 
-		this._logger.successfulDBQuery({
-			method: this.createChat.name,
-			repository: 'DirectChatsRepository',
-			data: { id: createdChatId },
-		});
-
 		return createdChatId;
 	}
 
@@ -111,7 +101,7 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 			.where('DirectChatUsers.userId = :userId')
 			.getQuery();
 
-		const directChats: DirectChat[] = await this._dataSource
+		return await this._dataSource
 			.createQueryBuilder()
 			.select('directChat')
 			.from(DirectChat, 'directChat')
@@ -129,14 +119,6 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 			.skip(skip)
 			.take(take)
 			.getMany();
-
-		this._logger.successfulDBQuery({
-			method: this.getLastChats.name,
-			repository: 'DirectChatsRepository',
-			data: { directChats },
-		});
-
-		return directChats;
 	}
 
 	public async getChatMessages(
