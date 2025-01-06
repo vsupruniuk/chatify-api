@@ -5,7 +5,6 @@ import { UpdateAppUserDto } from '@DTO/appUser/UpdateAppUser.dto';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { CacheKeys } from '@Enums/CacheKeys.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { FileFields } from '@Enums/FileFields.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
@@ -13,10 +12,7 @@ import { FileHelper } from '@Helpers/file.helper';
 import { AuthInterceptor } from '@Interceptors/auth.interceptor';
 import { IAccountSettingsService } from '@Interfaces/accountSettings/IAccountSettingsService';
 import { IAppUserController } from '@Interfaces/appUser/IAppUserController';
-import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { IUsersService } from '@Interfaces/users/IUsersService';
-import { AppLogger } from '@Logger/app.logger';
-import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
 	BadRequestException,
 	Body,
@@ -45,12 +41,7 @@ import { diskStorage } from 'multer';
 @Controller('app-user')
 @UseInterceptors(AuthInterceptor)
 export class AppUserController implements IAppUserController {
-	private readonly _logger: IAppLogger = new AppLogger();
-
 	constructor(
-		@Inject(CACHE_MANAGER)
-		private readonly _cacheManager: Cache,
-
 		@Inject(CustomProviders.I_USERS_SERVICE)
 		private readonly _usersService: IUsersService,
 
@@ -61,24 +52,8 @@ export class AppUserController implements IAppUserController {
 	@Get()
 	@HttpCode(HttpStatus.OK)
 	public async getUser(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.getUser.name,
-			controller: 'AppUserController',
-		});
-
 		const responseResult: SuccessfulResponseResult<AppUserDto> =
 			new SuccessfulResponseResult<AppUserDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
-
-		const userFromCache: AppUserDto | undefined = await this._cacheManager.get<AppUserDto>(
-			CacheKeys.APP_USER + `_${appUserPayload.id}`,
-		);
-
-		if (userFromCache) {
-			responseResult.data = [userFromCache];
-			responseResult.dataLength = responseResult.data.length;
-
-			return responseResult;
-		}
 
 		const user: AppUserDto | null = await this._usersService.getAppUser(appUserPayload.id);
 
@@ -86,16 +61,8 @@ export class AppUserController implements IAppUserController {
 			throw new UnauthorizedException(['Please, login to perform this action']);
 		}
 
-		await this._cacheManager.set(
-			CacheKeys.APP_USER + `_${appUserPayload.id}`,
-			user,
-			Number(process.env.CACHE_TIME_APP_USER),
-		);
-
 		responseResult.data = [user];
 		responseResult.dataLength = responseResult.data.length;
-
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
 
 		return responseResult;
 	}
@@ -106,12 +73,6 @@ export class AppUserController implements IAppUserController {
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@Body() updateAppUserDto: UpdateAppUserDto,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.updateUser.name,
-			controller: 'AppUserController',
-			body: updateAppUserDto,
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
@@ -142,12 +103,8 @@ export class AppUserController implements IAppUserController {
 			]);
 		}
 
-		await this._cacheManager.del(CacheKeys.APP_USER + `_${appUserPayload.id}`);
-
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
-
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
 
 		return responseResult;
 	}
@@ -158,12 +115,6 @@ export class AppUserController implements IAppUserController {
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@Body() newSettings: UpdateAccountSettingsDto,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.updateAccountSettings.name,
-			controller: 'AppUserController',
-			body: newSettings,
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
@@ -192,12 +143,8 @@ export class AppUserController implements IAppUserController {
 			]);
 		}
 
-		await this._cacheManager.del(CacheKeys.APP_USER + `_${fullUser.id}`);
-
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
-
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
 
 		return responseResult;
 	}
@@ -230,12 +177,6 @@ export class AppUserController implements IAppUserController {
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@UploadedFile() file: Express.Multer.File,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.uploadAvatar.name,
-			controller: 'AppUserController',
-			body: file,
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.CREATED,
 			ResponseStatus.SUCCESS,
@@ -267,12 +208,8 @@ export class AppUserController implements IAppUserController {
 			throw new UnprocessableEntityException(['Failed to save avatar. Please, try again']);
 		}
 
-		await this._cacheManager.del(CacheKeys.APP_USER + `_${appUserPayload.id}`);
-
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
-
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
 
 		return responseResult;
 	}
@@ -282,11 +219,6 @@ export class AppUserController implements IAppUserController {
 	public async deleteAvatar(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.deleteAvatar.name,
-			controller: 'AppUserController',
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.NO_CONTENT,
 			ResponseStatus.SUCCESS,
@@ -314,12 +246,8 @@ export class AppUserController implements IAppUserController {
 			throw new UnprocessableEntityException(['Failed to delete avatar, please try again']);
 		}
 
-		await this._cacheManager.del(CacheKeys.APP_USER + `_${appUserPayload.id}`);
-
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
-
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
 
 		return responseResult;
 	}

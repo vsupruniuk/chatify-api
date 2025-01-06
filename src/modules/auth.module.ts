@@ -11,7 +11,7 @@ import {
 	passwordResetTokensServiceProvider,
 	usersRepositoryProvider,
 	usersServiceProvider,
-} from '@Modules/providers/index';
+} from '@Modules/providers';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 

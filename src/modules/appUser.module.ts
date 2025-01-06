@@ -9,12 +9,10 @@ import {
 	usersRepositoryProvider,
 	usersServiceProvider,
 } from '@Modules/providers';
-import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
-	imports: [CacheModule.register()],
 	controllers: [AppUserController],
 	providers: [
 		JwtService,
