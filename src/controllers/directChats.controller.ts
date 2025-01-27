@@ -12,8 +12,6 @@ import { IDirectChatsController } from '@Interfaces/directChats/IDirectChatsCont
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { AuthInterceptor } from '@Interceptors/auth.interceptor';
-import { IAppLogger } from '@Interfaces/logger/IAppLogger';
-import { AppLogger } from '@Logger/app.logger';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { IDirectChatsService } from '@Interfaces/directChats/IDirectChatsService';
 import { AppUserPayload } from '@Decorators/AppUser.decorator';
@@ -26,8 +24,6 @@ import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChat
 @Controller('direct-chats')
 @UseInterceptors(AuthInterceptor)
 export class DirectChatsController implements IDirectChatsController {
-	private readonly _logger: IAppLogger = new AppLogger();
-
 	constructor(
 		@Inject(CustomProviders.I_DIRECT_CHATS_SERVICE_PROVIDER)
 		private readonly _directChatsService: IDirectChatsService,
@@ -40,15 +36,6 @@ export class DirectChatsController implements IDirectChatsController {
 		@Query('page', new ParseIntPipe({ optional: true })) page?: number,
 		@Query('take', new ParseIntPipe({ optional: true })) take?: number,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.getLastChats.name,
-			controller: 'DirectChatsController',
-			queryParams: {
-				page,
-				take,
-			},
-		});
-
 		const responseResult: SuccessfulResponseResult<DirectChatShortDto> =
 			new SuccessfulResponseResult<DirectChatShortDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
 

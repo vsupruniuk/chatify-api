@@ -1,5 +1,3 @@
-import { IAppLogger } from '@Interfaces/logger/IAppLogger';
-import { AppLogger } from '@Logger/app.logger';
 import { Injectable } from '@nestjs/common';
 
 import { DataSource, InsertResult, UpdateResult } from 'typeorm';
@@ -11,8 +9,6 @@ import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
 
 @Injectable()
 export class OTPCodesRepository implements IOTPCodesRepository {
-	private readonly _logger: IAppLogger = new AppLogger();
-
 	constructor(private readonly _dataSource: DataSource) {}
 
 	public async createOTPCode(createOTPCodeDto: CreateOTPCodeDto): Promise<string> {
@@ -23,30 +19,16 @@ export class OTPCodesRepository implements IOTPCodesRepository {
 			.values(createOTPCodeDto)
 			.execute();
 
-		this._logger.successfulDBQuery({
-			method: this.createOTPCode.name,
-			repository: 'OTPCodesRepository',
-			data: result,
-		});
-
 		return result.identifiers[0].id;
 	}
 
 	public async getUserOTPCodeById(userOTPCodeId: string): Promise<OTPCode | null> {
-		const otpCode: OTPCode | null = await this._dataSource
+		return await this._dataSource
 			.createQueryBuilder()
 			.select('otpCode')
 			.from(OTPCode, 'otpCode')
 			.where('otpCode.id = :userOTPCodeId', { userOTPCodeId })
 			.getOne();
-
-		this._logger.successfulDBQuery({
-			method: this.getUserOTPCodeById.name,
-			repository: 'OTPCodesRepository',
-			data: otpCode,
-		});
-
-		return otpCode;
 	}
 
 	public async updateOTPCode(
@@ -59,12 +41,6 @@ export class OTPCodesRepository implements IOTPCodesRepository {
 			.set(updateOTPCodeDto)
 			.where('id = :userOTPCodeId', { userOTPCodeId })
 			.execute();
-
-		this._logger.successfulDBQuery({
-			method: this.updateOTPCode.name,
-			repository: 'OTPCodesRepository',
-			data: updateResult,
-		});
 
 		return updateResult.affected ? updateResult.affected > 0 : false;
 	}

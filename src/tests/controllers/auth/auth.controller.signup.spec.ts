@@ -28,16 +28,14 @@ describe('AuthController', (): void => {
 	const otpCode: OTPCodeResponseDto = { code: 111111, expiresAt: '2023-11-25 1:10:00' };
 
 	const usersServiceMock: Partial<IUsersService> = {
-		getByEmail: jest
+		getByEmailOrNickname: jest
 			.fn()
-			.mockImplementation(async (userEmail: string): Promise<UserShortDto | null> => {
-				return usersMock.find((user: UserShortDto) => user.email === userEmail) || null;
-			}),
-
-		getByNickname: jest
-			.fn()
-			.mockImplementation(async (userNickname: string): Promise<UserShortDto | null> => {
-				return usersMock.find((user: UserShortDto) => user.nickname === userNickname) || null;
+			.mockImplementation(async (email: string, nickname: string): Promise<UserShortDto | null> => {
+				return (
+					usersMock.find(
+						(user: UserShortDto) => user.email === email || user.nickname === nickname,
+					) || null
+				);
 			}),
 
 		createUser: jest
@@ -91,7 +89,7 @@ describe('AuthController', (): void => {
 		app = moduleFixture.createNestApplication();
 		authController = moduleFixture.get<AuthController>(AuthController);
 
-		app.useGlobalPipes(new ValidationPipe({ whitelist: true, stopAtFirstError: false }));
+		app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
 		await app.init();
 	});
@@ -521,7 +519,7 @@ describe('AuthController', (): void => {
 				.expect(responseResult);
 		});
 
-		it('should call getByEmail in users service to check if email is taken', async (): Promise<void> => {
+		it('should call getByEmailOrNickname method in users service to check if user with provided email or nickname exist', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -533,24 +531,8 @@ describe('AuthController', (): void => {
 
 			await authController.signup(user);
 
-			expect(usersServiceMock.getByEmail).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.getByEmail).toHaveBeenCalledWith(user.email);
-		});
-
-		it('should call getByNickname in users service to check if nickname is taken', async (): Promise<void> => {
-			const user = <SignupUserDto>{
-				firstName: 'Bruce',
-				lastName: 'Banner',
-				email: 'bruce@mail.com',
-				nickname: 'b.banner',
-				password: 'qwerty1A',
-				passwordConfirmation: 'qwerty1A',
-			};
-
-			await authController.signup(user);
-
-			expect(usersServiceMock.getByNickname).toHaveBeenCalledTimes(1);
-			expect(usersServiceMock.getByNickname).toHaveBeenCalledWith(user.nickname);
+			expect(usersServiceMock.getByEmailOrNickname).toHaveBeenCalledTimes(1);
+			expect(usersServiceMock.getByEmailOrNickname).toHaveBeenCalledWith(user.email, user.nickname);
 		});
 
 		it('should call createUser in users service to create user', async (): Promise<void> => {

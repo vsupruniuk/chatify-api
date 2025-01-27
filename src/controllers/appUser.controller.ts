@@ -12,9 +12,7 @@ import { FileHelper } from '@Helpers/file.helper';
 import { AuthInterceptor } from '@Interceptors/auth.interceptor';
 import { IAccountSettingsService } from '@Interfaces/accountSettings/IAccountSettingsService';
 import { IAppUserController } from '@Interfaces/appUser/IAppUserController';
-import { IAppLogger } from '@Interfaces/logger/IAppLogger';
 import { IUsersService } from '@Interfaces/users/IUsersService';
-import { AppLogger } from '@Logger/app.logger';
 import {
 	BadRequestException,
 	Body,
@@ -43,8 +41,6 @@ import { diskStorage } from 'multer';
 @Controller('app-user')
 @UseInterceptors(AuthInterceptor)
 export class AppUserController implements IAppUserController {
-	private readonly _logger: IAppLogger = new AppLogger();
-
 	constructor(
 		@Inject(CustomProviders.I_USERS_SERVICE)
 		private readonly _usersService: IUsersService,
@@ -56,11 +52,6 @@ export class AppUserController implements IAppUserController {
 	@Get()
 	@HttpCode(HttpStatus.OK)
 	public async getUser(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.getUser.name,
-			controller: 'AppUserController',
-		});
-
 		const responseResult: SuccessfulResponseResult<AppUserDto> =
 			new SuccessfulResponseResult<AppUserDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
 
@@ -73,8 +64,6 @@ export class AppUserController implements IAppUserController {
 		responseResult.data = [user];
 		responseResult.dataLength = responseResult.data.length;
 
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
-
 		return responseResult;
 	}
 
@@ -84,12 +73,6 @@ export class AppUserController implements IAppUserController {
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@Body() updateAppUserDto: UpdateAppUserDto,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.updateUser.name,
-			controller: 'AppUserController',
-			body: updateAppUserDto,
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
@@ -123,8 +106,6 @@ export class AppUserController implements IAppUserController {
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
 
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
-
 		return responseResult;
 	}
 
@@ -134,12 +115,6 @@ export class AppUserController implements IAppUserController {
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@Body() newSettings: UpdateAccountSettingsDto,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.updateAccountSettings.name,
-			controller: 'AppUserController',
-			body: newSettings,
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.OK,
 			ResponseStatus.SUCCESS,
@@ -170,8 +145,6 @@ export class AppUserController implements IAppUserController {
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
-
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
 
 		return responseResult;
 	}
@@ -204,12 +177,6 @@ export class AppUserController implements IAppUserController {
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@UploadedFile() file: Express.Multer.File,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.uploadAvatar.name,
-			controller: 'AppUserController',
-			body: file,
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.CREATED,
 			ResponseStatus.SUCCESS,
@@ -244,8 +211,6 @@ export class AppUserController implements IAppUserController {
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
 
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
-
 		return responseResult;
 	}
 
@@ -254,11 +219,6 @@ export class AppUserController implements IAppUserController {
 	public async deleteAvatar(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 	): Promise<ResponseResult> {
-		this._logger.incomingRequest({
-			requestMethod: this.deleteAvatar.name,
-			controller: 'AppUserController',
-		});
-
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
 			HttpStatus.NO_CONTENT,
 			ResponseStatus.SUCCESS,
@@ -288,8 +248,6 @@ export class AppUserController implements IAppUserController {
 
 		responseResult.data = [];
 		responseResult.dataLength = responseResult.data.length;
-
-		this._logger.successfulRequest({ code: responseResult.code, data: responseResult.data });
 
 		return responseResult;
 	}

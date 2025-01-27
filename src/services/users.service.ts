@@ -86,6 +86,12 @@ export class UsersService implements IUsersService {
 		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
 	}
 
+	public async getByEmailOrNickname(email: string, nickname: string): Promise<UserShortDto | null> {
+		const user: User | null = await this._usersRepository.getByEmailOrNickname(email, nickname);
+
+		return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
+	}
+
 	public async getByResetPasswordToken(token: string): Promise<UserFullDto | null> {
 		const foundedToken: PasswordResetToken | null =
 			await this._passwordResetTokenRepository.getByField('token', token);
