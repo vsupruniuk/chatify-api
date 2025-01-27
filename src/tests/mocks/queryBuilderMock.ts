@@ -15,6 +15,7 @@ export class QueryBuilderMock<T extends ObjectLiteral>
 	public leftJoinAndSelect: jest.Mock = jest.fn().mockReturnThis();
 	public leftJoinAndMapMany: jest.Mock = jest.fn().mockReturnThis();
 	public where: jest.Mock = jest.fn().mockReturnThis();
+	public orWhere: jest.Mock = jest.fn().mockReturnThis();
 	public setParameter: jest.Mock = jest.fn().mockReturnThis();
 	public orderBy: jest.Mock = jest.fn().mockReturnThis();
 	public limit: jest.Mock = jest.fn().mockReturnThis();

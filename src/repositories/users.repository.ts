@@ -36,6 +36,20 @@ export class UsersRepository implements IUsersRepository {
 			.getOne();
 	}
 
+	public async getByEmailOrNickname(email: string, nickname: string): Promise<User | null> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.leftJoinAndSelect('user.accountSettings', 'accountSettings')
+			.leftJoinAndSelect('user.OTPCode', 'OTPCode')
+			.leftJoinAndSelect('user.JWTToken', 'JWTToken')
+			.leftJoinAndSelect('user.passwordResetToken', 'passwordResetToken')
+			.where('user.email = :email', { email })
+			.orWhere('user.nickname = :nickname', { nickname })
+			.getOne();
+	}
+
 	public async createUser(user: CreateUserDto): Promise<string> {
 		const result: InsertResult = await this._dataSource
 			.createQueryBuilder()
