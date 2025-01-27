@@ -58,6 +58,15 @@ export interface IUsersService {
 	getByNickname(nickname: string): Promise<UserShortDto | null>;
 
 	/**
+	 * Method for searching user by its email or nickname
+	 * @param email - user email to search
+	 * @param nickname - user nickname to search
+	 * @returns UserShortDto - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	getByEmailOrNickname(email: string, nickname: string): Promise<UserShortDto | null>;
+
+	/**
 	 * Method for searching user by its password reset token
 	 * @param token - user reset token
 	 * @returns UserShortDto - if user was found

@@ -75,20 +75,18 @@ export class AuthController implements IAuthController {
 			ResponseStatus.SUCCESS,
 		);
 
-		const userByEmail: UserShortDto | null = await this._usersService.getByEmail(
+		const existingUser: UserShortDto | null = await this._usersService.getByEmailOrNickname(
 			signupUserDTO.email,
-		);
-
-		if (userByEmail) {
-			throw new ConflictException(['This email is already taken|email']);
-		}
-
-		const userByNickname: UserShortDto | null = await this._usersService.getByNickname(
 			signupUserDTO.nickname,
 		);
 
-		if (userByNickname) {
-			throw new ConflictException(['This nickname is already taken|nickname']);
+		if (existingUser) {
+			const message: string =
+				existingUser.email === signupUserDTO.email
+					? 'This email is already taken|email'
+					: 'This nickname is already taken|nickname';
+
+			throw new ConflictException([message]);
 		}
 
 		const createdUser: UserShortDto | null = await this._usersService.createUser(signupUserDTO);
