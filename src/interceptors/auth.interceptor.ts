@@ -23,7 +23,7 @@ export class AuthInterceptor implements NestInterceptor {
 	async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<unknown>> {
 		const request: Request & TUserPayload = context.switchToHttp().getRequest();
 
-		const authHeader: string | undefined = request.headers['authorization'];
+		const authHeader: string | undefined = request.headers.authorization;
 
 		if (!authHeader) {
 			throw new UnauthorizedException(['Please, login to perform this action']);
