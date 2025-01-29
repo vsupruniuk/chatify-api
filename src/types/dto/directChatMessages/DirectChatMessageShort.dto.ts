@@ -3,15 +3,15 @@ import { UserPublicDto } from '@DTO/users/UserPublic.dto';
 
 export class DirectChatMessageShortDto {
 	@Expose()
-	id: string;
+	public id: string;
 
 	@Expose()
-	dateTime: string;
+	public dateTime: string;
 
 	@Expose()
-	messageText: string;
+	public messageText: string;
 
 	@Expose()
 	@Type(() => UserPublicDto)
-	sender: UserPublicDto;
+	public sender: UserPublicDto;
 }

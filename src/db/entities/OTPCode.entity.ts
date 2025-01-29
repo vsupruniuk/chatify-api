@@ -14,10 +14,10 @@ import {
 @Entity('OTPCodes')
 export class OTPCode {
 	@PrimaryGeneratedColumn('uuid')
-	id: string;
+	public id: string;
 
 	@Column({ type: 'int', nullable: true })
-	code: number | null;
+	public code: number | null;
 
 	@CreateDateColumn({
 		type: 'timestamp',
@@ -31,7 +31,7 @@ export class OTPCode {
 			},
 		},
 	})
-	createdAt: string;
+	public createdAt: string;
 
 	@Column({
 		type: 'timestamp',
@@ -45,7 +45,7 @@ export class OTPCode {
 			},
 		},
 	})
-	expiresAt: string | null;
+	public expiresAt: string | null;
 
 	@UpdateDateColumn({
 		type: 'timestamp',
@@ -59,8 +59,8 @@ export class OTPCode {
 			},
 		},
 	})
-	updatedAt: string;
+	public updatedAt: string;
 
 	@OneToOne(() => User, (user: User) => user.OTPCode, { nullable: false, onDelete: 'CASCADE' })
-	user: User;
+	public user: User;
 }

@@ -7,31 +7,31 @@ import { Expose, Type } from 'class-transformer';
  */
 export class UserShortDto {
 	@Expose()
-	id: string;
+	public id: string;
 
 	@Expose()
-	about: string | null;
+	public about: string | null;
 
 	@Expose()
-	avatarUrl: string | null;
+	public avatarUrl: string | null;
 
 	@Expose()
-	email: string;
+	public email: string;
 
 	@Expose()
-	firstName: string;
+	public firstName: string;
 
 	@Expose()
-	lastName: string | null;
+	public lastName: string | null;
 
 	@Expose()
-	nickname: string;
+	public nickname: string;
 
 	@Expose()
 	@Type(() => AccountSettingsIdDto)
-	accountSettings: AccountSettingsIdDto;
+	public accountSettings: AccountSettingsIdDto;
 
 	@Expose()
 	@Type(() => OTPCodeIdDto)
-	OTPCode: OTPCodeIdDto;
+	public OTPCode: OTPCodeIdDto;
 }

@@ -20,7 +20,10 @@ export class AuthInterceptor implements NestInterceptor {
 		private readonly _jwtTokensService: IJWTTokensService,
 	) {}
 
-	async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<unknown>> {
+	public async intercept(
+		context: ExecutionContext,
+		next: CallHandler,
+	): Promise<Observable<unknown>> {
 		const request: Request & TUserPayload = context.switchToHttp().getRequest();
 
 		const authHeader: string | undefined = request.headers.authorization;

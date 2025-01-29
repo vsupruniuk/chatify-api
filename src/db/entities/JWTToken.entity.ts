@@ -15,7 +15,7 @@ import {
 @Entity('JWTToken')
 export class JWTToken {
 	@PrimaryGeneratedColumn('uuid')
-	id: string;
+	public id: string;
 
 	@CreateDateColumn({
 		type: 'timestamp',
@@ -29,7 +29,7 @@ export class JWTToken {
 			},
 		},
 	})
-	createdAt: string;
+	public createdAt: string;
 
 	@Index({ unique: true })
 	@Column({
@@ -38,7 +38,7 @@ export class JWTToken {
 		unique: true,
 		nullable: false,
 	})
-	token: string;
+	public token: string;
 
 	@UpdateDateColumn({
 		type: 'timestamp',
@@ -52,8 +52,8 @@ export class JWTToken {
 			},
 		},
 	})
-	updatedAt: string;
+	public updatedAt: string;
 
 	@OneToOne(() => User, (user: User) => user.JWTToken, { nullable: false, onDelete: 'CASCADE' })
-	user: User;
+	public user: User;
 }

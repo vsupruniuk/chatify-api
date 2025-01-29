@@ -2,6 +2,7 @@
  * DTO class representing data required for creating OTP code
  */
 export class CreateOTPCodeDto {
-	code: number;
-	expiresAt: string;
+	public code: number;
+
+	public expiresAt: string;
 }

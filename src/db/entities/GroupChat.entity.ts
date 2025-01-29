@@ -17,21 +17,21 @@ import {
 @Entity('GroupChats')
 export class GroupChat {
 	@PrimaryGeneratedColumn('uuid')
-	id: string;
+	public id: string;
 
 	@Column({
 		type: 'varchar',
 		length: 255,
 		nullable: true,
 	})
-	avatarUrl: string | null;
+	public avatarUrl: string | null;
 
 	@Column({
 		type: 'varchar',
 		length: 255,
 		nullable: false,
 	})
-	name: string;
+	public name: string;
 
 	@CreateDateColumn({
 		type: 'timestamp',
@@ -45,7 +45,7 @@ export class GroupChat {
 			},
 		},
 	})
-	createdAt: string;
+	public createdAt: string;
 
 	@UpdateDateColumn({
 		type: 'timestamp',
@@ -59,14 +59,14 @@ export class GroupChat {
 			},
 		},
 	})
-	updatedAt: string;
+	public updatedAt: string;
 
 	@OneToMany(
 		() => GroupChatMessage,
 		(groupChatMessage: GroupChatMessage) => groupChatMessage.groupChat,
 		{ nullable: false, onDelete: 'NO ACTION' },
 	)
-	messages: GroupChatMessage[];
+	public messages: GroupChatMessage[];
 
 	@ManyToMany(() => User, (user: User) => user.groupChats, { onDelete: 'NO ACTION' })
 	@JoinTable({
@@ -80,5 +80,5 @@ export class GroupChat {
 			referencedColumnName: 'id',
 		},
 	})
-	users: User[];
+	public users: User[];
 }
