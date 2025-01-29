@@ -14,7 +14,7 @@ import {
 @Entity('AccountSettings')
 export class AccountSettings {
 	@PrimaryGeneratedColumn('uuid')
-	id: string;
+	public id: string;
 
 	@CreateDateColumn({
 		type: 'timestamp',
@@ -28,16 +28,16 @@ export class AccountSettings {
 			},
 		},
 	})
-	createdAt: string;
+	public createdAt: string;
 
 	@Column({ type: 'boolean', default: false })
-	enterIsSend: boolean;
+	public enterIsSend: boolean;
 
 	@Column({ type: 'boolean', default: false })
-	notification: boolean;
+	public notification: boolean;
 
 	@Column({ type: 'boolean', default: false })
-	twoStepVerification: boolean;
+	public twoStepVerification: boolean;
 
 	@UpdateDateColumn({
 		type: 'timestamp',
@@ -51,11 +51,11 @@ export class AccountSettings {
 			},
 		},
 	})
-	updatedAt: string;
+	public updatedAt: string;
 
 	@OneToOne(() => User, (user: User) => user.accountSettings, {
 		nullable: false,
 		onDelete: 'CASCADE',
 	})
-	user: User;
+	public user: User;
 }

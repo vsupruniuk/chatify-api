@@ -23,21 +23,21 @@ import {
 @Entity('Users')
 export class User {
 	@PrimaryGeneratedColumn('uuid')
-	id: string;
+	public id: string;
 
 	@Column({
 		type: 'varchar',
 		length: 255,
 		nullable: true,
 	})
-	about: string | null;
+	public about: string | null;
 
 	@Column({
 		type: 'varchar',
 		length: 255,
 		nullable: true,
 	})
-	avatarUrl: string | null;
+	public avatarUrl: string | null;
 
 	@CreateDateColumn({
 		type: 'timestamp',
@@ -51,7 +51,7 @@ export class User {
 			},
 		},
 	})
-	createdAt: string;
+	public createdAt: string;
 
 	@Index({ unique: true })
 	@Column({
@@ -60,24 +60,24 @@ export class User {
 		nullable: false,
 		unique: true,
 	})
-	email: string;
+	public email: string;
 
 	@Column({
 		type: 'varchar',
 		length: 255,
 		nullable: false,
 	})
-	firstName: string;
+	public firstName: string;
 
 	@Column({ type: 'boolean', default: false })
-	isActivated: boolean;
+	public isActivated: boolean;
 
 	@Column({
 		type: 'varchar',
 		length: 255,
 		nullable: true,
 	})
-	lastName: string | null;
+	public lastName: string | null;
 
 	@Index({ unique: true })
 	@Column({
@@ -86,14 +86,14 @@ export class User {
 		nullable: false,
 		unique: true,
 	})
-	nickname: string;
+	public nickname: string;
 
 	@Column({
 		type: 'varchar',
 		length: 255,
 		nullable: false,
 	})
-	password: string;
+	public password: string;
 
 	@UpdateDateColumn({
 		type: 'timestamp',
@@ -107,28 +107,28 @@ export class User {
 			},
 		},
 	})
-	updatedAt: string;
+	public updatedAt: string;
 
 	@OneToOne(() => AccountSettings, (accountSettings: AccountSettings) => accountSettings.user, {
 		nullable: false,
 		onDelete: 'NO ACTION',
 	})
 	@JoinColumn({ name: 'accountSettingsId', referencedColumnName: 'id' })
-	accountSettings: AccountSettings;
+	public accountSettings: AccountSettings;
 
 	@OneToOne(() => JWTToken, (jwtToken: JWTToken) => jwtToken.user, {
 		nullable: true,
 		onDelete: 'SET NULL',
 	})
 	@JoinColumn({ name: 'jwtTokenId', referencedColumnName: 'id' })
-	JWTToken: JWTToken | null;
+	public JWTToken: JWTToken | null;
 
 	@OneToOne(() => OTPCode, (otpCode: OTPCode) => otpCode.user, {
 		nullable: true,
 		onDelete: 'SET NULL',
 	})
 	@JoinColumn({ name: 'otpCodeId', referencedColumnName: 'id' })
-	OTPCode: OTPCode | null;
+	public OTPCode: OTPCode | null;
 
 	@OneToOne(
 		() => PasswordResetToken,
@@ -136,15 +136,15 @@ export class User {
 		{ nullable: true, onDelete: 'SET NULL' },
 	)
 	@JoinColumn({ name: 'passwordResetTokenId', referencedColumnName: 'id' })
-	passwordResetToken: PasswordResetToken | null;
+	public passwordResetToken: PasswordResetToken | null;
 
 	@ManyToMany(() => DirectChat, (directChat: DirectChat) => directChat.users, {
 		onDelete: 'CASCADE',
 	})
-	directChats: DirectChat[];
+	public directChats: DirectChat[];
 
 	@ManyToMany(() => GroupChat, (groupChat: GroupChat) => groupChat.users, { onDelete: 'CASCADE' })
-	groupChats: GroupChat[];
+	public groupChats: GroupChat[];
 
 	@ManyToMany(() => User, (user: User) => user.blockedUsers, { onDelete: 'NO ACTION' })
 	@JoinTable({
@@ -158,5 +158,5 @@ export class User {
 			referencedColumnName: 'id',
 		},
 	})
-	blockedUsers: User[];
+	public blockedUsers: User[];
 }

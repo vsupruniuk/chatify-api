@@ -70,7 +70,7 @@ export class DirectChatsGateway
 	}
 
 	@SubscribeMessage(WSEvents.CREATE_CHAT)
-	async createDirectChat(
+	public async createDirectChat(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@MessageBody() createDirectChatDto: CreateDirectChatDto,
 	): Promise<WsResponse<WSResponseResult>> {
@@ -98,7 +98,7 @@ export class DirectChatsGateway
 	}
 
 	@SubscribeMessage(WSEvents.SEND_MESSAGE)
-	async sendMessage(
+	public async sendMessage(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@MessageBody() sendDirectMessageDto: SendDirectMessageDto,
 	): Promise<WsResponse<WSResponseResult>> {

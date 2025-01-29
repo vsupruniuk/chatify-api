@@ -8,15 +8,19 @@ import {
 
 @ValidatorConstraint({ name: 'isStringsSimilar', async: false })
 export class IsStringsSimilarConstraint implements ValidatorConstraintInterface {
-	validate(value: never, validationArguments?: ValidationArguments): Promise<boolean> | boolean {
+	public validate(
+		value: never,
+		validationArguments?: ValidationArguments,
+	): Promise<boolean> | boolean {
 		const [relatedPropertyName] = validationArguments?.constraints || '';
 		const relatedValue = validationArguments?.object[relatedPropertyName] || '';
 
 		return value === relatedValue;
 	}
 
-	defaultMessage(args: ValidationArguments) {
+	public defaultMessage(args: ValidationArguments): string {
 		const [relatedPropertyName] = args.constraints;
+
 		return `${args.property} and ${relatedPropertyName} should match`;
 	}
 }
@@ -27,7 +31,7 @@ export class IsStringsSimilarConstraint implements ValidatorConstraintInterface 
  * @param validationOptions - additional validation options
  */
 export const IsStringsSimilar = (property: string, validationOptions?: ValidationOptions) => {
-	return (object: object, propertyName: string) => {
+	return (object: object, propertyName: string): void => {
 		registerDecorator({
 			target: object.constructor,
 			propertyName,

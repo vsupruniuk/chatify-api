@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Environments } from '@Enums/Environments.enum';
+import { Environments } from '../types/enums/Environments.enum';
 
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSource, DataSourceOptions } from 'typeorm';

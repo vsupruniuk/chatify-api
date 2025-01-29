@@ -2,14 +2,14 @@ import { Expose } from 'class-transformer';
 
 export class AccountSettingsFullDto {
 	@Expose()
-	id: string;
+	public id: string;
 
 	@Expose()
-	enterIsSend: boolean;
+	public enterIsSend: boolean;
 
 	@Expose()
-	notification: boolean;
+	public notification: boolean;
 
 	@Expose()
-	twoStepVerification: boolean;
+	public twoStepVerification: boolean;
 }

@@ -1,4 +1,5 @@
 export class ValidationErrorField {
-	field: string | null;
-	message: string;
+	public field: string | null;
+
+	public message: string;
 }

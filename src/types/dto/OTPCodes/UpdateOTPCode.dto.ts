@@ -1,4 +1,5 @@
 export class UpdateOTPCodeDto {
-	code: number | null;
-	expiresAt: string | null;
+	public code: number | null;
+
+	public expiresAt: string | null;
 }

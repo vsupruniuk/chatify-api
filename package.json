@@ -24,7 +24,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "migration:run": "npm run typeorm migration:run -- -d dist/src/db/typeOrmConfig.js",
-    "migration:generate": "npm run typeorm -- -d src/db/typeOrmConfig.ts migration:generate src/db/migrations/$npm_config_name",
+    "migration:generate": "npm run typeorm -- -d dist/src/db/typeOrmConfig.ts migration:generate src/db/migrations/$npm_config_name",
     "migration:create": "npm run typeorm -- migration:create src/db/migrations/$npm_config_name",
     "migration:revert": "npm run typeorm -- -d dist/src/db/typeOrmConfig.js migration:revert",
     "prepare": "husky"
