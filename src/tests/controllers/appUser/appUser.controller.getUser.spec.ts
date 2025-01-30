@@ -66,7 +66,7 @@ describe('AppUserController', (): void => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AppModule, AuthModule],
 		})
-			.overrideProvider(CustomProviders.I_USERS_SERVICE)
+			.overrideProvider(CustomProviders.CTF_USERS_SERVICE)
 			.useValue(usersServiceMock)
 			.overrideInterceptor(AuthInterceptor)
 			.useValue(authInterceptorMock)

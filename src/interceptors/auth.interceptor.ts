@@ -16,7 +16,7 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class AuthInterceptor implements NestInterceptor {
 	constructor(
-		@Inject(CustomProviders.I_JWT_TOKENS_SERVICE)
+		@Inject(CustomProviders.CTF_JWT_TOKENS_SERVICE)
 		private readonly _jwtTokensService: IJWTTokensService,
 	) {}
 

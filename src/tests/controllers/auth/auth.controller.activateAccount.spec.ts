@@ -130,13 +130,13 @@ describe('AuthController', (): void => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AppModule, AuthModule],
 		})
-			.overrideProvider(CustomProviders.I_AUTH_SERVICE)
+			.overrideProvider(CustomProviders.CTF_AUTH_SERVICE)
 			.useValue(authServiceMock)
-			.overrideProvider(CustomProviders.I_OTP_CODES_SERVICE)
+			.overrideProvider(CustomProviders.CTF_OTP_CODES_SERVICE)
 			.useValue(otpCodesServiceMock)
-			.overrideProvider(CustomProviders.I_JWT_TOKENS_SERVICE)
+			.overrideProvider(CustomProviders.CTF_JWT_TOKENS_SERVICE)
 			.useValue(jwtTokensServiceMock)
-			.overrideProvider(CustomProviders.I_USERS_SERVICE)
+			.overrideProvider(CustomProviders.CTF_USERS_SERVICE)
 			.useValue(usersServiceMock)
 			.compile();
 

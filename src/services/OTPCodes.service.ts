@@ -12,7 +12,7 @@ import { plainToInstance } from 'class-transformer';
 @Injectable()
 export class OTPCodesService implements IOTPCodesService {
 	constructor(
-		@Inject(CustomProviders.I_OTP_CODES_REPOSITORY)
+		@Inject(CustomProviders.CTF_OTP_CODES_REPOSITORY)
 		private readonly _otpCodesRepository: IOTPCodesRepository,
 	) {}
 
