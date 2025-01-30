@@ -3,12 +3,12 @@ import * as crypto from 'crypto';
 import { promisify } from 'util';
 
 export class CryptoService implements ICryptoService {
-	private readonly _ivLength: number = Number(process.env.CRYPTO_IV_LENGTH) || 0;
-	private readonly _saltLength: number = Number(process.env.CRYPTO_SALT_LENGTH) || 0;
-	private readonly _keyLength: number = Number(process.env.CRYPTO_KEY_LENGTH) || 0;
-	private readonly _password: string = process.env.CRYPTO_PASSWORD || '';
-	private readonly _algorithm: string = process.env.CRYPTO_CIPHER_ALGORITHM || '';
-	private readonly _encryptionEncoding: string = process.env.CRYPTO_ENCRYPTION_ENCODING || '';
+	private readonly _ivLength: number = Number(process.env.CRYPTO_IV_LENGTH);
+	private readonly _saltLength: number = Number(process.env.CRYPTO_SALT_LENGTH);
+	private readonly _keyLength: number = Number(process.env.CRYPTO_KEY_LENGTH);
+	private readonly _password: string = String(process.env.CRYPTO_PASSWORD);
+	private readonly _algorithm: string = String(process.env.CRYPTO_CIPHER_ALGORITHM);
+	private readonly _encryptionEncoding: string = String(process.env.CRYPTO_ENCRYPTION_ENCODING);
 
 	public async encryptText(text: string): Promise<string> {
 		const iv: Buffer = crypto.randomBytes(this._ivLength);
