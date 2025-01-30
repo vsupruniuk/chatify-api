@@ -70,7 +70,7 @@ describe('Direct chats controller', (): void => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AppModule, DirectChatsModule],
 		})
-			.overrideProvider(CustomProviders.I_DIRECT_CHATS_SERVICE_PROVIDER)
+			.overrideProvider(CustomProviders.CTF_DIRECT_CHATS_SERVICE_PROVIDER)
 			.useValue(directChatsServiceMock)
 			.overrideInterceptor(AuthInterceptor)
 			.useValue(authInterceptorMock)

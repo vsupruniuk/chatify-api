@@ -24,7 +24,7 @@ import { SuccessfulResponseResult } from '@Responses/successfulResponses/Success
 @UseInterceptors(AuthInterceptor)
 export class SearchController implements ISearchController {
 	constructor(
-		@Inject(CustomProviders.I_USERS_SERVICE)
+		@Inject(CustomProviders.CTF_USERS_SERVICE)
 		private readonly _usersService: IUsersService,
 	) {}
 

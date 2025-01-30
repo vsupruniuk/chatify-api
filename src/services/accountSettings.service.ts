@@ -7,7 +7,7 @@ import { Inject, Injectable } from '@nestjs/common';
 @Injectable()
 export class AccountSettingsService implements IAccountSettingsService {
 	constructor(
-		@Inject(CustomProviders.I_ACCOUNT_SETTINGS_REPOSITORY)
+		@Inject(CustomProviders.CTF_ACCOUNT_SETTINGS_REPOSITORY)
 		private readonly _accountSettingsRepository: IAccountSettingsRepository,
 	) {}
 

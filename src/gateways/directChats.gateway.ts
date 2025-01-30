@@ -46,10 +46,10 @@ export class DirectChatsGateway
 	private readonly _clients: Map<string, Socket> = new Map();
 
 	constructor(
-		@Inject(CustomProviders.I_DIRECT_CHATS_SERVICE_PROVIDER)
+		@Inject(CustomProviders.CTF_DIRECT_CHATS_SERVICE_PROVIDER)
 		private readonly _directChatsService: IDirectChatsService,
 
-		@Inject(CustomProviders.I_JWT_TOKENS_SERVICE)
+		@Inject(CustomProviders.CTF_JWT_TOKENS_SERVICE)
 		private readonly _jwtTokenService: IJWTTokensService,
 	) {}
 

@@ -25,7 +25,7 @@ import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChat
 @UseInterceptors(AuthInterceptor)
 export class DirectChatsController implements IDirectChatsController {
 	constructor(
-		@Inject(CustomProviders.I_DIRECT_CHATS_SERVICE_PROVIDER)
+		@Inject(CustomProviders.CTF_DIRECT_CHATS_SERVICE_PROVIDER)
 		private readonly _directChatsService: IDirectChatsService,
 	) {}
 

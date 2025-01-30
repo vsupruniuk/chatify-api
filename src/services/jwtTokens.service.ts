@@ -13,7 +13,7 @@ export class JwtTokensService implements IJWTTokensService {
 		@Inject(JwtService)
 		private readonly _jwtService: JwtService,
 
-		@Inject(CustomProviders.I_JWT_TOKENS_REPOSITORY)
+		@Inject(CustomProviders.CTF_JWT_TOKENS_REPOSITORY)
 		private readonly _jwtTokensRepository: IJWTTokensRepository,
 	) {}
 

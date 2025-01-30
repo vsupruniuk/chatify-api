@@ -28,16 +28,16 @@ import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetTok
 @Injectable()
 export class UsersService implements IUsersService {
 	constructor(
-		@Inject(CustomProviders.I_ACCOUNT_SETTINGS_REPOSITORY)
+		@Inject(CustomProviders.CTF_ACCOUNT_SETTINGS_REPOSITORY)
 		private readonly _accountSettingsRepository: IAccountSettingsRepository,
 
-		@Inject(CustomProviders.I_OTP_CODES_REPOSITORY)
+		@Inject(CustomProviders.CTF_OTP_CODES_REPOSITORY)
 		private readonly _otpCodesRepository: IOTPCodesRepository,
 
-		@Inject(CustomProviders.I_USERS_REPOSITORY)
+		@Inject(CustomProviders.CTF_USERS_REPOSITORY)
 		private readonly _usersRepository: IUsersRepository,
 
-		@Inject(CustomProviders.I_PASSWORD_RESET_TOKENS_REPOSITORY)
+		@Inject(CustomProviders.CTF_PASSWORD_RESET_TOKENS_REPOSITORY)
 		private readonly _passwordResetTokenRepository: IPasswordResetTokensRepository,
 	) {}
 
