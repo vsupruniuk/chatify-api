@@ -13,6 +13,8 @@ import providers from '@Modules/providers/providers';
 		providers.CTF_DIRECT_CHATS_SERVICE,
 		providers.CTF_DIRECT_CHATS_REPOSITORY,
 
+		providers.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY,
+
 		providers.CTF_CRYPTO_SERVICE,
 
 		providers.CTF_JWT_TOKENS_SERVICE,

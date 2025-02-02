@@ -10,17 +10,25 @@ import { directChats } from '@TestMocks/DirectChat/directChats';
 import SpyInstance = jest.SpyInstance;
 import { users } from '@TestMocks/User/users';
 import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
+import { IDirectChatMessagesRepository } from '@Interfaces/directChatMessages/IDirectChatMessagesRepository';
+import { DirectChatMessagesRepository } from '@Repositories/directChatMessages.repository';
 
 describe('directChatsService', (): void => {
 	let directChatsService: IDirectChatsService;
 	let directChatsRepository: IDirectChatsRepository;
+	let directChatMessagesRepository: IDirectChatMessagesRepository;
 	let cryptoService: ICryptoService;
 
 	beforeAll((): void => {
 		directChatsRepository = new DirectChatsRepository(connectionSource);
+		directChatMessagesRepository = new DirectChatMessagesRepository(connectionSource);
 		cryptoService = new CryptoService();
 
-		directChatsService = new DirectChatsService(directChatsRepository, cryptoService);
+		directChatsService = new DirectChatsService(
+			directChatsRepository,
+			directChatMessagesRepository,
+			cryptoService,
+		);
 	});
 
 	describe('getLastChats', () => {
