@@ -46,7 +46,7 @@ export class DirectChatsGateway
 	private readonly _clients: Map<string, Socket> = new Map();
 
 	constructor(
-		@Inject(CustomProviders.CTF_DIRECT_CHATS_SERVICE_PROVIDER)
+		@Inject(CustomProviders.CTF_DIRECT_CHATS_SERVICE)
 		private readonly _directChatsService: IDirectChatsService,
 
 		@Inject(CustomProviders.CTF_JWT_TOKENS_SERVICE)

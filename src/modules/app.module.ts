@@ -7,9 +7,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { typeOrmConfig, typeOrmConfigMock } from '@DB/typeOrmConfig';
 import { AuthModule } from '@Modules/auth.module';
-import { throttlerGuardProvider } from '@Modules/providers';
 import { Environments } from '@Enums/Environments.enum';
 import { StaticModule } from '@Modules/static.module';
+import providers from '@Modules/providers/providers';
 
 @Module({
 	imports: [
@@ -36,6 +36,6 @@ import { StaticModule } from '@Modules/static.module';
 		]),
 	],
 	controllers: [],
-	providers: [throttlerGuardProvider],
+	providers: [providers.CTF_THROTTLER_GUARD],
 })
 export class AppModule {}
