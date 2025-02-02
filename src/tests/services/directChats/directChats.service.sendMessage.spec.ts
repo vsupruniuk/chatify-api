@@ -8,17 +8,24 @@ import { directChatsMessages } from '@TestMocks/DirectChatMessage/directChatsMes
 import { DateHelper } from '@Helpers/date.helper';
 import { UnprocessableEntityException } from '@nestjs/common';
 import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
+import { DirectChatMessagesRepository } from '@Repositories/directChatMessages.repository';
 
 describe('Direct chats service', (): void => {
 	let directChatsService: DirectChatsService;
 	let directChatsRepository: DirectChatsRepository;
+	let directChatMessagesRepository: DirectChatMessagesRepository;
 	let cryptoService: CryptoService;
 
 	beforeAll((): void => {
 		directChatsRepository = new DirectChatsRepository(connectionSource);
+		directChatMessagesRepository = new DirectChatMessagesRepository(connectionSource);
 		cryptoService = new CryptoService();
 
-		directChatsService = new DirectChatsService(directChatsRepository, cryptoService);
+		directChatsService = new DirectChatsService(
+			directChatsRepository,
+			directChatMessagesRepository,
+			cryptoService,
+		);
 	});
 
 	describe('sendMessage', (): void => {
@@ -44,14 +51,14 @@ describe('Direct chats service', (): void => {
 			jest.useFakeTimers();
 
 			createMessageMock = jest
-				.spyOn(directChatsRepository, 'createMessage')
+				.spyOn(directChatMessagesRepository, 'createMessage')
 				.mockImplementation(
 					async (): Promise<string> =>
 						returnFakeMessageId ? nonExistingMessageId : createdMessageId,
 				);
 
 			getMessageByIdMock = jest
-				.spyOn(directChatsRepository, 'getMessageById')
+				.spyOn(directChatMessagesRepository, 'getMessageById')
 				.mockImplementation(async (messageId: string): Promise<DirectChatMessage | null> => {
 					return (
 						directChatMessagesMock.find((message: DirectChatMessage) => message.id === messageId) ||
@@ -133,7 +140,7 @@ describe('Direct chats service', (): void => {
 			await directChatsService.sendMessage(senderId, directChatId, messageText);
 
 			const message: DirectChatMessage | null =
-				await directChatsRepository.getMessageById(createdMessageId);
+				await directChatMessagesRepository.getMessageById(createdMessageId);
 
 			expect(decryptTextMock).toHaveBeenCalledTimes(1);
 			expect(decryptTextMock).toHaveBeenNthCalledWith(1, message!.messageText);

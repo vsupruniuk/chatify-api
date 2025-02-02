@@ -8,17 +8,24 @@ import { DirectChat } from '@Entities/DirectChat.entity';
 import { directChats } from '@TestMocks/DirectChat/directChats';
 import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 import { UnprocessableEntityException } from '@nestjs/common';
+import { DirectChatMessagesRepository } from '@Repositories/directChatMessages.repository';
 
 describe('Direct chats', (): void => {
 	let directChatsService: DirectChatsService;
 	let directChatsRepository: DirectChatsRepository;
+	let directChatMessagesRepository: DirectChatMessagesRepository;
 	let cryptoService: CryptoService;
 
 	beforeAll((): void => {
 		directChatsRepository = new DirectChatsRepository(connectionSource);
+		directChatMessagesRepository = new DirectChatMessagesRepository(connectionSource);
 		cryptoService = new CryptoService();
 
-		directChatsService = new DirectChatsService(directChatsRepository, cryptoService);
+		directChatsService = new DirectChatsService(
+			directChatsRepository,
+			directChatMessagesRepository,
+			cryptoService,
+		);
 	});
 
 	describe('createChat', (): void => {

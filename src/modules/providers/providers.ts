@@ -17,6 +17,7 @@ import {
 	throttlerGuardProvider,
 	otpCodesServiceProvider,
 	otpCodesRepositoryProvider,
+	directChatMessagesProvider,
 } from '@Modules/providers';
 
 const providers: Record<CustomProviders, Provider> = {
@@ -29,6 +30,8 @@ const providers: Record<CustomProviders, Provider> = {
 
 	[CustomProviders.CTF_DIRECT_CHATS_SERVICE]: directChatsServiceProvider,
 	[CustomProviders.CTF_DIRECT_CHATS_REPOSITORY]: directChatsRepositoryProvider,
+
+	[CustomProviders.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY]: directChatMessagesProvider,
 
 	[CustomProviders.CTF_EMAIL_SERVICE]: emailServiceProvider,
 

@@ -9,12 +9,16 @@ import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 import { DirectChat } from '@Entities/DirectChat.entity';
 import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
 import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
+import { IDirectChatMessagesRepository } from '@Interfaces/directChatMessages/IDirectChatMessagesRepository';
 
 @Injectable()
 export class DirectChatsService implements IDirectChatsService {
 	constructor(
 		@Inject(CustomProviders.CTF_DIRECT_CHATS_REPOSITORY)
 		private readonly _directChatsRepository: IDirectChatsRepository,
+
+		@Inject(CustomProviders.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY)
+		private readonly _directChatMessagesRepository: IDirectChatMessagesRepository,
 
 		@Inject(CustomProviders.CTF_CRYPTO_SERVICE)
 		private readonly _cryptoService: ICryptoService,
@@ -105,7 +109,7 @@ export class DirectChatsService implements IDirectChatsService {
 	): Promise<DirectChatMessageWithChatDto[]> {
 		const { skip: skipRecords, take: takeRecords } = this._getPagination(page, take);
 
-		const messages: DirectChatMessage[] = await this._directChatsRepository.getChatMessages(
+		const messages: DirectChatMessage[] = await this._directChatMessagesRepository.getChatMessages(
 			userId,
 			directChatId,
 			skipRecords,
@@ -131,7 +135,7 @@ export class DirectChatsService implements IDirectChatsService {
 		directChatId: string,
 		messageText: string,
 	): Promise<DirectChatMessageWithChatDto> {
-		const createdMessageId: string = await this._directChatsRepository.createMessage(
+		const createdMessageId: string = await this._directChatMessagesRepository.createMessage(
 			senderId,
 			directChatId,
 			await this._cryptoService.encryptText(messageText),
@@ -139,7 +143,7 @@ export class DirectChatsService implements IDirectChatsService {
 		);
 
 		const createdMessage: DirectChatMessage | null =
-			await this._directChatsRepository.getMessageById(createdMessageId);
+			await this._directChatMessagesRepository.getMessageById(createdMessageId);
 
 		if (!createdMessage) {
 			throw new UnprocessableEntityException('Failed to create message. Please try again');
