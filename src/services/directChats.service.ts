@@ -13,10 +13,10 @@ import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChat
 @Injectable()
 export class DirectChatsService implements IDirectChatsService {
 	constructor(
-		@Inject(CustomProviders.CTF_DIRECT_CHATS_REPOSITORY_PROVIDER)
+		@Inject(CustomProviders.CTF_DIRECT_CHATS_REPOSITORY)
 		private readonly _directChatsRepository: IDirectChatsRepository,
 
-		@Inject(CustomProviders.CTF_CRYPTO_SERVICE_PROVIDER)
+		@Inject(CustomProviders.CTF_CRYPTO_SERVICE)
 		private readonly _cryptoService: ICryptoService,
 	) {}
 

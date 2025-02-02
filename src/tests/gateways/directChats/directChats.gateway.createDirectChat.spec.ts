@@ -59,7 +59,7 @@ describe('Direct chat gateway', (): void => {
 			providers: [
 				DirectChatsGateway,
 				{
-					provide: CustomProviders.CTF_DIRECT_CHATS_SERVICE_PROVIDER,
+					provide: CustomProviders.CTF_DIRECT_CHATS_SERVICE,
 					useValue: directChatsServiceMock,
 				},
 				{ provide: CustomProviders.CTF_JWT_TOKENS_SERVICE, useValue: jwtServiceMock },
