@@ -1,3 +1,6 @@
+import * as dayjs from 'dayjs';
+import { Dayjs } from 'dayjs';
+
 /**
  * Helper class for dates
  */
@@ -7,9 +10,7 @@ export class DateHelper {
 	 * @returns dateTime - current date and time in ISO string format
 	 */
 	public static dateTimeNow(): string {
-		const dateNow: Date = new Date();
-
-		return this._formatDate(dateNow);
+		return this._formatDate(dayjs());
 	}
 
 	/**
@@ -18,9 +19,9 @@ export class DateHelper {
 	 * @returns dateTime - future date and time in ISO string format
 	 */
 	public static dateTimeFuture(milliseconds: number): string {
-		const dateNow: number = Date.now();
+		const dateNow: Dayjs = dayjs();
 
-		return this._formatDate(new Date(dateNow + milliseconds));
+		return this._formatDate(dateNow.add(milliseconds, 'milliseconds'));
 	}
 
 	/**
@@ -29,14 +30,14 @@ export class DateHelper {
 	 * @returns true - if target date less then current
 	 * @returns false - if target date greater then current
 	 */
-	public static isDateLessThenCurrent(date: string): boolean {
-		const currentDate: Date = new Date();
-		const targetDate: Date = new Date(date);
+	public static isDateLessThanCurrent(date: string): boolean {
+		const currentDate: Dayjs = dayjs();
+		const targetDate: Dayjs = dayjs(date);
 
-		return this._formatDate(targetDate) < this._formatDate(currentDate);
+		return targetDate.isBefore(currentDate);
 	}
 
-	private static _formatDate(date: Date): string {
+	private static _formatDate(date: Dayjs): string {
 		return date.toISOString();
 	}
 }

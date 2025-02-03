@@ -2,11 +2,12 @@ import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordRese
 import { DateHelper } from '@Helpers/date.helper';
 import { PasswordResetTokensHelper } from '@Helpers/passwordResetTokens.helper';
 import SpyInstance = jest.SpyInstance;
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
+import * as dayjs from 'dayjs';
 
-jest.mock('uuid', () => {
+jest.mock('node:crypto', () => {
 	return {
-		v4: jest.fn().mockReturnValue('uuid-v4'),
+		randomUUID: jest.fn().mockReturnValue('uuid-v4'),
 	};
 });
 
@@ -18,7 +19,7 @@ describe('passwordResetTokensHelper', (): void => {
 		beforeEach((): void => {
 			dateTimeFutureMock = jest
 				.spyOn(DateHelper, 'dateTimeFuture')
-				.mockReturnValue(new Date(dateTimeMock).toISOString());
+				.mockReturnValue(dayjs(dateTimeMock).toISOString());
 
 			jest.useFakeTimers();
 		});
@@ -36,13 +37,13 @@ describe('passwordResetTokensHelper', (): void => {
 			expect(PasswordResetTokensHelper.generateToken).toBeInstanceOf(Function);
 		});
 
-		it('should call uuid v4 method to generate token', (): void => {
+		it('should call randomUUID method from node:crypto to generate token', (): void => {
 			PasswordResetTokensHelper.generateToken();
 
-			expect(uuidv4).toHaveBeenCalledTimes(1);
+			expect(randomUUID).toHaveBeenCalledTimes(1);
 		});
 
-		it('should call uuid dateTimeFuture method in DateHelper to generate token expiration date', (): void => {
+		it('should call dateTimeFuture method in DateHelper to generate token expiration date', (): void => {
 			PasswordResetTokensHelper.generateToken();
 
 			expect(dateTimeFutureMock).toHaveBeenCalledTimes(1);
@@ -53,7 +54,7 @@ describe('passwordResetTokensHelper', (): void => {
 			const token: PasswordResetTokenInfoDto = PasswordResetTokensHelper.generateToken();
 
 			expect(token.token).toBe('uuid-v4');
-			expect(token.expiresAt).toBe(new Date(dateTimeMock).toISOString());
+			expect(token.expiresAt).toBe(dayjs(dateTimeMock).toISOString());
 		});
 	});
 });

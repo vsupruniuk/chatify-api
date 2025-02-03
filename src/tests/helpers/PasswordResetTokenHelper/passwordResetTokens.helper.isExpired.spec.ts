@@ -1,5 +1,6 @@
 import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
 import { PasswordResetTokensHelper } from '@Helpers/passwordResetTokens.helper';
+import * as dayjs from 'dayjs';
 
 describe('passwordResetTokensHelper', (): void => {
 	describe('isExpired', (): void => {
@@ -22,7 +23,7 @@ describe('passwordResetTokensHelper', (): void => {
 		});
 
 		it('should return false if token expiresAt property greater then current date', (): void => {
-			jest.setSystemTime(new Date(timeMock));
+			jest.setSystemTime(dayjs(timeMock).toDate());
 
 			const token: PasswordResetTokenDto = {
 				id: '1',
@@ -36,7 +37,7 @@ describe('passwordResetTokensHelper', (): void => {
 		});
 
 		it('should return false if token expiresAt property equal to current date', (): void => {
-			jest.setSystemTime(new Date(timeMock));
+			jest.setSystemTime(dayjs(timeMock).toDate());
 
 			const token: PasswordResetTokenDto = {
 				id: '1',
@@ -50,7 +51,7 @@ describe('passwordResetTokensHelper', (): void => {
 		});
 
 		it('should return true if code expiresAt property less then current date', (): void => {
-			jest.setSystemTime(new Date(timeMock));
+			jest.setSystemTime(dayjs(timeMock).toDate());
 
 			const token: PasswordResetTokenDto = {
 				id: '1',
