@@ -4,7 +4,7 @@ export class UpdateAppUserDto {
 	@IsString({ message: '$property must be a string|$property' })
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
 	@IsOptional()
-	about?: string;
+	public about?: string;
 
 	@IsString({ message: '$property must be a string|$property' })
 	@MinLength(3, {
@@ -12,7 +12,7 @@ export class UpdateAppUserDto {
 	})
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
 	@IsOptional()
-	firstName?: string;
+	public firstName?: string;
 
 	@IsString({ message: '$property must be a string|$property' })
 	@MinLength(3, {
@@ -20,11 +20,11 @@ export class UpdateAppUserDto {
 	})
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
 	@IsOptional()
-	lastName?: string;
+	public lastName?: string;
 
 	@IsString({ message: '$property must be a string|$property' })
 	@MinLength(3, { message: '$property must be at least $constraint1 characters long|$property' })
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
 	@IsOptional()
-	nickname?: string;
+	public nickname?: string;
 }

@@ -7,7 +7,7 @@ import { Socket, Event } from 'socket.io';
 type WSMiddleware = (event: Event, next: (error?: Error) => void) => void;
 
 export const WsAuthMiddleware = (jwtTokensService: IJWTTokensService): WSMiddleware => {
-	return async (event: Event, next: (error?: Error) => void) => {
+	return async (event: Event, next: (error?: Error) => void): Promise<void> => {
 		try {
 			const authHeader: string | undefined = (event as unknown as Socket).handshake.headers
 				.authorization;

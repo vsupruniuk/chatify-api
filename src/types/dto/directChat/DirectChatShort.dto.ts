@@ -4,13 +4,13 @@ import { UserPublicDto } from '@DTO/users/UserPublic.dto';
 
 export class DirectChatShortDto {
 	@Expose()
-	id: string;
+	public id: string;
 
 	@Expose()
 	@Type(() => UserPublicDto)
-	users: UserPublicDto[];
+	public users: UserPublicDto[];
 
 	@Expose()
 	@Type(() => DirectChatMessageShortDto)
-	messages: DirectChatMessageShortDto[];
+	public messages: DirectChatMessageShortDto[];
 }

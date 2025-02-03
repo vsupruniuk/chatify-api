@@ -16,7 +16,7 @@ import {
 @Entity('GroupChatMessages')
 export class GroupChatMessage {
 	@PrimaryGeneratedColumn('uuid')
-	id: string;
+	public id: string;
 
 	@CreateDateColumn({
 		type: 'timestamp',
@@ -30,7 +30,7 @@ export class GroupChatMessage {
 			},
 		},
 	})
-	createdAt: string;
+	public createdAt: string;
 
 	@Column({
 		type: 'timestamp',
@@ -44,14 +44,14 @@ export class GroupChatMessage {
 			},
 		},
 	})
-	dateTime: string;
+	public dateTime: string;
 
 	@Column({
 		type: 'varchar',
 		length: 1000,
 		nullable: false,
 	})
-	messageText: string;
+	public messageText: string;
 
 	@UpdateDateColumn({
 		type: 'timestamp',
@@ -65,16 +65,16 @@ export class GroupChatMessage {
 			},
 		},
 	})
-	updatedAt: string;
+	public updatedAt: string;
 
 	@ManyToOne(() => GroupChat, (groupChat: GroupChat) => groupChat.messages, {
 		nullable: false,
 		onDelete: 'CASCADE',
 	})
 	@JoinColumn({ name: 'groupChatId', referencedColumnName: 'id' })
-	groupChat: GroupChat;
+	public groupChat: GroupChat;
 
 	@ManyToOne(() => User, { nullable: false, onDelete: 'NO ACTION' })
 	@JoinColumn({ name: 'senderId', referencedColumnName: 'id' })
-	sender: User;
+	public sender: User;
 }

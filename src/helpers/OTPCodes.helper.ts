@@ -38,6 +38,6 @@ export class OTPCodesHelper {
 			return true;
 		}
 
-		return DateHelper.isDateLessThenCurrent(otpCode.expiresAt);
+		return DateHelper.isDateLessThanCurrent(otpCode.expiresAt);
 	}
 }

@@ -9,6 +9,7 @@ export class CreateUserDto extends (SignupUserDto as new () => Omit<
 	SignupUserDto,
 	'passwordConfirmation'
 >) {
-	accountSettings: AccountSettingsFullDto;
-	OTPCode: OTPCodeResponseDto;
+	public accountSettings: AccountSettingsFullDto;
+
+	public OTPCode: OTPCodeResponseDto;
 }

@@ -1,13 +1,13 @@
 import { QueryBuilderMock } from '@TestMocks/queryBuilderMock';
-import { DirectChatsRepository } from '@Repositories/directChats.repository';
 import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
 import { directChatsMessages } from '@TestMocks/DirectChatMessage/directChatsMessages';
 import { DataSource } from 'typeorm';
+import { DirectChatMessagesRepository } from '@Repositories/directChatMessages.repository';
 
 describe('Direct chats repository', (): void => {
 	let queryBuilderMock: QueryBuilderMock<never>;
 	let dataSourceMock: jest.Mocked<Partial<DataSource>>;
-	let directChatsRepository: DirectChatsRepository;
+	let directChatMessagesRepository: DirectChatMessagesRepository;
 
 	const directChatsMessagesMock: DirectChatMessage[] = [...directChatsMessages];
 	const messageId: string = directChatsMessagesMock[0].id;
@@ -51,7 +51,7 @@ describe('Direct chats repository', (): void => {
 		});
 
 		dataSourceMock = queryBuilderMock;
-		directChatsRepository = new DirectChatsRepository(dataSourceMock as DataSource);
+		directChatMessagesRepository = new DirectChatMessagesRepository(dataSourceMock as DataSource);
 	});
 
 	describe('getMessageById', (): void => {
@@ -60,15 +60,15 @@ describe('Direct chats repository', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(directChatsRepository.getMessageById).toBeDefined();
+			expect(directChatMessagesRepository.getMessageById).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(directChatsRepository.getMessageById).toBeInstanceOf(Function);
+			expect(directChatMessagesRepository.getMessageById).toBeInstanceOf(Function);
 		});
 
 		it('should use queryBuilder to build query for retrieving message by id', async (): Promise<void> => {
-			await directChatsRepository.getMessageById(messageId);
+			await directChatMessagesRepository.getMessageById(messageId);
 
 			expect(queryBuilderMock.createQueryBuilder).toHaveBeenCalledTimes(1);
 
@@ -109,14 +109,14 @@ describe('Direct chats repository', (): void => {
 
 		it('should return message by its id', async (): Promise<void> => {
 			const message: DirectChatMessage | null =
-				await directChatsRepository.getMessageById(messageId);
+				await directChatMessagesRepository.getMessageById(messageId);
 
 			expect(message?.id).toEqual(messageId);
 		});
 
 		it('should return null if message with provided id does not exist', async (): Promise<void> => {
 			const message: DirectChatMessage | null =
-				await directChatsRepository.getMessageById(notExistingMessageId);
+				await directChatMessagesRepository.getMessageById(notExistingMessageId);
 
 			expect(message).toBeNull();
 		});

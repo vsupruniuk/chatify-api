@@ -47,11 +47,11 @@ describe('AuthController', (): void => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AppModule, AuthModule],
 		})
-			.overrideProvider(CustomProviders.I_USERS_SERVICE)
+			.overrideProvider(CustomProviders.CTF_USERS_SERVICE)
 			.useValue(usersServiceMock)
-			.overrideProvider(CustomProviders.I_EMAIL_SERVICE)
+			.overrideProvider(CustomProviders.CTF_EMAIL_SERVICE)
 			.useValue(emailServiceMock)
-			.overrideProvider(CustomProviders.I_PASSWORD_RESET_TOKENS_SERVICE)
+			.overrideProvider(CustomProviders.CTF_PASSWORD_RESET_TOKENS_SERVICE)
 			.useValue(passwordResetTokenServiceMock)
 			.compile();
 

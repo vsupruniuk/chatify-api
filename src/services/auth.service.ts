@@ -13,10 +13,10 @@ import { plainToInstance } from 'class-transformer';
 @Injectable()
 export class AuthService implements IAuthService {
 	constructor(
-		@Inject(CustomProviders.I_OTP_CODES_REPOSITORY)
+		@Inject(CustomProviders.CTF_OTP_CODES_REPOSITORY)
 		private readonly _otpCodesRepository: IOTPCodesRepository,
 
-		@Inject(CustomProviders.I_USERS_REPOSITORY)
+		@Inject(CustomProviders.CTF_USERS_REPOSITORY)
 		private readonly _usersRepository: IUsersRepository,
 	) {}
 

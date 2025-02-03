@@ -8,3 +8,4 @@ export * from './passwordResetTokens';
 export * from './guards';
 export * from './directChats';
 export * from './crypto';
+export * from './directChatMessages';

@@ -2,17 +2,17 @@ import { Expose } from 'class-transformer';
 
 export class UserPublicDto {
 	@Expose()
-	id: string;
+	public id: string;
 
 	@Expose()
-	avatarUrl: string | null;
+	public avatarUrl: string | null;
 
 	@Expose()
-	firstName: string;
+	public firstName: string;
 
 	@Expose()
-	lastName: string | null;
+	public lastName: string | null;
 
 	@Expose()
-	nickname: string;
+	public nickname: string;
 }

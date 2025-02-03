@@ -48,22 +48,22 @@ import { Response } from 'express';
 @Controller('auth')
 export class AuthController implements IAuthController {
 	constructor(
-		@Inject(CustomProviders.I_USERS_SERVICE)
+		@Inject(CustomProviders.CTF_USERS_SERVICE)
 		private readonly _usersService: IUsersService,
 
-		@Inject(CustomProviders.I_AUTH_SERVICE)
+		@Inject(CustomProviders.CTF_AUTH_SERVICE)
 		private readonly _authService: IAuthService,
 
-		@Inject(CustomProviders.I_EMAIL_SERVICE)
+		@Inject(CustomProviders.CTF_EMAIL_SERVICE)
 		private readonly _emailService: IEmailService,
 
-		@Inject(CustomProviders.I_OTP_CODES_SERVICE)
+		@Inject(CustomProviders.CTF_OTP_CODES_SERVICE)
 		private readonly _otpCodesService: IOTPCodesService,
 
-		@Inject(CustomProviders.I_JWT_TOKENS_SERVICE)
+		@Inject(CustomProviders.CTF_JWT_TOKENS_SERVICE)
 		private readonly _jwtTokensService: IJWTTokensService,
 
-		@Inject(CustomProviders.I_PASSWORD_RESET_TOKENS_SERVICE)
+		@Inject(CustomProviders.CTF_PASSWORD_RESET_TOKENS_SERVICE)
 		private readonly _passwordResetTokensService: IPasswordResetTokensService,
 	) {}
 

@@ -14,7 +14,7 @@ import { Socket } from 'socket.io';
  */
 @Catch(HttpException, WsException)
 export class wsExceptionFilter extends BaseWsExceptionFilter {
-	catch(exception: WsException | HttpException, host: ArgumentsHost) {
+	public catch(exception: WsException | HttpException, host: ArgumentsHost): void {
 		const client: Socket = host.switchToWs().getClient();
 
 		const responseResult: ErrorWSResponseResult<ValidationErrorField> =

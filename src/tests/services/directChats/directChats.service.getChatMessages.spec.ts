@@ -11,17 +11,25 @@ import { directChatsMessages } from '@TestMocks/DirectChatMessage/directChatsMes
 import { directChats } from '@TestMocks/DirectChat/directChats';
 import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
 import { users } from '@TestMocks/User/users';
+import { IDirectChatMessagesRepository } from '@Interfaces/directChatMessages/IDirectChatMessagesRepository';
+import { DirectChatMessagesRepository } from '@Repositories/directChatMessages.repository';
 
 describe('directChatsService', (): void => {
 	let directChatsService: IDirectChatsService;
 	let directChatsRepository: IDirectChatsRepository;
+	let directChatMessagesRepository: IDirectChatMessagesRepository;
 	let cryptoService: ICryptoService;
 
 	beforeAll((): void => {
 		directChatsRepository = new DirectChatsRepository(connectionSource);
+		directChatMessagesRepository = new DirectChatMessagesRepository(connectionSource);
 		cryptoService = new CryptoService();
 
-		directChatsService = new DirectChatsService(directChatsRepository, cryptoService);
+		directChatsService = new DirectChatsService(
+			directChatsRepository,
+			directChatMessagesRepository,
+			cryptoService,
+		);
 	});
 
 	describe('getChatMessages', (): void => {
@@ -34,7 +42,7 @@ describe('directChatsService', (): void => {
 
 		beforeEach((): void => {
 			getChatMessagesMock = jest
-				.spyOn(directChatsRepository, 'getChatMessages')
+				.spyOn(directChatMessagesRepository, 'getChatMessages')
 				.mockImplementation(async (): Promise<DirectChatMessage[]> => directChatMessagesMock);
 
 			decryptTextMock = jest
@@ -75,7 +83,7 @@ describe('directChatsService', (): void => {
 
 			await directChatsService.getChatMessages(userIdMock, directChatIdMock, page, take);
 
-			const chatMessages: DirectChatMessage[] = await directChatsRepository.getChatMessages(
+			const chatMessages: DirectChatMessage[] = await directChatMessagesRepository.getChatMessages(
 				userIdMock,
 				directChatIdMock,
 				page * take - take,

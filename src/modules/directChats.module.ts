@@ -1,25 +1,24 @@
 import { DirectChatsGateway } from '@Gateways/directChats.gateway';
-import {
-	cryptoServiceProvider,
-	directChatsRepositoryProvider,
-	directChatsServiceProvider,
-	jwtTokensRepositoryProvider,
-	jwtTokensServiceProvider,
-} from '@Modules/providers';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { DirectChatsController } from '@Controllers/directChats.controller';
+import providers from '@Modules/providers/providers';
 
 @Module({
 	controllers: [DirectChatsController],
 	providers: [
 		DirectChatsGateway,
 		JwtService,
-		directChatsServiceProvider,
-		directChatsRepositoryProvider,
-		cryptoServiceProvider,
-		jwtTokensServiceProvider,
-		jwtTokensRepositoryProvider,
+
+		providers.CTF_DIRECT_CHATS_SERVICE,
+		providers.CTF_DIRECT_CHATS_REPOSITORY,
+
+		providers.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY,
+
+		providers.CTF_CRYPTO_SERVICE,
+
+		providers.CTF_JWT_TOKENS_SERVICE,
+		providers.CTF_JWT_TOKENS_REPOSITORY,
 	],
 })
 export class DirectChatsModule {}

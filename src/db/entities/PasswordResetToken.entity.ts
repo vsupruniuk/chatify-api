@@ -12,7 +12,7 @@ import {
 @Entity('PasswordResetTokens')
 export class PasswordResetToken {
 	@PrimaryGeneratedColumn('uuid')
-	id: string;
+	public id: string;
 
 	@CreateDateColumn({
 		type: 'timestamp',
@@ -26,7 +26,7 @@ export class PasswordResetToken {
 			},
 		},
 	})
-	createdAt: string;
+	public createdAt: string;
 
 	@Column({
 		type: 'timestamp',
@@ -40,7 +40,7 @@ export class PasswordResetToken {
 			},
 		},
 	})
-	expiresAt: string | null;
+	public expiresAt: string | null;
 
 	@Index()
 	@Column({
@@ -48,7 +48,7 @@ export class PasswordResetToken {
 		length: 255,
 		nullable: true,
 	})
-	token: string;
+	public token: string;
 
 	@UpdateDateColumn({
 		type: 'timestamp',
@@ -62,11 +62,11 @@ export class PasswordResetToken {
 			},
 		},
 	})
-	updatedAt: string;
+	public updatedAt: string;
 
 	@OneToOne(() => User, (user: User) => user.passwordResetToken, {
 		nullable: false,
 		onDelete: 'CASCADE',
 	})
-	user: User;
+	public user: User;
 }

@@ -1,6 +1,6 @@
 {
   "name": "chatify-api",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Chatify API is a powerful NestJS-based backend service for a real-time messenger application. It provides features like user management, group chats, direct messaging, user search, and more.",
   "author": "Vladyslav Supruniuk",
   "private": false,
@@ -24,7 +24,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "migration:run": "npm run typeorm migration:run -- -d dist/src/db/typeOrmConfig.js",
-    "migration:generate": "npm run typeorm -- -d src/db/typeOrmConfig.ts migration:generate src/db/migrations/$npm_config_name",
+    "migration:generate": "npm run typeorm -- -d dist/src/db/typeOrmConfig.ts migration:generate src/db/migrations/$npm_config_name",
     "migration:create": "npm run typeorm -- migration:create src/db/migrations/$npm_config_name",
     "migration:revert": "npm run typeorm -- -d dist/src/db/typeOrmConfig.js migration:revert",
     "prepare": "husky"
@@ -45,6 +45,7 @@
     "class-validator": "0.14.1",
     "compression": "1.7.4",
     "cookie-parser": "1.4.6",
+    "dayjs": "^1.11.13",
     "helmet": "7.1.0",
     "nodemailer": "6.9.11",
     "pg": "8.11.3",
@@ -52,8 +53,7 @@
     "rxjs": "7.8.1",
     "socket.io-client": "4.7.5",
     "sqlite3": "5.1.7",
-    "typeorm": "0.3.20",
-    "uuid": "9.0.1"
+    "typeorm": "0.3.20"
   },
   "devDependencies": {
     "@nestjs/cli": "10.3.2",
@@ -69,7 +69,6 @@
     "@types/nodemailer": "6.4.14",
     "@types/pg": "8.11.2",
     "@types/supertest": "6.0.2",
-    "@types/uuid": "9.0.8",
     "@typescript-eslint/eslint-plugin": "7.1.0",
     "@typescript-eslint/parser": "7.1.0",
     "cross-env": "7.0.3",

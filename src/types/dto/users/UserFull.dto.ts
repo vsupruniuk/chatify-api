@@ -5,16 +5,16 @@ import { Expose, Type } from 'class-transformer';
 
 export class UserFullDto extends UserShortDto {
 	@Expose()
-	isActivated: boolean;
+	public isActivated: boolean;
 
 	@Expose()
-	password: string;
+	public password: string;
 
 	@Expose()
 	@Type(() => PasswordResetTokenDto)
-	passwordResetToken?: PasswordResetTokenDto;
+	public passwordResetToken?: PasswordResetTokenDto;
 
 	@Expose()
 	@Type(() => JWTTokenFullDto)
-	JWTToken?: JWTTokenFullDto;
+	public JWTToken?: JWTTokenFullDto;
 }

@@ -9,10 +9,10 @@ import { Inject } from '@nestjs/common';
 
 export class PasswordResetTokensService implements IPasswordResetTokensService {
 	constructor(
-		@Inject(CustomProviders.I_PASSWORD_RESET_TOKENS_REPOSITORY)
+		@Inject(CustomProviders.CTF_PASSWORD_RESET_TOKENS_REPOSITORY)
 		private readonly _passwordResetTokensRepository: IPasswordResetTokensRepository,
 
-		@Inject(CustomProviders.I_USERS_REPOSITORY)
+		@Inject(CustomProviders.CTF_USERS_REPOSITORY)
 		private readonly _usersRepository: IUsersRepository,
 	) {}
 

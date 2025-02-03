@@ -46,10 +46,10 @@ export class DirectChatsGateway
 	private readonly _clients: Map<string, Socket> = new Map();
 
 	constructor(
-		@Inject(CustomProviders.I_DIRECT_CHATS_SERVICE_PROVIDER)
+		@Inject(CustomProviders.CTF_DIRECT_CHATS_SERVICE)
 		private readonly _directChatsService: IDirectChatsService,
 
-		@Inject(CustomProviders.I_JWT_TOKENS_SERVICE)
+		@Inject(CustomProviders.CTF_JWT_TOKENS_SERVICE)
 		private readonly _jwtTokenService: IJWTTokensService,
 	) {}
 
@@ -70,7 +70,7 @@ export class DirectChatsGateway
 	}
 
 	@SubscribeMessage(WSEvents.CREATE_CHAT)
-	async createDirectChat(
+	public async createDirectChat(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@MessageBody() createDirectChatDto: CreateDirectChatDto,
 	): Promise<WsResponse<WSResponseResult>> {
@@ -98,7 +98,7 @@ export class DirectChatsGateway
 	}
 
 	@SubscribeMessage(WSEvents.SEND_MESSAGE)
-	async sendMessage(
+	public async sendMessage(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@MessageBody() sendDirectMessageDto: SendDirectMessageDto,
 	): Promise<WsResponse<WSResponseResult>> {

@@ -8,24 +8,24 @@ import { IsStringsSimilar } from '@Decorators/IsStringsSimilar.decorator';
 export class SignupUserDto {
 	@IsEmail({}, { message: 'Wrong $property format|$property' })
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
-	email: string;
+	public email: string;
 
 	@IsString({ message: '$property must be a string|$property' })
 	@MinLength(3, {
 		message: '$property must be at least $constraint1 characters long|$property',
 	})
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
-	firstName: string;
+	public firstName: string;
 
 	@MinLength(3, { message: '$property must be at least $constraint1 characters long|$property' })
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
 	@IsOptional()
-	lastName?: string;
+	public lastName?: string;
 
 	@IsString({ message: '$property must be a string|$property' })
 	@MinLength(3, { message: '$property must be at least $constraint1 characters long|$property' })
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
-	nickname: string;
+	public nickname: string;
 
 	@IsString({ message: '$property must be a string|$property' })
 	@Matches(/^(?=.*[0-9])(?=.*[A-Z])/, {
@@ -33,7 +33,7 @@ export class SignupUserDto {
 	})
 	@MinLength(6, { message: '$property must be at least $constraint1 characters long|$property' })
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
-	password: string;
+	public password: string;
 
 	@IsString({ message: '$property must be a string|$property' })
 	@Matches(/^(?=.*[0-9])(?=.*[A-Z])/, {
@@ -44,5 +44,5 @@ export class SignupUserDto {
 	@IsStringsSimilar('password', {
 		message: 'Password and password confirmation must match|$property',
 	})
-	passwordConfirmation: string;
+	public passwordConfirmation: string;
 }

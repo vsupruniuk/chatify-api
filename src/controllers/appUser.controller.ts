@@ -42,10 +42,10 @@ import { diskStorage } from 'multer';
 @UseInterceptors(AuthInterceptor)
 export class AppUserController implements IAppUserController {
 	constructor(
-		@Inject(CustomProviders.I_USERS_SERVICE)
+		@Inject(CustomProviders.CTF_USERS_SERVICE)
 		private readonly _usersService: IUsersService,
 
-		@Inject(CustomProviders.I_ACCOUNT_SETTINGS_SERVICE)
+		@Inject(CustomProviders.CTF_ACCOUNT_SETTINGS_SERVICE)
 		private readonly _accountSettingsService: IAccountSettingsService,
 	) {}
 

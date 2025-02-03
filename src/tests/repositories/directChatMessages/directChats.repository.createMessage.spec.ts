@@ -1,6 +1,5 @@
 import { QueryBuilderMock } from '@TestMocks/queryBuilderMock';
 import { DataSource, InsertResult } from 'typeorm';
-import { DirectChatsRepository } from '@Repositories/directChats.repository';
 import { DirectChat } from '@Entities/DirectChat.entity';
 import { directChats } from '@TestMocks/DirectChat/directChats';
 import { User } from '@Entities/User.entity';
@@ -9,11 +8,12 @@ import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 import { DateHelper } from '@Helpers/date.helper';
 import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
 import { NotFoundException } from '@nestjs/common';
+import { DirectChatMessagesRepository } from '@Repositories/directChatMessages.repository';
 
 describe('Direct chats repository', () => {
 	let queryBuilderMock: QueryBuilderMock<never>;
 	let dataSourceMock: jest.Mocked<Partial<DataSource>>;
-	let directChatsRepository: DirectChatsRepository;
+	let directChatMessagesRepository: DirectChatMessagesRepository;
 
 	const createdMessageId: string = '96acb907-c157-4ba7-89c0-668bd400365a';
 	const directChatsMock: DirectChat[] = [...directChats];
@@ -63,7 +63,7 @@ describe('Direct chats repository', () => {
 		});
 
 		dataSourceMock = queryBuilderMock;
-		directChatsRepository = new DirectChatsRepository(dataSourceMock as DataSource);
+		directChatMessagesRepository = new DirectChatMessagesRepository(dataSourceMock as DataSource);
 	});
 
 	describe('Create Message', (): void => {
@@ -77,15 +77,15 @@ describe('Direct chats repository', () => {
 		});
 
 		it('should be declared', (): void => {
-			expect(directChatsRepository.createMessage).toBeDefined();
+			expect(directChatMessagesRepository.createMessage).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(directChatsRepository.createMessage).toBeInstanceOf(Function);
+			expect(directChatMessagesRepository.createMessage).toBeInstanceOf(Function);
 		});
 
 		it('should use queryBuilder to build query for retrieving message sender', async (): Promise<void> => {
-			await directChatsRepository.createMessage(
+			await directChatMessagesRepository.createMessage(
 				senderId,
 				directChatId,
 				messageText,
@@ -107,7 +107,7 @@ describe('Direct chats repository', () => {
 		});
 
 		it('should use queryBuilder to build query for retrieving message directChat', async (): Promise<void> => {
-			await directChatsRepository.createMessage(
+			await directChatMessagesRepository.createMessage(
 				senderId,
 				directChatId,
 				messageText,
@@ -136,7 +136,7 @@ describe('Direct chats repository', () => {
 
 			const sender: User | null = usersMock.find((user: User) => user.id === senderId) || null;
 
-			await directChatsRepository.createMessage(
+			await directChatMessagesRepository.createMessage(
 				senderId,
 				directChatId,
 				messageText,
@@ -165,7 +165,7 @@ describe('Direct chats repository', () => {
 			const notExistingSenderId: string = 'f44845d7-91af-4c29-8e1a-227c91b33852';
 
 			await expect(
-				directChatsRepository.createMessage(
+				directChatMessagesRepository.createMessage(
 					notExistingSenderId,
 					directChatId,
 					messageText,
@@ -178,7 +178,7 @@ describe('Direct chats repository', () => {
 			const notExistingDirectChatId: string = 'f44845d7-91af-4c29-8e1a-227c91b33852';
 
 			await expect(
-				directChatsRepository.createMessage(
+				directChatMessagesRepository.createMessage(
 					senderId,
 					notExistingDirectChatId,
 					messageText,
@@ -188,7 +188,7 @@ describe('Direct chats repository', () => {
 		});
 
 		it('should return id of created message', async (): Promise<void> => {
-			const messageId: string = await directChatsRepository.createMessage(
+			const messageId: string = await directChatMessagesRepository.createMessage(
 				senderId,
 				directChatId,
 				messageText,

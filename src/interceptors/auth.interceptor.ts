@@ -16,14 +16,17 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class AuthInterceptor implements NestInterceptor {
 	constructor(
-		@Inject(CustomProviders.I_JWT_TOKENS_SERVICE)
+		@Inject(CustomProviders.CTF_JWT_TOKENS_SERVICE)
 		private readonly _jwtTokensService: IJWTTokensService,
 	) {}
 
-	async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<unknown>> {
+	public async intercept(
+		context: ExecutionContext,
+		next: CallHandler,
+	): Promise<Observable<unknown>> {
 		const request: Request & TUserPayload = context.switchToHttp().getRequest();
 
-		const authHeader: string | undefined = request.headers['authorization'];
+		const authHeader: string | undefined = request.headers.authorization;
 
 		if (!authHeader) {
 			throw new UnauthorizedException(['Please, login to perform this action']);

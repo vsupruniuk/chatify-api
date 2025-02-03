@@ -1,7 +1,8 @@
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { CryptoService } from '@Services/crypto.service';
+import { ClassProvider } from '@nestjs/common';
 
-export const cryptoServiceProvider = {
-	provide: CustomProviders.I_CRYPTO_SERVICE_PROVIDER,
+export const cryptoServiceProvider: ClassProvider = {
+	provide: CustomProviders.CTF_CRYPTO_SERVICE,
 	useClass: CryptoService,
 };

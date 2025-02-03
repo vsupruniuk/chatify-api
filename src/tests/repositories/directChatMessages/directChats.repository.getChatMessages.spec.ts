@@ -1,15 +1,15 @@
 import { QueryBuilderMock } from '@TestMocks/queryBuilderMock';
-import { DirectChatsRepository } from '@Repositories/directChats.repository';
 import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
 import { directChatsMessages } from '@TestMocks/DirectChatMessage/directChatsMessages';
 import { directChats } from '@TestMocks/DirectChat/directChats';
 import { DataSource } from 'typeorm';
 import { users } from '@TestMocks/User/users';
 import { UnprocessableEntityException } from '@nestjs/common';
+import { DirectChatMessagesRepository } from '@Repositories/directChatMessages.repository';
 
 describe('directChatsRepository', (): void => {
 	let queryBuilderMock: QueryBuilderMock<never>;
-	let directChatRepository: DirectChatsRepository;
+	let directChatMessagesRepository: DirectChatMessagesRepository;
 
 	const directChatsMessagesMock: DirectChatMessage[] = [...directChatsMessages];
 
@@ -33,7 +33,7 @@ describe('directChatsRepository', (): void => {
 
 		const dataSourceMock: jest.Mocked<Partial<DataSource>> = queryBuilderMock;
 
-		directChatRepository = new DirectChatsRepository(dataSourceMock as DataSource);
+		directChatMessagesRepository = new DirectChatMessagesRepository(dataSourceMock as DataSource);
 	});
 
 	describe('getChatMessages', (): void => {
@@ -42,18 +42,18 @@ describe('directChatsRepository', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(directChatRepository.getChatMessages).toBeDefined();
+			expect(directChatMessagesRepository.getChatMessages).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(directChatRepository.getChatMessages).toBeInstanceOf(Function);
+			expect(directChatMessagesRepository.getChatMessages).toBeInstanceOf(Function);
 		});
 
 		it('should create query for retrieving last direct chat messages', async (): Promise<void> => {
 			const skip: number = 0;
 			const take: number = 10;
 
-			await directChatRepository.getChatMessages(userIdMock, directChatIdMock, skip, take);
+			await directChatMessagesRepository.getChatMessages(userIdMock, directChatIdMock, skip, take);
 
 			expect(queryBuilderMock.createQueryBuilder).toHaveBeenCalledTimes(1);
 
@@ -108,7 +108,7 @@ describe('directChatsRepository', (): void => {
 		});
 
 		it('should return array of DirectChatMessage', async (): Promise<void> => {
-			const messages: DirectChatMessage[] = await directChatRepository.getChatMessages(
+			const messages: DirectChatMessage[] = await directChatMessagesRepository.getChatMessages(
 				userIdMock,
 				directChatIdMock,
 				0,
@@ -124,7 +124,7 @@ describe('directChatsRepository', (): void => {
 
 		it('should throw UnprocessableEntityException if chat is not belongs to user', async (): Promise<void> => {
 			await expect(
-				directChatRepository.getChatMessages(wrongUserIdMock, directChatIdMock, 0, 10),
+				directChatMessagesRepository.getChatMessages(wrongUserIdMock, directChatIdMock, 0, 10),
 			).rejects.toThrow(UnprocessableEntityException);
 		});
 	});
