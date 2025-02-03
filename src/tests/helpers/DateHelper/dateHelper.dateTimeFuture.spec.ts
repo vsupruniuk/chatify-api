@@ -1,4 +1,5 @@
 import { DateHelper } from '@Helpers/date.helper';
+import * as dayjs from 'dayjs';
 
 describe('dateHelper', (): void => {
 	describe('dateTimeFuture', (): void => {
@@ -22,24 +23,24 @@ describe('dateHelper', (): void => {
 		});
 
 		it('should return current date and time if passed 0 milliseconds', (): void => {
-			jest.setSystemTime(new Date(dateTimeMock));
+			jest.setSystemTime(dayjs(dateTimeMock).toDate());
 
 			const dateTime: string = DateHelper.dateTimeFuture(0);
 
-			expect(dateTime).toEqual(new Date(dateTimeMock).toISOString());
+			expect(dateTime).toEqual(dayjs(dateTimeMock).toISOString());
 		});
 
 		it('should return correct date and time in 10 minutes', () => {
-			jest.setSystemTime(new Date(dateTimeMock));
+			jest.setSystemTime(dayjs(dateTimeMock).toDate());
 
 			const dateTimeFuture: string = '2023-11-21 12:10:00';
 			const dateTime: string = DateHelper.dateTimeFuture(1000 * 60 * 10);
 
-			expect(dateTime).toEqual(new Date(dateTimeFuture).toISOString());
+			expect(dateTime).toEqual(dayjs(dateTimeFuture).toISOString());
 		});
 
 		it('should return date and time in ISO string format', (): void => {
-			jest.setSystemTime(new Date(dateTimeMock));
+			jest.setSystemTime(dayjs(dateTimeMock).toDate());
 
 			const dateTime: string = DateHelper.dateTimeFuture(100000);
 

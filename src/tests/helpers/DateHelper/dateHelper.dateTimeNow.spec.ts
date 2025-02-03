@@ -1,4 +1,5 @@
 import { DateHelper } from '@Helpers/date.helper';
+import * as dayjs from 'dayjs';
 
 describe('dateHelper', (): void => {
 	describe('dateTimeNow', (): void => {
@@ -22,15 +23,15 @@ describe('dateHelper', (): void => {
 		});
 
 		it('should return current date and time', (): void => {
-			jest.setSystemTime(new Date(dateTimeMock));
+			jest.setSystemTime(dayjs(dateTimeMock).toDate());
 
 			const dateTime: string = DateHelper.dateTimeNow();
 
-			expect(dateTime).toEqual(new Date(dateTimeMock).toISOString());
+			expect(dateTime).toEqual(dayjs(dateTimeMock).toISOString());
 		});
 
 		it('should return current date and time in ISO string format', (): void => {
-			jest.setSystemTime(new Date(dateTimeMock));
+			jest.setSystemTime(dayjs(dateTimeMock).toDate());
 
 			const dateTime: string = DateHelper.dateTimeNow();
 
