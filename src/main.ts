@@ -7,25 +7,20 @@ import helmet from 'helmet';
 
 import { AppModule } from '@Modules/app.module';
 import { GlobalExceptionFilter } from '@Filters/globalException.filter';
+import { corsConfig, helmetConfig, validationPipeConfig } from '@Configs/index';
 
 async function bootstrap(): Promise<void> {
-	const port: number = Number(process.env.PORT) || 3000;
+	const port: number = Number(process.env.PORT);
 
 	const app: INestApplication = await NestFactory.create(AppModule);
 
-	app.enableCors({ origin: process.env.CLIENT_URL || '', credentials: true });
-	app.use(helmet());
-	app.use(cookieParser());
+	app.enableCors(corsConfig);
+	app.use(helmet(helmetConfig));
+	app.use(cookieParser(process.env.COOKIE_SECRET));
 	app.use(compression());
 
 	app.useGlobalFilters(new GlobalExceptionFilter());
-	app.useGlobalPipes(
-		new ValidationPipe({
-			transform: true,
-			whitelist: true,
-			stopAtFirstError: true,
-		}),
-	);
+	app.useGlobalPipes(new ValidationPipe(validationPipeConfig));
 
 	await app.listen(port, () => {
 		console.log(`Server started on port ${port}`);

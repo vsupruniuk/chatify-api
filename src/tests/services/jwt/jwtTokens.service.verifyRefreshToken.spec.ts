@@ -57,7 +57,7 @@ describe('jwtTokensService', (): void => {
 
 			expect(verifyAsyncMock).toHaveBeenCalledTimes(1);
 			expect(verifyAsyncMock).toHaveBeenCalledWith(validJwtToken, {
-				secret: process.env.JWT_REFRESH_TOKEN_SECRET || '',
+				secret: process.env.JWT_REFRESH_TOKEN_SECRET,
 			});
 		});
 

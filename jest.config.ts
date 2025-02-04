@@ -8,6 +8,7 @@ export default async (): Promise<Config> => {
 			'^.+\\.ts?$': 'ts-jest',
 		},
 		moduleNameMapper: {
+			'@Configs/(.*)': '<rootDir>/src/configs/$1',
 			'@Controllers/(.*)': '<rootDir>/src/controllers/$1',
 			'@DB/(.*)': '<rootDir>/src/db/$1',
 			'@Decorators/(.*)': '<rootDir>/src/decorators/$1',

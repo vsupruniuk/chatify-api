@@ -30,8 +30,8 @@ import providers from '@Modules/providers/providers';
 		}),
 		ThrottlerModule.forRoot([
 			{
-				ttl: Number(process.env.THROTTLE_TIME_TO_LIVE) || 1000000,
-				limit: Number(process.env.THROTTLE_REQUESTS_LIMIT) || 100,
+				ttl: Number(process.env.THROTTLE_TIME_TO_LIVE),
+				limit: Number(process.env.THROTTLE_REQUESTS_LIMIT),
 			},
 		]),
 	],

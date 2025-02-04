@@ -28,7 +28,7 @@ export class SearchController implements ISearchController {
 		private readonly _usersService: IUsersService,
 	) {}
 
-	@Get('/find-users')
+	@Get('find-users')
 	@HttpCode(HttpStatus.OK)
 	public async findUsers(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,

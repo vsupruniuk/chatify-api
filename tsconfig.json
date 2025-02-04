@@ -17,6 +17,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "paths": {
+      "@Configs/*": ["src/configs/*"],
       "@Controllers/*": ["src/controllers/*"],
       "@DB/*": ["src/db/*"],
       "@Decorators/*": ["src/decorators/*"],

@@ -10,17 +10,17 @@ import { Transporter } from 'nodemailer';
 @Injectable()
 export class EmailService implements IEmailService {
 	private readonly APP_NAME: string = 'Chatify';
-	private readonly APP_EMAIL: string = process.env.SMTP_USER || '';
+	private readonly APP_EMAIL: string = String(process.env.SMTP_USER);
 	private _transporter: Transporter;
 
 	constructor() {
 		this._transporter = nodemailer.createTransport({
-			host: process.env.SMTP_HOST || '',
-			port: Number(process.env.SMTP_PORT) || 465,
+			host: process.env.SMTP_HOST,
+			port: Number(process.env.SMTP_PORT),
 			secure: true,
 			auth: {
 				user: this.APP_EMAIL,
-				pass: process.env.SMTP_PASS || '',
+				pass: process.env.SMTP_PASS,
 			},
 		});
 
@@ -50,7 +50,7 @@ export class EmailService implements IEmailService {
 		token: string,
 	): Promise<void> {
 		const emailSubject: string = 'Password reset';
-		const link: string = `${process.env.CLIENT_URL || ''}/reset-password/${token}`;
+		const link: string = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
 		const emailContent: string = resetPasswordTemplate(userName, this.APP_EMAIL, link);
 

@@ -67,7 +67,7 @@ export class AuthController implements IAuthController {
 		private readonly _passwordResetTokensService: IPasswordResetTokensService,
 	) {}
 
-	@Post('/signup')
+	@Post('signup')
 	@HttpCode(HttpStatus.CREATED)
 	public async signup(@Body() signupUserDTO: SignupUserDto): Promise<ResponseResult> {
 		const responseResult: SuccessfulResponseResult<UserShortDto> = new SuccessfulResponseResult(
@@ -111,7 +111,7 @@ export class AuthController implements IAuthController {
 		return responseResult;
 	}
 
-	@Post('/activate-account')
+	@Post('activate-account')
 	@HttpCode(HttpStatus.OK)
 	public async activateAccount(
 		@Res({ passthrough: true }) response: Response,
@@ -166,7 +166,7 @@ export class AuthController implements IAuthController {
 		}
 
 		response.cookie(CookiesNames.REFRESH_TOKEN, refreshToken, {
-			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000 || 0,
+			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000,
 			secure: true,
 			sameSite: 'strict',
 			httpOnly: true,
@@ -178,7 +178,7 @@ export class AuthController implements IAuthController {
 		return responseResult;
 	}
 
-	@Post('/resend-activation-code')
+	@Post('resend-activation-code')
 	@HttpCode(HttpStatus.OK)
 	public async resendActivationCode(
 		@Body() resendActivationCodeDto: ResendActivationCodeDto,
@@ -218,7 +218,7 @@ export class AuthController implements IAuthController {
 		return responseResult;
 	}
 
-	@Post('/reset-password')
+	@Post('reset-password')
 	@HttpCode(HttpStatus.OK)
 	public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<ResponseResult> {
 		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
@@ -251,7 +251,7 @@ export class AuthController implements IAuthController {
 		return responseResult;
 	}
 
-	@Post(`/reset-password/:resetToken`)
+	@Post(`reset-password/:resetToken`)
 	@HttpCode(HttpStatus.OK)
 	public async resetPasswordConfirmation(
 		@Body() resetPasswordConfirmationDto: ResetPasswordConfirmationDto,
@@ -284,7 +284,7 @@ export class AuthController implements IAuthController {
 		return responseResult;
 	}
 
-	@Post('/login')
+	@Post('login')
 	@HttpCode(HttpStatus.OK)
 	public async login(
 		@Res({ passthrough: true }) response: Response,
@@ -336,7 +336,7 @@ export class AuthController implements IAuthController {
 		}
 
 		response.cookie(CookiesNames.REFRESH_TOKEN, refreshToken, {
-			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000 || 0,
+			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000,
 			secure: true,
 			sameSite: 'strict',
 			httpOnly: true,
@@ -348,7 +348,7 @@ export class AuthController implements IAuthController {
 		return responseResult;
 	}
 
-	@Post('/logout')
+	@Post('logout')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	public async logout(
 		@Res({ passthrough: true }) response: Response,
@@ -389,7 +389,7 @@ export class AuthController implements IAuthController {
 		return responseResult;
 	}
 
-	@Post('/refresh')
+	@Post('refresh')
 	@HttpCode(HttpStatus.OK)
 	public async refresh(
 		@Res({ passthrough: true }) response: Response,
@@ -428,7 +428,7 @@ export class AuthController implements IAuthController {
 		await this._jwtTokensService.saveRefreshToken(user.JWTToken.id, newRefreshToken);
 
 		response.cookie(CookiesNames.REFRESH_TOKEN, newRefreshToken, {
-			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000 || 0,
+			maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000,
 			secure: true,
 			sameSite: 'strict',
 			httpOnly: true,

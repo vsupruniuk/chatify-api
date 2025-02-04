@@ -14,7 +14,10 @@ import { createReadStream, existsSync, ReadStream } from 'fs';
 @Controller('static')
 @UseInterceptors(AuthInterceptor)
 export class StaticController implements IStaticController {
-	private readonly _publicFolderPath: string = resolve('.', 'public');
+	private readonly _publicFolderPath: string = resolve(
+		'.',
+		String(process.env.PUBLIC_FILES_FOLDER),
+	);
 
 	@Get(':fileName')
 	public getFile(@Param('fileName') fileName: string): StreamableFile {
