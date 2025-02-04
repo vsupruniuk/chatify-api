@@ -49,7 +49,7 @@ export class DirectChatsController implements IDirectChatsController {
 		return responseResult;
 	}
 
-	@Get('/chat-messages')
+	@Get('chat-messages')
 	@HttpCode(HttpStatus.OK)
 	public async getChatMessages(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,

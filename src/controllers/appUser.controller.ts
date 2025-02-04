@@ -109,7 +109,7 @@ export class AppUserController implements IAppUserController {
 		return responseResult;
 	}
 
-	@Patch('/account-settings')
+	@Patch('account-settings')
 	@HttpCode(HttpStatus.OK)
 	public async updateAccountSettings(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
@@ -149,7 +149,7 @@ export class AppUserController implements IAppUserController {
 		return responseResult;
 	}
 
-	@Post('/user-avatar')
+	@Post('user-avatar')
 	@HttpCode(HttpStatus.CREATED)
 	@UseInterceptors(
 		FileInterceptor(FileFields.USER_AVATAR, {

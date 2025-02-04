@@ -11,12 +11,12 @@ describe('Crypto service', (): void => {
 	});
 
 	describe('decryptText', (): void => {
-		const ivLength: number = Number(process.env.CRYPTO_IV_LENGTH) || 0;
-		const saltLength: number = Number(process.env.CRYPTO_SALT_LENGTH) || 0;
-		const keyLength: number = Number(process.env.CRYPTO_KEY_LENGTH) || 0;
-		const password: string = process.env.CRYPTO_PASSWORD || '';
-		const algorithm: string = process.env.CRYPTO_CIPHER_ALGORITHM || '';
-		const encryptionEncoding: string = process.env.CRYPTO_ENCRYPTION_ENCODING || '';
+		const ivLength: number = Number(process.env.CRYPTO_IV_LENGTH);
+		const saltLength: number = Number(process.env.CRYPTO_SALT_LENGTH);
+		const keyLength: number = Number(process.env.CRYPTO_KEY_LENGTH);
+		const password: string = String(process.env.CRYPTO_PASSWORD);
+		const algorithm: string = String(process.env.CRYPTO_CIPHER_ALGORITHM);
+		const encryptionEncoding: string = String(process.env.CRYPTO_ENCRYPTION_ENCODING);
 
 		it('should be defined', async (): Promise<void> => {
 			expect(cryptoService.decryptText).toBeDefined();

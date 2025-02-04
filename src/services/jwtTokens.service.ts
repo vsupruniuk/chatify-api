@@ -19,22 +19,22 @@ export class JwtTokensService implements IJWTTokensService {
 
 	public async generateAccessToken(payload: JWTPayloadDto): Promise<string> {
 		return await this._jwtService.signAsync(payload, {
-			secret: process.env.JWT_ACCESS_TOKEN_SECRET || '',
-			expiresIn: Number(process.env.JWT_ACCESS_TOKEN_EXPIRES_IN) || 0,
+			secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+			expiresIn: Number(process.env.JWT_ACCESS_TOKEN_EXPIRES_IN),
 		});
 	}
 
 	public async generateRefreshToken(payload: JWTPayloadDto): Promise<string> {
 		return await this._jwtService.signAsync(payload, {
-			secret: process.env.JWT_REFRESH_TOKEN_SECRET || '',
-			expiresIn: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) || 0,
+			secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+			expiresIn: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN),
 		});
 	}
 
 	public async verifyAccessToken(token: string): Promise<JWTPayloadDto | null> {
 		try {
 			return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
-				secret: process.env.JWT_ACCESS_TOKEN_SECRET || '',
+				secret: process.env.JWT_ACCESS_TOKEN_SECRET,
 			});
 		} catch (err) {
 			return null;
@@ -44,7 +44,7 @@ export class JwtTokensService implements IJWTTokensService {
 	public async verifyRefreshToken(token: string): Promise<JWTPayloadDto | null> {
 		try {
 			return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
-				secret: process.env.JWT_REFRESH_TOKEN_SECRET || '',
+				secret: process.env.JWT_REFRESH_TOKEN_SECRET,
 			});
 		} catch (err) {
 			return null;

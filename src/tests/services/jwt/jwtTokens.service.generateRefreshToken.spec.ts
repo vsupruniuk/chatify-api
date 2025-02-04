@@ -50,8 +50,8 @@ describe('jwtTokensService', (): void => {
 
 			expect(signAsyncMock).toHaveBeenCalledTimes(1);
 			expect(signAsyncMock).toHaveBeenCalledWith(jwtPayloadMock, {
-				secret: process.env.JWT_REFRESH_TOKEN_SECRET || '',
-				expiresIn: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) || 0,
+				secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+				expiresIn: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN),
 			});
 		});
 

@@ -136,7 +136,7 @@ export class UsersService implements IUsersService {
 		const otpCodeId: string = await this._otpCodesRepository.createOTPCode(otpCodeDTO);
 		const hashedPassword: string = await bcrypt.hash(
 			signupUserDto.password,
-			Number(process.env.PASSWORD_SALT_HASH_ROUNDS) || 10,
+			Number(process.env.PASSWORD_SALT_HASH_ROUNDS),
 		);
 
 		const userForCreation: CreateUserDto = plainToInstance(CreateUserDto, <CreateUserDto>{
@@ -159,7 +159,7 @@ export class UsersService implements IUsersService {
 		if (updateUserDtoCopy.password) {
 			updateUserDtoCopy.password = await bcrypt.hash(
 				updateUserDtoCopy.password,
-				Number(process.env.PASSWORD_SALT_HASH_ROUNDS) || 10,
+				Number(process.env.PASSWORD_SALT_HASH_ROUNDS),
 			);
 		}
 

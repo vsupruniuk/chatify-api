@@ -349,7 +349,7 @@ describe('AuthController', (): void => {
 
 			expect(responseMock.cookie).toHaveBeenCalledTimes(1);
 			expect(responseMock.cookie).toHaveBeenCalledWith(CookiesNames.REFRESH_TOKEN, token, {
-				maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000 || 0,
+				maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000,
 				secure: true,
 				sameSite: 'strict',
 				httpOnly: true,
