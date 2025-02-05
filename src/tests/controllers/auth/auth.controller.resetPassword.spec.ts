@@ -11,7 +11,6 @@ import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { users } from '@TestMocks/User/users';
 import { plainToInstance } from 'class-transformer';
@@ -139,14 +138,14 @@ describe('AuthController', (): void => {
 				.expect(responseResult);
 		});
 
-		it('should return response as instance of ResponseResult', async (): Promise<void> => {
+		it('should return nothing', async (): Promise<void> => {
 			const resetPasswordDto: ResetPasswordDto = {
 				email: 'tony@mail.com',
 			};
 
-			const responseResult: ResponseResult = await authController.resetPassword(resetPasswordDto);
+			const responseResult: void = await authController.resetPassword(resetPasswordDto);
 
-			expect(responseResult).toBeInstanceOf(ResponseResult);
+			expect(responseResult).toBeUndefined();
 		});
 
 		it('should call getFullUserByEmail method in users service to find user', async (): Promise<void> => {

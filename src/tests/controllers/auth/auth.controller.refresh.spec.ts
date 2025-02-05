@@ -13,7 +13,6 @@ import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { JwtTokensService } from '@Services/jwtTokens.service';
 import { UsersService } from '@Services/users.service';
@@ -162,15 +161,6 @@ describe('AuthController', (): void => {
 				.expect(HttpStatus.OK)
 				.expect(responseResult)
 				.expect(Headers.SET_COOKIE, RegExp(CookiesNames.REFRESH_TOKEN));
-		});
-
-		it('should return response as instance of ResponseResult', async (): Promise<void> => {
-			const result: ResponseResult = await authController.refresh(
-				responseMock as Response,
-				validToken,
-			);
-
-			expect(result).toBeInstanceOf(ResponseResult);
 		});
 
 		it('should call cookie method to set refreshToken to cookie', async (): Promise<void> => {

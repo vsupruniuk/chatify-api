@@ -4,7 +4,6 @@ import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { User } from '@Entities/User.entity';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { Headers } from '@Enums/Headers.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { AuthInterceptor } from '@Interceptors/auth.interceptor';
 import { IUsersService } from '@Interfaces/users/IUsersService';
 import { AppModule } from '@Modules/app.module';
@@ -18,8 +17,6 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
-import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { users } from '@TestMocks/User/users';
 import { TUserPayload } from '@Types/users/TUserPayload';
 import { plainToInstance } from 'class-transformer';
@@ -118,39 +115,16 @@ describe('AppUserController', (): void => {
 		it('should return 200 status and current authorized user if access token valid', async (): Promise<void> => {
 			isAuthorized = true;
 
-			const responseResult = <SuccessfulResponseResult<AppUserDto>>{
-				code: HttpStatus.OK,
-				status: ResponseStatus.SUCCESS,
-				data: [
-					{
-						id: 'f46845d7-90af-4c29-8e1a-227c90b33852',
-						about: null,
-						avatarUrl: null,
-						firstName: 'Tony',
-						lastName: 'Stark',
-						nickname: 't.stark',
-						accountSettings: {
-							id: '1',
-							enterIsSend: false,
-							notification: false,
-							twoStepVerification: true,
-						},
-					},
-				],
-				dataLength: 1,
-			};
-
 			await request(app.getHttpServer())
 				.get('/app-user')
 				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
-				.expect(HttpStatus.OK)
-				.expect(responseResult);
+				.expect(HttpStatus.OK);
 		});
 
-		it('should return response as instance of ResponseResult', async (): Promise<void> => {
-			const response: ResponseResult = await appUserController.getUser(appUserPayload);
+		it('should return response as instance of AppUserDto', async (): Promise<void> => {
+			const response: AppUserDto = await appUserController.getUser(appUserPayload);
 
-			expect(response).toBeInstanceOf(ResponseResult);
+			expect(response).toBeInstanceOf(AppUserDto);
 		});
 
 		it('should call getAppUser from users service to get user', async (): Promise<void> => {

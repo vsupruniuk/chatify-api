@@ -7,7 +7,6 @@ import { UserFullDto } from '@DTO/users/UserFull.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { FileFields } from '@Enums/FileFields.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { FileHelper } from '@Helpers/file.helper';
 import { AuthInterceptor } from '@Interceptors/auth.interceptor';
 import { IAccountSettingsService } from '@Interfaces/accountSettings/IAccountSettingsService';
@@ -32,14 +31,14 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ResponseResult } from '@Responses/ResponseResult';
-import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { TUserPayload } from '@Types/users/TUserPayload';
 import { Express, Request } from 'express';
 import { diskStorage } from 'multer';
+import { TransformInterceptor } from '@Interceptors/transform.interceptor';
 
 @Controller('app-user')
 @UseInterceptors(AuthInterceptor)
+@UseInterceptors(TransformInterceptor)
 export class AppUserController implements IAppUserController {
 	constructor(
 		@Inject(CustomProviders.CTF_USERS_SERVICE)
@@ -51,20 +50,14 @@ export class AppUserController implements IAppUserController {
 
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	public async getUser(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<AppUserDto> =
-			new SuccessfulResponseResult<AppUserDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
-
+	public async getUser(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<AppUserDto> {
 		const user: AppUserDto | null = await this._usersService.getAppUser(appUserPayload.id);
 
 		if (!user) {
 			throw new UnauthorizedException(['Please, login to perform this action']);
 		}
 
-		responseResult.data = [user];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
+		return user;
 	}
 
 	@Patch()
@@ -72,12 +65,7 @@ export class AppUserController implements IAppUserController {
 	public async updateUser(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@Body() updateAppUserDto: UpdateAppUserDto,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			HttpStatus.OK,
-			ResponseStatus.SUCCESS,
-		);
-
+	): Promise<void> {
 		if (!updateAppUserDto || !Object.keys(updateAppUserDto).length) {
 			throw new BadRequestException(['At least 1 field to change should be passed']);
 		}
@@ -102,11 +90,6 @@ export class AppUserController implements IAppUserController {
 				'Failed to update user information. Please try again',
 			]);
 		}
-
-		responseResult.data = [];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
 	}
 
 	@Patch('account-settings')
@@ -114,12 +97,7 @@ export class AppUserController implements IAppUserController {
 	public async updateAccountSettings(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@Body() newSettings: UpdateAccountSettingsDto,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			HttpStatus.OK,
-			ResponseStatus.SUCCESS,
-		);
-
+	): Promise<void> {
 		if (!newSettings || !Object.keys(newSettings).length) {
 			throw new BadRequestException(['At least 1 field to change should be passed']);
 		}
@@ -142,11 +120,6 @@ export class AppUserController implements IAppUserController {
 				'Failed to update account settings. Please, try again',
 			]);
 		}
-
-		responseResult.data = [];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
 	}
 
 	@Post('user-avatar')
@@ -176,12 +149,7 @@ export class AppUserController implements IAppUserController {
 	public async uploadAvatar(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@UploadedFile() file: Express.Multer.File,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			HttpStatus.CREATED,
-			ResponseStatus.SUCCESS,
-		);
-
+	): Promise<void> {
 		if (!file) {
 			throw new BadRequestException([
 				`Provide image file with size less than 10 MB to upload|${FileFields.USER_AVATAR}`,
@@ -207,23 +175,11 @@ export class AppUserController implements IAppUserController {
 		if (!isUserAvatarUrlUpdated) {
 			throw new UnprocessableEntityException(['Failed to save avatar. Please, try again']);
 		}
-
-		responseResult.data = [];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
 	}
 
 	@Delete('user-avatar')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	public async deleteAvatar(
-		@AppUserPayload() appUserPayload: JWTPayloadDto,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			HttpStatus.NO_CONTENT,
-			ResponseStatus.SUCCESS,
-		);
-
+	public async deleteAvatar(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<void> {
 		const fullUser: UserFullDto | null = await this._usersService.getFullUserById(
 			appUserPayload.id,
 		);
@@ -245,10 +201,5 @@ export class AppUserController implements IAppUserController {
 		if (!isUpdated) {
 			throw new UnprocessableEntityException(['Failed to delete avatar, please try again']);
 		}
-
-		responseResult.data = [];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
 	}
 }

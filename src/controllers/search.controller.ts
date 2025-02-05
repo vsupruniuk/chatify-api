@@ -3,7 +3,6 @@ import { QueryRequired } from '@Decorators/QueryRequired.decorator';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { UserPublicDto } from '@DTO/users/UserPublic.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { AuthInterceptor } from '@Interceptors/auth.interceptor';
 import { ISearchController } from '@Interfaces/search/ISearchController';
 import { IUsersService } from '@Interfaces/users/IUsersService';
@@ -17,11 +16,11 @@ import {
 	Query,
 	UseInterceptors,
 } from '@nestjs/common';
-import { ResponseResult } from '@Responses/ResponseResult';
-import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
+import { TransformInterceptor } from '@Interceptors/transform.interceptor';
 
 @Controller('search')
 @UseInterceptors(AuthInterceptor)
+@UseInterceptors(TransformInterceptor)
 export class SearchController implements ISearchController {
 	constructor(
 		@Inject(CustomProviders.CTF_USERS_SERVICE)
@@ -35,18 +34,7 @@ export class SearchController implements ISearchController {
 		@QueryRequired('nickname') nickname: string,
 		@Query('page', new ParseIntPipe({ optional: true })) page?: number,
 		@Query('take', new ParseIntPipe({ optional: true })) take?: number,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<UserPublicDto> =
-			new SuccessfulResponseResult<UserPublicDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
-
-		responseResult.data = await this._usersService.getPublicUsers(
-			appUserPayload.nickname,
-			nickname,
-			page,
-			take,
-		);
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
+	): Promise<UserPublicDto[]> {
+		return await this._usersService.getPublicUsers(appUserPayload.nickname, nickname, page, take);
 	}
 }

@@ -26,7 +26,6 @@ import * as request from 'supertest';
 import { Headers } from '@Enums/Headers.enum';
 import { directChats } from '@TestMocks/DirectChat/directChats';
 import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
-import { ResponseResult } from '@Responses/ResponseResult';
 
 describe('Direct chats controller', (): void => {
 	let app: INestApplication;
@@ -165,18 +164,20 @@ describe('Direct chats controller', (): void => {
 			);
 		});
 
-		it('should return response as instance of ResponseResult', async (): Promise<void> => {
+		it('should return each message as instance of DirectChatMessageWithChatDto', async (): Promise<void> => {
 			const page: number = 1;
 			const take: number = 10;
 
-			const response: ResponseResult = await directChatsController.getChatMessages(
+			const response: DirectChatMessageWithChatDto[] = await directChatsController.getChatMessages(
 				appUserPayload,
 				chatIdMock,
 				page,
 				take,
 			);
 
-			expect(response).toBeInstanceOf(ResponseResult);
+			response.forEach((message: DirectChatMessageWithChatDto) => {
+				expect(message).toBeInstanceOf(DirectChatMessageWithChatDto);
+			});
 		});
 	});
 });

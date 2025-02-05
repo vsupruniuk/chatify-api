@@ -18,7 +18,6 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { users } from '@TestMocks/User/users';
 import { TUserPayload } from '@Types/users/TUserPayload';
@@ -223,15 +222,17 @@ describe('SearchController', (): void => {
 			);
 		});
 
-		it('should return response as instance of ResponseResult', async (): Promise<void> => {
-			const response: ResponseResult = await searchController.findUsers(
+		it('should return each user as instance of UserPublicDto', async (): Promise<void> => {
+			const response: UserPublicDto[] = await searchController.findUsers(
 				appUserPayload,
 				'groot',
 				1,
 				10,
 			);
 
-			expect(response).toBeInstanceOf(ResponseResult);
+			response.forEach((user: UserPublicDto) => {
+				expect(user).toBeInstanceOf(UserPublicDto);
+			});
 		});
 	});
 });

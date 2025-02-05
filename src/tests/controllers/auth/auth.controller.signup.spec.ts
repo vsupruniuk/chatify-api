@@ -11,10 +11,6 @@ import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
 import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
-
-import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
-import { ResponseResult } from '@Responses/ResponseResult';
 
 import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
@@ -493,30 +489,7 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			const responseResult = <SuccessfulResponseResult<UserShortDto>>{
-				code: HttpStatus.CREATED,
-				status: ResponseStatus.SUCCESS,
-				data: [
-					{
-						id: '4',
-						firstName: 'Bruce',
-						lastName: 'Banner',
-						email: 'bruce@mail.com',
-						nickname: 'b.banner',
-						about: null,
-						avatarUrl: null,
-						accountSettings: { id: '01' },
-						OTPCode: { id: '001' },
-					},
-				],
-				dataLength: 1,
-			};
-
-			await request(app.getHttpServer())
-				.post('/auth/signup')
-				.send(user)
-				.expect(HttpStatus.CREATED)
-				.expect(responseResult);
+			await request(app.getHttpServer()).post('/auth/signup').send(user).expect(HttpStatus.CREATED);
 		});
 
 		it('should call getByEmailOrNickname method in users service to check if user with provided email or nickname exist', async (): Promise<void> => {
@@ -582,7 +555,7 @@ describe('AuthController', (): void => {
 			expect(emailServiceMock.sendActivationEmail).toHaveBeenCalledWith(user.email, otpCode.code);
 		});
 
-		it('should return response as instance of SuccessfulResponseResult', async (): Promise<void> => {
+		it('should return response as instance of UserShortDto', async (): Promise<void> => {
 			const user = <SignupUserDto>{
 				firstName: 'Bruce',
 				lastName: 'Banner',
@@ -592,9 +565,9 @@ describe('AuthController', (): void => {
 				passwordConfirmation: 'qwerty1A',
 			};
 
-			const response: ResponseResult = await authController.signup(user);
+			const response: UserShortDto = await authController.signup(user);
 
-			expect(response).toBeInstanceOf(SuccessfulResponseResult);
+			expect(response).toBeInstanceOf(UserShortDto);
 		});
 	});
 });

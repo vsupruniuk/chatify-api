@@ -18,7 +18,6 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { users } from '@TestMocks/User/users';
 import { TUserPayload } from '@Types/users/TUserPayload';
 import { plainToInstance } from 'class-transformer';
@@ -325,7 +324,7 @@ describe('AppUserController', (): void => {
 				.expect(HttpStatus.OK);
 		});
 
-		it('should return result as instance of Response Result', async (): Promise<void> => {
+		it('should return nothing', async (): Promise<void> => {
 			const updateAppUserDto: UpdateAppUserDto = {
 				about: 'Iron man',
 				firstName: 'Tony',
@@ -333,12 +332,9 @@ describe('AppUserController', (): void => {
 				nickname: 'tony.stark',
 			};
 
-			const result: ResponseResult = await appUserController.updateUser(
-				appUserPayload,
-				updateAppUserDto,
-			);
+			const result: void = await appUserController.updateUser(appUserPayload, updateAppUserDto);
 
-			expect(result).toBeInstanceOf(ResponseResult);
+			expect(result).toBeUndefined();
 		});
 
 		it('should call getByNickname in users service to check if user with given nickname already exist', async (): Promise<void> => {

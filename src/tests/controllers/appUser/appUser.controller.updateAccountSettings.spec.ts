@@ -19,7 +19,6 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { users } from '@TestMocks/User/users';
 import { TUserPayload } from '@Types/users/TUserPayload';
 import { plainToInstance } from 'class-transformer';
@@ -205,19 +204,19 @@ describe('AppUserController', (): void => {
 				.expect(HttpStatus.OK);
 		});
 
-		it('should return result as instance of Response Result', async (): Promise<void> => {
+		it('should return nothing', async (): Promise<void> => {
 			const updateAccountSettingsDto: UpdateAccountSettingsDto = {
 				enterIsSend: false,
 				notification: true,
 				twoStepVerification: true,
 			};
 
-			const result: ResponseResult = await appUserController.updateAccountSettings(
+			const result: void = await appUserController.updateAccountSettings(
 				appUserPayload,
 				updateAccountSettingsDto,
 			);
 
-			expect(result).toBeInstanceOf(ResponseResult);
+			expect(result).toBeUndefined();
 		});
 
 		it('should call getFullUserById method in users service to get full user data', async (): Promise<void> => {

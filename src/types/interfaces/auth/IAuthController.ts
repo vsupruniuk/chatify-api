@@ -4,8 +4,9 @@ import { ResendActivationCodeDto } from '@DTO/auth/ResendActivationCode.dto';
 import { ResetPasswordDto } from '@DTO/auth/ResetPassword.dto';
 import { ResetPasswordConfirmationDto } from '@DTO/auth/ResetPasswordConfirmation.dto';
 import { SignupUserDto } from '@DTO/users/SignupUser.dto';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { Response } from 'express';
+import { UserShortDto } from '@DTO/users/UserShort.dto';
+import { LoginResponseDto } from '@DTO/auth/LoginResponse.dto';
 
 /**
  * Interface representing public methods of auth controller
@@ -14,67 +15,63 @@ export interface IAuthController {
 	/**
 	 * Method for handling signup request from user.
 	 * @param signupUserDTO - data for creating user
-	 * @returns responseResult - successful result with created user
+	 * @returns UserShortDto - created user
 	 */
-	signup(signupUserDTO: SignupUserDto): Promise<ResponseResult>;
+	signup(signupUserDTO: SignupUserDto): Promise<UserShortDto>;
 
 	/**
 	 * Method for activating user account via OTP code
 	 * @param response - client response object
 	 * @param accountActivationDto - code and codeId for activation
-	 * @returns responseResult - successful result if user was activated
+	 * @returns LoginResponseDto - access token for login
 	 */
 	activateAccount(
 		response: Response,
 		accountActivationDto: AccountActivationDto,
-	): Promise<ResponseResult>;
+	): Promise<LoginResponseDto>;
 
 	/**
 	 * Method for handling request to send activation code one more time for activation account
 	 * @param resendActivationCodeDto - email of not activated account
-	 * @returns responseResult - successful result if code was resend to user email
 	 */
-	resendActivationCode(resendActivationCodeDto: ResendActivationCodeDto): Promise<ResponseResult>;
+	resendActivationCode(resendActivationCodeDto: ResendActivationCodeDto): Promise<void>;
 
 	/**
 	 * Method for generating reset password token and sending via email
 	 * @param resetPasswordDto - user email for generating token
-	 * @returns responseResult - successful result if reset token was generated and send to user
 	 */
-	resetPassword(resetPasswordDto: ResetPasswordDto): Promise<ResponseResult>;
+	resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void>;
 
 	/**
 	 * Method for resetting user password
 	 * @param resetPasswordConfirmationDto - new user password with confirmation password
 	 * @param resetToken - uuid token which user get via email
-	 * @returns responseResult - successful result if new password was saved to db
 	 */
 	resetPasswordConfirmation(
 		resetPasswordConfirmationDto: ResetPasswordConfirmationDto,
 		resetToken: string,
-	): Promise<ResponseResult>;
+	): Promise<void>;
 
 	/**
 	 * Method for handling user login
 	 * @param response - client response object
 	 * @param loginDto - user email end password
-	 * @returns responseResult - successful result if user was logged in
+	 * @returns LoginResponseDto - access token for login
 	 */
-	login(response: Response, loginDto: LoginDto): Promise<ResponseResult>;
+	login(response: Response, loginDto: LoginDto): Promise<LoginResponseDto[]>;
 
 	/**
 	 * Method for handling log out
 	 * @param response - client response object
 	 * @param refreshToken - user refresh token from cookie
-	 * @return responseResult - successful result if user was logged out
 	 */
-	logout(response: Response, refreshToken: string): Promise<ResponseResult>;
+	logout(response: Response, refreshToken: string): Promise<void>;
 
 	/**
 	 * Method for refreshing access and refresh tokens of authorized user
 	 * @param response - client response object
 	 * @param refreshToken - user refresh token from cookie
-	 * @returns responseResult - successful result if access and refresh tokens updated
+	 * @returns LoginResponseDto - access token for login
 	 */
-	refresh(response: Response, refreshToken: string): Promise<ResponseResult>;
+	refresh(response: Response, refreshToken: string): Promise<LoginResponseDto[]>;
 }

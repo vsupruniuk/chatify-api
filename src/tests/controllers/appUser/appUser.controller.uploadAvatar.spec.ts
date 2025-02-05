@@ -16,7 +16,6 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { users } from '@TestMocks/User/users';
 import { plainToInstance } from 'class-transformer';
 import { Observable } from 'rxjs';
@@ -133,10 +132,10 @@ describe('AppUserController', (): void => {
 				.expect(HttpStatus.UNAUTHORIZED);
 		});
 
-		it('should return response as instance of ResponseResult', async (): Promise<void> => {
-			const result: ResponseResult = await appUserController.uploadAvatar(appUserPayload, fileMock);
+		it('should return nothing', async (): Promise<void> => {
+			const result: void = await appUserController.uploadAvatar(appUserPayload, fileMock);
 
-			expect(result).toBeInstanceOf(ResponseResult);
+			expect(result).toBeUndefined();
 		});
 
 		it('should call getFullUserById method in users service to get full user information', async (): Promise<void> => {

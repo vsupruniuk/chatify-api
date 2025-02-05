@@ -1,5 +1,6 @@
-import { ResponseResult } from '@Responses/ResponseResult';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
+import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
+import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
 
 export interface IDirectChatsController {
 	/**
@@ -7,13 +8,13 @@ export interface IDirectChatsController {
 	 * @param appUserPayload - user data from access token
 	 * @param page - page number of records
 	 * @param take - number of records to retrieve
-	 * @returns ResponseResult - successful response result
+	 * @returns DirectChatShortDto - user last chats
 	 */
 	getLastChats(
 		appUserPayload: JWTPayloadDto,
 		page?: number,
 		take?: number,
-	): Promise<ResponseResult>;
+	): Promise<DirectChatShortDto[]>;
 
 	/**
 	 * Retrieve chat messages
@@ -21,11 +22,12 @@ export interface IDirectChatsController {
 	 * @param chatId - chat id for retrieving messages
 	 * @param page - page number of records
 	 * @param take - number of record to retrieve
+	 * @returns DirectChatMessageWithChatDto - direct chat last messages
 	 */
 	getChatMessages(
 		appUserPayload: JWTPayloadDto,
 		chatId: string,
 		page?: number,
 		take?: number,
-	): Promise<ResponseResult>;
+	): Promise<DirectChatMessageWithChatDto[]>;
 }
