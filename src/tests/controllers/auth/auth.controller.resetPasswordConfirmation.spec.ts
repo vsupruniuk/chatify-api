@@ -9,7 +9,6 @@ import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { users } from '@TestMocks/User/users';
 import { plainToInstance } from 'class-transformer';
@@ -321,18 +320,18 @@ describe('AuthController', (): void => {
 			expect(passwordResetTokensService.deleteToken).toHaveBeenCalledWith(existingTokenId);
 		});
 
-		it('should return response as instance of ResponseResult', async (): Promise<void> => {
+		it('should return nothing', async (): Promise<void> => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
 			} as ResetPasswordConfirmationDto;
 
-			const result: ResponseResult = await authController.resetPasswordConfirmation(
+			const result: void = await authController.resetPasswordConfirmation(
 				resetPasswordConfirmationDto,
 				existingToken,
 			);
 
-			expect(result).toBeInstanceOf(SuccessfulResponseResult);
+			expect(result).toBeUndefined();
 		});
 	});
 });

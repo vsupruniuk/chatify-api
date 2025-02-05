@@ -18,7 +18,6 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { users } from '@TestMocks/User/users';
 import { TUserPayload } from '@Types/users/TUserPayload';
 import { plainToInstance } from 'class-transformer';
@@ -156,10 +155,10 @@ describe('AppUserController', (): void => {
 				.expect(HttpStatus.NO_CONTENT);
 		});
 
-		it('should return response as instance of ResponseResult', async (): Promise<void> => {
-			const result: ResponseResult = await appUserController.deleteAvatar(appUserPayload);
+		it('should return nothing', async (): Promise<void> => {
+			const result: void = await appUserController.deleteAvatar(appUserPayload);
 
-			expect(result).toBeInstanceOf(ResponseResult);
+			expect(result).toBeUndefined();
 		});
 
 		it('should call getFullUserById in users service to get full user', async (): Promise<void> => {

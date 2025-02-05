@@ -26,7 +26,6 @@ import { DirectChatsModule } from '@Modules/directChats.module';
 import * as request from 'supertest';
 import { Headers } from '@Enums/Headers.enum';
 import { ResponseStatus } from '@Enums/ResponseStatus.enum';
-import { ResponseResult } from '@Responses/ResponseResult';
 
 describe('DirectChatsController', (): void => {
 	let app: INestApplication;
@@ -200,17 +199,19 @@ describe('DirectChatsController', (): void => {
 			);
 		});
 
-		it('should return response as instance of ResponseResult', async (): Promise<void> => {
+		it('should return each chat as instance of DirectChatShortDto', async (): Promise<void> => {
 			const page: number = 1;
 			const take: number = 10;
 
-			const response: ResponseResult = await directChatsController.getLastChats(
+			const response: DirectChatShortDto[] = await directChatsController.getLastChats(
 				appUserPayload,
 				page,
 				take,
 			);
 
-			expect(response).toBeInstanceOf(ResponseResult);
+			response.forEach((chat: DirectChatShortDto) => {
+				expect(chat).toBeInstanceOf(DirectChatShortDto);
+			});
 		});
 	});
 });

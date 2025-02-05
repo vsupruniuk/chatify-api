@@ -9,20 +9,19 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { IDirectChatsController } from '@Interfaces/directChats/IDirectChatsController';
-import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { AuthInterceptor } from '@Interceptors/auth.interceptor';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
 import { IDirectChatsService } from '@Interfaces/directChats/IDirectChatsService';
 import { AppUserPayload } from '@Decorators/AppUser.decorator';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 import { QueryRequired } from '@Decorators/QueryRequired.decorator';
 import { DirectChatMessageWithChatDto } from '@DTO/directChatMessages/DirectChatMessageWithChat.dto';
+import { TransformInterceptor } from '@Interceptors/transform.interceptor';
 
 @Controller('direct-chats')
 @UseInterceptors(AuthInterceptor)
+@UseInterceptors(TransformInterceptor)
 export class DirectChatsController implements IDirectChatsController {
 	constructor(
 		@Inject(CustomProviders.CTF_DIRECT_CHATS_SERVICE)
@@ -35,18 +34,8 @@ export class DirectChatsController implements IDirectChatsController {
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 		@Query('page', new ParseIntPipe({ optional: true })) page?: number,
 		@Query('take', new ParseIntPipe({ optional: true })) take?: number,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<DirectChatShortDto> =
-			new SuccessfulResponseResult<DirectChatShortDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
-
-		responseResult.data = await this._directChatsService.getLastChats(
-			appUserPayload.id,
-			page,
-			take,
-		);
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
+	): Promise<DirectChatShortDto[]> {
+		return await this._directChatsService.getLastChats(appUserPayload.id, page, take);
 	}
 
 	@Get('chat-messages')
@@ -56,21 +45,7 @@ export class DirectChatsController implements IDirectChatsController {
 		@QueryRequired('chatId') chatId: string,
 		page?: number,
 		take?: number,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<DirectChatMessageWithChatDto> =
-			new SuccessfulResponseResult<DirectChatMessageWithChatDto>(
-				HttpStatus.OK,
-				ResponseStatus.SUCCESS,
-			);
-
-		responseResult.data = await this._directChatsService.getChatMessages(
-			appUserPayload.id,
-			chatId,
-			page,
-			take,
-		);
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
+	): Promise<DirectChatMessageWithChatDto[]> {
+		return await this._directChatsService.getChatMessages(appUserPayload.id, chatId, page, take);
 	}
 }

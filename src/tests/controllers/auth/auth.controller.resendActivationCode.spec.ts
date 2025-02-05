@@ -11,7 +11,6 @@ import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { EmailService } from '@Services/email.service';
 import { OTPCodesService } from '@Services/OTPCodes.service';
@@ -186,15 +185,15 @@ describe('AuthController', (): void => {
 				.expect(responseResult);
 		});
 
-		it('should return successful response as instance of ResponseResult', async (): Promise<void> => {
+		it('should return nothing', async (): Promise<void> => {
 			const resendActivationCodeDto = <ResendActivationCodeDto>{
 				email: existingUserEmail,
 			};
 
-			const responseResult: ResponseResult =
+			const responseResult: void =
 				await authController.resendActivationCode(resendActivationCodeDto);
 
-			expect(responseResult).toBeInstanceOf(ResponseResult);
+			expect(responseResult).toBeUndefined();
 		});
 
 		it('should call getFullUserByEmail method in users service to find user by email', async (): Promise<void> => {

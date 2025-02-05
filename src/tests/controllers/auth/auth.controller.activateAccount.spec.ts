@@ -20,7 +20,6 @@ import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
 import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { jwtTokens } from '@TestMocks/JWTToken/jwtTokens';
 import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
@@ -523,23 +522,6 @@ describe('AuthController', (): void => {
 
 			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(user?.id, { JWTToken: token });
-		});
-
-		it('should return response as instance of SuccessfulResponseResult', async (): Promise<void> => {
-			jest.setSystemTime(new Date('2023-11-24 18:25:00'));
-
-			const accountActivationDto = <AccountActivationDto>{
-				id: existingUserId,
-				code: 111111,
-				OTPCodeId: existingOTPCodeId,
-			};
-
-			const response: ResponseResult = await authController.activateAccount(
-				responseMock as Response,
-				accountActivationDto,
-			);
-
-			expect(response).toBeInstanceOf(SuccessfulResponseResult);
 		});
 	});
 });

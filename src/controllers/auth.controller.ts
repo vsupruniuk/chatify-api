@@ -15,8 +15,6 @@ import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { JWTToken } from '@Entities/JWTToken.entity';
 import { CookiesNames } from '@Enums/CookiesNames.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
-import { IAuthController } from '@Interfaces/auth/IAuthController';
 import { IAuthService } from '@Interfaces/auth/IAuthService';
 import { IEmailService } from '@Interfaces/emails/IEmailService';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
@@ -39,13 +37,15 @@ import {
 	Res,
 	UnauthorizedException,
 	UnprocessableEntityException,
+	UseInterceptors,
 } from '@nestjs/common';
 
-import { ResponseResult } from '@Responses/ResponseResult';
-import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { Response } from 'express';
+import { TransformInterceptor } from '@Interceptors/transform.interceptor';
+import { IAuthController } from '@Interfaces/auth/IAuthController';
 
 @Controller('auth')
+@UseInterceptors(TransformInterceptor)
 export class AuthController implements IAuthController {
 	constructor(
 		@Inject(CustomProviders.CTF_USERS_SERVICE)
@@ -69,12 +69,7 @@ export class AuthController implements IAuthController {
 
 	@Post('signup')
 	@HttpCode(HttpStatus.CREATED)
-	public async signup(@Body() signupUserDTO: SignupUserDto): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<UserShortDto> = new SuccessfulResponseResult(
-			HttpStatus.CREATED,
-			ResponseStatus.SUCCESS,
-		);
-
+	public async signup(@Body() signupUserDTO: SignupUserDto): Promise<UserShortDto> {
 		const existingUser: UserShortDto | null = await this._usersService.getByEmailOrNickname(
 			signupUserDTO.email,
 			signupUserDTO.nickname,
@@ -105,10 +100,7 @@ export class AuthController implements IAuthController {
 
 		await this._emailService.sendActivationEmail(createdUser.email, userOTPCode.code);
 
-		responseResult.data = [createdUser];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
+		return createdUser;
 	}
 
 	@Post('activate-account')
@@ -116,10 +108,7 @@ export class AuthController implements IAuthController {
 	public async activateAccount(
 		@Res({ passthrough: true }) response: Response,
 		@Body() accountActivationDto: AccountActivationDto,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<LoginResponseDto> =
-			new SuccessfulResponseResult<LoginResponseDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
-
+	): Promise<LoginResponseDto> {
 		const isActivated: boolean = await this._authService.activateAccount(accountActivationDto);
 
 		if (!isActivated) {
@@ -172,22 +161,14 @@ export class AuthController implements IAuthController {
 			httpOnly: true,
 		});
 
-		responseResult.data = [{ accessToken }];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
+		return { accessToken };
 	}
 
 	@Post('resend-activation-code')
 	@HttpCode(HttpStatus.OK)
 	public async resendActivationCode(
 		@Body() resendActivationCodeDto: ResendActivationCodeDto,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			HttpStatus.OK,
-			ResponseStatus.SUCCESS,
-		);
-
+	): Promise<void> {
 		const user: UserFullDto | null = await this._usersService.getFullUserByEmail(
 			resendActivationCodeDto.email,
 		);
@@ -211,21 +192,11 @@ export class AuthController implements IAuthController {
 		}
 
 		await this._emailService.sendActivationEmail(resendActivationCodeDto.email, otpCode.code);
-
-		responseResult.data = [];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
 	}
 
 	@Post('reset-password')
 	@HttpCode(HttpStatus.OK)
-	public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			HttpStatus.OK,
-			ResponseStatus.SUCCESS,
-		);
-
+	public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void> {
 		const user: UserFullDto | null = await this._usersService.getFullUserByEmail(
 			resetPasswordDto.email,
 		);
@@ -244,11 +215,6 @@ export class AuthController implements IAuthController {
 		}
 
 		await this._emailService.sendResetPasswordEmail(user.email, user.firstName, token);
-
-		responseResult.data = [];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
 	}
 
 	@Post(`reset-password/:resetToken`)
@@ -256,12 +222,7 @@ export class AuthController implements IAuthController {
 	public async resetPasswordConfirmation(
 		@Body() resetPasswordConfirmationDto: ResetPasswordConfirmationDto,
 		@Param('resetToken', ParseUUIDPipe) resetToken: string,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			HttpStatus.OK,
-			ResponseStatus.SUCCESS,
-		);
-
+	): Promise<void> {
 		const user: UserFullDto | null = await this._usersService.getByResetPasswordToken(resetToken);
 
 		if (!user || !user.passwordResetToken) {
@@ -277,22 +238,15 @@ export class AuthController implements IAuthController {
 		}
 
 		await this._passwordResetTokensService.deleteToken(user.passwordResetToken.id);
-
-		responseResult.data = [];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
 	}
 
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
+	@UseInterceptors(TransformInterceptor)
 	public async login(
 		@Res({ passthrough: true }) response: Response,
 		@Body() loginDto: LoginDto,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<LoginResponseDto> =
-			new SuccessfulResponseResult<LoginResponseDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
-
+	): Promise<LoginResponseDto[]> {
 		const user: UserFullDto | null = await this._usersService.getFullUserByEmail(loginDto.email);
 
 		if (!user) {
@@ -342,10 +296,7 @@ export class AuthController implements IAuthController {
 			httpOnly: true,
 		});
 
-		responseResult.data = [{ accessToken }];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
+		return [{ accessToken }];
 	}
 
 	@Post('logout')
@@ -353,12 +304,7 @@ export class AuthController implements IAuthController {
 	public async logout(
 		@Res({ passthrough: true }) response: Response,
 		@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<null> = new SuccessfulResponseResult<null>(
-			HttpStatus.NO_CONTENT,
-			ResponseStatus.SUCCESS,
-		);
-
+	): Promise<void> {
 		const userData: JWTPayloadDto | null =
 			await this._jwtTokensService.verifyRefreshToken(refreshToken);
 
@@ -385,8 +331,6 @@ export class AuthController implements IAuthController {
 		}
 
 		response.clearCookie(CookiesNames.REFRESH_TOKEN);
-
-		return responseResult;
 	}
 
 	@Post('refresh')
@@ -394,10 +338,7 @@ export class AuthController implements IAuthController {
 	public async refresh(
 		@Res({ passthrough: true }) response: Response,
 		@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
-	): Promise<ResponseResult> {
-		const responseResult: SuccessfulResponseResult<LoginResponseDto> =
-			new SuccessfulResponseResult<LoginResponseDto>(HttpStatus.OK, ResponseStatus.SUCCESS);
-
+	): Promise<LoginResponseDto[]> {
 		const userData: JWTPayloadDto | null =
 			await this._jwtTokensService.verifyRefreshToken(refreshToken);
 
@@ -434,10 +375,7 @@ export class AuthController implements IAuthController {
 			httpOnly: true,
 		});
 
-		responseResult.data = [{ accessToken: newAccessToken }];
-		responseResult.dataLength = responseResult.data.length;
-
-		return responseResult;
+		return [{ accessToken: newAccessToken }];
 	}
 
 	private _createJwtPayload(user: UserFullDto): JWTPayloadDto {

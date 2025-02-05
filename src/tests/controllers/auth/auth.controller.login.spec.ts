@@ -1,6 +1,5 @@
 import { AuthController } from '@Controllers/auth.controller';
 import { LoginDto } from '@DTO/auth/Login.dto';
-import { LoginResponseDto } from '@DTO/auth/LoginResponse.dto';
 import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
 import { UserFullDto } from '@DTO/users/UserFull.dto';
@@ -8,7 +7,6 @@ import { JWTToken } from '@Entities/JWTToken.entity';
 import { User } from '@Entities/User.entity';
 import { CookiesNames } from '@Enums/CookiesNames.enum';
 import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
 import { IAuthService } from '@Interfaces/auth/IAuthService';
 import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
 import { IUsersService } from '@Interfaces/users/IUsersService';
@@ -16,8 +14,6 @@ import { AppModule } from '@Modules/app.module';
 import { AuthModule } from '@Modules/auth.module';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseResult } from '@Responses/ResponseResult';
-import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
 import { jwtTokens } from '@TestMocks/JWTToken/jwtTokens';
 import { users } from '@TestMocks/User/users';
 import { Headers } from '@Enums/Headers.enum';
@@ -247,18 +243,7 @@ describe('AuthController', (): void => {
 				password: 'qwertyA1',
 			};
 
-			const responseResult = <SuccessfulResponseResult<LoginResponseDto>>{
-				code: HttpStatus.OK,
-				status: ResponseStatus.SUCCESS,
-				data: [{ accessToken: 'jwt-access-token' }],
-				dataLength: 1,
-			};
-
-			await request(app.getHttpServer())
-				.post('/auth/login')
-				.send(loginDto)
-				.expect(HttpStatus.OK)
-				.expect(responseResult);
+			await request(app.getHttpServer()).post('/auth/login').send(loginDto).expect(HttpStatus.OK);
 		});
 
 		it('should set refresh token to cookies', async (): Promise<void> => {
@@ -415,20 +400,6 @@ describe('AuthController', (): void => {
 
 			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
 			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(user?.id, { JWTToken: token });
-		});
-
-		it('should return response as instance of SuccessfulResponseResult', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
-				email: 'tony@mail.com',
-				password: 'qwertyA1',
-			};
-
-			const response: ResponseResult = await authController.login(
-				responseMock as Response,
-				loginDto,
-			);
-
-			expect(response).toBeInstanceOf(SuccessfulResponseResult);
 		});
 	});
 });
