@@ -1,53 +1,109 @@
 import { DirectChat } from '@Entities/DirectChat.entity';
-import { plainToInstance } from 'class-transformer';
-import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
 
 export const directChats: DirectChat[] = [
-	plainToInstance(DirectChat, <DirectChat>{
-		id: 'a9bdc525-1c35-48c0-a0c6-79601d842f43',
-		createdAt: '2024-05-24 17:00:00',
-		updatedAt: '2024-05-24 17:00:00',
-		messages: [
-			plainToInstance(DirectChatMessage, <DirectChatMessage>{
-				id: 'a25d0f16-8255-4cf4-a06a-167271bd7720',
-				createdAt: '2024-08-03 10:00:00',
-				dateTime: '2024-08-03 10:00:00',
-				messageText: 'Tony, what if we lose?',
-				updatedAt: '2024-08-03 10:00:00',
-			}),
-		],
+	{
+		id: 'd1a2b3c4-5e6f-7g8h-9i0j-1k2l3m4n5o6p',
+		createdAt: '2025-01-01 10:00:00',
+		updatedAt: '2025-01-01 10:00:00',
+		messages: [],
 		users: [],
-	}),
-
-	plainToInstance(DirectChat, <DirectChat>{
-		id: '3e253a0e-be8f-41f1-8568-70105319abf0',
-		createdAt: '2024-05-24 17:00:00',
-		updatedAt: '2024-05-24 17:00:00',
-		messages: [
-			plainToInstance(DirectChatMessage, <DirectChatMessage>{
-				id: 'a25d0f16-8255-4cf4-a06a-167271bd7720',
-				createdAt: '2024-08-03 10:00:00',
-				dateTime: '2024-08-03 10:00:00',
-				messageText: 'Tony, what if we lose?',
-				updatedAt: '2024-08-03 10:00:00',
-			}),
-		],
+	},
+	{
+		id: 'f2b3c4d5-6e7f-8g9h-0i1j-2k3l4m5n6o7p',
+		createdAt: '2025-01-03 14:20:00',
+		updatedAt: '2025-01-03 14:20:00',
+		messages: [],
 		users: [],
-	}),
-
-	plainToInstance(DirectChat, <DirectChat>{
-		id: 'ff41a4a5-7f18-4d63-b243-5087f4288583',
-		createdAt: '2024-05-24 17:00:00',
-		updatedAt: '2024-05-24 17:00:00',
-		messages: [
-			plainToInstance(DirectChatMessage, <DirectChatMessage>{
-				id: 'a25d0f16-8255-4cf4-a06a-167271bd7720',
-				createdAt: '2024-08-03 10:00:00',
-				dateTime: '2024-08-03 10:00:00',
-				messageText: 'Tony, what if we lose?',
-				updatedAt: '2024-08-03 10:00:00',
-			}),
-		],
+	},
+	{
+		id: 'g3c4d5e6-7f8g-9h0i-1j2k-3l4m5n6o7p8q',
+		createdAt: '2025-01-06 09:45:00',
+		updatedAt: '2025-01-06 09:45:00',
+		messages: [],
 		users: [],
-	}),
+	},
+	{
+		id: 'h4d5e6f7-8g9h-0i1j-2k3l-4m5n6o7p8q9r',
+		createdAt: '2025-01-09 18:30:00',
+		updatedAt: '2025-01-09 18:30:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'i5e6f7g8-9h0i-1j2k-3l4m-5n6o7p8q9r0s',
+		createdAt: '2025-01-12 13:10:00',
+		updatedAt: '2025-01-12 13:10:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'j6f7g8h9-0i1j-2k3l-4m5n-6o7p8q9r0s1t',
+		createdAt: '2025-01-14 08:50:00',
+		updatedAt: '2025-01-14 08:50:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'k7g8h9i0-1j2k-3l4m-5n6o-7p8q9r0s1t2u',
+		createdAt: '2025-01-16 21:15:00',
+		updatedAt: '2025-01-16 21:15:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'l8h9i0j1-2k3l-4m5n-6o7p-8q9r0s1t2u3v',
+		createdAt: '2025-01-19 17:40:00',
+		updatedAt: '2025-01-19 17:40:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'm9i0j1k2-3l4m-5n6o-7p8q-9r0s1t2u3v4w',
+		createdAt: '2025-01-22 12:10:00',
+		updatedAt: '2025-01-22 12:10:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'n0j1k2l3-4m5n-6o7p-8q9r-0s1t2u3v4w5x',
+		createdAt: '2025-01-25 06:45:00',
+		updatedAt: '2025-01-25 06:45:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'o1k2l3m4-5n6o-7p8q-9r0s-1t2u3v4w5x6y',
+		createdAt: '2025-01-27 16:20:00',
+		updatedAt: '2025-01-27 16:20:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'p2l3m4n5-6o7p-8q9r-0s1t-2u3v4w5x6y7z',
+		createdAt: '2025-01-30 09:10:00',
+		updatedAt: '2025-01-30 09:10:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'q3m4n5o6-7p8q-9r0s-1t2u-3v4w5x6y7z8a',
+		createdAt: '2025-02-02 19:30:00',
+		updatedAt: '2025-02-02 19:30:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'r4n5o6p7-8q9r-0s1t-2u3v-4w5x6y7z8a9b',
+		createdAt: '2025-02-05 14:40:00',
+		updatedAt: '2025-02-05 14:40:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 's5o6p7q8-9r0s-1t2u-3v4w-5x6y7z8a9b0c',
+		createdAt: '2025-02-08 08:15:00',
+		updatedAt: '2025-02-08 08:15:00',
+		messages: [],
+		users: [],
+	},
 ];
