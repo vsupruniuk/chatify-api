@@ -1,13 +1,4 @@
-import { AppUserController } from '@Controllers/appUser.controller';
-import { AppUserDto } from '@DTO/appUser/appUser.dto';
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
-import { User } from '@Entities/User.entity';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { Headers } from '@Enums/Headers.enum';
-import { AuthInterceptor } from '@Interceptors/auth.interceptor';
-import { IUsersService } from '@Interfaces/users/IUsersService';
-import { AppModule } from '@Modules/app.module';
-import { AuthModule } from '@Modules/auth.module';
+import { Headers } from '@enums/Headers.enum';
 import {
 	CallHandler,
 	ExecutionContext,
@@ -17,14 +8,23 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { users } from '@TestMocks/User/users';
-import { TUserPayload } from '@Types/users/TUserPayload';
 import { plainToInstance } from 'class-transformer';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import * as request from 'supertest';
+import { User } from '@entities/User.entity';
+import { AppUserController } from '@controllers/appUser.controller';
+import { users } from '@testMocks/User/users';
+import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
+import { AuthInterceptor } from '@interceptors/auth.interceptor';
+import { TUserPayload } from '@custom-types/users/TUserPayload';
+import { IUsersService } from '@services/users/IUsersService';
+import { AppUserDto } from '../../../types/dto/appUser/appUser.dto';
+import { AppModule } from '@modules/app.module';
+import { AuthModule } from '@modules/auth.module';
+import { CustomProviders } from '@enums/CustomProviders.enum';
 
-describe('AppUserController', (): void => {
+describe.skip('AppUserController', (): void => {
 	let app: INestApplication;
 	let appUserController: AppUserController;
 

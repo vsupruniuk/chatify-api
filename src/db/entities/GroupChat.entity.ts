@@ -1,5 +1,5 @@
-import { GroupChatMessage } from '@Entities/GroupChatMessage.entity';
-import { User } from '@Entities/User.entity';
+import { GroupChatMessage } from '@entities/GroupChatMessage.entity';
+import { User } from '@entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
@@ -14,12 +14,13 @@ import {
 /**
  * Domain entity representing group chat between mane users
  */
-@Entity('GroupChats')
+@Entity('group_chats')
 export class GroupChat {
 	@PrimaryGeneratedColumn('uuid')
 	public id: string;
 
 	@Column({
+		name: 'avatar_url',
 		type: 'varchar',
 		length: 255,
 		nullable: true,
@@ -34,30 +35,16 @@ export class GroupChat {
 	public name: string;
 
 	@CreateDateColumn({
+		name: 'created_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public createdAt: string;
 
 	@UpdateDateColumn({
+		name: 'updated_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public updatedAt: string;
 
@@ -70,13 +57,13 @@ export class GroupChat {
 
 	@ManyToMany(() => User, (user: User) => user.groupChats, { onDelete: 'NO ACTION' })
 	@JoinTable({
-		name: 'GroupChatUsers',
+		name: 'group_chats_users',
 		joinColumn: {
-			name: 'groupChatId',
+			name: 'group_chat_id',
 			referencedColumnName: 'id',
 		},
 		inverseJoinColumn: {
-			name: 'userId',
+			name: 'user_id',
 			referencedColumnName: 'id',
 		},
 	})

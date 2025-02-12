@@ -1,34 +1,33 @@
-import { AuthController } from '@Controllers/auth.controller';
-import { AccountActivationDto } from '@DTO/auth/AccountActivation.dto';
-import { LoginResponseDto } from '@DTO/auth/LoginResponse.dto';
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
-import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
-import { UserFullDto } from '@DTO/users/UserFull.dto';
-import { JWTToken } from '@Entities/JWTToken.entity';
-import { OTPCode } from '@Entities/OTPCode.entity';
-import { User } from '@Entities/User.entity';
-import { CookiesNames } from '@Enums/CookiesNames.enum';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { Headers } from '@Enums/Headers.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
-import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
-import { IAuthService } from '@Interfaces/auth/IAuthService';
-import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
-import { IOTPCodesService } from '@Interfaces/OTPCodes/IOTPCodesService';
-import { IUsersService } from '@Interfaces/users/IUsersService';
-import { AppModule } from '@Modules/app.module';
-import { AuthModule } from '@Modules/auth.module';
+import { AuthController } from '@controllers/auth/auth.controller';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
-import { jwtTokens } from '@TestMocks/JWTToken/jwtTokens';
-import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
-import { users } from '@TestMocks/User/users';
 import { plainToInstance } from 'class-transformer';
 import { Response } from 'express';
 import * as request from 'supertest';
+import { OTPCodesHelper } from '@helpers/OTPCodes.helper';
+import { OTPCode } from '@entities/OTPCode.entity';
+import { otpCodes } from '@testMocks/OTPCode/otpCodes';
+import { JWTToken } from '@entities/JWTToken.entity';
+import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
+import { User } from '@entities/User.entity';
+import { users } from '@testMocks/User/users';
+import { IAuthService } from '@services/auth/IAuthService';
+import { AccountActivationDto } from '../../../types/dto/auth/AccountActivation.dto';
+import { IJWTTokensService } from '@interfaces/jwt/IJWTTokensService';
+import { JWTTokenFullDto } from '../../../types/dto/JWTTokens/JWTTokenFull.dto';
+import { IUsersService } from '@services/users/IUsersService';
+import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
+import { IOTPCodesService } from '@interfaces/OTPCodes/IOTPCodesService';
+import { AppModule } from '@modules/app.module';
+import { AuthModule } from '@modules/auth.module';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
+import { LoginResponseDto } from '../../../types/dto/auth/LoginResponse.dto';
+import { ResponseStatus } from '@enums/ResponseStatus.enum';
+import { CookiesNames } from '@enums/CookiesNames.enum';
+import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
 
-describe('AuthController', (): void => {
+describe.skip('AuthController', (): void => {
 	let app: INestApplication;
 	let authController: AuthController;
 

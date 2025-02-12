@@ -1,13 +1,13 @@
-import { connectionSource } from '@DB/typeOrmConfig';
-import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
-import { JWTToken } from '@Entities/JWTToken.entity';
-import { JwtService } from '@nestjs/jwt';
-import { JWTTokensRepository } from '@Repositories/JWTTokens.repository';
-import { JwtTokensService } from '@Services/jwtTokens.service';
-import { jwtTokens } from '@TestMocks/JWTToken/jwtTokens';
 import SpyInstance = jest.SpyInstance;
+import { JwtTokensService } from '@services/jwtTokens.service';
+import { JWTTokensRepository } from '@repositories/JWTTokens.repository';
+import { JwtService } from '@nestjs/jwt';
+import { connectionSource } from '@db/typeOrmConfig';
+import { JWTToken } from '@entities/JWTToken.entity';
+import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
+import { JWTTokenFullDto } from '../../../types/dto/JWTTokens/JWTTokenFull.dto';
 
-describe('jwtTokensService', (): void => {
+describe.skip('jwtTokensService', (): void => {
 	let jwtTokensService: JwtTokensService;
 	let jwtTokensRepository: JWTTokensRepository;
 

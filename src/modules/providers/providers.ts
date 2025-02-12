@@ -1,4 +1,4 @@
-import { CustomProviders } from '@Enums/CustomProviders.enum';
+import { CustomProviders } from '@enums/CustomProviders.enum';
 import { Provider } from '@nestjs/common';
 import {
 	accountSettingsRepositoryProvider,
@@ -18,7 +18,7 @@ import {
 	otpCodesServiceProvider,
 	otpCodesRepositoryProvider,
 	directChatMessagesProvider,
-} from '@Modules/providers';
+} from '@modules/providers';
 
 const providers: Record<CustomProviders, Provider> = {
 	[CustomProviders.CTF_ACCOUNT_SETTINGS_SERVICE]: accountSettingsServiceProvider,

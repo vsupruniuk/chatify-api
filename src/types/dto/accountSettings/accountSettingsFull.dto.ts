@@ -5,7 +5,7 @@ export class AccountSettingsFullDto {
 	public id: string;
 
 	@Expose()
-	public enterIsSend: boolean;
+	public enterIsSending: boolean;
 
 	@Expose()
 	public notification: boolean;

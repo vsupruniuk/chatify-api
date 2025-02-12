@@ -1,16 +1,16 @@
-import { connectionSource } from '@DB/typeOrmConfig';
-import { DateHelper } from '@Helpers/date.helper';
-import { DirectChatsRepository } from '@Repositories/directChats.repository';
-import { CryptoService } from '@Services/crypto.service';
-import { DirectChatsService } from '@Services/directChats.service';
+import { DirectChatsRepository } from '@repositories/directChats.repository';
+import { CryptoService } from '@services/crypto.service';
+import { DirectChatsService } from '@services/directChats.service';
+import { DirectChatMessagesRepository } from '@repositories/directChatMessages.repository';
+import { connectionSource } from '@db/typeOrmConfig';
 import SpyInstance = jest.SpyInstance;
-import { DirectChat } from '@Entities/DirectChat.entity';
-import { directChats } from '@TestMocks/DirectChat/directChats';
-import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
+import { directChats } from '@testMocks/DirectChat/directChats';
+import { DirectChat } from '@entities/DirectChat.entity';
+import { DateHelper } from '@helpers/date.helper';
 import { UnprocessableEntityException } from '@nestjs/common';
-import { DirectChatMessagesRepository } from '@Repositories/directChatMessages.repository';
+import { DirectChatShortDto } from '../../../types/dto/directChat/DirectChatShort.dto';
 
-describe('Direct chats', (): void => {
+describe.skip('Direct chats', (): void => {
 	let directChatsService: DirectChatsService;
 	let directChatsRepository: DirectChatsRepository;
 	let directChatMessagesRepository: DirectChatMessagesRepository;

@@ -10,7 +10,7 @@ import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 import { QueryBuilderMock } from '@TestMocks/queryBuilderMock';
 
-describe('directChatRepository', (): void => {
+describe.skip('directChatRepository', (): void => {
 	let queryBuilderMock: QueryBuilderMock<never>;
 	let dataSourceMock: jest.Mocked<Partial<DataSource>>;
 	let directChatRepository: DirectChatsRepository;

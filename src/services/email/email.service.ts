@@ -1,15 +1,13 @@
-import { accountActivationTemplate } from '@EmailTemplates/accountActivationTemplate';
-import { resetPasswordTemplate } from '@EmailTemplates/resetPasswordTemplate';
-import { EmailPriority } from '@Enums/EmailPriority.enum';
-
-import { IEmailService } from '@Interfaces/emails/IEmailService';
 import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
+import { IEmailService } from '@services/email/IEmailService';
 import { Transporter } from 'nodemailer';
+import * as nodemailer from 'nodemailer';
+import { accountActivationTemplate } from '@emailTemplates/accountActivationTemplate';
+import { EmailPriority } from '@enums/EmailPriority.enum';
 
 @Injectable()
 export class EmailService implements IEmailService {
-	private readonly APP_NAME: string = 'Chatify';
+	private readonly APP_NAME: string = String(process.env.APP_NAME);
 	private readonly APP_EMAIL: string = String(process.env.SMTP_USER);
 	private _transporter: Transporter;
 
@@ -44,25 +42,26 @@ export class EmailService implements IEmailService {
 		);
 	}
 
-	public async sendResetPasswordEmail(
-		receiverEmail: string,
-		userName: string,
-		token: string,
-	): Promise<void> {
-		const emailSubject: string = 'Password reset';
-		const link: string = `${process.env.CLIENT_URL}/reset-password/${token}`;
-
-		const emailContent: string = resetPasswordTemplate(userName, this.APP_EMAIL, link);
-
-		return this._sendMail(
-			receiverEmail,
-			emailSubject,
-			emailContent,
-			emailContent,
-			EmailPriority.HIGH,
-		);
-	}
-
+	// // TODO check if needed
+	// public async sendResetPasswordEmail(
+	// 	receiverEmail: string,
+	// 	userName: string,
+	// 	token: string,
+	// ): Promise<void> {
+	// 	const emailSubject: string = 'Password reset';
+	// 	const link: string = `${process.env.CLIENT_URL}/reset-password/${token}`;
+	//
+	// 	const emailContent: string = resetPasswordTemplate(userName, this.APP_EMAIL, link);
+	//
+	// 	return this._sendMail(
+	// 		receiverEmail,
+	// 		emailSubject,
+	// 		emailContent,
+	// 		emailContent,
+	// 		EmailPriority.HIGH,
+	// 	);
+	// }
+	//
 	private async _sendMail(
 		receiverEmail: string,
 		emailSubject: string,

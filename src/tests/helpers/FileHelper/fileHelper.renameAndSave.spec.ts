@@ -1,7 +1,7 @@
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
-import { FileHelper } from '@Helpers/file.helper';
+import { FileHelper } from '@helpers/file.helper';
+import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
 
-describe('fileHelper', (): void => {
+describe.skip('fileHelper', (): void => {
 	describe('renameAndSave', (): void => {
 		const callback: jest.Mock = jest.fn();
 

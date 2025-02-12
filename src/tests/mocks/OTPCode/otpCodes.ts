@@ -1,6 +1,6 @@
-import { User } from '@Entities/User.entity';
+import { User } from '@entities/User.entity';
 
-import { OTPCode } from '@Entities/OTPCode.entity';
+import { OTPCode } from '@entities/OTPCode.entity';
 
 export const otpCodes: OTPCode[] = [
 	{

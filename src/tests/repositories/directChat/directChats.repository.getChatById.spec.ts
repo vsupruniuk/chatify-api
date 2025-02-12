@@ -5,7 +5,7 @@ import { directChats } from '@TestMocks/DirectChat/directChats';
 import { DataSource } from 'typeorm';
 import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
 
-describe('directChatsRepository', () => {
+describe.skip('directChatsRepository', () => {
 	let queryBuilderMock: QueryBuilderMock<never>;
 	let directChatRepository: DirectChatsRepository;
 

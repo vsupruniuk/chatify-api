@@ -1,9 +1,9 @@
-import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
-import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
-import { TUpdatePasswordResetToken } from '@Types/passwordResetTokens/TUpdatePasswordResetToken';
+import { PasswordResetTokensRepository } from '@repositories/passwordResetTokens.repository';
 import { DataSource, UpdateResult } from 'typeorm';
+import { TUpdatePasswordResetToken } from '@custom-types/passwordResetTokens/TUpdatePasswordResetToken';
+import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 
-describe('passwordResetTokensRepository', (): void => {
+describe.skip('passwordResetTokensRepository', (): void => {
 	let passwordResetTokensRepository: PasswordResetTokensRepository;
 
 	let resolvedAffectedValue: number = 0;

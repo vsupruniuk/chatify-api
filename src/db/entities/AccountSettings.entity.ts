@@ -1,4 +1,4 @@
-import { User } from '@Entities/User.entity';
+import { User } from '@entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
@@ -11,45 +11,31 @@ import {
 /**
  * Domain entity representing settings for user account
  */
-@Entity('AccountSettings')
+@Entity('account_settings')
 export class AccountSettings {
 	@PrimaryGeneratedColumn('uuid')
 	public id: string;
 
 	@CreateDateColumn({
+		name: 'created_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public createdAt: string;
 
-	@Column({ type: 'boolean', default: false })
-	public enterIsSend: boolean;
+	@Column({ name: 'enter_is_sending', type: 'boolean', default: false })
+	public enterIsSending: boolean;
 
 	@Column({ type: 'boolean', default: false })
 	public notification: boolean;
 
-	@Column({ type: 'boolean', default: false })
+	@Column({ name: 'two_step_verification', type: 'boolean', default: false })
 	public twoStepVerification: boolean;
 
 	@UpdateDateColumn({
+		name: 'updated_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public updatedAt: string;
 

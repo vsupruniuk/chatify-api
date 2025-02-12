@@ -1,5 +1,5 @@
-import { JWTToken } from '@Entities/JWTToken.entity';
-import { User } from '@Entities/User.entity';
+import { JWTToken } from '@entities/JWTToken.entity';
+import { User } from '@entities/User.entity';
 
 export const jwtTokens: JWTToken[] = [
 	{

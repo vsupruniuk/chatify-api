@@ -9,7 +9,7 @@ import {
 @ValidatorConstraint({ name: 'isStringsSimilar', async: false })
 export class IsStringsSimilarConstraint implements ValidatorConstraintInterface {
 	public validate(
-		value: never,
+		value: unknown,
 		validationArguments?: ValidationArguments,
 	): Promise<boolean> | boolean {
 		const [relatedPropertyName] = validationArguments?.constraints || '';

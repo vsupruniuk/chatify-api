@@ -1,7 +1,7 @@
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
-import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
-import { DateHelper } from '@Helpers/date.helper';
 import * as crypto from 'node:crypto';
+import { PasswordResetTokenInfoDto } from '../types/dto/passwordResetTokens/passwordResetTokenInfo.dto';
+import { DateHelper } from '@helpers/date.helper';
+import { PasswordResetTokenDto } from '../types/dto/passwordResetTokens/passwordResetToken.dto';
 
 /**
  * Helper class for password reset tokens

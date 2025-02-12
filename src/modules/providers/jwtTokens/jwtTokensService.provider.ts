@@ -1,5 +1,5 @@
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { JwtTokensService } from '@Services/jwtTokens.service';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { JwtTokensService } from '@services/jwtTokens.service';
 import { ClassProvider } from '@nestjs/common';
 
 export const jwtTokensServiceProvider: ClassProvider = {

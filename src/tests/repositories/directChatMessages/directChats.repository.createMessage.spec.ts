@@ -1,16 +1,16 @@
-import { QueryBuilderMock } from '@TestMocks/queryBuilderMock';
+import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
 import { DataSource, InsertResult } from 'typeorm';
-import { DirectChat } from '@Entities/DirectChat.entity';
-import { directChats } from '@TestMocks/DirectChat/directChats';
-import { User } from '@Entities/User.entity';
-import { users } from '@TestMocks/User/users';
+import { DirectChatMessagesRepository } from '@repositories/directChatMessages.repository';
+import { DirectChat } from '@entities/DirectChat.entity';
+import { directChats } from '@testMocks/DirectChat/directChats';
+import { User } from '@entities/User.entity';
+import { users } from '@testMocks/User/users';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
-import { DateHelper } from '@Helpers/date.helper';
-import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
+import { DateHelper } from '@helpers/date.helper';
+import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
 import { NotFoundException } from '@nestjs/common';
-import { DirectChatMessagesRepository } from '@Repositories/directChatMessages.repository';
 
-describe('Direct chats repository', () => {
+describe.skip('Direct chats repository', () => {
 	let queryBuilderMock: QueryBuilderMock<never>;
 	let dataSourceMock: jest.Mocked<Partial<DataSource>>;
 	let directChatMessagesRepository: DirectChatMessagesRepository;

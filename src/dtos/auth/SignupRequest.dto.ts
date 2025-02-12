@@ -1,11 +1,7 @@
-import { IsEmail, IsOptional, IsString, MinLength, Matches, MaxLength } from 'class-validator';
+import { IsEmail, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsStringsSimilar } from '@decorators/validation/IsStringsSimilar.decorator';
 
-import { IsStringsSimilar } from '@Decorators/IsStringsSimilar.decorator';
-
-/**
- * DTO class representing request data for signup request
- */
-export class SignupUserDto {
+export class SignupRequestDto {
 	@IsEmail({}, { message: 'Wrong $property format|$property' })
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
 	public email: string;

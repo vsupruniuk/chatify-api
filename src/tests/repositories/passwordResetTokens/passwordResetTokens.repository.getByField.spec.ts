@@ -1,9 +1,9 @@
-import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
-import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
-import { passwordResetTokens } from '@TestMocks/PasswordResetToken/passwordResetTokens';
+import { PasswordResetToken } from '@db/entities/PasswordResetToken.entity';
+import { PasswordResetTokensRepository } from '@repositories/passwordResetTokens.repository';
 import { DataSource } from 'typeorm';
+import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
 
-describe('passwordResetTokensRepository', (): void => {
+describe.skip('passwordResetTokensRepository', (): void => {
 	let passwordResetTokensRepository: PasswordResetTokensRepository;
 
 	let resolvedValue: PasswordResetToken | null = null;

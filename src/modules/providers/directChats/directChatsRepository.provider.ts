@@ -1,5 +1,5 @@
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { DirectChatsRepository } from '@Repositories/directChats.repository';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { DirectChatsRepository } from '@repositories/directChats.repository';
 import { ClassProvider } from '@nestjs/common';
 
 export const directChatsRepositoryProvider: ClassProvider = {

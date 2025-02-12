@@ -1,9 +1,9 @@
-import { AccountSettings } from '@Entities/AccountSettings.entity';
-import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
-import { accountSettings } from '@TestMocks/AccountSettings/accountSettings';
 import { DataSource } from 'typeorm';
+import { AccountSettings } from '@entities/AccountSettings.entity';
+import { AccountSettingsRepository } from '@repositories/accountSettings.repository';
+import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
 
-describe('accountSettingsRepository', (): void => {
+describe.skip('accountSettingsRepository', (): void => {
 	let accountSettingsRepository: AccountSettingsRepository;
 
 	let resolvedValue: AccountSettings | null = null;

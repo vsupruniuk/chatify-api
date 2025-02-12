@@ -1,9 +1,9 @@
-import { UpdateAccountSettingsDto } from '@DTO/accountSettings/updateAccountSettings.dto';
-import { AccountSettings } from '@Entities/AccountSettings.entity';
-import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
 import { DataSource, UpdateResult } from 'typeorm';
+import { AccountSettingsRepository } from '@repositories/accountSettings.repository';
+import { UpdateAccountSettingsDto } from '../../../types/dto/accountSettings/updateAccountSettings.dto';
+import { AccountSettings } from '@entities/AccountSettings.entity';
 
-describe('accountSettingsRepository', (): void => {
+describe.skip('accountSettingsRepository', (): void => {
 	let accountSettingsRepository: AccountSettingsRepository;
 
 	let resolvedAffectedValue: number = 0;

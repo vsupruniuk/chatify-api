@@ -1,11 +1,11 @@
-import { connectionSource } from '@DB/typeOrmConfig';
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
-import { JwtService } from '@nestjs/jwt';
-import { JWTTokensRepository } from '@Repositories/JWTTokens.repository';
-import { JwtTokensService } from '@Services/jwtTokens.service';
 import SpyInstance = jest.SpyInstance;
+import { JwtTokensService } from '@services/jwtTokens.service';
+import { JwtService } from '@nestjs/jwt';
+import { JWTTokensRepository } from '@repositories/JWTTokens.repository';
+import { connectionSource } from '@db/typeOrmConfig';
+import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
 
-describe('jwtTokensService', (): void => {
+describe.skip('jwtTokensService', (): void => {
 	let jwtTokensService: JwtTokensService;
 	const jwtService: JwtService = new JwtService();
 

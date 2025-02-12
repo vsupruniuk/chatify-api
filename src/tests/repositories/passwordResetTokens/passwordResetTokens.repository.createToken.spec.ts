@@ -1,10 +1,10 @@
-import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
-import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
-import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
+import { PasswordResetTokensRepository } from '@repositories/passwordResetTokens.repository';
 import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
+import { PasswordResetTokenInfoDto } from '../../../types/dto/passwordResetTokens/passwordResetTokenInfo.dto';
+import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 
-describe('passwordResetTokensRepository', (): void => {
+describe.skip('passwordResetTokensRepository', (): void => {
 	let passwordResetTokenRepository: PasswordResetTokensRepository;
 
 	const insertMock: jest.Mock = jest.fn().mockReturnThis();

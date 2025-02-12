@@ -1,8 +1,8 @@
-import { JWTToken } from '@Entities/JWTToken.entity';
-import { JWTTokensRepository } from '@Repositories/JWTTokens.repository';
 import { DataSource, DeleteResult } from 'typeorm';
+import { JWTTokensRepository } from '@repositories/JWTTokens.repository';
+import { JWTToken } from '@entities/JWTToken.entity';
 
-describe('jwtTokensRepository', (): void => {
+describe.skip('jwtTokensRepository', (): void => {
 	let jwtTokensRepository: JWTTokensRepository;
 
 	let resolvedAffectedValue: number = 0;

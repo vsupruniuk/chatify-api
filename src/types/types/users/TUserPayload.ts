@@ -1,4 +1,4 @@
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
+import { JWTPayloadDto } from '../../dto/JWTTokens/JWTPayload.dto';
 
 export interface TUserPayload {
 	user: JWTPayloadDto;

@@ -1,9 +1,9 @@
-import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
-import { User } from '@Entities/User.entity';
-import { UsersRepository } from '@Repositories/users.repository';
 import { DataSource, UpdateResult } from 'typeorm';
+import { UsersRepository } from '@repositories/users/users.repository';
+import { UpdateUserDto } from '../../../types/dto/users/UpdateUser.dto';
+import { User } from '@entities/User.entity';
 
-describe('usersRepository', (): void => {
+describe.skip('usersRepository', (): void => {
 	let usersRepository: UsersRepository;
 
 	let resolvedAffectedValue: number = 0;

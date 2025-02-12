@@ -1,5 +1,5 @@
-import { IsStringsSimilar } from '@Decorators/IsStringsSimilar.decorator';
 import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsStringsSimilar } from '@decorators/validation/IsStringsSimilar.decorator';
 
 export class ResetPasswordConfirmationDto {
 	@IsString({ message: '$property must be a string|$property' })

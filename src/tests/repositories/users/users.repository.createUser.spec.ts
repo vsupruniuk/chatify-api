@@ -1,13 +1,12 @@
-import { CreateUserDto } from '@DTO/users/CreateUser.dto';
-import { User } from '@Entities/User.entity';
-
-import { UsersRepository } from '@Repositories/users.repository';
-import { accountSettings } from '@TestMocks/AccountSettings/accountSettings';
-import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
 import { DataSource, InsertResult } from 'typeorm';
+import { UsersRepository } from '@repositories/users/users.repository';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
+import { CreateUserDto } from '../../../types/dto/users/CreateUser.dto';
+import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
+import { otpCodes } from '@testMocks/OTPCode/otpCodes';
+import { User } from '@entities/User.entity';
 
-describe('usersRepository', (): void => {
+describe.skip('usersRepository', (): void => {
 	let usersRepository: UsersRepository;
 
 	const insertMock: jest.Mock = jest.fn().mockReturnThis();

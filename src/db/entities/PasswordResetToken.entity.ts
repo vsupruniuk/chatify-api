@@ -1,4 +1,4 @@
-import { User } from '@Entities/User.entity';
+import { User } from '@entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
@@ -9,58 +9,37 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('PasswordResetTokens')
+@Entity('password_reset_tokens')
 export class PasswordResetToken {
 	@PrimaryGeneratedColumn('uuid')
 	public id: string;
 
 	@CreateDateColumn({
-		type: 'timestamp',
+		name: 'created_at',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public createdAt: string;
 
 	@Column({
 		type: 'timestamp',
+		name: 'expires_at',
 		nullable: true,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public expiresAt: string | null;
 
-	@Index()
+	@Index({ unique: true })
 	@Column({
 		type: 'varchar',
 		length: 255,
 		nullable: true,
+		unique: true,
 	})
-	public token: string;
+	public token: string | null;
 
 	@UpdateDateColumn({
+		name: 'updated_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public updatedAt: string;
 

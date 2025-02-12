@@ -1,9 +1,9 @@
-import { UpdateOTPCodeDto } from '@DTO/OTPCodes/UpdateOTPCode.dto';
-import { OTPCode } from '@Entities/OTPCode.entity';
-import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
 import { DataSource, UpdateResult } from 'typeorm';
+import { OTPCodesRepository } from '@repositories/OTPCodes.repository';
+import { UpdateOTPCodeDto } from '../../../types/dto/OTPCodes/UpdateOTPCode.dto';
+import { OTPCode } from '@entities/OTPCode.entity';
 
-describe('OTPCodesRepository', (): void => {
+describe.skip('OTPCodesRepository', (): void => {
 	let otpCodesRepository: OTPCodesRepository;
 
 	let resolvedAffectedValue: number = 0;

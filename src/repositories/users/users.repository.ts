@@ -1,0 +1,124 @@
+import { Injectable } from '@nestjs/common';
+import { DataSource, EntityManager, InsertResult } from 'typeorm';
+import { IUsersRepository } from '@repositories/users/IUsersRepository';
+import { User } from '@entities/User.entity';
+import { SignupRequestDto } from '@dtos/auth/SignupRequest.dto';
+import { AccountSettings } from '@entities/AccountSettings.entity';
+import { JWTToken } from '@entities/JWTToken.entity';
+import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
+import { OTPCode } from '@entities/OTPCode.entity';
+
+@Injectable()
+export class UsersRepository implements IUsersRepository {
+	constructor(private readonly _dataSource: DataSource) {}
+	public async findByEmailOrNickname(email: string, nickname: string): Promise<User | null> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.where('user.email = :email', { email })
+			.orWhere('user.nickname = :nickname', { nickname })
+			.getOne();
+	}
+
+	public async createUser(
+		otpCode: number,
+		otpCodeExpiresAt: string,
+		signupRequestDto: SignupRequestDto,
+	): Promise<User> {
+		return await this._dataSource.transaction(
+			async (transactionalEntityManager: EntityManager): Promise<User> => {
+				const accountSettingInsertResult: InsertResult = await transactionalEntityManager
+					.createQueryBuilder()
+					.insert()
+					.into(AccountSettings)
+					.values({})
+					.returning('*')
+					.execute();
+
+				const jwtTokenInsertResult: InsertResult = await transactionalEntityManager
+					.createQueryBuilder()
+					.insert()
+					.into(JWTToken)
+					.values({})
+					.returning('*')
+					.execute();
+
+				const passwordResetTokenInsertResult: InsertResult = await transactionalEntityManager
+					.createQueryBuilder()
+					.insert()
+					.into(PasswordResetToken)
+					.values({})
+					.returning('*')
+					.execute();
+
+				const otpCodeInsertResult: InsertResult = await transactionalEntityManager
+					.createQueryBuilder()
+					.insert()
+					.into(OTPCode)
+					.values({ code: otpCode, expiresAt: otpCodeExpiresAt })
+					.returning('*')
+					.execute();
+
+				const userInsertResult: InsertResult = await transactionalEntityManager
+					.createQueryBuilder()
+					.insert()
+					.into(User)
+					.values({
+						...signupRequestDto,
+						accountSettings: accountSettingInsertResult.generatedMaps[0],
+						jwtToken: jwtTokenInsertResult.generatedMaps[0],
+						passwordResetToken: passwordResetTokenInsertResult.generatedMaps[0],
+						otpCode: otpCodeInsertResult.generatedMaps[0],
+					})
+					.returning('*')
+					.execute();
+
+				return userInsertResult.generatedMaps[0] as User;
+			},
+		);
+	}
+
+	//
+	// // TODO check if needed
+	// public async getPublicUsers(nickname: string, skip: number, take: number): Promise<User[]> {
+	// 	return await this._dataSource
+	// 		.createQueryBuilder()
+	// 		.select('user')
+	// 		.from(User, 'user')
+	// 		.where('user.nickname LIKE :nickname', { nickname: `%${nickname}%` })
+	// 		.andWhere('user.isActivated = :isActivated', { isActivated: true })
+	// 		.orderBy('user.nickname')
+	// 		.skip(skip)
+	// 		.take(take)
+	// 		.getMany();
+	// }
+	//
+	// // TODO check if needed
+	// public async getByField(fieldName: TUserGetFields, fieldValue: string): Promise<User | null> {
+	// 	return await this._dataSource
+	// 		.createQueryBuilder()
+	// 		.select('user')
+	// 		.from(User, 'user')
+	// 		.leftJoinAndSelect('user.accountSettings', 'accountSettings')
+	// 		.leftJoinAndSelect('user.OTPCode', 'OTPCode')
+	// 		.leftJoinAndSelect('user.JWTToken', 'JWTToken')
+	// 		.leftJoinAndSelect('user.passwordResetToken', 'passwordResetToken')
+	// 		.where(`user.${fieldName} = :fieldValue`, { fieldValue })
+	// 		.getOne();
+	// }
+	//
+
+	//
+	// // TODO check if needed
+	// public async updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean> {
+	// 	const updateResult: UpdateResult = await this._dataSource
+	// 		.createQueryBuilder()
+	// 		.update(User)
+	// 		.set(updateUserDto)
+	// 		.where('id = :userId', { userId })
+	// 		.execute();
+	//
+	// 	return updateResult.affected ? updateResult.affected > 0 : false;
+	// }
+}

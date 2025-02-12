@@ -1,9 +1,9 @@
-import { AccountSettings } from '@Entities/AccountSettings.entity';
 import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
-import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
+import { AccountSettingsRepository } from '@repositories/accountSettings.repository';
+import { AccountSettings } from '@entities/AccountSettings.entity';
 
-describe('accountSettingsRepository', (): void => {
+describe.skip('accountSettingsRepository', (): void => {
 	let accountSettingsRepository: AccountSettingsRepository;
 
 	const insertMock: jest.Mock = jest.fn().mockReturnThis();

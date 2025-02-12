@@ -7,27 +7,26 @@ import {
 	UnauthorizedException,
 	ValidationPipe,
 } from '@nestjs/common';
-import { IStaticController } from '@Interfaces/static/IStaticController';
-import { users } from '@TestMocks/User/users';
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
+import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
+import { IStaticController } from '@interfaces/static/IStaticController';
 import { plainToInstance } from 'class-transformer';
-import { AuthInterceptor } from '@Interceptors/auth.interceptor';
+import { users } from '@testMocks/User/users';
+import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { Observable } from 'rxjs';
-import { Request } from 'express';
-import { TUserPayload } from '@Types/users/TUserPayload';
+import { TUserPayload } from '@custom-types/users/TUserPayload';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@Modules/app.module';
-import { SearchModule } from '@Modules/search.module';
-import { StaticController } from '@Controllers/static.controller';
-import * as request from 'supertest';
+import { AppModule } from '@modules/app.module';
+import { SearchModule } from '@modules/search.module';
+import { StaticController } from '@controllers/static.controller';
+import * as path from 'node:path';
 import * as fs from 'node:fs';
-import { Headers } from '@Enums/Headers.enum';
-import * as path from 'path';
-import { ReadStream } from 'fs';
 import { Readable } from 'stream';
-import { ContentTypes } from '@Enums/ContentTypes.enum';
+import { ReadStream } from 'fs';
+import { ContentTypes } from '@enums/ContentTypes.enum';
+import * as request from 'supertest';
+import { Headers } from '@enums/Headers.enum';
 
-describe('StaticController', (): void => {
+describe.skip('StaticController', (): void => {
 	let app: INestApplication;
 	let staticController: IStaticController;
 

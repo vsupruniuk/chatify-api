@@ -1,18 +1,14 @@
-import { HttpStatus } from '@nestjs/common';
+import { ResponseStatus } from '@enums/ResponseStatus.enum';
 
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
-
-import { ResponseResult } from '@Responses/ResponseResult';
+import { ResponseResult } from '@responses/ResponseResult';
 
 /**
  * Class representing successful response result
  */
 export class SuccessfulResponseResult<T> extends ResponseResult {
-	public data: T[];
+	public data: T;
 
-	public dataLength: number;
-
-	constructor(code: HttpStatus, status: ResponseStatus) {
-		super(code, status);
+	constructor(status: ResponseStatus) {
+		super(status);
 	}
 }

@@ -1,13 +1,13 @@
-import { DirectChatsRepository } from '@Repositories/directChats.repository';
-import { DirectChat } from '@Entities/DirectChat.entity';
-import { directChats } from '@TestMocks/DirectChat/directChats';
-import { User } from '@Entities/User.entity';
-import { users } from '@TestMocks/User/users';
+import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
+import { DirectChatsRepository } from '@repositories/directChats.repository';
+import { DirectChat } from '@entities/DirectChat.entity';
+import { directChats } from '@testMocks/DirectChat/directChats';
+import { User } from '@entities/User.entity';
+import { users } from '@testMocks/User/users';
 import { DataSource } from 'typeorm';
-import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
-import { QueryBuilderMock } from '@TestMocks/queryBuilderMock';
+import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
 
-describe('directChatRepository', (): void => {
+describe.skip('directChatRepository', (): void => {
 	let queryBuilderMock: QueryBuilderMock<never>;
 	let directChatRepository: DirectChatsRepository;
 

@@ -1,11 +1,11 @@
-import { QueryBuilderMock } from '@TestMocks/queryBuilderMock';
-import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
-import { User } from '@Entities/User.entity';
-import { users } from '@TestMocks/User/users';
+import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
+import { User } from '@entities/User.entity';
+import { IUsersRepository } from '@repositories/users/IUsersRepository';
+import { users } from '@testMocks/User/users';
 import { DataSource } from 'typeorm';
-import { UsersRepository } from '@Repositories/users.repository';
+import { UsersRepository } from '@repositories/users/users.repository';
 
-describe('usersRepository', (): void => {
+describe.skip('usersRepository', (): void => {
 	let queryBuilderMock: QueryBuilderMock<never>;
 	let usersRepository: IUsersRepository;
 

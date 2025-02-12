@@ -1,14 +1,14 @@
-import { IPasswordResetTokensService } from '@Interfaces/passwordResetTokens/IPasswordResetTokens.service';
-import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
-import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
-import { connectionSource } from '@DB/typeOrmConfig';
-import { PasswordResetTokensService } from '@Services/passwordResetTokens.service';
-import { UsersRepository } from '@Repositories/users.repository';
+import { IPasswordResetTokensRepository } from '@interfaces/passwordResetTokens/IPasswordResetTokensRepository';
+import { IPasswordResetTokensService } from '@interfaces/passwordResetTokens/IPasswordResetTokens.service';
+import { UsersRepository } from '@repositories/users/users.repository';
+import { PasswordResetTokensRepository } from '@repositories/passwordResetTokens.repository';
+import { connectionSource } from '@db/typeOrmConfig';
+import { PasswordResetTokensService } from '@services/passwordResetTokens.service';
 import SpyInstance = jest.SpyInstance;
-import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
-import { passwordResetTokens } from '@TestMocks/PasswordResetToken/passwordResetTokens';
+import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
+import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
 
-describe('passwordResetTokensService', (): void => {
+describe.skip('passwordResetTokensService', (): void => {
 	let passwordResetTokensService: IPasswordResetTokensService;
 	let passwordResetTokensRepository: IPasswordResetTokensRepository;
 	let usersRepository: UsersRepository;

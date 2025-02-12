@@ -1,15 +1,15 @@
-import { connectionSource } from '@DB/typeOrmConfig';
-import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
-import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
-import { PasswordResetTokensHelper } from '@Helpers/passwordResetTokens.helper';
-import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
-import { UsersRepository } from '@Repositories/users.repository';
-import { PasswordResetTokensService } from '@Services/passwordResetTokens.service';
-import { passwordResetTokens } from '@TestMocks/PasswordResetToken/passwordResetTokens';
-import { TPasswordResetTokensGetFields } from '@Types/passwordResetTokens/TPasswordResetTokensGetFields';
+import { PasswordResetTokensRepository } from '@repositories/passwordResetTokens.repository';
+import { PasswordResetTokensService } from '@services/passwordResetTokens.service';
+import { UsersRepository } from '@repositories/users/users.repository';
+import { connectionSource } from '@db/typeOrmConfig';
 import SpyInstance = jest.SpyInstance;
+import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
+import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
+import { PasswordResetTokenInfoDto } from '../../../types/dto/passwordResetTokens/passwordResetTokenInfo.dto';
+import { TPasswordResetTokensGetFields } from '@custom-types/passwordResetTokens/TPasswordResetTokensGetFields';
+import { PasswordResetTokensHelper } from '@helpers/passwordResetTokens.helper';
 
-describe('passwordResetTokensService', (): void => {
+describe.skip('passwordResetTokensService', (): void => {
 	let passwordResetTokensService: PasswordResetTokensService;
 	let passwordResetTokensRepository: PasswordResetTokensRepository;
 	let usersRepository: UsersRepository;

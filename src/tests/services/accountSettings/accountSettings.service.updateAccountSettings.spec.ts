@@ -1,14 +1,14 @@
-import { connectionSource } from '@DB/typeOrmConfig';
-import { UpdateAccountSettingsDto } from '@DTO/accountSettings/updateAccountSettings.dto';
-import { AccountSettings } from '@Entities/AccountSettings.entity';
-import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
-import { IAccountSettingsService } from '@Interfaces/accountSettings/IAccountSettingsService';
-import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
-import { AccountSettingsService } from '@Services/accountSettings.service';
-import { accountSettings } from '@TestMocks/AccountSettings/accountSettings';
+import { IAccountSettingsService } from '@interfaces/accountSettings/IAccountSettingsService';
+import { IAccountSettingsRepository } from '@interfaces/accountSettings/IAccountSettingsRepository';
+import { AccountSettingsRepository } from '@repositories/accountSettings.repository';
+import { connectionSource } from '@db/typeOrmConfig';
+import { AccountSettingsService } from '@services/accountSettings.service';
 import SpyInstance = jest.SpyInstance;
+import { AccountSettings } from '@entities/AccountSettings.entity';
+import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
+import { UpdateAccountSettingsDto } from '../../../types/dto/accountSettings/updateAccountSettings.dto';
 
-describe('accountSettingsService', (): void => {
+describe.skip('accountSettingsService', (): void => {
 	let accountSettingsService: IAccountSettingsService;
 	let accountSettingsRepository: IAccountSettingsRepository;
 

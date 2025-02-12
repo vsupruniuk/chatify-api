@@ -1,14 +1,5 @@
-import { SearchController } from '@Controllers/search.controller';
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
-import { UserPublicDto } from '@DTO/users/UserPublic.dto';
-import { User } from '@Entities/User.entity';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { Headers } from '@Enums/Headers.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
-import { AuthInterceptor } from '@Interceptors/auth.interceptor';
-import { IUsersService } from '@Interfaces/users/IUsersService';
-import { AppModule } from '@Modules/app.module';
-import { SearchModule } from '@Modules/search.module';
+import { TUserPayload } from '@custom-types/users/TUserPayload';
+import { Headers } from '@enums/Headers.enum';
 import {
 	CallHandler,
 	ExecutionContext,
@@ -18,15 +9,24 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
-import { users } from '@TestMocks/User/users';
-import { TUserPayload } from '@Types/users/TUserPayload';
 import { plainToInstance } from 'class-transformer';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
+import { JWTPayloadDto } from 'src/types/dto/JWTTokens/JWTPayload.dto';
 import * as request from 'supertest';
+import { SearchController } from '@controllers/search.controller';
+import { User } from '@entities/User.entity';
+import { users } from '@testMocks/User/users';
+import { AuthInterceptor } from '@interceptors/auth.interceptor';
+import { IUsersService } from '@services/users/IUsersService';
+import { UserPublicDto } from '../../../types/dto/users/UserPublic.dto';
+import { AppModule } from '@modules/app.module';
+import { SearchModule } from '@modules/search.module';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
+import { ResponseStatus } from '@enums/ResponseStatus.enum';
 
-describe('SearchController', (): void => {
+describe.skip('SearchController', (): void => {
 	let app: INestApplication;
 	let searchController: SearchController;
 

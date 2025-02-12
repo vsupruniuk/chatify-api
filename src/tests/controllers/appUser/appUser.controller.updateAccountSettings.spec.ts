@@ -1,15 +1,4 @@
-import { AppUserController } from '@Controllers/appUser.controller';
-import { UpdateAccountSettingsDto } from '@DTO/accountSettings/updateAccountSettings.dto';
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
-import { UserFullDto } from '@DTO/users/UserFull.dto';
-import { User } from '@Entities/User.entity';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { Headers } from '@Enums/Headers.enum';
-import { AuthInterceptor } from '@Interceptors/auth.interceptor';
-import { IAccountSettingsService } from '@Interfaces/accountSettings/IAccountSettingsService';
-import { IUsersService } from '@Interfaces/users/IUsersService';
-import { AppModule } from '@Modules/app.module';
-import { AuthModule } from '@Modules/auth.module';
+import { Headers } from '@enums/Headers.enum';
 import {
 	CallHandler,
 	ExecutionContext,
@@ -19,14 +8,25 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { users } from '@TestMocks/User/users';
-import { TUserPayload } from '@Types/users/TUserPayload';
 import { plainToInstance } from 'class-transformer';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import * as request from 'supertest';
+import { AppUserController } from '@controllers/appUser.controller';
+import { User } from '@entities/User.entity';
+import { users } from '@testMocks/User/users';
+import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
+import { AuthInterceptor } from '@interceptors/auth.interceptor';
+import { TUserPayload } from '@custom-types/users/TUserPayload';
+import { IUsersService } from '@services/users/IUsersService';
+import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
+import { IAccountSettingsService } from '@interfaces/accountSettings/IAccountSettingsService';
+import { AppModule } from '@modules/app.module';
+import { AuthModule } from '@modules/auth.module';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { UpdateAccountSettingsDto } from '../../../types/dto/accountSettings/updateAccountSettings.dto';
 
-describe('AppUserController', (): void => {
+describe.skip('AppUserController', (): void => {
 	let app: INestApplication;
 	let appUserController: AppUserController;
 

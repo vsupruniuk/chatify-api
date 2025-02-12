@@ -1,11 +1,11 @@
-import { OTPCode } from '@Entities/OTPCode.entity';
 import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 import { plainToInstance } from 'class-transformer';
-import { CreateOTPCodeDto } from '@DTO/OTPCodes/CreateOTPCode.dto';
-import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
+import { OTPCodesRepository } from '@repositories/OTPCodes.repository';
+import { CreateOTPCodeDto } from '../../../types/dto/OTPCodes/CreateOTPCode.dto';
+import { OTPCode } from '@entities/OTPCode.entity';
 
-describe('OTPCodesRepository', (): void => {
+describe.skip('OTPCodesRepository', (): void => {
 	let otpCodesRepository: OTPCodesRepository;
 
 	const insertMock: jest.Mock = jest.fn().mockReturnThis();

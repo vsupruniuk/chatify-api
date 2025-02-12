@@ -1,12 +1,12 @@
-import { AccountSettingsFullDto } from '@DTO/accountSettings/accountSettingsFull.dto';
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
-import { SignupUserDto } from '@DTO/users/SignupUser.dto';
+import { SignupRequestDto } from '@dtos/auth/SignupRequest.dto';
+import { AccountSettingsFullDto } from '../accountSettings/accountSettingsFull.dto';
+import { OTPCodeResponseDto } from '../OTPCodes/OTPCodeResponse.dto';
 
 /**
  * DTO class representing user data for creating new user
  */
-export class CreateUserDto extends (SignupUserDto as new () => Omit<
-	SignupUserDto,
+export class CreateUserDto extends (SignupRequestDto as new () => Omit<
+	SignupRequestDto,
 	'passwordConfirmation'
 >) {
 	public accountSettings: AccountSettingsFullDto;

@@ -1,7 +1,7 @@
-import { JWTTokenFullDto } from '@DTO/JWTTokens/JWTTokenFull.dto';
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
 import { Expose, Type } from 'class-transformer';
+import { PasswordResetTokenDto } from '../passwordResetTokens/passwordResetToken.dto';
+import { UserShortDto } from './UserShort.dto';
+import { JWTTokenFullDto } from '../JWTTokens/JWTTokenFull.dto';
 
 export class UserFullDto extends UserShortDto {
 	@Expose()

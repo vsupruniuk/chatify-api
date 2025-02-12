@@ -1,4 +1,4 @@
-import { User } from '@Entities/User.entity';
+import { User } from '@entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
@@ -11,7 +11,7 @@ import {
 /**
  * Domain entity representing information about OTP code
  */
-@Entity('OTPCodes')
+@Entity('otp_codes')
 export class OTPCode {
 	@PrimaryGeneratedColumn('uuid')
 	public id: string;
@@ -20,47 +20,26 @@ export class OTPCode {
 	public code: number | null;
 
 	@CreateDateColumn({
+		name: 'created_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public createdAt: string;
 
 	@Column({
+		name: 'expires_at',
 		type: 'timestamp',
 		nullable: true,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public expiresAt: string | null;
 
 	@UpdateDateColumn({
+		name: 'updated_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public updatedAt: string;
 
-	@OneToOne(() => User, (user: User) => user.OTPCode, { nullable: false, onDelete: 'CASCADE' })
+	@OneToOne(() => User, (user: User) => user.otpCode, { nullable: false, onDelete: 'CASCADE' })
 	public user: User;
 }

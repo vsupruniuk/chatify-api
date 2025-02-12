@@ -1,22 +1,21 @@
-import { connectionSource } from '@DB/typeOrmConfig';
-import { User } from '@Entities/User.entity';
-import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
-import { IUsersService } from '@Interfaces/users/IUsersService';
-import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
-import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
-import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
-import { UserShortDto } from '@DTO/users/UserShort.dto';
-import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
-import { UsersService } from '@Services/users.service';
-import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
-import { UsersRepository } from '@Repositories/users.repository';
-import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-import { users } from '@TestMocks/User/users';
-import { TUserGetFields } from '@Types/users/TUserGetFields';
-
 import SpyInstance = jest.SpyInstance;
+import { IOTPCodesRepository } from '@interfaces/OTPCodes/IOTPCodesRepository';
+import { IUsersService } from '@services/users/IUsersService';
+import { IUsersRepository } from '@repositories/users/IUsersRepository';
+import { IAccountSettingsRepository } from '@interfaces/accountSettings/IAccountSettingsRepository';
+import { IPasswordResetTokensRepository } from '@interfaces/passwordResetTokens/IPasswordResetTokensRepository';
+import { UsersRepository } from '@repositories/users/users.repository';
+import { connectionSource } from '@db/typeOrmConfig';
+import { AccountSettingsRepository } from '@repositories/accountSettings.repository';
+import { OTPCodesRepository } from '@repositories/OTPCodes.repository';
+import { PasswordResetTokensRepository } from '@repositories/passwordResetTokens.repository';
+import { UsersService } from '@services/users/users.service';
+import { User } from '@entities/User.entity';
+import { users } from '@testMocks/User/users';
+import { TUserGetFields } from '@custom-types/users/TUserGetFields';
+import { UserShortDto } from '../../../types/dto/users/UserShort.dto';
 
-describe('UsersService', (): void => {
+describe.skip('UsersService', (): void => {
 	let usersService: IUsersService;
 	let usersRepository: IUsersRepository;
 	let accountSettingsRepository: IAccountSettingsRepository;

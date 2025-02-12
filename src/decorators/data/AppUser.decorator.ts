@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { TUserPayload } from '@Types/users/TUserPayload';
 import { Request } from 'express';
+import { TUserPayload } from '@custom-types/users/TUserPayload';
 
 /**
  * Get authorized user properties and return as parameter in controller method

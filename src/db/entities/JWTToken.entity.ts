@@ -1,4 +1,4 @@
-import { User } from '@Entities/User.entity';
+import { User } from '@entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
@@ -12,22 +12,15 @@ import {
 /**
  * Domain model representing user JWT token
  */
-@Entity('JWTToken')
+@Entity('jwt_tokens')
 export class JWTToken {
 	@PrimaryGeneratedColumn('uuid')
 	public id: string;
 
 	@CreateDateColumn({
+		name: 'created_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public createdAt: string;
 
@@ -36,24 +29,17 @@ export class JWTToken {
 		type: 'varchar',
 		length: 500,
 		unique: true,
-		nullable: false,
+		nullable: true,
 	})
-	public token: string;
+	public token: string | null;
 
 	@UpdateDateColumn({
+		name: 'updated_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public updatedAt: string;
 
-	@OneToOne(() => User, (user: User) => user.JWTToken, { nullable: false, onDelete: 'CASCADE' })
+	@OneToOne(() => User, (user: User) => user.jwtToken, { nullable: false, onDelete: 'CASCADE' })
 	public user: User;
 }

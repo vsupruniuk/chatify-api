@@ -1,6 +1,6 @@
-import { AccountSettingsIdDto } from '@DTO/accountSettings/accountSettingsId.dto';
-import { OTPCodeIdDto } from '@DTO/OTPCodes/OTPCodeId.dto';
 import { Expose, Type } from 'class-transformer';
+import { AccountSettingsIdDto } from '../accountSettings/accountSettingsId.dto';
+import { OTPCodeIdDto } from '../OTPCodes/OTPCodeId.dto';
 
 /**
  * DTO class representing response with user data

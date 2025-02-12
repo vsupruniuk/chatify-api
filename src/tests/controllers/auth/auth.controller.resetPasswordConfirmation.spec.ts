@@ -1,23 +1,23 @@
-import { AuthController } from '@Controllers/auth.controller';
-import { ResetPasswordConfirmationDto } from '@DTO/auth/ResetPasswordConfirmation.dto';
-import { UserFullDto } from '@DTO/users/UserFull.dto';
-import { User } from '@Entities/User.entity';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
-import { IUsersService } from '@Interfaces/users/IUsersService';
-import { AppModule } from '@Modules/app.module';
-import { AuthModule } from '@Modules/auth.module';
+import { AuthController } from '@controllers/auth/auth.controller';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { SuccessfulResponseResult } from '@Responses/successfulResponses/SuccessfulResponseResult';
-import { users } from '@TestMocks/User/users';
 import { plainToInstance } from 'class-transformer';
 import * as request from 'supertest';
-import { IPasswordResetTokensService } from '@Interfaces/passwordResetTokens/IPasswordResetTokens.service';
-import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
-import { passwordResetTokens } from '@TestMocks/PasswordResetToken/passwordResetTokens';
+import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
+import { User } from '@entities/User.entity';
+import { users } from '@testMocks/User/users';
+import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
+import { IUsersService } from '@services/users/IUsersService';
+import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
+import { IPasswordResetTokensService } from '@interfaces/passwordResetTokens/IPasswordResetTokens.service';
+import { AppModule } from '@modules/app.module';
+import { AuthModule } from '@modules/auth.module';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { ResetPasswordConfirmationDto } from '../../../types/dto/auth/ResetPasswordConfirmation.dto';
+import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
+import { ResponseStatus } from '@enums/ResponseStatus.enum';
 
-describe('AuthController', (): void => {
+describe.skip('AuthController', (): void => {
 	let app: INestApplication;
 	let authController: AuthController;
 

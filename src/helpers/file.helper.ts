@@ -1,7 +1,7 @@
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { BadRequestException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
+import { JWTPayloadDto } from '../types/dto/JWTTokens/JWTPayload.dto';
 
 /**
  * Helper class for actions related to static files

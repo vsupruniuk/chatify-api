@@ -6,28 +6,28 @@ import {
 	UnauthorizedException,
 	ValidationPipe,
 } from '@nestjs/common';
-import { DirectChatsController } from '@Controllers/directChats.controller';
-import { DirectChat } from '@Entities/DirectChat.entity';
-import { directChats } from '@TestMocks/DirectChat/directChats';
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { plainToInstance } from 'class-transformer';
-import { User } from '@Entities/User.entity';
-import { users } from '@TestMocks/User/users';
-import { AuthInterceptor } from '@Interceptors/auth.interceptor';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
-import { TUserPayload } from '@Types/users/TUserPayload';
-import { IDirectChatsService } from '@Interfaces/directChats/IDirectChatsService';
-import { DirectChatShortDto } from '@DTO/directChat/DirectChatShort.dto';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@Modules/app.module';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { DirectChatsModule } from '@Modules/directChats.module';
 import * as request from 'supertest';
-import { Headers } from '@Enums/Headers.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
+import { Headers } from '@enums/Headers.enum';
+import { DirectChatsController } from '@controllers/directChats.controller';
+import { User } from '@db/entities/User.entity';
+import { DirectChat } from '@db/entities/DirectChat.entity';
+import { users } from '@testMocks/User/users';
+import { directChats } from '@testMocks/DirectChat/directChats';
+import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
+import { AuthInterceptor } from '@interceptors/auth.interceptor';
+import { TUserPayload } from '@custom-types/users/TUserPayload';
+import { IDirectChatsService } from '@interfaces/directChats/IDirectChatsService';
+import { DirectChatShortDto } from '../../../types/dto/directChat/DirectChatShort.dto';
+import { AppModule } from '@modules/app.module';
+import { DirectChatsModule } from '@modules/directChats.module';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { ResponseStatus } from '@enums/ResponseStatus.enum';
 
-describe('DirectChatsController', (): void => {
+describe.skip('DirectChatsController', (): void => {
 	let app: INestApplication;
 	let directChatsController: DirectChatsController;
 

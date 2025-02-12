@@ -1,5 +1,5 @@
-import { JWTToken } from '@Entities/JWTToken.entity';
-import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
+import { JWTToken } from '@db/entities/JWTToken.entity';
+import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 
 export class UpdateUserDto {
 	public about: string | null;

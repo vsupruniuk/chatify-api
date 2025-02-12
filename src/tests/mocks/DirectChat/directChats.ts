@@ -1,4 +1,4 @@
-import { DirectChat } from '@Entities/DirectChat.entity';
+import { DirectChat } from '@entities/DirectChat.entity';
 
 export const directChats: DirectChat[] = [
 	{

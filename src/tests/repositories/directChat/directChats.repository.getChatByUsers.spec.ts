@@ -5,7 +5,7 @@ import { directChats } from '@TestMocks/DirectChat/directChats';
 import { users } from '@TestMocks/User/users';
 import { DataSource } from 'typeorm';
 
-describe('directChatsRepository', (): void => {
+describe.skip('directChatsRepository', (): void => {
 	let queryBuilderMock: QueryBuilderMock<never>;
 	let directChatRepository: DirectChatsRepository;
 

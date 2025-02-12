@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Environments } from '@Enums/Environments.enum';
+import { Environments } from '@enums/Environments.enum';
 
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
@@ -17,8 +17,9 @@ export const typeOrmConfig: PostgresConnectionOptions = {
 	database: process.env.DATABASE_NAME,
 	entities: [String(process.env.DATABASE_ENTITIES_PATH)],
 	migrations: [String(process.env.DATABASE_MIGRATIONS_PATH)],
-	migrationsTableName: 'Migrations',
+	migrationsTableName: 'migrations',
 	ssl: process.env.NODE_ENV === Environments.DEV ? false : { rejectUnauthorized: false },
+	logging: process.env.NODE_ENV === Environments.DEV ? ['query', 'error', 'warn'] : false,
 };
 
 export const typeOrmConfigMock: TypeOrmModuleOptions = {

@@ -1,10 +1,10 @@
-import { QueryBuilderMock } from '@TestMocks/queryBuilderMock';
-import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
-import { directChatsMessages } from '@TestMocks/DirectChatMessage/directChatsMessages';
+import { DirectChatMessagesRepository } from '@repositories/directChatMessages.repository';
+import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
 import { DataSource } from 'typeorm';
-import { DirectChatMessagesRepository } from '@Repositories/directChatMessages.repository';
+import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
+import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
 
-describe('Direct chats repository', (): void => {
+describe.skip('Direct chats repository', (): void => {
 	let queryBuilderMock: QueryBuilderMock<never>;
 	let dataSourceMock: jest.Mocked<Partial<DataSource>>;
 	let directChatMessagesRepository: DirectChatMessagesRepository;

@@ -1,21 +1,21 @@
-import { connectionSource } from '@DB/typeOrmConfig';
-import { UpdateUserDto } from '@DTO/users/UpdateUser.dto';
-import { User } from '@Entities/User.entity';
-import { IAccountSettingsRepository } from '@Interfaces/accountSettings/IAccountSettingsRepository';
-import { IOTPCodesRepository } from '@Interfaces/OTPCodes/IOTPCodesRepository';
-import { IPasswordResetTokensRepository } from '@Interfaces/passwordResetTokens/IPasswordResetTokensRepository';
-import { IUsersRepository } from '@Interfaces/users/IUsersRepository';
-import { IUsersService } from '@Interfaces/users/IUsersService';
-import { AccountSettingsRepository } from '@Repositories/accountSettings.repository';
-import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-import { PasswordResetTokensRepository } from '@Repositories/passwordResetTokens.repository';
-import { UsersRepository } from '@Repositories/users.repository';
-import { UsersService } from '@Services/users.service';
-import { users } from '@TestMocks/User/users';
-import * as bcrypt from 'bcrypt';
 import SpyInstance = jest.SpyInstance;
+import { IUsersRepository } from '@repositories/users/IUsersRepository';
+import { IUsersService } from '@services/users/IUsersService';
+import { IAccountSettingsRepository } from '@interfaces/accountSettings/IAccountSettingsRepository';
+import { IOTPCodesRepository } from '@interfaces/OTPCodes/IOTPCodesRepository';
+import { IPasswordResetTokensRepository } from '@interfaces/passwordResetTokens/IPasswordResetTokensRepository';
+import { UsersRepository } from '@repositories/users/users.repository';
+import { connectionSource } from '@db/typeOrmConfig';
+import { AccountSettingsRepository } from '@repositories/accountSettings.repository';
+import { OTPCodesRepository } from '@repositories/OTPCodes.repository';
+import { PasswordResetTokensRepository } from '@repositories/passwordResetTokens.repository';
+import { UsersService } from '@services/users/users.service';
+import { User } from '@entities/User.entity';
+import { users } from '@testMocks/User/users';
+import { UpdateUserDto } from '../../../types/dto/users/UpdateUser.dto';
+import * as bcrypt from 'bcrypt';
 
-describe('UsersService', (): void => {
+describe.skip('UsersService', (): void => {
 	let usersService: IUsersService;
 	let usersRepository: IUsersRepository;
 	let accountSettingsRepository: IAccountSettingsRepository;

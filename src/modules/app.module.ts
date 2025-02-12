@@ -1,15 +1,15 @@
-import { AppUserModule } from '@Modules/appUser.module';
-import { DirectChatsModule } from '@Modules/directChats.module';
-import { SearchModule } from '@Modules/search.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { typeOrmConfig, typeOrmConfigMock } from '@DB/typeOrmConfig';
-import { AuthModule } from '@Modules/auth.module';
-import { Environments } from '@Enums/Environments.enum';
-import { StaticModule } from '@Modules/static.module';
-import providers from '@Modules/providers/providers';
+import { AppUserModule } from '@modules/appUser.module';
+import { AuthModule } from '@modules/auth.module';
+import { SearchModule } from '@modules/search.module';
+import { DirectChatsModule } from '@modules/directChats.module';
+import { StaticModule } from '@modules/static.module';
+import { Environments } from '@enums/Environments.enum';
+import { typeOrmConfig, typeOrmConfigMock } from '@db/typeOrmConfig';
+import providers from '@modules/providers/providers';
 
 @Module({
 	imports: [

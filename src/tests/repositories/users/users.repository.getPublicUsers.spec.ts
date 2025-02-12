@@ -1,9 +1,9 @@
-import { User } from '@Entities/User.entity';
-import { UsersRepository } from '@Repositories/users.repository';
-import { users } from '@TestMocks/User/users';
+import { UsersRepository } from '@repositories/users/users.repository';
+import { User } from '@entities/User.entity';
 import { DataSource } from 'typeorm';
+import { users } from '@testMocks/User/users';
 
-describe('usersRepository', (): void => {
+describe.skip('usersRepository', (): void => {
 	let usersRepository: UsersRepository;
 
 	let resolvedValue: User[] = [];

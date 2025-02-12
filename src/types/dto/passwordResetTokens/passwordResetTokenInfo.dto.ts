@@ -1,4 +1,4 @@
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
+import { PasswordResetTokenDto } from './passwordResetToken.dto';
 
 export class PasswordResetTokenInfoDto extends (PasswordResetTokenDto as new () => Omit<
 	PasswordResetTokenDto,

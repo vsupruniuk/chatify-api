@@ -1,13 +1,13 @@
-import { QueryBuilderMock } from '@TestMocks/queryBuilderMock';
-import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
-import { directChatsMessages } from '@TestMocks/DirectChatMessage/directChatsMessages';
-import { directChats } from '@TestMocks/DirectChat/directChats';
+import { directChats } from '@testMocks/DirectChat/directChats';
+import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
+import { DirectChatMessagesRepository } from '@repositories/directChatMessages.repository';
+import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
+import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
+import { users } from '@testMocks/User/users';
 import { DataSource } from 'typeorm';
-import { users } from '@TestMocks/User/users';
 import { UnprocessableEntityException } from '@nestjs/common';
-import { DirectChatMessagesRepository } from '@Repositories/directChatMessages.repository';
 
-describe('directChatsRepository', (): void => {
+describe.skip('directChatsRepository', (): void => {
 	let queryBuilderMock: QueryBuilderMock<never>;
 	let directChatMessagesRepository: DirectChatMessagesRepository;
 

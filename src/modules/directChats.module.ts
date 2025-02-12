@@ -1,11 +1,12 @@
-import { DirectChatsGateway } from '@Gateways/directChats.gateway';
+import { DirectChatsGateway } from '@gateways/directChats.gateway';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { DirectChatsController } from '@Controllers/directChats.controller';
-import providers from '@Modules/providers/providers';
+import providers from '@modules/providers/providers';
 
 @Module({
-	controllers: [DirectChatsController],
+	controllers: [
+		//DirectChatsController
+	],
 	providers: [
 		DirectChatsGateway,
 		JwtService,

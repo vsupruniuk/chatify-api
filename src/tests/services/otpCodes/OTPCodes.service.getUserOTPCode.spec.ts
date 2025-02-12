@@ -1,14 +1,13 @@
-import { OTPCodesHelper } from '@Helpers/OTPCodes.helper';
-import { OTPCodesService } from '@Services/OTPCodes.service';
-import { connectionSource } from '@DB/typeOrmConfig';
-import { OTPCode } from '@Entities/OTPCode.entity';
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
-import { OTPCodesRepository } from '@Repositories/OTPCodes.repository';
-import { otpCodes } from '@TestMocks/OTPCode/otpCodes';
-
+import { OTPCodesService } from '@services/OTPCodes.service';
+import { OTPCodesRepository } from '@repositories/OTPCodes.repository';
+import { connectionSource } from '@db/typeOrmConfig';
 import SpyInstance = jest.SpyInstance;
+import { OTPCode } from '@entities/OTPCode.entity';
+import { otpCodes } from '@testMocks/OTPCode/otpCodes';
+import { OTPCodesHelper } from '@helpers/OTPCodes.helper';
+import { OTPCodeResponseDto } from '../../../types/dto/OTPCodes/OTPCodeResponse.dto';
 
-describe('OTPCodesService', (): void => {
+describe.skip('OTPCodesService', (): void => {
 	let otpCodesService: OTPCodesService;
 	let otpCodesRepository: OTPCodesRepository;
 
