@@ -1,0 +1,68 @@
+import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
+import { JwtService } from '@nestjs/jwt';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+import { Inject } from '@nestjs/common';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { IJWTTokensRepository } from '@repositories/jwt/IJWTTokensRepository';
+
+export class JwtTokensService implements IJWTTokensService {
+	constructor(
+		private readonly _jwtService: JwtService,
+
+		@Inject(CustomProviders.CTF_JWT_TOKENS_REPOSITORY)
+		private readonly _jwtTokensRepository: IJWTTokensRepository,
+	) {}
+
+	public async generateAccessToken(payload: JWTPayloadDto): Promise<string> {
+		return await this._jwtService.signAsync(payload, {
+			secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+			expiresIn: Number(process.env.JWT_ACCESS_TOKEN_EXPIRES_IN),
+		});
+	}
+
+	public async generateRefreshToken(payload: JWTPayloadDto): Promise<string> {
+		return await this._jwtService.signAsync(payload, {
+			secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+			expiresIn: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN),
+		});
+	}
+
+	public async saveRefreshToken(id: string, token: string): Promise<void> {
+		await this._jwtTokensRepository.updateToken(id, token);
+	}
+
+	// public async verifyAccessToken(token: string): Promise<JWTPayloadDto | null> {
+	// 	try {
+	// 		return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
+	// 			secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+	// 		});
+	// 	} catch (err) {
+	// 		return null;
+	// 	}
+	// }
+	//
+	// // TODO check if needed
+	// public async verifyRefreshToken(token: string): Promise<JWTPayloadDto | null> {
+	// 	try {
+	// 		return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
+	// 			secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+	// 		});
+	// 	} catch (err) {
+	// 		return null;
+	// 	}
+	// }
+	//
+	// // TODO check if needed
+	// public async getById(id: string): Promise<JWTTokenFullDto | null> {
+	// 	const token: JWTToken | null = await this._jwtTokensRepository.getById(id);
+	//
+	// 	return token
+	// 		? plainToInstance(JWTTokenFullDto, token, { excludeExtraneousValues: true })
+	// 		: null;
+	// }
+	//
+	// // TODO check if needed
+	// public async deleteToken(id: string): Promise<boolean> {
+	// 	return await this._jwtTokensRepository.deleteToken(id);
+	// }
+}

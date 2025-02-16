@@ -17,7 +17,7 @@ import { User } from '@db/entities/User.entity';
 import { DirectChat } from '@db/entities/DirectChat.entity';
 import { users } from '@testMocks/User/users';
 import { directChats } from '@testMocks/DirectChat/directChats';
-import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { TUserPayload } from '@custom-types/users/TUserPayload';
 import { IDirectChatsService } from '@interfaces/directChats/IDirectChatsService';

@@ -20,7 +20,7 @@ import { users } from '@testMocks/User/users';
 import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
 import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
 import { directChats } from '@testMocks/DirectChat/directChats';
-import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { TUserPayload } from '@custom-types/users/TUserPayload';
 import { AppModule } from '@modules/app.module';

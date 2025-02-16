@@ -7,6 +7,8 @@ import { ErrorField } from '@responses/errors/ErrorField';
 import { ResponseStatus } from '@enums/ResponseStatus.enum';
 import { IValidationErrorResponse } from '@interfaces/errors/IValidationError';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
+import { Environments } from '@enums/Environments.enum';
+import { DateHelper } from '@helpers/date.helper';
 
 /**
  * Global exception filter for handling all exceptions and errors in app.
@@ -23,8 +25,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 			ResponseStatus.ERROR,
 		);
 
-		console.log(exception);
-		console.log(exception instanceof HttpException);
+		const status: number =
+			exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
 		if (exception instanceof HttpException) {
 			responseResult.message =
@@ -42,14 +44,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
 				return { message, field };
 			});
-
-			response.status(exception.getStatus()).json(responseResult);
 		} else {
 			responseResult.message = 'Internal server error';
 
 			responseResult.errors = [{ message: exception.message, field: null }];
-
-			response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(responseResult);
 		}
+
+		if (process.env.NODE_ENV === Environments.DEV) {
+			responseResult.stack = exception.stack;
+			responseResult.dateTime = DateHelper.dateTimeNow();
+		}
+
+		response.status(status).json(responseResult);
 	}
 }

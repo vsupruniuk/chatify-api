@@ -1,6 +1,6 @@
 import SpyInstance = jest.SpyInstance;
-import { JwtTokensService } from '@services/jwtTokens.service';
-import { JWTTokensRepository } from '@repositories/JWTTokens.repository';
+import { JwtTokensService } from '@services/jwt/jwtTokens.service';
+import { JwtTokensRepository } from '@repositories/jwt/jwtTokens.repository';
 import { JwtService } from '@nestjs/jwt';
 import { connectionSource } from '@db/typeOrmConfig';
 import { JWTToken } from '@entities/JWTToken.entity';
@@ -9,11 +9,11 @@ import { JWTTokenFullDto } from '../../../types/dto/JWTTokens/JWTTokenFull.dto';
 
 describe.skip('jwtTokensService', (): void => {
 	let jwtTokensService: JwtTokensService;
-	let jwtTokensRepository: JWTTokensRepository;
+	let jwtTokensRepository: JwtTokensRepository;
 
 	beforeEach((): void => {
 		const jwtService: JwtService = new JwtService();
-		jwtTokensRepository = new JWTTokensRepository(connectionSource);
+		jwtTokensRepository = new JwtTokensRepository(connectionSource);
 
 		jwtTokensService = new JwtTokensService(jwtService, jwtTokensRepository);
 	});

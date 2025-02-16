@@ -1,17 +1,25 @@
 import {
+	BadRequestException,
 	ConflictException,
 	Inject,
 	Injectable,
+	NotFoundException,
 	UnprocessableEntityException,
 } from '@nestjs/common';
 import { IAuthService } from '@services/auth/IAuthService';
-import { SignupRequestDto } from '@dtos/auth/SignupRequest.dto';
+import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { OTPCodesHelper } from '@helpers/OTPCodes.helper';
 import { DateHelper } from '@helpers/date.helper';
 import { IUsersService } from '@services/users/IUsersService';
 import { UserDto } from '@dtos/users/UserDto';
 import { IEmailService } from '@services/email/IEmailService';
+import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/ActivateAccountRequest.dto';
+import { UserWithOtpCodeDto } from '@dtos/users/UserWithOtpCodeDto';
+import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
+import { TransformHelper } from '@helpers/transform.helper';
+import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
+import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -21,7 +29,11 @@ export class AuthService implements IAuthService {
 
 		@Inject(CustomProviders.CTF_EMAIL_SERVICE)
 		private readonly _emailService: IEmailService,
+
+		@Inject(CustomProviders.CTF_JWT_TOKENS_SERVICE)
+		private readonly _jwtTokensService: IJWTTokensService,
 	) {}
+	private readonly OTP_CODE_EXPIRATION_TIME: number = 1000 * 60 * 10;
 
 	public async registerUser(signupRequestDto: SignupRequestDto): Promise<void> {
 		const existingUser: UserDto | null = await this._usersService.getByEmailOrNickname(
@@ -39,7 +51,7 @@ export class AuthService implements IAuthService {
 		}
 
 		const otpCode: number = OTPCodesHelper.generateOTPCode();
-		const otpCodeExpirationDate: string = DateHelper.dateTimeFuture(1000 * 60 * 10);
+		const otpCodeExpirationDate: string = DateHelper.dateTimeFuture(this.OTP_CODE_EXPIRATION_TIME);
 
 		const isUserCreated: boolean = await this._usersService.createUser(
 			otpCode,
@@ -54,31 +66,46 @@ export class AuthService implements IAuthService {
 		await this._emailService.sendActivationEmail(signupRequestDto.email, otpCode);
 	}
 
-	// // TODO check if needed
-	// public async activateAccount(accountActivationDto: AccountActivationDto): Promise<boolean> {
-	// 	const otpCode: OTPCode | null = await this._otpCodesRepository.getUserOTPCodeById(
-	// 		accountActivationDto.OTPCodeId,
-	// 	);
-	//
-	// 	if (!otpCode) {
-	// 		return false;
-	// 	}
-	//
-	// 	const isExpired: boolean = OTPCodesHelper.isExpired(
-	// 		plainToInstance(OTPCodeResponseDto, otpCode, { excludeExtraneousValues: true }),
-	// 	);
-	//
-	// 	if (isExpired || accountActivationDto.code !== otpCode.code) {
-	// 		return false;
-	// 	}
-	//
-	// 	return await this._usersRepository.updateUser(accountActivationDto.id, {
-	// 		isActivated: true,
-	// 	});
-	// }
-	//
-	// // TODO check if needed
-	// public async validatePassword(passwordFromDto: string, passwordFromDb: string): Promise<boolean> {
-	// 	return await bcrypt.compare(passwordFromDto, passwordFromDb);
-	// }
+	public async activateAccount(
+		activateAccountRequestDto: ActivateAccountRequestDto,
+	): Promise<ActivateAccountDto> {
+		const user: UserWithOtpCodeDto | null =
+			await this._usersService.getByEmailAndNotActiveWithOtpCode(activateAccountRequestDto.email);
+
+		if (!user) {
+			throw new NotFoundException('No user for activation found with this email');
+		}
+
+		if (activateAccountRequestDto.code !== user.otpCode.code) {
+			throw new BadRequestException('OTP code is incorrect');
+		}
+
+		if (OTPCodesHelper.isExpired(user.otpCode)) {
+			throw new BadRequestException('OTP code is expired');
+		}
+
+		const activatedUser: UserWithJwtTokenDto | null = await this._usersService.activateUser(
+			user.id,
+			user.otpCode.id,
+		);
+
+		if (!activatedUser) {
+			throw new UnprocessableEntityException('Failed to activate user, please try again');
+		}
+
+		const accessToken: string = await this._jwtTokensService.generateAccessToken(
+			TransformHelper.toJwtTokenPayload(activatedUser),
+		);
+
+		const refreshToken: string = await this._jwtTokensService.generateRefreshToken(
+			TransformHelper.toJwtTokenPayload(activatedUser),
+		);
+
+		await this._jwtTokensService.saveRefreshToken(activatedUser.jwtToken.id, refreshToken);
+
+		return TransformHelper.toTargetDto(ActivateAccountDto, <ActivateAccountDto>{
+			accessToken,
+			refreshToken,
+		});
+	}
 }

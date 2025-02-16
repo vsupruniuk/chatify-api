@@ -12,7 +12,7 @@ import * as request from 'supertest';
 import SpyInstance = jest.SpyInstance;
 import { AppUserController } from '@controllers/appUser.controller';
 import { User } from '@db/entities/User.entity';
-import { JWTPayloadDto } from 'src/types/dto/JWTTokens/JWTPayload.dto';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { users } from '@testMocks/User/users';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { IUsersService } from '@services/users/IUsersService';

@@ -1,4 +1,7 @@
-import { SignupRequestDto } from '@dtos/auth/SignupRequest.dto';
+import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
+import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/ActivateAccountRequest.dto';
+import { Response } from 'express';
+import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation/ActivateAccountResponse.dto';
 
 /**
  * Interface representing public methods of auth controller
@@ -10,17 +13,16 @@ export interface IAuthController {
 	 */
 	signup(signupRequestDto: SignupRequestDto): Promise<void>;
 
-	// /**
-	//  * Method for activating user account via OTP code
-	//  * @param response - client response object
-	//  * @param accountActivationDto - code and codeId for activation
-	//  * @returns LoginResponseDto - access token for login
-	//  */
-	// activateAccount(
-	// 	response: Response,
-	// 	accountActivationDto: AccountActivationDto,
-	// ): Promise<LoginResponseDto>;
-	//
+	/**
+	 * Method for activating user account via OTP code
+	 * @param response - user response object
+	 * @param activateAccountRequestDto - generated access token
+	 */
+	activateAccount(
+		response: Response,
+		activateAccountRequestDto: ActivateAccountRequestDto,
+	): Promise<ActivateAccountResponseDto>;
+
 	// /**
 	//  * Method for handling request to send activation code one more time for activation account
 	//  * @param resendActivationCodeDto - email of not activated account

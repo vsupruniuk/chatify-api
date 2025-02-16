@@ -1,4 +1,14 @@
+import { JWTToken } from '@entities/JWTToken.entity';
+
 export interface IJWTTokensRepository {
+	/**
+	 * Method for updating JWT token
+	 * @param id - token id for updating
+	 * @param token - token value
+	 * @returns JWTToken - created token
+	 */
+	updateToken(id: string, token: string): Promise<JWTToken>;
+
 	// /**
 	//  * Method for searching JWT token by id
 	//  * @param id - token id
@@ -6,13 +16,6 @@ export interface IJWTTokensRepository {
 	//  * @returns null - if token wasn't found
 	//  */
 	// getById(id: string): Promise<JWTToken | null>;
-	//
-	// /**
-	//  * Method for creating JWT token
-	//  * @param token - token value
-	//  * @returns id - id of created token
-	//  */
-	// createToken(token: string): Promise<string>;
 	//
 	// /**
 	//  * Method for updating user JWT token

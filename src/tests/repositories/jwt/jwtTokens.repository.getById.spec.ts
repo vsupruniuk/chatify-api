@@ -1,10 +1,10 @@
 import { DataSource } from 'typeorm';
-import { JWTTokensRepository } from '@repositories/JWTTokens.repository';
+import { JwtTokensRepository } from '@repositories/jwt/jwtTokens.repository';
 import { JWTToken } from '@entities/JWTToken.entity';
 import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
 
 describe.skip('jwtTokensRepository', (): void => {
-	let jwtTokensRepository: JWTTokensRepository;
+	let jwtTokensRepository: JwtTokensRepository;
 
 	let resolvedValue: JWTToken | null = null;
 
@@ -29,7 +29,7 @@ describe.skip('jwtTokensRepository', (): void => {
 	};
 
 	beforeEach((): void => {
-		jwtTokensRepository = new JWTTokensRepository(dataSourceMock);
+		jwtTokensRepository = new JwtTokensRepository(dataSourceMock);
 	});
 
 	describe('getById', () => {

@@ -15,7 +15,7 @@ import * as request from 'supertest';
 import { AppUserController } from '@controllers/appUser.controller';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
-import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { TUserPayload } from '@custom-types/users/TUserPayload';
 import { IUsersService } from '@services/users/IUsersService';

@@ -1,10 +1,15 @@
 import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
-import { Body, Controller, Inject, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Inject, Patch, Post, Res, UseInterceptors } from '@nestjs/common';
 import { IAuthController } from './IAuthController';
-import { SignupRequestDto } from '@dtos/auth/SignupRequest.dto';
+import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 import { PasswordHashingPipe } from '@pipes/passwordHashing.pipe';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { IAuthService } from '@services/auth/IAuthService';
+import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/ActivateAccountRequest.dto';
+import { Response } from 'express';
+import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation/ActivateAccountResponse.dto';
+import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
+import { ResponseHelper } from '@helpers/response.helper';
 
 @Controller('auth')
 @UseInterceptors(ResponseTransformInterceptor)
@@ -21,68 +26,19 @@ export class AuthController implements IAuthController {
 		await this._authService.registerUser(signupRequestDto);
 	}
 
-	// // TODO check if needed
-	// @Post('activate-account')
-	// @HttpCode(HttpStatus.OK)
-	// public async activateAccount(
-	// 	@Res({ passthrough: true }) response: Response,
-	// 	@Body() accountActivationDto: AccountActivationDto,
-	// ): Promise<LoginResponseDto> {
-	// 	const isActivated: boolean = await this._authService.activateAccount(accountActivationDto);
-	//
-	// 	if (!isActivated) {
-	// 		throw new BadRequestException([
-	// 			'Invalid or expired code. Please check the entered code or request a new one|otpCode',
-	// 		]);
-	// 	}
-	//
-	// 	await this._otpCodesService.deactivateUserOTPCode(accountActivationDto.OTPCodeId);
-	//
-	// 	const user: UserFullDto | null = await this._usersService.getFullUserById(
-	// 		accountActivationDto.id,
-	// 	);
-	//
-	// 	if (!user) {
-	// 		throw new UnprocessableEntityException(['Failed to activate account. Please try again']);
-	// 	}
-	//
-	// 	const accessToken: string = await this._jwtTokensService.generateAccessToken(
-	// 		this._createJwtPayload(user),
-	// 	);
-	//
-	// 	const refreshToken: string = await this._jwtTokensService.generateRefreshToken(
-	// 		this._createJwtPayload(user),
-	// 	);
-	//
-	// 	const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
-	// 		user.JWTToken?.id || null,
-	// 		refreshToken,
-	// 	);
-	//
-	// 	const jwtToken: JWTTokenFullDto | null = await this._jwtTokensService.getById(savedTokenId);
-	//
-	// 	if (!jwtToken) {
-	// 		throw new UnprocessableEntityException(['Failed to activate account. Please try again']);
-	// 	}
-	//
-	// 	const isTokenIdUpdated: boolean = await this._usersService.updateUser(user.id, {
-	// 		JWTToken: jwtToken as JWTToken,
-	// 	});
-	//
-	// 	if (!isTokenIdUpdated) {
-	// 		throw new UnprocessableEntityException(['Failed to activate account. Please try again']);
-	// 	}
-	//
-	// 	response.cookie(CookiesNames.REFRESH_TOKEN, refreshToken, {
-	// 		maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000,
-	// 		secure: true,
-	// 		sameSite: 'strict',
-	// 		httpOnly: true,
-	// 	});
-	//
-	// 	return { accessToken };
-	// }
-	//
+	@Patch('activate-account')
+	public async activateAccount(
+		@Res({ passthrough: true }) response: Response,
+		@Body() activateAccountRequestDto: ActivateAccountRequestDto,
+	): Promise<ActivateAccountResponseDto> {
+		const activateAccountDto: ActivateAccountDto =
+			await this._authService.activateAccount(activateAccountRequestDto);
+
+		ResponseHelper.setRefreshTokenCookie(response, activateAccountDto.refreshToken);
+
+		return { accessToken: activateAccountDto.accessToken };
+	}
+
 	// // TODO check if needed
 	// @Post('resend-activation-code')
 	// @HttpCode(HttpStatus.OK)

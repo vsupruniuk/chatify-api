@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager, InsertResult } from 'typeorm';
 import { IUsersRepository } from '@repositories/users/IUsersRepository';
 import { User } from '@entities/User.entity';
-import { SignupRequestDto } from '@dtos/auth/SignupRequest.dto';
+import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 import { AccountSettings } from '@entities/AccountSettings.entity';
 import { JWTToken } from '@entities/JWTToken.entity';
 import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
@@ -18,6 +18,17 @@ export class UsersRepository implements IUsersRepository {
 			.from(User, 'user')
 			.where('user.email = :email', { email })
 			.orWhere('user.nickname = :nickname', { nickname })
+			.getOne();
+	}
+
+	public async findByEmailAndNotActiveWithOtpCode(email: string): Promise<User | null> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.leftJoinAndSelect('user.otpCode', 'otpCode')
+			.where('user.email = :email', { email })
+			.andWhere('user.isActivated = :isActivated', { isActivated: false })
 			.getOne();
 	}
 
@@ -75,6 +86,34 @@ export class UsersRepository implements IUsersRepository {
 					.execute();
 
 				return userInsertResult.generatedMaps[0] as User;
+			},
+		);
+	}
+
+	public async activateUser(userId: string, otpCodeId: string): Promise<User | null> {
+		return await this._dataSource.transaction(
+			async (transactionalEntityManager: EntityManager): Promise<User | null> => {
+				await transactionalEntityManager
+					.createQueryBuilder()
+					.update(User)
+					.set(<User>{ isActivated: true })
+					.where('id = :userId', { userId })
+					.execute();
+
+				await transactionalEntityManager
+					.createQueryBuilder()
+					.update(OTPCode)
+					.set(<OTPCode>{ code: null, expiresAt: null })
+					.where('id = :otpCodeId', { otpCodeId })
+					.execute();
+
+				return await transactionalEntityManager
+					.createQueryBuilder()
+					.select('user')
+					.from(User, 'user')
+					.where('user.id = :userId', { userId })
+					.leftJoinAndSelect('user.jwtToken', 'jwtToken')
+					.getOne();
 			},
 		);
 	}

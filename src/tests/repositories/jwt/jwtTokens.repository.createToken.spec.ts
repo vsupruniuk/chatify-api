@@ -1,10 +1,10 @@
 import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
-import { JWTTokensRepository } from '@repositories/JWTTokens.repository';
+import { JwtTokensRepository } from '@repositories/jwt/jwtTokens.repository';
 import { JWTToken } from '@entities/JWTToken.entity';
 
 describe.skip('jwtTokensRepository', (): void => {
-	let jwtTokensRepository: JWTTokensRepository;
+	let jwtTokensRepository: JwtTokensRepository;
 
 	const insertMock: jest.Mock = jest.fn().mockReturnThis();
 	const intoMock: jest.Mock = jest.fn().mockReturnThis();
@@ -29,7 +29,7 @@ describe.skip('jwtTokensRepository', (): void => {
 	};
 
 	beforeEach((): void => {
-		jwtTokensRepository = new JWTTokensRepository(dataSourceMock);
+		jwtTokensRepository = new JwtTokensRepository(dataSourceMock);
 	});
 
 	describe('createToken', (): void => {

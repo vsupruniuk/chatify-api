@@ -12,7 +12,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { plainToInstance } from 'class-transformer';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
-import { JWTPayloadDto } from 'src/types/dto/JWTTokens/JWTPayload.dto';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import * as request from 'supertest';
 import { SearchController } from '@controllers/search.controller';
 import { User } from '@entities/User.entity';

@@ -12,7 +12,7 @@ import { plainToInstance } from 'class-transformer';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import * as request from 'supertest';
-import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { AppUserController } from '@controllers/appUser.controller';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';

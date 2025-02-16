@@ -1,18 +1,27 @@
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+
 export interface IJWTTokensService {
-	// /**
-	//  * Generate JWT access token with user data
-	//  * @param payload - user data for generation token
-	//  * @returns token - JWT token
-	//  */
-	// generateAccessToken(payload: JWTPayloadDto): Promise<string>;
-	//
-	// /**
-	//  * Generate JWT refresh token with user data
-	//  * @param payload - user data for generation token
-	//  * @returns token - JWT token
-	//  */
-	// generateRefreshToken(payload: JWTPayloadDto): Promise<string>;
-	//
+	/**
+	 * Generate JWT access token with user data
+	 * @param payload - user data for generation token
+	 * @returns JWTPayloadDto - JWT token
+	 */
+	generateAccessToken(payload: JWTPayloadDto): Promise<string>;
+
+	/**
+	 * Generate JWT refresh token with user data
+	 * @param payload - user data for generation token
+	 * @returns JWTPayloadDto - JWT token
+	 */
+	generateRefreshToken(payload: JWTPayloadDto): Promise<string>;
+
+	/**
+	 * Save new user refresh token to DB or update existing one
+	 * @param id - token id for updating
+	 * @param token - JWT refresh token
+	 */
+	saveRefreshToken(id: string, token: string): Promise<void>;
+
 	// /**
 	//  * Verify if JWT access token valid or not
 	//  * @param token - JWT access token
@@ -36,14 +45,7 @@ export interface IJWTTokensService {
 	//  * @returns null - if token wasn't found
 	//  */
 	// getById(id: string): Promise<JWTTokenFullDto | null>;
-	//
-	// /**
-	//  * Save new user refresh token to DB or update existing one
-	//  * @param id - user JWT token id
-	//  * @param token - JWT refresh token
-	//  * @returns id - token id of created or updated token
-	//  */
-	// saveRefreshToken(id: string | null, token: string): Promise<string>;
+
 	//
 	// /**
 	//  * Delete user refresh token from DB

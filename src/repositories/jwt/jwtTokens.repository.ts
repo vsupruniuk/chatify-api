@@ -1,9 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { IJWTTokensRepository } from '@interfaces/jwt/IJWTTokensRepository';
+import { IJWTTokensRepository } from '@repositories/jwt/IJWTTokensRepository';
+import { DataSource, UpdateResult } from 'typeorm';
+import { JWTToken } from '@entities/JWTToken.entity';
 
 @Injectable()
-export class JWTTokensRepository implements IJWTTokensRepository {
-	// constructor(private readonly _dataSource: DataSource) {}
+export class JwtTokensRepository implements IJWTTokensRepository {
+	constructor(private readonly _dataSource: DataSource) {}
+	public async updateToken(id: string, token: string): Promise<JWTToken> {
+		const jwtTokenUpdateResult: UpdateResult = await this._dataSource
+			.createQueryBuilder()
+			.update(JWTToken)
+			.set({ token })
+			.where('id = :id', { id })
+			.returning('*')
+			.execute();
+
+		return jwtTokenUpdateResult.raw[0] as JWTToken;
+	}
+
 	//
 	// // TODO check if needed
 	// public async getById(id: string): Promise<JWTToken | null> {
@@ -14,18 +28,7 @@ export class JWTTokensRepository implements IJWTTokensRepository {
 	// 		.where('jwtToken.id = :id', { id })
 	// 		.getOne();
 	// }
-	//
-	// // TODO check if needed
-	// public async createToken(token: string): Promise<string> {
-	// 	const result: InsertResult = await this._dataSource
-	// 		.createQueryBuilder()
-	// 		.insert()
-	// 		.into(JWTToken)
-	// 		.values({ token })
-	// 		.execute();
-	//
-	// 	return result.identifiers[0].id;
-	// }
+
 	//
 	// // TODO check if needed
 	// public async updateToken(id: string, token: string): Promise<boolean> {

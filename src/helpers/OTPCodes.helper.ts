@@ -1,6 +1,6 @@
 import * as crypto from 'crypto';
-import { OTPCodeResponseDto } from '../types/dto/OTPCodes/OTPCodeResponse.dto';
 import { DateHelper } from '@helpers/date.helper';
+import { OTPCodeDto } from '@dtos/otpCode/OTPCodeDto';
 
 /**
  * Helper clas for OTP codes
@@ -25,12 +25,12 @@ export class OTPCodesHelper {
 
 	/**
 	 * Check if OTP code is expired
-	 * @param otpCode - code to check for expiration
+	 * @param otpCode - code for expiration checking
 	 * @returns true - if code is expired
 	 * @returns false - if code is not expired
 	 */
-	public static isExpired(otpCode: OTPCodeResponseDto): boolean {
-		if (otpCode.expiresAt === null) {
+	public static isExpired(otpCode: OTPCodeDto): boolean {
+		if (!otpCode.expiresAt) {
 			return true;
 		}
 

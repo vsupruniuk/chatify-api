@@ -1,4 +1,6 @@
-import { SignupRequestDto } from '@dtos/auth/SignupRequest.dto';
+import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
+import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/ActivateAccountRequest.dto';
+import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
 
 /**
  * Interface representing public methods of auth service
@@ -12,13 +14,17 @@ export interface IAuthService {
 	 */
 	registerUser(signupRequestDto: SignupRequestDto): Promise<void>;
 
-	// /**
-	//  * Method for activating user account via OTP code
-	//  * @param accountActivationDto - code and codeId for activation
-	//  * @returns true - if account was activated
-	//  * @returns false - if account wasn't activated
-	//  */
-	// activateAccount(accountActivationDto: AccountActivationDto): Promise<boolean>;
+	/**
+	 * Method for activating user account via OTP code
+	 * @param activateAccountRequestDto - user email and code for activation
+	 * @returns ActivateAccountDto - generated access and refresh tokens
+	 * @throws NotFoundException - if not found user for activation with provided email
+	 * @throws BadRequestException - if OTP code invalid or expired
+	 * @throws UnprocessableEntityException - if failed to activate user
+	 */
+	activateAccount(
+		activateAccountRequestDto: ActivateAccountRequestDto,
+	): Promise<ActivateAccountDto>;
 	//
 	// /**
 	//  * Method to check if user password valid or not

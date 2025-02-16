@@ -1,9 +1,9 @@
 import { DataSource, UpdateResult } from 'typeorm';
-import { JWTTokensRepository } from '@repositories/JWTTokens.repository';
+import { JwtTokensRepository } from '@repositories/jwt/jwtTokens.repository';
 import { JWTToken } from '@entities/JWTToken.entity';
 
 describe.skip('jwtTokensRepository', (): void => {
-	let jwtTokensRepository: JWTTokensRepository;
+	let jwtTokensRepository: JwtTokensRepository;
 
 	let resolvedAffectedValue: number = 0;
 
@@ -32,7 +32,7 @@ describe.skip('jwtTokensRepository', (): void => {
 	};
 
 	beforeEach((): void => {
-		jwtTokensRepository = new JWTTokensRepository(dataSourceMock);
+		jwtTokensRepository = new JwtTokensRepository(dataSourceMock);
 	});
 
 	describe('updateToken', (): void => {

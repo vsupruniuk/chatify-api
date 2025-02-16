@@ -1,5 +1,5 @@
 import { FileHelper } from '@helpers/file.helper';
-import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 
 describe.skip('fileHelper', (): void => {
 	describe('renameAndSave', (): void => {

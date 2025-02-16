@@ -7,7 +7,7 @@ import {
 	UnauthorizedException,
 	ValidationPipe,
 } from '@nestjs/common';
-import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { IStaticController } from '@interfaces/static/IStaticController';
 import { plainToInstance } from 'class-transformer';
 import { users } from '@testMocks/User/users';

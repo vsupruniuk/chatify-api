@@ -4,8 +4,10 @@ import { UserDto } from '@dtos/users/UserDto';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { IUsersRepository } from '@repositories/users/IUsersRepository';
 import { TransformHelper } from '@helpers/transform.helper';
-import { SignupRequestDto } from '@dtos/auth/SignupRequest.dto';
+import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 import { User } from '@entities/User.entity';
+import { UserWithOtpCodeDto } from '@dtos/users/UserWithOtpCodeDto';
+import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -21,6 +23,14 @@ export class UsersService implements IUsersService {
 		);
 	}
 
+	public async getByEmailAndNotActiveWithOtpCode(
+		email: string,
+	): Promise<UserWithOtpCodeDto | null> {
+		const user: User | null = await this._usersRepository.findByEmailAndNotActiveWithOtpCode(email);
+
+		return TransformHelper.toTargetDto(UserWithOtpCodeDto, user);
+	}
+
 	public async createUser(
 		otpCode: number,
 		otpCodeExpiresAt: string,
@@ -33,6 +43,15 @@ export class UsersService implements IUsersService {
 		);
 
 		return Boolean(user);
+	}
+
+	public async activateUser(
+		userId: string,
+		otpCodeId: string,
+	): Promise<UserWithJwtTokenDto | null> {
+		const activatedUser: User | null = await this._usersRepository.activateUser(userId, otpCodeId);
+
+		return TransformHelper.toTargetDto(UserWithJwtTokenDto, activatedUser);
 	}
 
 	// // TODO check if needed

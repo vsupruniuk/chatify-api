@@ -1,4 +1,4 @@
-import { SignupRequestDto } from '@dtos/auth/SignupRequest.dto';
+import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 import { AccountSettingsFullDto } from '../accountSettings/accountSettingsFull.dto';
 import { OTPCodeResponseDto } from '../OTPCodes/OTPCodeResponse.dto';
 

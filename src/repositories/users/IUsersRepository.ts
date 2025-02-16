@@ -1,5 +1,5 @@
 import { User } from '@entities/User.entity';
-import { SignupRequestDto } from '@dtos/auth/SignupRequest.dto';
+import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 
 /**
  * Interface representing public methods of users repository
@@ -15,6 +15,14 @@ export interface IUsersRepository {
 	findByEmailOrNickname(email: string, nickname: string): Promise<User | null>;
 
 	/**
+	 * Method for searching not active users with OTP code by email
+	 * @param email - user email for searching
+	 * @returns User - if user found
+	 * @return null - if user not found
+	 */
+	findByEmailAndNotActiveWithOtpCode(email: string): Promise<User | null>;
+
+	/**
 	 * Method for creating a new user with OTP code record, JWT token record, password reset token record and default account settings
 	 * @param otpCode - 6-digit number for creating OTP code
 	 * @param otpCodeExpiresAt - expiration date for creating OTP code
@@ -25,6 +33,16 @@ export interface IUsersRepository {
 		otpCodeExpiresAt: string,
 		signupRequestDto: SignupRequestDto,
 	): Promise<User>;
+
+	/**
+	 * Method for activating user and clearing user OTP code
+	 * @param userId - user id for activating user
+	 * @param otpCodeId - OTP code id for clearing code
+	 * @returns true - if user was activated and code is cleared
+	 * @returns false - if user wasn't activated or code wasn't cleared
+	 */
+	activateUser(userId: string, otpCodeId: string): Promise<User | null>;
+
 	// /**
 	//  * Get activated users by nickname
 	//  * @param nickname - partial or full user nickname

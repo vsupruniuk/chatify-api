@@ -12,7 +12,7 @@ import { IDirectChatsGateway } from '@interfaces/directChats/IDirectChatsGateway
 import { wsExceptionFilter } from '@filters/wsException.filter';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { IDirectChatsService } from '@interfaces/directChats/IDirectChatsService';
-import { IJWTTokensService } from '@interfaces/jwt/IJWTTokensService';
+import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
 import { TUserPayload } from '@custom-types/users/TUserPayload';
 
 @UsePipes(

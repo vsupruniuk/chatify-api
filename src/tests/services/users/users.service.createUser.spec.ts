@@ -17,7 +17,7 @@ import { AccountSettings } from '@entities/AccountSettings.entity';
 import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
 import { OTPCode } from '@entities/OTPCode.entity';
 import { otpCodes } from '@testMocks/OTPCode/otpCodes';
-import { SignupRequestDto } from '@dtos/auth/SignupRequest.dto';
+import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 import { User } from '@entities/User.entity';
 import { OTPCodesHelper } from '@helpers/OTPCodes.helper';
 import { UserShortDto } from '../../../types/dto/users/UserShort.dto';

@@ -11,14 +11,14 @@ import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
 import { JWTToken } from '@entities/JWTToken.entity';
 import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
-import { IJWTTokensService } from '@interfaces/jwt/IJWTTokensService';
+import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
 import { JWTTokenFullDto } from '../../../types/dto/JWTTokens/JWTTokenFull.dto';
 import { IUsersService } from '@services/users/IUsersService';
 import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
 import { IAuthService } from '@services/auth/IAuthService';
 import { LoginDto } from '../../../types/dto/auth/Login.dto';
 import { CookiesNames } from '@enums/CookiesNames.enum';
-import { JWTPayloadDto } from '../../../types/dto/JWTTokens/JWTPayload.dto';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 
 describe.skip('AuthController', (): void => {
 	let app: INestApplication;
