@@ -1,5 +1,5 @@
 import { DataSource, UpdateResult } from 'typeorm';
-import { OTPCodesRepository } from '@repositories/OTPCodes.repository';
+import { OTPCodesRepository } from '@repositories/otpCode/OTPCodes.repository';
 import { UpdateOTPCodeDto } from '../../../types/dto/OTPCodes/UpdateOTPCode.dto';
 import { OTPCode } from '@entities/OTPCode.entity';
 

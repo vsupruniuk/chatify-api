@@ -1,6 +1,6 @@
 import SpyInstance = jest.SpyInstance;
-import { OTPCodesService } from '@services/OTPCodes.service';
-import { OTPCodesRepository } from '@repositories/OTPCodes.repository';
+import { OTPCodesService } from '@services/otpCode/OTPCodes.service';
+import { OTPCodesRepository } from '@repositories/otpCode/OTPCodes.repository';
 import { connectionSource } from '@db/typeOrmConfig';
 
 describe.skip('OTPCodesService', (): void => {

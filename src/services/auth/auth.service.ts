@@ -20,6 +20,9 @@ import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
 import { TransformHelper } from '@helpers/transform.helper';
 import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
 import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
+import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
+import { otpCodeConfig } from '@configs/otpCode.config';
+import { IOTPCodesService } from '@services/otpCode/IOTPCodesService';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -32,8 +35,10 @@ export class AuthService implements IAuthService {
 
 		@Inject(CustomProviders.CTF_JWT_TOKENS_SERVICE)
 		private readonly _jwtTokensService: IJWTTokensService,
+
+		@Inject(CustomProviders.CTF_OTP_CODES_SERVICE)
+		private readonly _otpCodeService: IOTPCodesService,
 	) {}
-	private readonly OTP_CODE_EXPIRATION_TIME: number = 1000 * 60 * 10;
 
 	public async registerUser(signupRequestDto: SignupRequestDto): Promise<void> {
 		const existingUser: UserDto | null = await this._usersService.getByEmailOrNickname(
@@ -51,7 +56,7 @@ export class AuthService implements IAuthService {
 		}
 
 		const otpCode: number = OTPCodesHelper.generateOTPCode();
-		const otpCodeExpirationDate: string = DateHelper.dateTimeFuture(this.OTP_CODE_EXPIRATION_TIME);
+		const otpCodeExpirationDate: string = DateHelper.dateTimeFuture(otpCodeConfig.ttl);
 
 		const isUserCreated: boolean = await this._usersService.createUser(
 			otpCode,
@@ -107,5 +112,31 @@ export class AuthService implements IAuthService {
 			accessToken,
 			refreshToken,
 		});
+	}
+
+	public async resendActivationCode(
+		resendActivationCodeRequestDto: ResendActivationCodeRequestDto,
+	): Promise<void> {
+		const user: UserWithOtpCodeDto | null =
+			await this._usersService.getByEmailAndNotActiveWithOtpCode(
+				resendActivationCodeRequestDto.email,
+			);
+
+		if (!user) {
+			throw new NotFoundException('No user for activation found with this email');
+		}
+
+		const updatedOtpCode: number | null = await this._otpCodeService.regenerateCode(
+			user.otpCode.id,
+		);
+
+		if (!updatedOtpCode) {
+			throw new UnprocessableEntityException('Failed to generate new OTP code, please try again');
+		}
+
+		await this._emailService.sendActivationEmail(
+			resendActivationCodeRequestDto.email,
+			updatedOtpCode,
+		);
 	}
 }

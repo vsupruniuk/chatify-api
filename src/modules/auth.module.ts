@@ -18,6 +18,9 @@ import { JwtService } from '@nestjs/jwt';
 
 		providers.CTF_USERS_SERVICE,
 		providers.CTF_USERS_REPOSITORY,
+
+		providers.CTF_OTP_CODES_SERVICE,
+		providers.CTF_OTP_CODES_REPOSITORY,
 	],
 })
 export class AuthModule {}

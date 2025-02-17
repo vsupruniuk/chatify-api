@@ -17,7 +17,7 @@ import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
 import { JWTTokenFullDto } from '../../../types/dto/JWTTokens/JWTTokenFull.dto';
 import { IUsersService } from '@services/users/IUsersService';
 import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
-import { IOTPCodesService } from '@interfaces/OTPCodes/IOTPCodesService';
+import { IOTPCodesService } from '@services/otpCode/IOTPCodesService';
 import { AppModule } from '@modules/app.module';
 import { AuthModule } from '@modules/auth.module';
 import { CustomProviders } from '@enums/CustomProviders.enum';

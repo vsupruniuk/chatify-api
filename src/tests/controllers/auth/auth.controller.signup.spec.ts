@@ -8,7 +8,7 @@ import { UserShortDto } from 'src/types/dto/users/UserShort.dto';
 import { IUsersService } from '@services/users/IUsersService';
 import { OTPCodeResponseDto } from 'src/types/dto/OTPCodes/OTPCodeResponse.dto';
 import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { IOTPCodesService } from '@interfaces/OTPCodes/IOTPCodesService';
+import { IOTPCodesService } from '@services/otpCode/IOTPCodesService';
 import { IEmailService } from '@services/email/IEmailService';
 import { AppModule } from '@modules/app.module';
 import { AuthModule } from '@modules/auth.module';

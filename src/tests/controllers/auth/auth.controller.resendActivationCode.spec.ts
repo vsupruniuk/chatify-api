@@ -10,7 +10,7 @@ import { otpCodes } from '@testMocks/OTPCode/otpCodes';
 import { UsersService } from '@services/users/users.service';
 import { UserShortDto } from '../../../types/dto/users/UserShort.dto';
 import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
-import { OTPCodesService } from '@services/OTPCodes.service';
+import { OTPCodesService } from '@services/otpCode/OTPCodes.service';
 import { OTPCodeResponseDto } from '../../../types/dto/OTPCodes/OTPCodeResponse.dto';
 import { EmailService } from '@services/email/email.service';
 import { AppModule } from '@modules/app.module';

@@ -1,8 +1,8 @@
 import { connectionSource } from '@db/typeOrmConfig';
-import { IOTPCodesRepository } from '@interfaces/OTPCodes/IOTPCodesRepository';
+import { IOTPCodesRepository } from '@repositories/otpCode/IOTPCodesRepository';
 import { IAuthService } from '@services/auth/IAuthService';
 import { IUsersRepository } from '@repositories/users/IUsersRepository';
-import { OTPCodesRepository } from '@repositories/OTPCodes.repository';
+import { OTPCodesRepository } from '@repositories/otpCode/OTPCodes.repository';
 import { UsersRepository } from '@repositories/users/users.repository';
 import { AuthService } from '@services/auth/auth.service';
 import SpyInstance = jest.SpyInstance;

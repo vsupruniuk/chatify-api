@@ -1,7 +1,7 @@
 import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 import { plainToInstance } from 'class-transformer';
-import { OTPCodesRepository } from '@repositories/OTPCodes.repository';
+import { OTPCodesRepository } from '@repositories/otpCode/OTPCodes.repository';
 import { CreateOTPCodeDto } from '../../../types/dto/OTPCodes/CreateOTPCode.dto';
 import { OTPCode } from '@entities/OTPCode.entity';
 

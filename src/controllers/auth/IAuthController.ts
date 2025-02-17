@@ -2,6 +2,7 @@ import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/ActivateAccountRequest.dto';
 import { Response } from 'express';
 import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation/ActivateAccountResponse.dto';
+import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
 
 /**
  * Interface representing public methods of auth controller
@@ -23,12 +24,14 @@ export interface IAuthController {
 		activateAccountRequestDto: ActivateAccountRequestDto,
 	): Promise<ActivateAccountResponseDto>;
 
-	// /**
-	//  * Method for handling request to send activation code one more time for activation account
-	//  * @param resendActivationCodeDto - email of not activated account
-	//  */
-	// resendActivationCode(resendActivationCodeDto: ResendActivationCodeDto): Promise<void>;
-	//
+	/**
+	 * Method for handling request to send activation code one more time for activation account
+	 * @param resendActivationCodeRequestDto - email of not activated account
+	 */
+	resendActivationCode(
+		resendActivationCodeRequestDto: ResendActivationCodeRequestDto,
+	): Promise<void>;
+
 	// /**
 	//  * Method for generating reset password token and sending via email
 	//  * @param resetPasswordDto - user email for generating token

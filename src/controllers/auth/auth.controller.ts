@@ -10,6 +10,7 @@ import { Response } from 'express';
 import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation/ActivateAccountResponse.dto';
 import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
 import { ResponseHelper } from '@helpers/response.helper';
+import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
 
 @Controller('auth')
 @UseInterceptors(ResponseTransformInterceptor)
@@ -39,37 +40,13 @@ export class AuthController implements IAuthController {
 		return { accessToken: activateAccountDto.accessToken };
 	}
 
-	// // TODO check if needed
-	// @Post('resend-activation-code')
-	// @HttpCode(HttpStatus.OK)
-	// public async resendActivationCode(
-	// 	@Body() resendActivationCodeDto: ResendActivationCodeDto,
-	// ): Promise<void> {
-	// 	const user: UserFullDto | null = await this._usersService.getFullUserByEmail(
-	// 		resendActivationCodeDto.email,
-	// 	);
-	//
-	// 	if (!user) {
-	// 		throw new NotFoundException(['User with this email does not exist|email']);
-	// 	}
-	//
-	// 	if (user.isActivated) {
-	// 		throw new UnprocessableEntityException(['This account is already activated|email']);
-	// 	}
-	//
-	// 	await this._otpCodesService.createNewOTPCode(user.OTPCode.id);
-	//
-	// 	const otpCode: OTPCodeResponseDto | null = await this._otpCodesService.getUserOTPCode(
-	// 		user.OTPCode.id,
-	// 	);
-	//
-	// 	if (!otpCode || !otpCode.code) {
-	// 		throw new UnprocessableEntityException(['Failed to create new OTP code. Please try again']);
-	// 	}
-	//
-	// 	await this._emailService.sendActivationEmail(resendActivationCodeDto.email, otpCode.code);
-	// }
-	//
+	@Patch('resend-activation-code')
+	public async resendActivationCode(
+		@Body() resendActivationCodeRequestDto: ResendActivationCodeRequestDto,
+	): Promise<void> {
+		await this._authService.resendActivationCode(resendActivationCodeRequestDto);
+	}
+
 	// // TODO check if needed
 	// @Post('reset-password')
 	// @HttpCode(HttpStatus.OK)
