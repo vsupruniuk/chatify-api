@@ -1,5 +1,5 @@
 import { DataSource, DeleteResult } from 'typeorm';
-import { PasswordResetTokensRepository } from '@repositories/passwordResetTokens.repository';
+import { PasswordResetTokensRepository } from '@repositories/passwordResetToken/passwordResetTokens.repository';
 import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 
 describe.skip('passwordResetTokensRepository', (): void => {

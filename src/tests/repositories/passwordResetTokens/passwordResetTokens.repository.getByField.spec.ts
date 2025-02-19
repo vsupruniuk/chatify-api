@@ -1,5 +1,5 @@
 import { PasswordResetToken } from '@db/entities/PasswordResetToken.entity';
-import { PasswordResetTokensRepository } from '@repositories/passwordResetTokens.repository';
+import { PasswordResetTokensRepository } from '@repositories/passwordResetToken/passwordResetTokens.repository';
 import { DataSource } from 'typeorm';
 import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
 

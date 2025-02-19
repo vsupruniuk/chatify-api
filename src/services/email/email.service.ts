@@ -4,6 +4,7 @@ import { Transporter } from 'nodemailer';
 import * as nodemailer from 'nodemailer';
 import { accountActivationTemplate } from '@emailTemplates/accountActivationTemplate';
 import { EmailPriority } from '@enums/EmailPriority.enum';
+import { resetPasswordTemplate } from '@emailTemplates/resetPasswordTemplate';
 
 @Injectable()
 export class EmailService implements IEmailService {
@@ -42,26 +43,25 @@ export class EmailService implements IEmailService {
 		);
 	}
 
-	// // TODO check if needed
-	// public async sendResetPasswordEmail(
-	// 	receiverEmail: string,
-	// 	userName: string,
-	// 	token: string,
-	// ): Promise<void> {
-	// 	const emailSubject: string = 'Password reset';
-	// 	const link: string = `${process.env.CLIENT_URL}/reset-password/${token}`;
-	//
-	// 	const emailContent: string = resetPasswordTemplate(userName, this.APP_EMAIL, link);
-	//
-	// 	return this._sendMail(
-	// 		receiverEmail,
-	// 		emailSubject,
-	// 		emailContent,
-	// 		emailContent,
-	// 		EmailPriority.HIGH,
-	// 	);
-	// }
-	//
+	public async sendResetPasswordEmail(
+		receiverEmail: string,
+		userName: string,
+		token: string,
+	): Promise<void> {
+		const emailSubject: string = 'Password reset';
+		const link: string = `${process.env.CLIENT_URL}/reset-password/${token}`;
+
+		const emailContent: string = resetPasswordTemplate(userName, this.APP_EMAIL, link);
+
+		return this._sendMail(
+			receiverEmail,
+			emailSubject,
+			emailContent,
+			emailContent,
+			EmailPriority.HIGH,
+		);
+	}
+
 	private async _sendMail(
 		receiverEmail: string,
 		emailSubject: string,

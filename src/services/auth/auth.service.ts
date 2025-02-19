@@ -23,6 +23,9 @@ import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
 import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
 import { otpCodeConfig } from '@configs/otpCode.config';
 import { IOTPCodesService } from '@services/otpCode/IOTPCodesService';
+import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
+import { UserWithPasswordResetTokenDto } from '@dtos/users/UserWithPasswordResetTokenDto';
+import { IPasswordResetTokensService } from '@services/passwordResetToken/IPasswordResetTokensService';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -38,6 +41,9 @@ export class AuthService implements IAuthService {
 
 		@Inject(CustomProviders.CTF_OTP_CODES_SERVICE)
 		private readonly _otpCodeService: IOTPCodesService,
+
+		@Inject(CustomProviders.CTF_PASSWORD_RESET_TOKENS_SERVICE)
+		private readonly _passwordResetTokensService: IPasswordResetTokensService,
 	) {}
 
 	public async registerUser(signupRequestDto: SignupRequestDto): Promise<void> {
@@ -78,15 +84,15 @@ export class AuthService implements IAuthService {
 			await this._usersService.getByEmailAndNotActiveWithOtpCode(activateAccountRequestDto.email);
 
 		if (!user) {
-			throw new NotFoundException('No user for activation found with this email');
+			throw new NotFoundException('No user for activation found with this email|email');
 		}
 
 		if (activateAccountRequestDto.code !== user.otpCode.code) {
-			throw new BadRequestException('OTP code is incorrect');
+			throw new BadRequestException('OTP code is incorrect|code');
 		}
 
 		if (OTPCodesHelper.isExpired(user.otpCode)) {
-			throw new BadRequestException('OTP code is expired');
+			throw new BadRequestException('OTP code is expired|code');
 		}
 
 		const activatedUser: UserWithJwtTokenDto | null = await this._usersService.activateUser(
@@ -138,5 +144,25 @@ export class AuthService implements IAuthService {
 			resendActivationCodeRequestDto.email,
 			updatedOtpCode,
 		);
+	}
+
+	public async resetPassword(resetPasswordRequestDto: ResetPasswordRequestDto): Promise<void> {
+		const user: UserWithPasswordResetTokenDto | null =
+			await this._usersService.getByEmailWithPasswordResetToken(resetPasswordRequestDto.email);
+
+		if (!user) {
+			throw new NotFoundException('User with this email does not exist|email');
+		}
+
+		const passwordResetToken: string | null =
+			await this._passwordResetTokensService.regenerateToken(user.passwordResetToken.id);
+
+		if (!passwordResetToken) {
+			throw new UnprocessableEntityException(
+				'Failed to generate password reset token, please try again',
+			);
+		}
+
+		await this._emailService.sendResetPasswordEmail(user.email, user.firstName, passwordResetToken);
 	}
 }

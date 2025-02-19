@@ -32,6 +32,16 @@ export class UsersRepository implements IUsersRepository {
 			.getOne();
 	}
 
+	public async findByEmailWithPasswordResetToken(email: string): Promise<User | null> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.leftJoinAndSelect('user.passwordResetToken', 'passwordResetToken')
+			.where('user.email = :email', { email })
+			.getOne();
+	}
+
 	public async createUser(
 		otpCode: number,
 		otpCodeExpiresAt: string,

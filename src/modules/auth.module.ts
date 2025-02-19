@@ -21,6 +21,9 @@ import { JwtService } from '@nestjs/jwt';
 
 		providers.CTF_OTP_CODES_SERVICE,
 		providers.CTF_OTP_CODES_REPOSITORY,
+
+		providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
+		providers.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 	],
 })
 export class AuthModule {}

@@ -8,12 +8,12 @@ export interface IEmailService {
 	 * @param otpCode - generated OTP code
 	 */
 	sendActivationEmail(receiverEmail: string, otpCode: number): Promise<void>;
-	//
-	// /**
-	//  * Send to user email with link for reset password
-	//  * @param receiverEmail - email entered on registration
-	//  * @param userName - name entered on registration
-	//  * @param token - uuid token generated for this user
-	//  */
-	// sendResetPasswordEmail(receiverEmail: string, userName: string, token: string): Promise<void>;
+
+	/**
+	 * Send to user email with link for reset password
+	 * @param receiverEmail - email entered on registration
+	 * @param userName - name entered on registration
+	 * @param token - uuid token generated for this user
+	 */
+	sendResetPasswordEmail(receiverEmail: string, userName: string, token: string): Promise<void>;
 }

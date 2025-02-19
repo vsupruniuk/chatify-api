@@ -3,6 +3,7 @@ import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/Activate
 import { Response } from 'express';
 import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation/ActivateAccountResponse.dto';
 import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
+import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
 
 /**
  * Interface representing public methods of auth controller
@@ -32,12 +33,12 @@ export interface IAuthController {
 		resendActivationCodeRequestDto: ResendActivationCodeRequestDto,
 	): Promise<void>;
 
-	// /**
-	//  * Method for generating reset password token and sending via email
-	//  * @param resetPasswordDto - user email for generating token
-	//  */
-	// resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void>;
-	//
+	/**
+	 * Method for generating reset password token and sending via email
+	 * @param resetPasswordRequestDto - user email for generating token
+	 */
+	resetPassword(resetPasswordRequestDto: ResetPasswordRequestDto): Promise<void>;
+
 	// /**
 	//  * Method for resetting user password
 	//  * @param resetPasswordConfirmationDto - new user password with confirmation password

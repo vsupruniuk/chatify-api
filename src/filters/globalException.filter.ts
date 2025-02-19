@@ -40,7 +40,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 			const messages: string[] = Array.isArray(errorMessages) ? errorMessages : [errorMessages];
 
 			responseResult.errors = messages.map((msg: string) => {
-				const [message, field] = msg.split(this.MESSAGE_FIELD_SEPARATOR);
+				const [message, field = null] = msg.split(this.MESSAGE_FIELD_SEPARATOR);
 
 				return { message, field };
 			});

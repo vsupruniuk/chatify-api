@@ -11,6 +11,7 @@ import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation/Activat
 import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
 import { ResponseHelper } from '@helpers/response.helper';
 import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
+import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
 
 @Controller('auth')
 @UseInterceptors(ResponseTransformInterceptor)
@@ -45,6 +46,13 @@ export class AuthController implements IAuthController {
 		@Body() resendActivationCodeRequestDto: ResendActivationCodeRequestDto,
 	): Promise<void> {
 		await this._authService.resendActivationCode(resendActivationCodeRequestDto);
+	}
+
+	@Patch('reset-password')
+	public async resetPassword(
+		@Body() resetPasswordRequestDto: ResetPasswordRequestDto,
+	): Promise<void> {
+		await this._authService.resetPassword(resetPasswordRequestDto);
 	}
 
 	// // TODO check if needed

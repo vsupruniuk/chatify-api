@@ -9,7 +9,7 @@ import { users } from '@testMocks/User/users';
 import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
 import { IUsersService } from '@services/users/IUsersService';
 import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
-import { IPasswordResetTokensService } from '@interfaces/passwordResetTokens/IPasswordResetTokens.service';
+import { IPasswordResetTokensService } from '@services/passwordResetToken/IPasswordResetTokensService';
 import { AppModule } from '@modules/app.module';
 import { AuthModule } from '@modules/auth.module';
 import { CustomProviders } from '@enums/CustomProviders.enum';

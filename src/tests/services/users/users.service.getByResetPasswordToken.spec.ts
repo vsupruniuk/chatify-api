@@ -1,4 +1,4 @@
-import { IPasswordResetTokensRepository } from '@interfaces/passwordResetTokens/IPasswordResetTokensRepository';
+import { IPasswordResetTokensRepository } from '@repositories/passwordResetToken/IPasswordResetTokensRepository';
 import { IUsersService } from '@services/users/IUsersService';
 import { IUsersRepository } from '@repositories/users/IUsersRepository';
 import { IAccountSettingsRepository } from '@interfaces/accountSettings/IAccountSettingsRepository';
@@ -7,7 +7,7 @@ import { UsersRepository } from '@repositories/users/users.repository';
 import { connectionSource } from '@db/typeOrmConfig';
 import { AccountSettingsRepository } from '@repositories/accountSettings.repository';
 import { OTPCodesRepository } from '@repositories/otpCode/OTPCodes.repository';
-import { PasswordResetTokensRepository } from '@repositories/passwordResetTokens.repository';
+import { PasswordResetTokensRepository } from '@repositories/passwordResetToken/passwordResetTokens.repository';
 import { UsersService } from '@services/users/users.service';
 import SpyInstance = jest.SpyInstance;
 import { PasswordResetToken } from '@entities/PasswordResetToken.entity';

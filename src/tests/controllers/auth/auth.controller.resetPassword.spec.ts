@@ -8,11 +8,11 @@ import { users } from '@testMocks/User/users';
 import { IUsersService } from '@services/users/IUsersService';
 import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
 import { IEmailService } from '@services/email/IEmailService';
-import { IPasswordResetTokensService } from '@interfaces/passwordResetTokens/IPasswordResetTokens.service';
+import { IPasswordResetTokensService } from '@services/passwordResetToken/IPasswordResetTokensService';
 import { AppModule } from '@modules/app.module';
 import { AuthModule } from '@modules/auth.module';
 import { CustomProviders } from '@enums/CustomProviders.enum';
-import { ResetPasswordDto } from '../../../types/dto/auth/ResetPassword.dto';
+import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
 import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
 import { ResponseStatus } from '@enums/ResponseStatus.enum';
 
@@ -87,7 +87,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 400 status if email in wrong format', async (): Promise<void> => {
-			const resetPasswordDto: ResetPasswordDto = {
+			const resetPasswordDto: ResetPasswordRequestDto = {
 				email: 'tonymail.com',
 			};
 
@@ -98,7 +98,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 400 status if email in wrong format', async (): Promise<void> => {
-			const resetPasswordDto: ResetPasswordDto = {
+			const resetPasswordDto: ResetPasswordRequestDto = {
 				email: 'tony@mail.com'.padStart(256, 't'),
 			};
 
@@ -109,7 +109,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 404 status if user with this email not exist', async (): Promise<void> => {
-			const resetPasswordDto: ResetPasswordDto = {
+			const resetPasswordDto: ResetPasswordRequestDto = {
 				email: 'bruce@mail.com',
 			};
 
@@ -120,7 +120,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 200 status if user with this email exist and token was generated', async (): Promise<void> => {
-			const resetPasswordDto: ResetPasswordDto = {
+			const resetPasswordDto: ResetPasswordRequestDto = {
 				email: 'tony@mail.com',
 			};
 
@@ -139,7 +139,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return nothing', async (): Promise<void> => {
-			const resetPasswordDto: ResetPasswordDto = {
+			const resetPasswordDto: ResetPasswordRequestDto = {
 				email: 'tony@mail.com',
 			};
 
@@ -149,7 +149,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should call getFullUserByEmail method in users service to find user', async (): Promise<void> => {
-			const resetPasswordDto: ResetPasswordDto = {
+			const resetPasswordDto: ResetPasswordRequestDto = {
 				email: 'tony@mail.com',
 			};
 
@@ -160,7 +160,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should call createPasswordResetToken method in users service to create token', async (): Promise<void> => {
-			const resetPasswordDto: ResetPasswordDto = {
+			const resetPasswordDto: ResetPasswordRequestDto = {
 				email: 'tony@mail.com',
 			};
 
@@ -177,7 +177,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should call sendResetPasswordEmail method in email service to send email with reset link', async (): Promise<void> => {
-			const resetPasswordDto: ResetPasswordDto = {
+			const resetPasswordDto: ResetPasswordRequestDto = {
 				email: 'tony@mail.com',
 			};
 

@@ -2,6 +2,7 @@ import { UserDto } from '@dtos/users/UserDto';
 import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 import { UserWithOtpCodeDto } from '@dtos/users/UserWithOtpCodeDto';
 import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
+import { UserWithPasswordResetTokenDto } from '@dtos/users/UserWithPasswordResetTokenDto';
 
 /**
  * Interface representing public methods of users service
@@ -23,6 +24,14 @@ export interface IUsersService {
 	 * @returns null if user wasn't found
 	 */
 	getByEmailAndNotActiveWithOtpCode(email: string): Promise<UserWithOtpCodeDto | null>;
+
+	/**
+	 * Method for searching user with password reset token by email
+	 * @param email - user email for search
+	 * @returns UserWithPasswordResetTokenDto - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	getByEmailWithPasswordResetToken(email: string): Promise<UserWithPasswordResetTokenDto | null>;
 
 	/**
 	 * Method for creating user from signup data with some default settings

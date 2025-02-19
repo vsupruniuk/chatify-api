@@ -1,6 +1,6 @@
 import * as dayjs from 'dayjs';
 import { PasswordResetTokensHelper } from '@helpers/passwordResetTokens.helper';
-import { PasswordResetTokenDto } from '../../../types/dto/passwordResetTokens/passwordResetToken.dto';
+import { PasswordResetTokenDto } from '@dtos/passwordResetToken/PasswordResetToken.dto';
 
 describe.skip('passwordResetTokensHelper', (): void => {
 	describe('isExpired', (): void => {

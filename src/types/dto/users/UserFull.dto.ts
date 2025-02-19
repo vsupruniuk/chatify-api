@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { PasswordResetTokenDto } from '../passwordResetTokens/passwordResetToken.dto';
+import { PasswordResetTokenDto } from '@dtos/passwordResetToken/PasswordResetToken.dto';
 import { UserShortDto } from './UserShort.dto';
 import { JWTTokenFullDto } from '../JWTTokens/JWTTokenFull.dto';
 

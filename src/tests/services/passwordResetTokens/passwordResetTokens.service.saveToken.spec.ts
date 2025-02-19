@@ -1,5 +1,5 @@
-import { PasswordResetTokensRepository } from '@repositories/passwordResetTokens.repository';
-import { PasswordResetTokensService } from '@services/passwordResetTokens.service';
+import { PasswordResetTokensRepository } from '@repositories/passwordResetToken/passwordResetTokens.repository';
+import { PasswordResetTokensService } from '@services/passwordResetToken/passwordResetTokens.service';
 import { UsersRepository } from '@repositories/users/users.repository';
 import { connectionSource } from '@db/typeOrmConfig';
 import SpyInstance = jest.SpyInstance;

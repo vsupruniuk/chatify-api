@@ -2,6 +2,7 @@ import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/ActivateAccountRequest.dto';
 import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
 import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
+import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
 
 /**
  * Interface representing public methods of auth service
@@ -36,4 +37,10 @@ export interface IAuthService {
 	resendActivationCode(
 		resendActivationCodeRequestDto: ResendActivationCodeRequestDto,
 	): Promise<void>;
+
+	/**
+	 * Method for creating password reset token and sending to user via email
+	 * @param resetPasswordRequestDto - user email to search user
+	 */
+	resetPassword(resetPasswordRequestDto: ResetPasswordRequestDto): Promise<void>;
 }
