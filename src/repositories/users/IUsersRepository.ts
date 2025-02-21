@@ -15,6 +15,14 @@ export interface IUsersRepository {
 	findByEmailOrNickname(email: string, nickname: string): Promise<User | null>;
 
 	/**
+	 * Method for searching user by password reset token
+	 * @param token - password reset token sent with email
+	 * @returns User - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	findByNotExpiredPasswordResetToken(token: string): Promise<User | null>;
+
+	/**
 	 * Method for searching not active users with OTP code by email
 	 * @param email - user email for searching
 	 * @returns User - if user found
@@ -50,6 +58,15 @@ export interface IUsersRepository {
 	 * @returns false - if user wasn't activated or code wasn't cleared
 	 */
 	activateUser(userId: string, otpCodeId: string): Promise<User | null>;
+
+	/**
+	 * Method for updating user password
+	 * @param userId - user id
+	 * @param tokenId - password reset token id
+	 * @param password - new password provided by user
+	 * @returns User - user with updated password
+	 */
+	updatePassword(userId: string, tokenId: string, password: string): Promise<User | null>;
 
 	// /**
 	//  * Get activated users by nickname

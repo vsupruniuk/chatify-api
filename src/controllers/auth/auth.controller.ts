@@ -1,5 +1,15 @@
 import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
-import { Body, Controller, Inject, Patch, Post, Res, UseInterceptors } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Inject,
+	Param,
+	ParseUUIDPipe,
+	Patch,
+	Post,
+	Res,
+	UseInterceptors,
+} from '@nestjs/common';
 import { IAuthController } from './IAuthController';
 import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 import { PasswordHashingPipe } from '@pipes/passwordHashing.pipe';
@@ -12,6 +22,7 @@ import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount
 import { ResponseHelper } from '@helpers/response.helper';
 import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
 import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
+import { ResetPasswordConfirmationRequestDto } from '@dtos/auth/resetPasswordConfirmation/ResetPasswordConfirmationRequest.dto';
 
 @Controller('auth')
 @UseInterceptors(ResponseTransformInterceptor)
@@ -55,54 +66,19 @@ export class AuthController implements IAuthController {
 		await this._authService.resetPassword(resetPasswordRequestDto);
 	}
 
-	// // TODO check if needed
-	// @Post('reset-password')
-	// @HttpCode(HttpStatus.OK)
-	// public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void> {
-	// 	const user: UserFullDto | null = await this._usersService.getFullUserByEmail(
-	// 		resetPasswordDto.email,
-	// 	);
-	//
-	// 	if (!user) {
-	// 		throw new NotFoundException(['User with this email does not exist|email']);
-	// 	}
-	//
-	// 	const token: string | null = await this._passwordResetTokensService.saveToken(
-	// 		user.id,
-	// 		user.passwordResetToken?.id || null,
-	// 	);
-	//
-	// 	if (!token) {
-	// 		throw new UnprocessableEntityException(['Failed to reset password. Please try again']);
-	// 	}
-	//
-	// 	await this._emailService.sendResetPasswordEmail(user.email, user.firstName, token);
-	// }
-	//
-	// // TODO check if needed
-	// @Post(`reset-password/:resetToken`)
-	// @HttpCode(HttpStatus.OK)
-	// public async resetPasswordConfirmation(
-	// 	@Body() resetPasswordConfirmationDto: ResetPasswordConfirmationDto,
-	// 	@Param('resetToken', ParseUUIDPipe) resetToken: string,
-	// ): Promise<void> {
-	// 	const user: UserFullDto | null = await this._usersService.getByResetPasswordToken(resetToken);
-	//
-	// 	if (!user || !user.passwordResetToken) {
-	// 		throw new NotFoundException(['User related to this token not found']);
-	// 	}
-	//
-	// 	const isUpdated: boolean = await this._usersService.updateUser(user.id, {
-	// 		password: resetPasswordConfirmationDto.password,
-	// 	});
-	//
-	// 	if (!isUpdated) {
-	// 		throw new UnprocessableEntityException(['Failed to update password. Please try again']);
-	// 	}
-	//
-	// 	await this._passwordResetTokensService.deleteToken(user.passwordResetToken.id);
-	// }
-	//
+	@Patch('reset-password/:passwordResetToken')
+	public async resetPasswordConfirmation(
+		@Body(PasswordHashingPipe)
+		resetPasswordConfirmationRequestDto: ResetPasswordConfirmationRequestDto,
+
+		@Param('passwordResetToken', ParseUUIDPipe) passwordResetToken: string,
+	): Promise<void> {
+		await this._authService.confirmResetPassword(
+			resetPasswordConfirmationRequestDto.password,
+			passwordResetToken,
+		);
+	}
+
 	// // TODO check if needed
 	// @Post('login')
 	// @HttpCode(HttpStatus.OK)

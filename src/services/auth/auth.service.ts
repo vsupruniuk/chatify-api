@@ -165,4 +165,23 @@ export class AuthService implements IAuthService {
 
 		await this._emailService.sendResetPasswordEmail(user.email, user.firstName, passwordResetToken);
 	}
+
+	public async confirmResetPassword(password: string, token: string): Promise<void> {
+		const user: UserWithPasswordResetTokenDto | null =
+			await this._usersService.getByNotExpiredPasswordResetToken(token);
+
+		if (!user) {
+			throw new NotFoundException('User associated with this token not found');
+		}
+
+		const isPasswordUpdated: boolean = await this._usersService.changeUserPassword(
+			user.id,
+			user.passwordResetToken.id,
+			password,
+		);
+
+		if (!isPasswordUpdated) {
+			throw new UnprocessableEntityException('Failed to reset password, please try again');
+		}
+	}
 }

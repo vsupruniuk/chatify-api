@@ -24,6 +24,14 @@ export class UsersService implements IUsersService {
 		);
 	}
 
+	public async getByNotExpiredPasswordResetToken(
+		token: string,
+	): Promise<UserWithPasswordResetTokenDto | null> {
+		const user: User | null = await this._usersRepository.findByNotExpiredPasswordResetToken(token);
+
+		return TransformHelper.toTargetDto(UserWithPasswordResetTokenDto, user);
+	}
+
 	public async getByEmailAndNotActiveWithOtpCode(
 		email: string,
 	): Promise<UserWithOtpCodeDto | null> {
@@ -61,6 +69,16 @@ export class UsersService implements IUsersService {
 		const activatedUser: User | null = await this._usersRepository.activateUser(userId, otpCodeId);
 
 		return TransformHelper.toTargetDto(UserWithJwtTokenDto, activatedUser);
+	}
+
+	public async changeUserPassword(
+		userId: string,
+		tokenId: string,
+		password: string,
+	): Promise<boolean> {
+		const user: User | null = await this._usersRepository.updatePassword(userId, tokenId, password);
+
+		return !!user && user.password === password;
 	}
 
 	// // TODO check if needed

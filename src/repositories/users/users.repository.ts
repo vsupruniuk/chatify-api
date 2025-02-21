@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, EntityManager, InsertResult } from 'typeorm';
+import { Brackets, DataSource, EntityManager, InsertResult, WhereExpressionBuilder } from 'typeorm';
 import { IUsersRepository } from '@repositories/users/IUsersRepository';
 import { User } from '@entities/User.entity';
 import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
@@ -18,6 +18,23 @@ export class UsersRepository implements IUsersRepository {
 			.from(User, 'user')
 			.where('user.email = :email', { email })
 			.orWhere('user.nickname = :nickname', { nickname })
+			.getOne();
+	}
+
+	public async findByNotExpiredPasswordResetToken(token: string): Promise<User | null> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.innerJoinAndSelect('user.passwordResetToken', 'passwordResetToken')
+			.where('passwordResetToken.token = :token', { token })
+			.andWhere(
+				new Brackets((qb: WhereExpressionBuilder) => {
+					qb.where('passwordResetToken.expiresAt IS NULL').orWhere(
+						'passwordResetToken.expiresAt > NOW()',
+					);
+				}),
+			)
 			.getOne();
 	}
 
@@ -123,6 +140,38 @@ export class UsersRepository implements IUsersRepository {
 					.from(User, 'user')
 					.where('user.id = :userId', { userId })
 					.leftJoinAndSelect('user.jwtToken', 'jwtToken')
+					.getOne();
+			},
+		);
+	}
+
+	public async updatePassword(
+		userId: string,
+		tokenId: string,
+		password: string,
+	): Promise<User | null> {
+		console.log(tokenId);
+		return await this._dataSource.transaction(
+			async (transactionalEntityManager: EntityManager): Promise<User | null> => {
+				await transactionalEntityManager
+					.createQueryBuilder()
+					.update(User)
+					.set(<User>{ password })
+					.where('id = :userId', { userId })
+					.execute();
+
+				await transactionalEntityManager
+					.createQueryBuilder()
+					.update(PasswordResetToken)
+					.set(<PasswordResetToken>{ token: null, expiresAt: null })
+					.where('id = :tokenId', { tokenId })
+					.execute();
+
+				return await transactionalEntityManager
+					.createQueryBuilder()
+					.select('user')
+					.from(User, 'user')
+					.where('user.id = :userId', { userId })
 					.getOne();
 			},
 		);

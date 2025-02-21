@@ -18,6 +18,14 @@ export interface IUsersService {
 	getByEmailOrNickname(email: string, nickname: string): Promise<UserDto | null>;
 
 	/**
+	 * Method for searching user by password reset token
+	 * @param token - password reset token sent with email
+	 * @returns UserDto - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	getByNotExpiredPasswordResetToken(token: string): Promise<UserWithPasswordResetTokenDto | null>;
+
+	/**
 	 * Method for searching user with OTP code by email
 	 * @param email - user email for search
 	 * @returns UserWithOtpCodeDto - if user was found
@@ -55,6 +63,16 @@ export interface IUsersService {
 	 * @returns null - if user wasn't activated
 	 */
 	activateUser(userId: string, otpCodeId: string): Promise<UserWithJwtTokenDto | null>;
+
+	/**
+	 * Method for changing user password
+	 * @param userId - user id
+	 * @param tokenId - password reset token id
+	 * @param password - new password provided by user
+	 * @returns true - if password was updated
+	 * @returns false - if password wasn't updated
+	 */
+	changeUserPassword(userId: string, tokenId: string, password: string): Promise<boolean>;
 
 	// /**
 	//  * Method for searching users by their nicknames

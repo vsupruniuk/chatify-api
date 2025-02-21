@@ -4,6 +4,7 @@ import { Response } from 'express';
 import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation/ActivateAccountResponse.dto';
 import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
 import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
+import { ResetPasswordConfirmationRequestDto } from '@dtos/auth/resetPasswordConfirmation/ResetPasswordConfirmationRequest.dto';
 
 /**
  * Interface representing public methods of auth controller
@@ -39,15 +40,15 @@ export interface IAuthController {
 	 */
 	resetPassword(resetPasswordRequestDto: ResetPasswordRequestDto): Promise<void>;
 
-	// /**
-	//  * Method for resetting user password
-	//  * @param resetPasswordConfirmationDto - new user password with confirmation password
-	//  * @param resetToken - uuid token which user get via email
-	//  */
-	// resetPasswordConfirmation(
-	// 	resetPasswordConfirmationDto: ResetPasswordConfirmationDto,
-	// 	resetToken: string,
-	// ): Promise<void>;
+	/**
+	 * Method for resetting user password
+	 * @param resetPasswordConfirmationRequestDto - new user password with confirmation password
+	 * @param passwordResetToken - uuid token which user get via email
+	 */
+	resetPasswordConfirmation(
+		resetPasswordConfirmationRequestDto: ResetPasswordConfirmationRequestDto,
+		passwordResetToken: string,
+	): Promise<void>;
 	//
 	// /**
 	//  * Method for handling user login

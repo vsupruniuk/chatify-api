@@ -13,7 +13,7 @@ import { IPasswordResetTokensService } from '@services/passwordResetToken/IPassw
 import { AppModule } from '@modules/app.module';
 import { AuthModule } from '@modules/auth.module';
 import { CustomProviders } from '@enums/CustomProviders.enum';
-import { ResetPasswordConfirmationDto } from '../../../types/dto/auth/ResetPasswordConfirmation.dto';
+import { ResetPasswordConfirmationRequestDto } from '@dtos/auth/resetPasswordConfirmation/ResetPasswordConfirmationRequest.dto';
 import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
 import { ResponseStatus } from '@enums/ResponseStatus.enum';
 
@@ -83,7 +83,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 400 status if reset token is not valid UUID', async (): Promise<void> => {
-			const resetPasswordConfirmationDto: ResetPasswordConfirmationDto = {
+			const resetPasswordConfirmationDto: ResetPasswordConfirmationRequestDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
 			};
@@ -97,7 +97,7 @@ describe.skip('AuthController', (): void => {
 		it('should return 400 status if password missed', async (): Promise<void> => {
 			const resetPasswordConfirmationDto = {
 				passwordConfirmation: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
@@ -108,7 +108,7 @@ describe.skip('AuthController', (): void => {
 		it('should return 400 status if passwordConfirmation missed', async (): Promise<void> => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
@@ -120,7 +120,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1AA',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
@@ -144,7 +144,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwertyAA',
 				passwordConfirmation: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
@@ -156,7 +156,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty11',
 				passwordConfirmation: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
@@ -168,7 +168,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwert',
 				passwordConfirmation: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
@@ -180,7 +180,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A'.padStart(256, 'q'),
 				passwordConfirmation: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
@@ -204,7 +204,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwertyAA',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
@@ -216,7 +216,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty11',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
@@ -228,7 +228,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwert',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
@@ -240,7 +240,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A'.padStart(256, 'q'),
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post('/auth/reset-password/1662043c-4d4b-4424-ac31-45189dedd099')
@@ -252,7 +252,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await request(app.getHttpServer())
 				.post(`/auth/reset-password/${notExistingToken}`)
@@ -264,7 +264,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			const responseResult: SuccessfulResponseResult<null> = {
 				code: HttpStatus.OK,
@@ -284,7 +284,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await authController.resetPasswordConfirmation(resetPasswordConfirmationDto, existingToken);
 
@@ -296,7 +296,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			const userId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
 
@@ -312,7 +312,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			await authController.resetPasswordConfirmation(resetPasswordConfirmationDto, existingToken);
 
@@ -324,7 +324,7 @@ describe.skip('AuthController', (): void => {
 			const resetPasswordConfirmationDto = {
 				password: 'qwerty1A',
 				passwordConfirmation: 'qwerty1A',
-			} as ResetPasswordConfirmationDto;
+			} as ResetPasswordConfirmationRequestDto;
 
 			const result: void = await authController.resetPasswordConfirmation(
 				resetPasswordConfirmationDto,

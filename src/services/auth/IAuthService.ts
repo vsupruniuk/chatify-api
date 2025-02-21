@@ -41,6 +41,17 @@ export interface IAuthService {
 	/**
 	 * Method for creating password reset token and sending to user via email
 	 * @param resetPasswordRequestDto - user email to search user
+	 * @throws NotFoundException - if not found user with provided email
+	 * @throws UnprocessableEntityException - if failed to generate password reset token
 	 */
 	resetPassword(resetPasswordRequestDto: ResetPasswordRequestDto): Promise<void>;
+
+	/**
+	 * Method for confirmation and changing user password
+	 * @param password - new user password
+	 * @param token - password reset token sent with email
+	 * @throws NotFoundException - if not found user associated with token
+	 * @throws UnprocessableEntityException - if failed to update password
+	 */
+	confirmResetPassword(password: string, token: string): Promise<void>;
 }
