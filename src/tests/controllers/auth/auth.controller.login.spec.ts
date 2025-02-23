@@ -16,7 +16,7 @@ import { JWTTokenFullDto } from '../../../types/dto/JWTTokens/JWTTokenFull.dto';
 import { IUsersService } from '@services/users/IUsersService';
 import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
 import { IAuthService } from '@services/auth/IAuthService';
-import { LoginDto } from '../../../types/dto/auth/Login.dto';
+import { LoginRequestDto } from '@dtos/auth/login/LoginRequest.dto';
 import { CookiesNames } from '@enums/CookiesNames.enum';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 
@@ -118,7 +118,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 400 status if email is missing', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				password: 'qwerty1A',
 			};
 
@@ -129,7 +129,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 400 status if email in wrong format', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tonymail.com',
 				password: 'qwerty1A',
 			};
@@ -153,7 +153,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 400 status if password is too short', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwe',
 			};
@@ -165,7 +165,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 400 status if password does not contains at least 1 number', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyAA',
 			};
@@ -177,7 +177,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 400 status if password does not contains at least 1 upper case letter', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwerty11',
 			};
@@ -189,7 +189,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 400 status email too long', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com'.padStart(256, 't'),
 				password: 'qwerty1A',
 			};
@@ -201,7 +201,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 400 status password too long', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwerty1A'.padStart(256, 'q'),
 			};
@@ -213,7 +213,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 422 status if user with email does not exist', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'bruce@mail.com',
 				password: 'qwerty1A',
 			};
@@ -225,7 +225,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 422 status if password is wrong', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwerty1A',
 			};
@@ -237,7 +237,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should return 200 status if password is correct and email exist', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyA1',
 			};
@@ -246,7 +246,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should set refresh token to cookies', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyA1',
 			};
@@ -259,7 +259,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should call cookie method to set refreshToken to cookie', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyA1',
 			};
@@ -278,7 +278,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should call getFullUserByEmail in usersService to find user', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyA1',
 			};
@@ -290,7 +290,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should call validatePassword in authService to check if user password valid or not', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyA1',
 			};
@@ -305,7 +305,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should call generateAccessToken in jwtTokensService to generate access token for user', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyA1',
 			};
@@ -325,7 +325,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should call generateRefreshToken in jwtTokensService to generate refresh token for user', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyA1',
 			};
@@ -345,7 +345,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should call saveRefreshToken in jwtTokensService to save user refresh token to DB', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyA1',
 			};
@@ -365,7 +365,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should call getById method in JWT tokens service to get created user token', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyA1',
 			};
@@ -379,7 +379,7 @@ describe.skip('AuthController', (): void => {
 		});
 
 		it('should call updateUser in usersService to update user JWT token id', async (): Promise<void> => {
-			const loginDto = <LoginDto>{
+			const loginDto = <LoginRequestDto>{
 				email: 'tony@mail.com',
 				password: 'qwertyA1',
 			};

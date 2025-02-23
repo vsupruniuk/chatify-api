@@ -39,6 +39,14 @@ export interface IUsersRepository {
 	findByEmailWithPasswordResetToken(email: string): Promise<User | null>;
 
 	/**
+	 * Method for searching user with password reset token by email
+	 * @param email - user email for search
+	 * @returns UserWithPasswordResetTokenDto - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	findFullUserWithJwtTokenByEmail(email: string): Promise<User | null>;
+
+	/**
 	 * Method for creating a new user with OTP code record, JWT token record, password reset token record and default account settings
 	 * @param otpCode - 6-digit number for creating OTP code
 	 * @param otpCodeExpiresAt - expiration date for creating OTP code

@@ -3,6 +3,8 @@ import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/Activate
 import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
 import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
 import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
+import { LoginRequestDto } from '@dtos/auth/login/LoginRequest.dto';
+import { LoginDto } from '@dtos/auth/login/Login.dto';
 
 /**
  * Interface representing public methods of auth service
@@ -54,4 +56,11 @@ export interface IAuthService {
 	 * @throws UnprocessableEntityException - if failed to update password
 	 */
 	confirmResetPassword(password: string, token: string): Promise<void>;
+
+	/**
+	 * Method for handling user login
+	 * @param loginRequestDto - user email and password
+	 * @returns LoginDto - access and refresh tokens
+	 */
+	login(loginRequestDto: LoginRequestDto): Promise<LoginDto>;
 }

@@ -2,6 +2,8 @@ import { ResponseTransformInterceptor } from '@interceptors/responseTransform.in
 import {
 	Body,
 	Controller,
+	HttpCode,
+	HttpStatus,
 	Inject,
 	Param,
 	ParseUUIDPipe,
@@ -23,6 +25,9 @@ import { ResponseHelper } from '@helpers/response.helper';
 import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
 import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
 import { ResetPasswordConfirmationRequestDto } from '@dtos/auth/resetPasswordConfirmation/ResetPasswordConfirmationRequest.dto';
+import { LoginRequestDto } from '@dtos/auth/login/LoginRequest.dto';
+import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
+import { LoginDto } from '@dtos/auth/login/Login.dto';
 
 @Controller('auth')
 @UseInterceptors(ResponseTransformInterceptor)
@@ -77,6 +82,19 @@ export class AuthController implements IAuthController {
 			resetPasswordConfirmationRequestDto.password,
 			passwordResetToken,
 		);
+	}
+
+	@Post('login')
+	@HttpCode(HttpStatus.OK)
+	public async login(
+		@Res({ passthrough: true }) response: Response,
+		@Body() loginRequestDto: LoginRequestDto,
+	): Promise<LoginResponseDto> {
+		const loginDto: LoginDto = await this._authService.login(loginRequestDto);
+
+		ResponseHelper.setRefreshTokenCookie(response, loginDto.refreshToken);
+
+		return { accessToken: loginDto.accessToken };
 	}
 
 	// // TODO check if needed

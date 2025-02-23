@@ -9,6 +9,7 @@ import { User } from '@entities/User.entity';
 import { UserWithOtpCodeDto } from '@dtos/users/UserWithOtpCodeDto';
 import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
 import { UserWithPasswordResetTokenDto } from '@dtos/users/UserWithPasswordResetTokenDto';
+import { FullUserWithJwtTokenDto } from '@dtos/users/FullUserWithJwtTokenDto';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -46,6 +47,14 @@ export class UsersService implements IUsersService {
 		const user: User | null = await this._usersRepository.findByEmailWithPasswordResetToken(email);
 
 		return TransformHelper.toTargetDto(UserWithPasswordResetTokenDto, user);
+	}
+
+	public async getFullUserWithJwtTokenByEmail(
+		email: string,
+	): Promise<FullUserWithJwtTokenDto | null> {
+		const user: User | null = await this._usersRepository.findFullUserWithJwtTokenByEmail(email);
+
+		return TransformHelper.toTargetDto(FullUserWithJwtTokenDto, user);
 	}
 
 	public async createUser(

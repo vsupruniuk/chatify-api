@@ -59,6 +59,16 @@ export class UsersRepository implements IUsersRepository {
 			.getOne();
 	}
 
+	public async findFullUserWithJwtTokenByEmail(email: string): Promise<User | null> {
+		return this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.leftJoinAndSelect('user.jwtToken', 'jwtToken')
+			.where('user.email = :email', { email })
+			.getOne();
+	}
+
 	public async createUser(
 		otpCode: number,
 		otpCodeExpiresAt: string,
@@ -150,7 +160,6 @@ export class UsersRepository implements IUsersRepository {
 		tokenId: string,
 		password: string,
 	): Promise<User | null> {
-		console.log(tokenId);
 		return await this._dataSource.transaction(
 			async (transactionalEntityManager: EntityManager): Promise<User | null> => {
 				await transactionalEntityManager

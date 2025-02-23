@@ -5,6 +5,8 @@ import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation/Activat
 import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
 import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
 import { ResetPasswordConfirmationRequestDto } from '@dtos/auth/resetPasswordConfirmation/ResetPasswordConfirmationRequest.dto';
+import { LoginRequestDto } from '@dtos/auth/login/LoginRequest.dto';
+import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
 
 /**
  * Interface representing public methods of auth controller
@@ -49,15 +51,15 @@ export interface IAuthController {
 		resetPasswordConfirmationRequestDto: ResetPasswordConfirmationRequestDto,
 		passwordResetToken: string,
 	): Promise<void>;
-	//
-	// /**
-	//  * Method for handling user login
-	//  * @param response - client response object
-	//  * @param loginDto - user email end password
-	//  * @returns LoginResponseDto - access token for login
-	//  */
-	// login(response: Response, loginDto: LoginDto): Promise<LoginResponseDto[]>;
-	//
+
+	/**
+	 * Method for handling user login
+	 * @param response - client response object
+	 * @param loginRequestDto - user email end password
+	 * @returns LoginResponseDto - access token for login
+	 */
+	login(response: Response, loginRequestDto: LoginRequestDto): Promise<LoginResponseDto>;
+
 	// /**
 	//  * Method for handling log out
 	//  * @param response - client response object

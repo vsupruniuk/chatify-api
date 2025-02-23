@@ -19,7 +19,7 @@ import { AuthModule } from '@modules/auth.module';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { CookiesNames } from '@enums/CookiesNames.enum';
 import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
-import { LoginResponseDto } from '../../../types/dto/auth/LoginResponse.dto';
+import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
 import { ResponseStatus } from '@enums/ResponseStatus.enum';
 
 describe.skip('AuthController', (): void => {

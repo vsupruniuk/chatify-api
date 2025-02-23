@@ -26,6 +26,10 @@ import { IOTPCodesService } from '@services/otpCode/IOTPCodesService';
 import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
 import { UserWithPasswordResetTokenDto } from '@dtos/users/UserWithPasswordResetTokenDto';
 import { IPasswordResetTokensService } from '@services/passwordResetToken/IPasswordResetTokensService';
+import { LoginRequestDto } from '@dtos/auth/login/LoginRequest.dto';
+import { LoginDto } from '@dtos/auth/login/Login.dto';
+import { PasswordHelper } from '@helpers/password.helper';
+import { FullUserWithJwtTokenDto } from '@dtos/users/FullUserWithJwtTokenDto';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -104,15 +108,7 @@ export class AuthService implements IAuthService {
 			throw new UnprocessableEntityException('Failed to activate user, please try again');
 		}
 
-		const accessToken: string = await this._jwtTokensService.generateAccessToken(
-			TransformHelper.toJwtTokenPayload(activatedUser),
-		);
-
-		const refreshToken: string = await this._jwtTokensService.generateRefreshToken(
-			TransformHelper.toJwtTokenPayload(activatedUser),
-		);
-
-		await this._jwtTokensService.saveRefreshToken(activatedUser.jwtToken.id, refreshToken);
+		const { accessToken, refreshToken } = await this._proceedLogin(activatedUser);
 
 		return TransformHelper.toTargetDto(ActivateAccountDto, <ActivateAccountDto>{
 			accessToken,
@@ -183,5 +179,43 @@ export class AuthService implements IAuthService {
 		if (!isPasswordUpdated) {
 			throw new UnprocessableEntityException('Failed to reset password, please try again');
 		}
+	}
+
+	public async login(loginRequestDto: LoginRequestDto): Promise<LoginDto> {
+		const user: FullUserWithJwtTokenDto | null =
+			await this._usersService.getFullUserWithJwtTokenByEmail(loginRequestDto.email);
+
+		if (!user) {
+			throw new NotFoundException('User with this email does not exist|email');
+		}
+
+		const isPasswordValid: boolean = await PasswordHelper.validatePassword(
+			loginRequestDto.password,
+			user.password,
+		);
+
+		if (!isPasswordValid) {
+			throw new BadRequestException('Invalid password|password');
+		}
+
+		const { accessToken, refreshToken } = await this._proceedLogin(user);
+
+		return TransformHelper.toTargetDto(LoginDto, <LoginDto>{ accessToken, refreshToken });
+	}
+
+	private async _proceedLogin<T extends UserWithJwtTokenDto>(
+		user: T,
+	): Promise<{ accessToken: string; refreshToken: string }> {
+		const accessToken: string = await this._jwtTokensService.generateAccessToken(
+			TransformHelper.toJwtTokenPayload(user),
+		);
+
+		const refreshToken: string = await this._jwtTokensService.generateRefreshToken(
+			TransformHelper.toJwtTokenPayload(user),
+		);
+
+		await this._jwtTokensService.saveRefreshToken(user.jwtToken.id, refreshToken);
+
+		return { accessToken, refreshToken };
 	}
 }
