@@ -9,6 +9,13 @@ export interface IJWTTokensRepository {
 	 */
 	updateToken(id: string, token: string): Promise<JWTToken>;
 
+	/**
+	 * Reset user JWT token by user id
+	 * @param userId - user id
+	 * @returns JWTToken - JWT token that was reset
+	 */
+	resetTokenByUserId(userId: string): Promise<JWTToken>;
+
 	// /**
 	//  * Method for searching JWT token by id
 	//  * @param id - token id

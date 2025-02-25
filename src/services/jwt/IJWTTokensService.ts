@@ -22,22 +22,30 @@ export interface IJWTTokensService {
 	 */
 	saveRefreshToken(id: string, token: string): Promise<void>;
 
-	// /**
-	//  * Verify if JWT access token valid or not
-	//  * @param token - JWT access token
-	//  * @returns JWTPayloadDto - user data if JWT access token valid
-	//  * @returns null - if JWT access token invalid
-	//  */
-	// verifyAccessToken(token: string): Promise<JWTPayloadDto | null>;
-	//
-	// /**
-	//  * Verify if JWT refresh token valid or not
-	//  * @param token - JWT refresh token
-	//  * @returns JWTPayloadDto - user data if JWT refresh token valid
-	//  * @returns null - if JWT refresh token invalid
-	//  */
-	// verifyRefreshToken(token: string): Promise<JWTPayloadDto | null>;
-	//
+	/**
+	 * Verify if JWT access token valid or not
+	 * @param token - JWT access token
+	 * @returns JWTPayloadDto - user data if JWT access token valid
+	 * @returns null - if JWT access token invalid
+	 */
+	verifyAccessToken(token: string): Promise<JWTPayloadDto | null>;
+
+	/**
+	 * Verify if JWT refresh token valid or not
+	 * @param token - JWT refresh token
+	 * @returns JWTPayloadDto - user data if JWT refresh token valid
+	 * @returns null - if JWT refresh token invalid
+	 */
+	verifyRefreshToken(token: string): Promise<JWTPayloadDto | null>;
+
+	/**
+	 * Method for resetting user JWT token
+	 * @param userId - user id
+	 * @returns true - if token was set to null
+	 * @returns false if token wasn't set to null
+	 */
+	resetUserToken(userId: string): Promise<boolean>;
+
 	// /**
 	//  * Get user JWT refresh token by id
 	//  * @param id - token id

@@ -30,6 +30,7 @@ import { LoginRequestDto } from '@dtos/auth/login/LoginRequest.dto';
 import { LoginDto } from '@dtos/auth/login/Login.dto';
 import { PasswordHelper } from '@helpers/password.helper';
 import { FullUserWithJwtTokenDto } from '@dtos/users/FullUserWithJwtTokenDto';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -201,6 +202,19 @@ export class AuthService implements IAuthService {
 		const { accessToken, refreshToken } = await this._proceedLogin(user);
 
 		return TransformHelper.toTargetDto(LoginDto, <LoginDto>{ accessToken, refreshToken });
+	}
+
+	public async logout(refreshToken: string): Promise<void> {
+		const userPayload: JWTPayloadDto | null =
+			await this._jwtTokensService.verifyRefreshToken(refreshToken);
+
+		if (userPayload) {
+			const isReset: boolean = await this._jwtTokensService.resetUserToken(userPayload.id);
+
+			if (!isReset) {
+				throw new UnprocessableEntityException('Failed to logout, please try again');
+			}
+		}
 	}
 
 	private async _proceedLogin<T extends UserWithJwtTokenDto>(

@@ -63,4 +63,10 @@ export interface IAuthService {
 	 * @returns LoginDto - access and refresh tokens
 	 */
 	login(loginRequestDto: LoginRequestDto): Promise<LoginDto>;
+
+	/**
+	 * Method for handling user log out
+	 * @param refreshToken - user refresh token from cookies
+	 */
+	logout(refreshToken: string): Promise<void>;
 }

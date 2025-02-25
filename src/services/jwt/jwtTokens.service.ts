@@ -4,6 +4,7 @@ import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { Inject } from '@nestjs/common';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { IJWTTokensRepository } from '@repositories/jwt/IJWTTokensRepository';
+import { JWTToken } from '@entities/JWTToken.entity';
 
 export class JwtTokensService implements IJWTTokensService {
 	constructor(
@@ -31,27 +32,32 @@ export class JwtTokensService implements IJWTTokensService {
 		await this._jwtTokensRepository.updateToken(id, token);
 	}
 
-	// public async verifyAccessToken(token: string): Promise<JWTPayloadDto | null> {
-	// 	try {
-	// 		return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
-	// 			secret: process.env.JWT_ACCESS_TOKEN_SECRET,
-	// 		});
-	// 	} catch (err) {
-	// 		return null;
-	// 	}
-	// }
-	//
-	// // TODO check if needed
-	// public async verifyRefreshToken(token: string): Promise<JWTPayloadDto | null> {
-	// 	try {
-	// 		return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
-	// 			secret: process.env.JWT_REFRESH_TOKEN_SECRET,
-	// 		});
-	// 	} catch (err) {
-	// 		return null;
-	// 	}
-	// }
-	//
+	public async verifyAccessToken(token: string): Promise<JWTPayloadDto | null> {
+		try {
+			return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
+				secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+			});
+		} catch (err) {
+			return null;
+		}
+	}
+
+	public async verifyRefreshToken(token: string): Promise<JWTPayloadDto | null> {
+		try {
+			return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
+				secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+			});
+		} catch (err) {
+			return null;
+		}
+	}
+
+	public async resetUserToken(userId: string): Promise<boolean> {
+		const updatedToken: JWTToken = await this._jwtTokensRepository.resetTokenByUserId(userId);
+
+		return updatedToken.token === null;
+	}
+
 	// // TODO check if needed
 	// public async getById(id: string): Promise<JWTTokenFullDto | null> {
 	// 	const token: JWTToken | null = await this._jwtTokensRepository.getById(id);

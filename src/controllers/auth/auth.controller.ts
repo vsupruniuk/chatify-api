@@ -28,6 +28,8 @@ import { ResetPasswordConfirmationRequestDto } from '@dtos/auth/resetPasswordCon
 import { LoginRequestDto } from '@dtos/auth/login/LoginRequest.dto';
 import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
 import { LoginDto } from '@dtos/auth/login/Login.dto';
+import { Cookie } from '@decorators/data/Cookie.decorator';
+import { CookiesNames } from '@enums/CookiesNames.enum';
 
 @Controller('auth')
 @UseInterceptors(ResponseTransformInterceptor)
@@ -97,101 +99,18 @@ export class AuthController implements IAuthController {
 		return { accessToken: loginDto.accessToken };
 	}
 
-	// // TODO check if needed
-	// @Post('login')
-	// @HttpCode(HttpStatus.OK)
-	// @UseInterceptors(TransformInterceptor)
-	// public async login(
-	// 	@Res({ passthrough: true }) response: Response,
-	// 	@Body() loginDto: LoginDto,
-	// ): Promise<LoginResponseDto[]> {
-	// 	const user: UserFullDto | null = await this._usersService.getFullUserByEmail(loginDto.email);
-	//
-	// 	if (!user) {
-	// 		throw new UnprocessableEntityException(['Invalid email or password|email']);
-	// 	}
-	//
-	// 	const isPasswordValid: boolean = await this._authService.validatePassword(
-	// 		loginDto.password,
-	// 		user.password,
-	// 	);
-	//
-	// 	if (!isPasswordValid) {
-	// 		throw new UnprocessableEntityException(['Invalid email or password|email']);
-	// 	}
-	//
-	// 	const accessToken: string = await this._jwtTokensService.generateAccessToken(
-	// 		this._createJwtPayload(user),
-	// 	);
-	//
-	// 	const refreshToken: string = await this._jwtTokensService.generateRefreshToken(
-	// 		this._createJwtPayload(user),
-	// 	);
-	//
-	// 	const savedTokenId: string = await this._jwtTokensService.saveRefreshToken(
-	// 		user.JWTToken?.id || null,
-	// 		refreshToken,
-	// 	);
-	//
-	// 	const token: JWTTokenFullDto | null = await this._jwtTokensService.getById(savedTokenId);
-	//
-	// 	if (!token) {
-	// 		throw new UnprocessableEntityException(['Failed to login. Please try again']);
-	// 	}
-	//
-	// 	const isTokenIdUpdated: boolean = await this._usersService.updateUser(user.id, {
-	// 		JWTToken: token as JWTToken,
-	// 	});
-	//
-	// 	if (!isTokenIdUpdated) {
-	// 		throw new UnprocessableEntityException(['Failed to login. Please try again']);
-	// 	}
-	//
-	// 	response.cookie(CookiesNames.REFRESH_TOKEN, refreshToken, {
-	// 		maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000,
-	// 		secure: true,
-	// 		sameSite: 'strict',
-	// 		httpOnly: true,
-	// 	});
-	//
-	// 	return [{ accessToken }];
-	// }
-	//
-	// // TODO check if needed
-	// @Post('logout')
-	// @HttpCode(HttpStatus.NO_CONTENT)
-	// public async logout(
-	// 	@Res({ passthrough: true }) response: Response,
-	// 	@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
-	// ): Promise<void> {
-	// 	const userData: JWTPayloadDto | null =
-	// 		await this._jwtTokensService.verifyRefreshToken(refreshToken);
-	//
-	// 	if (userData) {
-	// 		const fullUserData: UserFullDto | null = await this._usersService.getFullUserByEmail(
-	// 			userData.email,
-	// 		);
-	//
-	// 		if (!fullUserData || !fullUserData.JWTToken) {
-	// 			throw new UnprocessableEntityException(['Failed to log out. Please try again']);
-	// 		}
-	//
-	// 		const isCookieDeleted: boolean = await this._jwtTokensService.deleteToken(
-	// 			fullUserData.JWTToken.id,
-	// 		);
-	//
-	// 		const isUserUpdated: boolean = await this._usersService.updateUser(userData.id, {
-	// 			JWTToken: null,
-	// 		});
-	//
-	// 		if (!isCookieDeleted || !isUserUpdated) {
-	// 			throw new UnprocessableEntityException(['Failed to log out. Please try again']);
-	// 		}
-	// 	}
-	//
-	// 	response.clearCookie(CookiesNames.REFRESH_TOKEN);
-	// }
-	//
+	@Patch('logout')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	public async logout(
+		@Res({ passthrough: true }) response: Response,
+
+		@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
+	): Promise<void> {
+		await this._authService.logout(refreshToken);
+
+		response.clearCookie(CookiesNames.REFRESH_TOKEN);
+	}
+
 	// // TODO check if needed
 	// @Post('refresh')
 	// @HttpCode(HttpStatus.OK)

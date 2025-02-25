@@ -60,13 +60,13 @@ export interface IAuthController {
 	 */
 	login(response: Response, loginRequestDto: LoginRequestDto): Promise<LoginResponseDto>;
 
-	// /**
-	//  * Method for handling log out
-	//  * @param response - client response object
-	//  * @param refreshToken - user refresh token from cookie
-	//  */
-	// logout(response: Response, refreshToken: string): Promise<void>;
-	//
+	/**
+	 * Method for handling log out
+	 * @param response - client response object
+	 * @param refreshToken - user refresh token from cookie
+	 */
+	logout(response: Response, refreshToken: string): Promise<void>;
+
 	// /**
 	//  * Method for refreshing access and refresh tokens of authorized user
 	//  * @param response - client response object
