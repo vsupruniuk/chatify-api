@@ -61,12 +61,22 @@ export interface IAuthService {
 	 * Method for handling user login
 	 * @param loginRequestDto - user email and password
 	 * @returns LoginDto - access and refresh tokens
+	 * @throws NotFoundException - if user with provided login does not exist
+	 * @throws BadRequestException - if password is not valid
 	 */
 	login(loginRequestDto: LoginRequestDto): Promise<LoginDto>;
 
 	/**
 	 * Method for handling user log out
 	 * @param refreshToken - user refresh token from cookies
+	 * @throws UnprocessableEntityException - if failed to log out
 	 */
 	logout(refreshToken: string): Promise<void>;
+
+	/**
+	 * Method for handling refresh flow
+	 * @param userRefreshToken - user refresh token
+	 * @throws UnauthorizedException - if refresh token
+	 */
+	refresh(userRefreshToken: string): Promise<LoginDto>;
 }

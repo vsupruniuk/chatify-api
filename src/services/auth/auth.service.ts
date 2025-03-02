@@ -4,6 +4,7 @@ import {
 	Inject,
 	Injectable,
 	NotFoundException,
+	UnauthorizedException,
 	UnprocessableEntityException,
 } from '@nestjs/common';
 import { IAuthService } from '@services/auth/IAuthService';
@@ -215,6 +216,26 @@ export class AuthService implements IAuthService {
 				throw new UnprocessableEntityException('Failed to logout, please try again');
 			}
 		}
+	}
+
+	public async refresh(userRefreshToken: string): Promise<LoginDto> {
+		const userPayload: JWTPayloadDto | null =
+			await this._jwtTokensService.verifyRefreshToken(userRefreshToken);
+
+		if (!userPayload) {
+			throw new UnauthorizedException('Please, login to perform this action');
+		}
+
+		const user: FullUserWithJwtTokenDto | null =
+			await this._usersService.getFullUserWithJwtTokenByEmail(userPayload.email);
+
+		if (!user) {
+			throw new UnauthorizedException('Please, login to perform this action');
+		}
+
+		const { accessToken, refreshToken } = await this._proceedLogin(user);
+
+		return TransformHelper.toTargetDto(LoginDto, <LoginDto>{ accessToken, refreshToken });
 	}
 
 	private async _proceedLogin<T extends UserWithJwtTokenDto>(

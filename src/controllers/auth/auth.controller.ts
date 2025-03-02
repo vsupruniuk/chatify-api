@@ -111,59 +111,16 @@ export class AuthController implements IAuthController {
 		response.clearCookie(CookiesNames.REFRESH_TOKEN);
 	}
 
-	// // TODO check if needed
-	// @Post('refresh')
-	// @HttpCode(HttpStatus.OK)
-	// public async refresh(
-	// 	@Res({ passthrough: true }) response: Response,
-	// 	@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
-	// ): Promise<LoginResponseDto[]> {
-	// 	const userData: JWTPayloadDto | null =
-	// 		await this._jwtTokensService.verifyRefreshToken(refreshToken);
-	//
-	// 	if (!userData) {
-	// 		throw new UnauthorizedException(['Please, login to perform this action']);
-	// 	}
-	//
-	// 	const user: UserFullDto | null = await this._usersService.getFullUserByEmail(userData.email);
-	//
-	// 	if (!user || !user.JWTToken) {
-	// 		throw new UnauthorizedException(['Please, login to perform this action']);
-	// 	}
-	//
-	// 	const token: JWTTokenFullDto | null = await this._jwtTokensService.getById(user.JWTToken.id);
-	//
-	// 	if (!token) {
-	// 		throw new UnauthorizedException(['Please, login to perform this action']);
-	// 	}
-	//
-	// 	const newAccessToken: string = await this._jwtTokensService.generateAccessToken(
-	// 		this._createJwtPayload(user),
-	// 	);
-	//
-	// 	const newRefreshToken: string = await this._jwtTokensService.generateRefreshToken(
-	// 		this._createJwtPayload(user),
-	// 	);
-	//
-	// 	await this._jwtTokensService.saveRefreshToken(user.JWTToken.id, newRefreshToken);
-	//
-	// 	response.cookie(CookiesNames.REFRESH_TOKEN, newRefreshToken, {
-	// 		maxAge: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN) * 1000,
-	// 		secure: true,
-	// 		sameSite: 'strict',
-	// 		httpOnly: true,
-	// 	});
-	//
-	// 	return [{ accessToken: newAccessToken }];
-	// }
-	//
-	// private _createJwtPayload(user: UserFullDto): JWTPayloadDto {
-	// 	return {
-	// 		id: user.id,
-	// 		email: user.email,
-	// 		firstName: user.firstName,
-	// 		lastName: user.lastName,
-	// 		nickname: user.nickname,
-	// 	};
-	// }
+	@Patch('refresh')
+	public async refresh(
+		@Res({ passthrough: true }) response: Response,
+
+		@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
+	): Promise<LoginResponseDto> {
+		const loginDto: LoginDto = await this._authService.refresh(refreshToken);
+
+		ResponseHelper.setRefreshTokenCookie(response, loginDto.refreshToken);
+
+		return { accessToken: loginDto.accessToken };
+	}
 }
