@@ -12,8 +12,8 @@ import { UsersService } from '@services/users/users.service';
 import SpyInstance = jest.SpyInstance;
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
-import { TUserGetFields } from '@custom-types/users/TUserGetFields';
-import { AppUserDto } from '../../../types/dto/appUser/appUser.dto';
+import { TUserGetFields } from '@customTypes/types/users/TUserGetFields';
+import { AppUserDto } from '@dtos/appUser/AppUser.dto';
 
 describe.skip('usersService', (): void => {
 	let usersService: IUsersService;

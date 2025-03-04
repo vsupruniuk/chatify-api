@@ -6,7 +6,7 @@ import SpyInstance = jest.SpyInstance;
 import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
 import { PasswordResetTokenInfoDto } from '../../../types/dto/passwordResetTokens/passwordResetTokenInfo.dto';
-import { TPasswordResetTokensGetFields } from '@custom-types/passwordResetTokens/TPasswordResetTokensGetFields';
+import { TPasswordResetTokensGetFields } from '@customTypes/types/passwordResetTokens/TPasswordResetTokensGetFields';
 import { PasswordResetTokensHelper } from '@helpers/passwordResetTokens.helper';
 
 describe.skip('passwordResetTokensService', (): void => {

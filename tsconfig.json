@@ -16,10 +16,11 @@
     "strictNullChecks": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
+    "typeRoots": ["./node_modules/@types", "./src/typesNew"],
     "paths": {
       "@configs/*": ["src/configs/*"],
       "@controllers/*": ["src/controllers/*"],
-      "@custom-types/*": ["src/types/types/*"],
+      "@customTypes/*": ["src/types/*"],
       "@db/*": ["src/db/*"],
       "@decorators/*": ["src/decorators/*"],
       "@dtos/*": ["src/dtos/*"],

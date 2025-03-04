@@ -13,7 +13,7 @@ import { plainToInstance } from 'class-transformer';
 import { users } from '@testMocks/User/users';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { Observable } from 'rxjs';
-import { TUserPayload } from '@custom-types/users/TUserPayload';
+import { TUserPayload } from '@customTypes/types/users/TUserPayload';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@modules/app.module';
 import { SearchModule } from '@modules/search.module';

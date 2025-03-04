@@ -47,6 +47,14 @@ export interface IUsersRepository {
 	findFullUserWithJwtTokenByEmail(email: string): Promise<User | null>;
 
 	/**
+	 * Method for searching user with account setting by id
+	 * @param id - user id to search
+	 * @returns User - if user found
+	 * @returns null - if user not found
+	 */
+	findByIdWithAccountSettings(id: string): Promise<User | null>;
+
+	/**
 	 * Method for creating a new user with OTP code record, JWT token record, password reset token record and default account settings
 	 * @param otpCode - 6-digit number for creating OTP code
 	 * @param otpCodeExpiresAt - expiration date for creating OTP code

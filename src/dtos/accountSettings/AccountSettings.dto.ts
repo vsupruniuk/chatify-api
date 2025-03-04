@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class AccountSettingsFullDto {
+export class AccountSettingsDto {
 	@Expose()
 	public id: string;
 

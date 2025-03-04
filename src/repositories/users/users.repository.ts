@@ -69,6 +69,16 @@ export class UsersRepository implements IUsersRepository {
 			.getOne();
 	}
 
+	public async findByIdWithAccountSettings(id: string): Promise<User | null> {
+		return this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.leftJoinAndSelect('user.accountSettings', 'accountSettings')
+			.where('user.id = :id', { id })
+			.getOne();
+	}
+
 	public async createUser(
 		otpCode: number,
 		otpCodeExpiresAt: string,

@@ -1,5 +1,5 @@
 import { IUsersService } from '@services/users/IUsersService';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UserDto } from '@dtos/users/UserDto';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { IUsersRepository } from '@repositories/users/IUsersRepository';
@@ -10,6 +10,7 @@ import { UserWithOtpCodeDto } from '@dtos/users/UserWithOtpCodeDto';
 import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
 import { UserWithPasswordResetTokenDto } from '@dtos/users/UserWithPasswordResetTokenDto';
 import { FullUserWithJwtTokenDto } from '@dtos/users/FullUserWithJwtTokenDto';
+import { AppUserDto } from '@dtos/appUser/AppUser.dto';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -55,6 +56,16 @@ export class UsersService implements IUsersService {
 		const user: User | null = await this._usersRepository.findFullUserWithJwtTokenByEmail(email);
 
 		return TransformHelper.toTargetDto(FullUserWithJwtTokenDto, user);
+	}
+
+	public async getAppUser(id: string): Promise<AppUserDto> {
+		const user: User | null = await this._usersRepository.findByIdWithAccountSettings(id);
+
+		if (!user) {
+			throw new NotFoundException('This user does not exist');
+		}
+
+		return TransformHelper.toTargetDto(AppUserDto, user);
 	}
 
 	public async createUser(

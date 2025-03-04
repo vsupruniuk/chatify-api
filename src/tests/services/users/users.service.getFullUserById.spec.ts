@@ -12,7 +12,7 @@ import { PasswordResetTokensRepository } from '@repositories/passwordResetToken/
 import { UsersService } from '@services/users/users.service';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
-import { TUserGetFields } from '@custom-types/users/TUserGetFields';
+import { TUserGetFields } from '@customTypes/types/users/TUserGetFields';
 import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
 
 describe.skip('usersService', (): void => {

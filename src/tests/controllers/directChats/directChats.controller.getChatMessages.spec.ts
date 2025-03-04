@@ -22,7 +22,7 @@ import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMes
 import { directChats } from '@testMocks/DirectChat/directChats';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
-import { TUserPayload } from '@custom-types/users/TUserPayload';
+import { TUserPayload } from '@customTypes/types/users/TUserPayload';
 import { AppModule } from '@modules/app.module';
 import { DirectChatsModule } from '@modules/directChats.module';
 import { CustomProviders } from '@enums/CustomProviders.enum';

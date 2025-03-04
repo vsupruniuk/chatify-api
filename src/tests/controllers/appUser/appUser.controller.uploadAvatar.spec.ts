@@ -10,7 +10,7 @@ import { plainToInstance } from 'class-transformer';
 import { Observable } from 'rxjs';
 import * as request from 'supertest';
 import SpyInstance = jest.SpyInstance;
-import { AppUserController } from '@controllers/appUser.controller';
+import { AppUserController } from '@controllers/appUser/appUser.controller';
 import { User } from '@db/entities/User.entity';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { users } from '@testMocks/User/users';

@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { AccountSettingsFullDto } from '../accountSettings/accountSettingsFull.dto';
+import { AccountSettingsDto } from '@dtos/accountSettings/AccountSettings.dto';
 
 export class AppUserDto {
 	@Expose()
@@ -21,6 +21,6 @@ export class AppUserDto {
 	public nickname: string;
 
 	@Expose()
-	@Type(() => AccountSettingsFullDto)
-	public accountSettings: AccountSettingsFullDto;
+	@Type(() => AccountSettingsDto)
+	public accountSettings: AccountSettingsDto;
 }

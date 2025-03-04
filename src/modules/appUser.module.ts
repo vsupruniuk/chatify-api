@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { AppUserController } from '@controllers/appUser/appUser.controller';
 import providers from '@modules/providers/providers';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-	controllers: [
-		// AppUserController
-	],
+	controllers: [AppUserController],
 	providers: [
 		JwtService,
 
@@ -14,13 +13,6 @@ import providers from '@modules/providers/providers';
 
 		providers.CTF_USERS_SERVICE,
 		providers.CTF_USERS_REPOSITORY,
-
-		providers.CTF_ACCOUNT_SETTINGS_SERVICE,
-		providers.CTF_ACCOUNT_SETTINGS_REPOSITORY,
-
-		providers.CTF_OTP_CODES_REPOSITORY,
-
-		providers.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 	],
 })
 export class AppUserModule {}

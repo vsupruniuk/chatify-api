@@ -4,6 +4,7 @@ import { UserWithOtpCodeDto } from '@dtos/users/UserWithOtpCodeDto';
 import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
 import { UserWithPasswordResetTokenDto } from '@dtos/users/UserWithPasswordResetTokenDto';
 import { FullUserWithJwtTokenDto } from '@dtos/users/FullUserWithJwtTokenDto';
+import { AppUserDto } from '@dtos/appUser/AppUser.dto';
 
 /**
  * Interface representing public methods of users service
@@ -49,6 +50,14 @@ export interface IUsersService {
 	 * @returns null - if user wasn't found
 	 */
 	getFullUserWithJwtTokenByEmail(email: string): Promise<FullUserWithJwtTokenDto | null>;
+
+	/**
+	 * Retrieving current logged-in user
+	 * @param id - user id from access token
+	 * @returns AppUserDto - current logged-in user information
+	 * @throws NotFoundException - if user not found
+	 */
+	getAppUser(id: string): Promise<AppUserDto>;
 
 	/**
 	 * Method for creating user from signup data with some default settings

@@ -14,8 +14,8 @@ import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
-import { TPasswordResetTokensGetFields } from '@custom-types/passwordResetTokens/TPasswordResetTokensGetFields';
-import { TUserGetFields } from '@custom-types/users/TUserGetFields';
+import { TPasswordResetTokensGetFields } from '@customTypes/types/passwordResetTokens/TPasswordResetTokensGetFields';
+import { TUserGetFields } from '@customTypes/types/users/TUserGetFields';
 import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
 
 describe.skip('UsersService', (): void => {

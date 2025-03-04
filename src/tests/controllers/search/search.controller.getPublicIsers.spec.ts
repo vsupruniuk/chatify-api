@@ -1,4 +1,4 @@
-import { TUserPayload } from '@custom-types/users/TUserPayload';
+import { TUserPayload } from '@customTypes/types/users/TUserPayload';
 import { Headers } from '@enums/Headers.enum';
 import {
 	CallHandler,
@@ -14,7 +14,6 @@ import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import * as request from 'supertest';
-import { SearchController } from '@controllers/search.controller';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';

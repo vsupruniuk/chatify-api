@@ -1,5 +1,5 @@
 import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { AccountSettingsFullDto } from '../accountSettings/accountSettingsFull.dto';
+import { AccountSettingsDto } from '@dtos/accountSettings/AccountSettings.dto';
 import { OTPCodeResponseDto } from '../OTPCodes/OTPCodeResponse.dto';
 
 /**
@@ -9,7 +9,7 @@ export class CreateUserDto extends (SignupRequestDto as new () => Omit<
 	SignupRequestDto,
 	'passwordConfirmation'
 >) {
-	public accountSettings: AccountSettingsFullDto;
+	public accountSettings: AccountSettingsDto;
 
 	public OTPCode: OTPCodeResponseDto;
 }

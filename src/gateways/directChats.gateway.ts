@@ -13,7 +13,7 @@ import { wsExceptionFilter } from '@filters/wsException.filter';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { IDirectChatsService } from '@interfaces/directChats/IDirectChatsService';
 import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
-import { TUserPayload } from '@custom-types/users/TUserPayload';
+import { TUserPayload } from '@customTypes/types/users/TUserPayload';
 
 @UsePipes(
 	new ValidationPipe({

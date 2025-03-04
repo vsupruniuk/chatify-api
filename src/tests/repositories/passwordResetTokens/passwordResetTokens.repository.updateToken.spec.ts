@@ -1,6 +1,6 @@
 import { PasswordResetTokensRepository } from '@repositories/passwordResetToken/passwordResetTokens.repository';
 import { DataSource, UpdateResult } from 'typeorm';
-import { TUpdatePasswordResetToken } from '@custom-types/passwordResetTokens/TUpdatePasswordResetToken';
+import { TUpdatePasswordResetToken } from '@customTypes/types/passwordResetTokens/TUpdatePasswordResetToken';
 import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 
 describe.skip('passwordResetTokensRepository', (): void => {

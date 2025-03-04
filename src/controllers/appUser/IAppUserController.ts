@@ -1,11 +1,14 @@
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+import { AppUserDto } from '@dtos/appUser/AppUser.dto';
+
 export interface IAppUserController {
-	// /**
-	//  * Returns information about current logged-in user
-	//  * @param appUserPayload - user data from access token
-	//  * @returns AppUserDto - current user information
-	//  */
-	// getUser(appUserPayload: JWTPayloadDto): Promise<AppUserDto>;
-	//
+	/**
+	 * Returns information about current logged-in user
+	 * @param appUserPayload - user payload from JWT token
+	 * @returns AppUserDto - information about current logged in user
+	 */
+	getAppUser(appUserPayload: JWTPayloadDto): Promise<AppUserDto>;
+
 	// /**
 	//  * Update user public information
 	//  * @param appUserPayload - user data from access token

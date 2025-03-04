@@ -19,7 +19,7 @@ import { users } from '@testMocks/User/users';
 import { directChats } from '@testMocks/DirectChat/directChats';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
-import { TUserPayload } from '@custom-types/users/TUserPayload';
+import { TUserPayload } from '@customTypes/types/users/TUserPayload';
 import { IDirectChatsService } from '@interfaces/directChats/IDirectChatsService';
 import { DirectChatShortDto } from '../../../types/dto/directChat/DirectChatShort.dto';
 import { AppModule } from '@modules/app.module';
