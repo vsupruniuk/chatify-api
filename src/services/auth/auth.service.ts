@@ -238,9 +238,7 @@ export class AuthService implements IAuthService {
 		return TransformHelper.toTargetDto(LoginDto, <LoginDto>{ accessToken, refreshToken });
 	}
 
-	private async _proceedLogin<T extends UserWithJwtTokenDto>(
-		user: T,
-	): Promise<{ accessToken: string; refreshToken: string }> {
+	private async _proceedLogin<T extends UserWithJwtTokenDto>(user: T): Promise<LoginDto> {
 		const accessToken: string = await this._jwtTokensService.generateAccessToken(
 			TransformHelper.toJwtTokenPayload(user),
 		);

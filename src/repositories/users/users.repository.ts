@@ -7,6 +7,7 @@ import { AccountSettings } from '@entities/AccountSettings.entity';
 import { JWTToken } from '@entities/JWTToken.entity';
 import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 import { OTPCode } from '@entities/OTPCode.entity';
+import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
 
 @Injectable()
 export class UsersRepository implements IUsersRepository {
@@ -18,6 +19,15 @@ export class UsersRepository implements IUsersRepository {
 			.from(User, 'user')
 			.where('user.email = :email', { email })
 			.orWhere('user.nickname = :nickname', { nickname })
+			.getOne();
+	}
+
+	public async findByNickname(nickname: string): Promise<User | null> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.where('user.nickname = :nickname', { nickname })
 			.getOne();
 	}
 
@@ -191,6 +201,30 @@ export class UsersRepository implements IUsersRepository {
 					.select('user')
 					.from(User, 'user')
 					.where('user.id = :userId', { userId })
+					.getOne();
+			},
+		);
+	}
+
+	public async updateAppUser(
+		id: string,
+		updateAppUserDto: UpdateAppUserRequestDto,
+	): Promise<User | null> {
+		return await this._dataSource.transaction(
+			async (transactionalEntityManager: EntityManager): Promise<User | null> => {
+				await transactionalEntityManager
+					.createQueryBuilder()
+					.update(User)
+					.set(updateAppUserDto)
+					.where('id = :id', { id })
+					.execute();
+
+				return await transactionalEntityManager
+					.createQueryBuilder()
+					.select('user')
+					.from(User, 'user')
+					.leftJoinAndSelect('user.accountSettings', 'accountSettings')
+					.where('user.id = :id', { id })
 					.getOne();
 			},
 		);

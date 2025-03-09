@@ -18,6 +18,7 @@ import {
 	otpCodesServiceProvider,
 	otpCodesRepositoryProvider,
 	directChatMessagesProvider,
+	appUserServiceProvider,
 } from '@modules/providers';
 
 const providers: Record<CustomProviders, Provider> = {
@@ -46,6 +47,7 @@ const providers: Record<CustomProviders, Provider> = {
 	[CustomProviders.CTF_PASSWORD_RESET_TOKENS_SERVICE]: passwordResetTokensServiceProvider,
 	[CustomProviders.CTF_PASSWORD_RESET_TOKENS_REPOSITORY]: passwordResetTokensRepositoryProvider,
 
+	[CustomProviders.CTF_APP_USER_SERVICE]: appUserServiceProvider,
 	[CustomProviders.CTF_USERS_SERVICE]: usersServiceProvider,
 	[CustomProviders.CTF_USERS_REPOSITORY]: usersRepositoryProvider,
 };

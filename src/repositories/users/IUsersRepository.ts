@@ -1,5 +1,6 @@
 import { User } from '@entities/User.entity';
 import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
+import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
 
 /**
  * Interface representing public methods of users repository
@@ -13,6 +14,14 @@ export interface IUsersRepository {
 	 * @returns null - if user wasn't found
 	 */
 	findByEmailOrNickname(email: string, nickname: string): Promise<User | null>;
+
+	/**
+	 * Method for searching user by its nickname
+	 * @param nickname - user nickname to search
+	 * @returns User - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	findByNickname(nickname: string): Promise<User | null>;
 
 	/**
 	 * Method for searching user by password reset token
@@ -83,6 +92,15 @@ export interface IUsersRepository {
 	 * @returns User - user with updated password
 	 */
 	updatePassword(userId: string, tokenId: string, password: string): Promise<User | null>;
+
+	/**
+	 * Method for updating user public information
+	 * @param id - user id
+	 * @param updateAppUserDto - user information to update
+	 * @returns User - if user was updated
+	 * @returns null - if user wasn't updated
+	 */
+	updateAppUser(id: string, updateAppUserDto: UpdateAppUserRequestDto): Promise<User | null>;
 
 	// /**
 	//  * Get activated users by nickname

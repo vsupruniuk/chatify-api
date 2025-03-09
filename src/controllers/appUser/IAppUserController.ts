@@ -1,5 +1,6 @@
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { AppUserDto } from '@dtos/appUser/AppUser.dto';
+import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
 
 export interface IAppUserController {
 	/**
@@ -9,12 +10,16 @@ export interface IAppUserController {
 	 */
 	getAppUser(appUserPayload: JWTPayloadDto): Promise<AppUserDto>;
 
-	// /**
-	//  * Update user public information
-	//  * @param appUserPayload - user data from access token
-	//  * @param updateAppUserDto - new information about user
-	//  */
-	// updateUser(appUserPayload: JWTPayloadDto, updateAppUserDto: UpdateAppUserDto): Promise<void>;
+	/**
+	 * Update user public information
+	 * @param appUserPayload - user data from access token
+	 * @param updateAppUserDto - new information about user
+	 * @returns AppUserDto - updated app user
+	 */
+	updateUser(
+		appUserPayload: JWTPayloadDto,
+		updateAppUserDto: UpdateAppUserRequestDto,
+	): Promise<AppUserDto>;
 	//
 	// /**
 	//  * Update user account settings

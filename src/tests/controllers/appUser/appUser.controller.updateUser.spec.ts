@@ -23,7 +23,7 @@ import { UserShortDto } from '../../../types/dto/users/UserShort.dto';
 import { AppModule } from '@modules/app.module';
 import { AuthModule } from '@modules/auth.module';
 import { CustomProviders } from '@enums/CustomProviders.enum';
-import { UpdateAppUserDto } from '../../../types/dto/appUser/UpdateAppUser.dto';
+import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
 
 describe.skip('AppUserController', (): void => {
 	let app: INestApplication;
@@ -156,7 +156,7 @@ describe.skip('AppUserController', (): void => {
 		it('should return 400 status if about present in body, but its too long', async (): Promise<void> => {
 			isAuthorized = true;
 
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				about: 'Iron man'.padEnd(256, 'n'),
 			};
 
@@ -184,7 +184,7 @@ describe.skip('AppUserController', (): void => {
 		it('should return 400 status if firstName present in body, but its too short', async (): Promise<void> => {
 			isAuthorized = true;
 
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				firstName: 'To',
 			};
 
@@ -198,7 +198,7 @@ describe.skip('AppUserController', (): void => {
 		it('should return 400 status if firstName present in body, but its too long', async (): Promise<void> => {
 			isAuthorized = true;
 
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				firstName: 'Tony'.padEnd(256, 'y'),
 			};
 
@@ -226,7 +226,7 @@ describe.skip('AppUserController', (): void => {
 		it('should return 400 status if lastName present in body, but its too short', async (): Promise<void> => {
 			isAuthorized = true;
 
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				lastName: 'St',
 			};
 
@@ -240,7 +240,7 @@ describe.skip('AppUserController', (): void => {
 		it('should return 400 status if lastName present in body, but its too long', async (): Promise<void> => {
 			isAuthorized = true;
 
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				lastName: 'Stark'.padEnd(256, 'k'),
 			};
 
@@ -268,7 +268,7 @@ describe.skip('AppUserController', (): void => {
 		it('should return 400 status if nickname present in body, but its too short', async (): Promise<void> => {
 			isAuthorized = true;
 
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				nickname: 'st',
 			};
 
@@ -282,7 +282,7 @@ describe.skip('AppUserController', (): void => {
 		it('should return 400 status if nickname present in body, but its too long', async (): Promise<void> => {
 			isAuthorized = true;
 
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				nickname: 't.stark'.padEnd(256, 'k'),
 			};
 
@@ -296,7 +296,7 @@ describe.skip('AppUserController', (): void => {
 		it('should return 409 status if nickname present in body, but its already taken', async (): Promise<void> => {
 			isAuthorized = true;
 
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				nickname: 't.stark',
 			};
 
@@ -310,7 +310,7 @@ describe.skip('AppUserController', (): void => {
 		it('should return 200 status if all data valid', async (): Promise<void> => {
 			isAuthorized = true;
 
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				about: 'Iron man',
 				firstName: 'Tony',
 				lastName: 'Stark',
@@ -325,7 +325,7 @@ describe.skip('AppUserController', (): void => {
 		});
 
 		it('should return nothing', async (): Promise<void> => {
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				about: 'Iron man',
 				firstName: 'Tony',
 				lastName: 'Stark',
@@ -338,7 +338,7 @@ describe.skip('AppUserController', (): void => {
 		});
 
 		it('should call getByNickname in users service to check if user with given nickname already exist', async (): Promise<void> => {
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				about: 'Iron man',
 				firstName: 'Tony',
 				lastName: 'Stark',
@@ -352,7 +352,7 @@ describe.skip('AppUserController', (): void => {
 		});
 
 		it('should not to call getByNickname in users service if nickname was not passed to body', async (): Promise<void> => {
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				about: 'Iron man',
 				firstName: 'Tony',
 				lastName: 'Stark',
@@ -364,7 +364,7 @@ describe.skip('AppUserController', (): void => {
 		});
 
 		it('should call updateUser method in users service to update user', async (): Promise<void> => {
-			const updateAppUserDto: UpdateAppUserDto = {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
 				about: 'Iron man',
 				firstName: 'Tony',
 				lastName: 'Stark',

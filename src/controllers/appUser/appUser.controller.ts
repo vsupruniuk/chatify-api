@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Patch, UseInterceptors } from '@nestjs/common';
 import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
 import { IAppUserController } from '@controllers/appUser/IAppUserController';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
@@ -6,55 +6,33 @@ import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { AppUserPayload } from '@decorators/data/AppUser.decorator';
 import { AppUserDto } from '@dtos/appUser/AppUser.dto';
 import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IUsersService } from '@services/users/IUsersService';
+import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
+import { DtoNotEmptyPipe } from '@pipes/dtoNotEmpty.pipe';
+import { IAppUserService } from '@services/appUser/IAppUserService';
 
 @Controller('app-user')
 @UseInterceptors(AuthInterceptor)
 @UseInterceptors(ResponseTransformInterceptor)
 export class AppUserController implements IAppUserController {
 	constructor(
-		@Inject(CustomProviders.CTF_USERS_SERVICE)
-		private readonly _usersService: IUsersService,
+		@Inject(CustomProviders.CTF_APP_USER_SERVICE)
+		private readonly _appUserService: IAppUserService,
 	) {}
 
 	@Get()
 	public async getAppUser(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<AppUserDto> {
-		return await this._usersService.getAppUser(appUserPayload.id);
+		return await this._appUserService.getAppUser(appUserPayload.id);
 	}
 
-	// 	// TODO check if needed
-	// 	@Patch()
-	// 	@HttpCode(HttpStatus.OK)
-	// 	public async updateUser(
-	// 		@AppUserPayload() appUserPayload: JWTPayloadDto,
-	// 		@Body() updateAppUserDto: UpdateAppUserDto,
-	// 	): Promise<void> {
-	// 		if (!updateAppUserDto || !Object.keys(updateAppUserDto).length) {
-	// 			throw new BadRequestException(['At least 1 field to change should be passed']);
-	// 		}
-	//
-	// 		if (updateAppUserDto.nickname) {
-	// 			const userByNickname: UserShortDto | null = await this._usersService.getByNickname(
-	// 				updateAppUserDto.nickname,
-	// 			);
-	//
-	// 			if (userByNickname) {
-	// 				throw new ConflictException(['User with this nickname already exist|nickname']);
-	// 			}
-	// 		}
-	//
-	// 		const isUserUpdated: boolean = await this._usersService.updateUser(
-	// 			appUserPayload.id,
-	// 			updateAppUserDto,
-	// 		);
-	//
-	// 		if (!isUserUpdated) {
-	// 			throw new UnprocessableEntityException([
-	// 				'Failed to update user information. Please try again',
-	// 			]);
-	// 		}
-	// 	}
-	//
+	@Patch()
+	public async updateUser(
+		@AppUserPayload() appUserPayload: JWTPayloadDto,
+
+		@Body(DtoNotEmptyPipe) updateAppUserDto: UpdateAppUserRequestDto,
+	): Promise<AppUserDto> {
+		return this._appUserService.updateAppUser(appUserPayload, updateAppUserDto);
+	}
+
 	// 	// TODO check if needed
 	// 	@Patch('account-settings')
 	// 	@HttpCode(HttpStatus.OK)

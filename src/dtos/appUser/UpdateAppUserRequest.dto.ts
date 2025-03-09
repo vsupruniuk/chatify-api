@@ -1,6 +1,6 @@
 import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
-export class UpdateAppUserDto {
+export class UpdateAppUserRequestDto {
 	@IsString({ message: '$property must be a string|$property' })
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
 	@IsOptional()

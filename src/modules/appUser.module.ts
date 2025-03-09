@@ -11,7 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 		providers.CTF_JWT_TOKENS_SERVICE,
 		providers.CTF_JWT_TOKENS_REPOSITORY,
 
-		providers.CTF_USERS_SERVICE,
+		providers.CTF_APP_USER_SERVICE,
 		providers.CTF_USERS_REPOSITORY,
 	],
 })
