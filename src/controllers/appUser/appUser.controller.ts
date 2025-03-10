@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Inject, Patch, UseInterceptors } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Get,
+	Inject,
+	Patch,
+	Post,
+	UploadedFile,
+	UseInterceptors,
+} from '@nestjs/common';
 import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
 import { IAppUserController } from '@controllers/appUser/IAppUserController';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
@@ -9,9 +18,16 @@ import { CustomProviders } from '@enums/CustomProviders.enum';
 import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
 import { DtoNotEmptyPipe } from '@pipes/dtoNotEmpty.pipe';
 import { IAppUserService } from '@services/appUser/IAppUserService';
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
-import { AccountSettingsDto } from '@dtos/accountSettings/AccountSettings.dto';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
+import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings/AccountSettings.dto';
 import { IAccountSettingsService } from '@services/accountSettings/IAccountSettingsService';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFields } from '@enums/FileFields.enum';
+import { GlobalTypes } from '../../typesNew/global';
+import { diskStorage } from 'multer';
+import { FileHelper } from '@helpers/file.helper';
+import { IUsersService } from '@services/users/IUsersService';
+import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar/UploadAvatarResponse.dto';
 
 @Controller('app-user')
 @UseInterceptors(AuthInterceptor)
@@ -23,6 +39,9 @@ export class AppUserController implements IAppUserController {
 
 		@Inject(CustomProviders.CTF_ACCOUNT_SETTINGS_SERVICE)
 		private readonly _accountSettingsService: IAccountSettingsService,
+
+		@Inject(CustomProviders.CTF_USERS_SERVICE)
+		private readonly _usersService: IUsersService,
 	) {}
 
 	@Get()
@@ -51,62 +70,39 @@ export class AppUserController implements IAppUserController {
 		);
 	}
 
-	// 	// TODO check if needed
-	// 	@Post('user-avatar')
-	// 	@HttpCode(HttpStatus.CREATED)
-	// 	@UseInterceptors(
-	// 		FileInterceptor(FileFields.USER_AVATAR, {
-	// 			fileFilter(
-	// 				req: Request & TUserPayload,
-	// 				file: Express.Multer.File,
-	// 				callback: (error: Error | null, acceptFile: boolean) => void,
-	// 			): void {
-	// 				FileHelper.validateFileExtension(file, callback);
-	// 			},
-	// 			limits: { fileSize: 10_485_760, files: 1 },
-	// 			storage: diskStorage({
-	// 				destination: 'public',
-	// 				filename(
-	// 					req: Request & TUserPayload,
-	// 					file: Express.Multer.File,
-	// 					callback: (error: Error | null, filename: string) => void,
-	// 				): void {
-	// 					FileHelper.renameAndSave(req.user, file, callback);
-	// 				},
-	// 			}),
-	// 		}),
-	// 	)
-	// 	public async uploadAvatar(
-	// 		@AppUserPayload() appUserPayload: JWTPayloadDto,
-	// 		@UploadedFile() file: Express.Multer.File,
-	// 	): Promise<void> {
-	// 		if (!file) {
-	// 			throw new BadRequestException([
-	// 				`Provide image file with size less than 10 MB to upload|${FileFields.USER_AVATAR}`,
-	// 			]);
-	// 		}
-	//
-	// 		const fullUser: UserFullDto | null = await this._usersService.getFullUserById(
-	// 			appUserPayload.id,
-	// 		);
-	//
-	// 		if (!fullUser) {
-	// 			throw new UnauthorizedException(['Please, login to perform this action']);
-	// 		}
-	//
-	// 		if (fullUser.avatarUrl) {
-	// 			FileHelper.deleteFile(fullUser.avatarUrl);
-	// 		}
-	//
-	// 		const isUserAvatarUrlUpdated: boolean = await this._usersService.updateUser(appUserPayload.id, {
-	// 			avatarUrl: file.filename,
-	// 		});
-	//
-	// 		if (!isUserAvatarUrlUpdated) {
-	// 			throw new UnprocessableEntityException(['Failed to save avatar. Please, try again']);
-	// 		}
-	// 	}
-	//
+	@UseInterceptors(
+		FileInterceptor(FileFields.USER_AVATAR, {
+			fileFilter(
+				req: GlobalTypes.TAuthorizedRequest,
+				file: Express.Multer.File,
+				callback: (error: Error | null, acceptFile: boolean) => void,
+			) {
+				FileHelper.validateFileExtension(file, callback);
+			},
+			limits: { fileSize: 10_485_760, files: 1 },
+			storage: diskStorage({
+				destination: 'public',
+				filename(
+					req: GlobalTypes.TAuthorizedRequest,
+					file: Express.Multer.File,
+					callback: (error: Error | null, filename: string) => void,
+				) {
+					FileHelper.renameAndSave(req.user, file, callback);
+				},
+			}),
+		}),
+	)
+	@Post('user-avatar')
+	public async uploadAvatar(
+		@AppUserPayload() appUserPayload: JWTPayloadDto,
+
+		@UploadedFile() file: Express.Multer.File,
+	): Promise<UploadAvatarResponseDto> {
+		await this._usersService.updateUserAvatarUrl(appUserPayload.id, file.filename);
+
+		return { avatarUrl: file.filename };
+	}
+
 	// 	// TODO check if needed
 	// 	@Delete('user-avatar')
 	// 	@HttpCode(HttpStatus.NO_CONTENT)

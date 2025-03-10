@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IAccountSettingsRepository } from '@repositories/accountSettings/IAccountSettingsRepository';
 import { DataSource, EntityManager, UpdateResult } from 'typeorm';
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
 import { AccountSettings } from '@entities/AccountSettings.entity';
 import { User } from '@entities/User.entity';
 

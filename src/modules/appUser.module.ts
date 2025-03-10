@@ -16,6 +16,9 @@ import { JwtService } from '@nestjs/jwt';
 
 		providers.CTF_ACCOUNT_SETTINGS_SERVICE,
 		providers.CTF_ACCOUNT_SETTINGS_REPOSITORY,
+
+		providers.CTF_USERS_SERVICE,
+		providers.CTF_USERS_REPOSITORY,
 	],
 })
 export class AppUserModule {}

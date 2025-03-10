@@ -90,6 +90,10 @@ export class UsersService implements IUsersService {
 		return !!user && user.password === password;
 	}
 
+	public async updateUserAvatarUrl(userId: string, avatarUrl: string | null): Promise<void> {
+		await this._usersRepository.updateUserAvatarUrl(userId, avatarUrl);
+	}
+
 	// // TODO check if needed
 	// public async getPublicUsers(
 	// 	userNickname: string,

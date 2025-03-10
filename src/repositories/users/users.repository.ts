@@ -12,6 +12,7 @@ import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto'
 @Injectable()
 export class UsersRepository implements IUsersRepository {
 	constructor(private readonly _dataSource: DataSource) {}
+
 	public async findByEmailOrNickname(email: string, nickname: string): Promise<User | null> {
 		return await this._dataSource
 			.createQueryBuilder()
@@ -228,6 +229,15 @@ export class UsersRepository implements IUsersRepository {
 					.getOne();
 			},
 		);
+	}
+
+	public async updateUserAvatarUrl(userId: string, avatarUrl: string | null): Promise<void> {
+		await this._dataSource
+			.createQueryBuilder()
+			.update(User)
+			.set(<User>{ avatarUrl })
+			.returning('*')
+			.execute();
 	}
 
 	//

@@ -102,6 +102,13 @@ export interface IUsersRepository {
 	 */
 	updateAppUser(id: string, updateAppUserDto: UpdateAppUserRequestDto): Promise<User | null>;
 
+	/**
+	 * Method for updating user avatar url
+	 * @param userId - user id
+	 * @param avatarUrl - new avatar url
+	 */
+	updateUserAvatarUrl(userId: string, avatarUrl: string | null): Promise<void>;
+
 	// /**
 	//  * Get activated users by nickname
 	//  * @param nickname - partial or full user nickname

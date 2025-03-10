@@ -83,6 +83,13 @@ export interface IUsersService {
 	 */
 	changeUserPassword(userId: string, tokenId: string, password: string): Promise<boolean>;
 
+	/**
+	 * Method for updating user avatar url
+	 * @param userId - user id
+	 * @param avatarUrl - new avatar url
+	 */
+	updateUserAvatarUrl(userId: string, avatarUrl: string | null): Promise<void>;
+
 	// /**
 	//  * Method for searching users by their nicknames
 	//  * @param userNickname - logged-in user nickname

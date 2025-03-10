@@ -1,6 +1,6 @@
 import { DataSource, UpdateResult } from 'typeorm';
 import { AccountSettingsRepository } from '@repositories/accountSettings/accountSettings.repository';
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
 import { AccountSettings } from '@entities/AccountSettings.entity';
 
 describe.skip('accountSettingsRepository', (): void => {

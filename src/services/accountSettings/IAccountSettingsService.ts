@@ -1,5 +1,5 @@
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
-import { AccountSettingsDto } from '@dtos/accountSettings/AccountSettings.dto';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
+import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings/AccountSettings.dto';
 
 export interface IAccountSettingsService {
 	/**

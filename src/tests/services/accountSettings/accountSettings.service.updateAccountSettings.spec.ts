@@ -6,7 +6,7 @@ import { AccountSettingsService } from '@services/accountSettings/accountSetting
 import SpyInstance = jest.SpyInstance;
 import { AccountSettings } from '@entities/AccountSettings.entity';
 import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
 
 describe.skip('accountSettingsService', (): void => {
 	let accountSettingsService: IAccountSettingsService;

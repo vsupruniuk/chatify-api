@@ -40,4 +40,12 @@ export class DateHelper {
 	private static _formatDate(date: Dayjs): string {
 		return date.toISOString();
 	}
+
+	/**
+	 * Generate and return current timestamp
+	 * @returns - current timestamp
+	 */
+	public static timestampNow(): number {
+		return dayjs().unix();
+	}
 }

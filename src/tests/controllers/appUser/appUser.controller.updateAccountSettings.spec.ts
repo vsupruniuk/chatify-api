@@ -24,7 +24,7 @@ import { IAccountSettingsService } from '@services/accountSettings/IAccountSetti
 import { AppModule } from '@modules/app.module';
 import { AuthModule } from '@modules/auth.module';
 import { CustomProviders } from '@enums/CustomProviders.enum';
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
 
 describe.skip('AppUserController', (): void => {
 	let app: INestApplication;

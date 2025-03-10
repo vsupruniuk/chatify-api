@@ -1,4 +1,4 @@
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
 import { AccountSettings } from '@entities/AccountSettings.entity';
 
 /**
