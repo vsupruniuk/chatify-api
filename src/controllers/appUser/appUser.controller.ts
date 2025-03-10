@@ -1,6 +1,7 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
 	Inject,
 	Patch,
@@ -103,30 +104,8 @@ export class AppUserController implements IAppUserController {
 		return { avatarUrl: file.filename };
 	}
 
-	// 	// TODO check if needed
-	// 	@Delete('user-avatar')
-	// 	@HttpCode(HttpStatus.NO_CONTENT)
-	// 	public async deleteAvatar(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<void> {
-	// 		const fullUser: UserFullDto | null = await this._usersService.getFullUserById(
-	// 			appUserPayload.id,
-	// 		);
-	//
-	// 		if (!fullUser) {
-	// 			throw new UnauthorizedException(['Please, login to perform this action']);
-	// 		}
-	//
-	// 		if (!fullUser.avatarUrl) {
-	// 			throw new NotFoundException(['User does not have saved avatar|user-avatar']);
-	// 		}
-	//
-	// 		FileHelper.deleteFile(fullUser.avatarUrl);
-	//
-	// 		const isUpdated: boolean = await this._usersService.updateUser(fullUser.id, {
-	// 			avatarUrl: null,
-	// 		});
-	//
-	// 		if (!isUpdated) {
-	// 			throw new UnprocessableEntityException(['Failed to delete avatar, please try again']);
-	// 		}
-	// 	}
+	@Delete('user-avatar')
+	public async deleteAvatar(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<void> {
+		await this._accountSettingsService.deleteUserAvatar(appUserPayload.id);
+	}
 }

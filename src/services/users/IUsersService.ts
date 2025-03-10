@@ -10,6 +10,14 @@ import { FullUserWithJwtTokenDto } from '@dtos/users/FullUserWithJwtTokenDto';
  */
 export interface IUsersService {
 	/**
+	 * Method for searching user by id
+	 * @param id - user id
+	 * @returns UserDto - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	getById(id: string): Promise<UserDto | null>;
+
+	/**
 	 * Method for searching user by its email or nickname
 	 * @param email - user email to search
 	 * @param nickname - user nickname to search

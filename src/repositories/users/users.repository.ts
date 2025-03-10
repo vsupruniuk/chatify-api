@@ -23,6 +23,15 @@ export class UsersRepository implements IUsersRepository {
 			.getOne();
 	}
 
+	public async findById(id: string): Promise<User | null> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.where('user.id = :id', { id })
+			.getOne();
+	}
+
 	public async findByNickname(nickname: string): Promise<User | null> {
 		return await this._dataSource
 			.createQueryBuilder()
@@ -236,6 +245,7 @@ export class UsersRepository implements IUsersRepository {
 			.createQueryBuilder()
 			.update(User)
 			.set(<User>{ avatarUrl })
+			.where('id = :userId', { userId })
 			.returning('*')
 			.execute();
 	}

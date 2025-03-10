@@ -18,6 +18,12 @@ export class UsersService implements IUsersService {
 		private readonly _usersRepository: IUsersRepository,
 	) {}
 
+	public async getById(id: string): Promise<UserDto | null> {
+		const user: User | null = await this._usersRepository.findById(id);
+
+		return TransformHelper.toTargetDto(UserDto, user);
+	}
+
 	public async getByEmailOrNickname(email: string, nickname: string): Promise<UserDto | null> {
 		return TransformHelper.toTargetDto(
 			UserDto,

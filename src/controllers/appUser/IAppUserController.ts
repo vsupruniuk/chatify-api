@@ -46,9 +46,9 @@ export interface IAppUserController {
 		file: Express.Multer.File,
 	): Promise<UploadAvatarResponseDto>;
 
-	// /**
-	//  * Delete user avatar
-	//  * @param appUserPayload - user data from access token
-	//  */
-	// deleteAvatar(appUserPayload: JWTPayloadDto): Promise<void>;
+	/**
+	 * Delete user avatar
+	 * @param appUserPayload - user data from access token
+	 */
+	deleteAvatar(appUserPayload: JWTPayloadDto): Promise<void>;
 }

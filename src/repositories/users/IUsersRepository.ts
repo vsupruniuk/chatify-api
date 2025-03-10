@@ -16,6 +16,14 @@ export interface IUsersRepository {
 	findByEmailOrNickname(email: string, nickname: string): Promise<User | null>;
 
 	/**
+	 * Method for searching user by its id
+	 * @param id - user id to search
+	 * @returns User - if user was found
+	 * @returns null - if user wasn't found
+	 */
+	findById(id: string): Promise<User | null>;
+
+	/**
 	 * Method for searching user by its nickname
 	 * @param nickname - user nickname to search
 	 * @returns User - if user was found
