@@ -1,6 +1,6 @@
 import { DataSource, UpdateResult } from 'typeorm';
-import { AccountSettingsRepository } from '@repositories/accountSettings.repository';
-import { UpdateAccountSettingsDto } from '../../../types/dto/accountSettings/updateAccountSettings.dto';
+import { AccountSettingsRepository } from '@repositories/accountSettings/accountSettings.repository';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
 import { AccountSettings } from '@entities/AccountSettings.entity';
 
 describe.skip('accountSettingsRepository', (): void => {
@@ -39,7 +39,7 @@ describe.skip('accountSettingsRepository', (): void => {
 	describe('updateAccountSettings', (): void => {
 		const existingSettingsId: string = '1';
 		const notExistingSettingsId: string = '1';
-		const updateAccountSettingsDto: Partial<UpdateAccountSettingsDto> = {
+		const updateAccountSettingsDto: Partial<UpdateAccountSettingsRequestDto> = {
 			enterIsSend: true,
 			notification: true,
 			twoStepVerification: false,

@@ -1,9 +1,9 @@
 import { IsBoolean, IsOptional } from 'class-validator';
 
-export class UpdateAccountSettingsDto {
+export class UpdateAccountSettingsRequestDto {
 	@IsBoolean({ message: '$property must be a boolean|$property' })
 	@IsOptional()
-	public enterIsSend?: boolean;
+	public enterIsSending?: boolean;
 
 	@IsBoolean({ message: '$property must be a boolean|$property' })
 	@IsOptional()

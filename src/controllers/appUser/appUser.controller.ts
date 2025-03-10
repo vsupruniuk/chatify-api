@@ -9,6 +9,9 @@ import { CustomProviders } from '@enums/CustomProviders.enum';
 import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
 import { DtoNotEmptyPipe } from '@pipes/dtoNotEmpty.pipe';
 import { IAppUserService } from '@services/appUser/IAppUserService';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
+import { AccountSettingsDto } from '@dtos/accountSettings/AccountSettings.dto';
+import { IAccountSettingsService } from '@services/accountSettings/IAccountSettingsService';
 
 @Controller('app-user')
 @UseInterceptors(AuthInterceptor)
@@ -17,6 +20,9 @@ export class AppUserController implements IAppUserController {
 	constructor(
 		@Inject(CustomProviders.CTF_APP_USER_SERVICE)
 		private readonly _appUserService: IAppUserService,
+
+		@Inject(CustomProviders.CTF_ACCOUNT_SETTINGS_SERVICE)
+		private readonly _accountSettingsService: IAccountSettingsService,
 	) {}
 
 	@Get()
@@ -33,37 +39,18 @@ export class AppUserController implements IAppUserController {
 		return this._appUserService.updateAppUser(appUserPayload, updateAppUserDto);
 	}
 
-	// 	// TODO check if needed
-	// 	@Patch('account-settings')
-	// 	@HttpCode(HttpStatus.OK)
-	// 	public async updateAccountSettings(
-	// 		@AppUserPayload() appUserPayload: JWTPayloadDto,
-	// 		@Body() newSettings: UpdateAccountSettingsDto,
-	// 	): Promise<void> {
-	// 		if (!newSettings || !Object.keys(newSettings).length) {
-	// 			throw new BadRequestException(['At least 1 field to change should be passed']);
-	// 		}
-	//
-	// 		const fullUser: UserFullDto | null = await this._usersService.getFullUserById(
-	// 			appUserPayload.id,
-	// 		);
-	//
-	// 		if (!fullUser) {
-	// 			throw new UnauthorizedException(['Please, login to perform this action']);
-	// 		}
-	//
-	// 		const isAccountSettingsUpdated = await this._accountSettingsService.updateAccountSettings(
-	// 			fullUser.accountSettings.id,
-	// 			newSettings,
-	// 		);
-	//
-	// 		if (!isAccountSettingsUpdated) {
-	// 			throw new UnprocessableEntityException([
-	// 				'Failed to update account settings. Please, try again',
-	// 			]);
-	// 		}
-	// 	}
-	//
+	@Patch('account-settings')
+	public async updateAccountSettings(
+		@AppUserPayload() appUserPayload: JWTPayloadDto,
+
+		@Body(DtoNotEmptyPipe) updateAccountSettingsRequestDto: UpdateAccountSettingsRequestDto,
+	): Promise<AccountSettingsDto> {
+		return this._accountSettingsService.updateAccountSettings(
+			appUserPayload.id,
+			updateAccountSettingsRequestDto,
+		);
+	}
+
 	// 	// TODO check if needed
 	// 	@Post('user-avatar')
 	// 	@HttpCode(HttpStatus.CREATED)

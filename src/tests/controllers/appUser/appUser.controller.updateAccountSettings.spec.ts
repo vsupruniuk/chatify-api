@@ -20,11 +20,11 @@ import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { TUserPayload } from '@customTypes/types/users/TUserPayload';
 import { IUsersService } from '@services/users/IUsersService';
 import { UserFullDto } from '../../../types/dto/users/UserFull.dto';
-import { IAccountSettingsService } from '@interfaces/accountSettings/IAccountSettingsService';
+import { IAccountSettingsService } from '@services/accountSettings/IAccountSettingsService';
 import { AppModule } from '@modules/app.module';
 import { AuthModule } from '@modules/auth.module';
 import { CustomProviders } from '@enums/CustomProviders.enum';
-import { UpdateAccountSettingsDto } from '../../../types/dto/accountSettings/updateAccountSettings.dto';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
 
 describe.skip('AppUserController', (): void => {
 	let app: INestApplication;
@@ -191,7 +191,7 @@ describe.skip('AppUserController', (): void => {
 		it('should return 200 status if all data valid', async (): Promise<void> => {
 			isAuthorized = true;
 
-			const updateAccountSettingsDto: UpdateAccountSettingsDto = {
+			const updateAccountSettingsDto: UpdateAccountSettingsRequestDto = {
 				enterIsSend: false,
 				notification: true,
 				twoStepVerification: true,
@@ -205,7 +205,7 @@ describe.skip('AppUserController', (): void => {
 		});
 
 		it('should return nothing', async (): Promise<void> => {
-			const updateAccountSettingsDto: UpdateAccountSettingsDto = {
+			const updateAccountSettingsDto: UpdateAccountSettingsRequestDto = {
 				enterIsSend: false,
 				notification: true,
 				twoStepVerification: true,
@@ -220,7 +220,7 @@ describe.skip('AppUserController', (): void => {
 		});
 
 		it('should call getFullUserById method in users service to get full user data', async (): Promise<void> => {
-			const updateAccountSettingsDto: UpdateAccountSettingsDto = {
+			const updateAccountSettingsDto: UpdateAccountSettingsRequestDto = {
 				enterIsSend: false,
 				notification: true,
 				twoStepVerification: true,
@@ -233,7 +233,7 @@ describe.skip('AppUserController', (): void => {
 		});
 
 		it('should call updateAccountSettings method in account settings service to update user account settings', async (): Promise<void> => {
-			const updateAccountSettingsDto: UpdateAccountSettingsDto = {
+			const updateAccountSettingsDto: UpdateAccountSettingsRequestDto = {
 				enterIsSend: false,
 				notification: true,
 				twoStepVerification: true,

@@ -1,6 +1,8 @@
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { AppUserDto } from '@dtos/appUser/AppUser.dto';
 import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
+import { AccountSettingsDto } from '@dtos/accountSettings/AccountSettings.dto';
 
 export interface IAppUserController {
 	/**
@@ -20,17 +22,18 @@ export interface IAppUserController {
 		appUserPayload: JWTPayloadDto,
 		updateAppUserDto: UpdateAppUserRequestDto,
 	): Promise<AppUserDto>;
-	//
-	// /**
-	//  * Update user account settings
-	//  * @param appUserPayload - user data from access token
-	//  * @param newSettings - new account settings
-	//  */
-	// updateAccountSettings(
-	// 	appUserPayload: JWTPayloadDto,
-	// 	newSettings: UpdateAccountSettingsDto,
-	// ): Promise<void>;
-	//
+
+	/**
+	 * Update user account settings
+	 * @param appUserPayload - user data from access token
+	 * @param updateAccountSettingsRequestDto - new account settings
+	 * @returns AccountSettingsDto - updated account settings
+	 */
+	updateAccountSettings(
+		appUserPayload: JWTPayloadDto,
+		updateAccountSettingsRequestDto: UpdateAccountSettingsRequestDto,
+	): Promise<AccountSettingsDto>;
+
 	// /**
 	//  * Upload and save user avatar
 	//  * @param appUserPayload - user data from access token

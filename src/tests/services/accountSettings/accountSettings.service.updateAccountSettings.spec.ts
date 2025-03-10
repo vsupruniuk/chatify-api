@@ -1,12 +1,12 @@
-import { IAccountSettingsService } from '@interfaces/accountSettings/IAccountSettingsService';
-import { IAccountSettingsRepository } from '@interfaces/accountSettings/IAccountSettingsRepository';
-import { AccountSettingsRepository } from '@repositories/accountSettings.repository';
+import { IAccountSettingsService } from '@services/accountSettings/IAccountSettingsService';
+import { IAccountSettingsRepository } from '@repositories/accountSettings/IAccountSettingsRepository';
+import { AccountSettingsRepository } from '@repositories/accountSettings/accountSettings.repository';
 import { connectionSource } from '@db/typeOrmConfig';
-import { AccountSettingsService } from '@services/accountSettings.service';
+import { AccountSettingsService } from '@services/accountSettings/accountSettings.service';
 import SpyInstance = jest.SpyInstance;
 import { AccountSettings } from '@entities/AccountSettings.entity';
 import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
-import { UpdateAccountSettingsDto } from '../../../types/dto/accountSettings/updateAccountSettings.dto';
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/UpdateAccountSettingsRequest.dto';
 
 describe.skip('accountSettingsService', (): void => {
 	let accountSettingsService: IAccountSettingsService;
@@ -24,7 +24,7 @@ describe.skip('accountSettingsService', (): void => {
 		const accountSettingsMock: AccountSettings[] = [...accountSettings];
 		const existingSettingsId: string = '1';
 		const notExistingSettingsId: string = '5';
-		const updateAccountSettingsDto: UpdateAccountSettingsDto = {
+		const updateAccountSettingsDto: UpdateAccountSettingsRequestDto = {
 			notification: true,
 			twoStepVerification: false,
 			enterIsSend: false,

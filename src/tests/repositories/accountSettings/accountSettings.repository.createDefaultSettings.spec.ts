@@ -1,6 +1,6 @@
 import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
-import { AccountSettingsRepository } from '@repositories/accountSettings.repository';
+import { AccountSettingsRepository } from '@repositories/accountSettings/accountSettings.repository';
 import { AccountSettings } from '@entities/AccountSettings.entity';
 
 describe.skip('accountSettingsRepository', (): void => {

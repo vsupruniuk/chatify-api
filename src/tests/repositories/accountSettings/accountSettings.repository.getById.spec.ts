@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { AccountSettings } from '@entities/AccountSettings.entity';
-import { AccountSettingsRepository } from '@repositories/accountSettings.repository';
+import { AccountSettingsRepository } from '@repositories/accountSettings/accountSettings.repository';
 import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
 
 describe.skip('accountSettingsRepository', (): void => {
