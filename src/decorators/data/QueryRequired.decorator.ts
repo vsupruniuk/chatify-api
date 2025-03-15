@@ -6,7 +6,7 @@ export const QueryRequired = createParamDecorator((queryName: string, ctx: Execu
 	const queryParamData = request.query[queryName];
 
 	if (!queryParamData) {
-		throw new BadRequestException([`Missing required query parameter: ${queryName}`]);
+		throw new BadRequestException(`Missing required query parameter: ${queryName}`);
 	}
 
 	return queryParamData;

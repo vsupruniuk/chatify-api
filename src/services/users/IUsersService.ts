@@ -58,6 +58,8 @@ export interface IUsersService {
 	 */
 	getFullUserWithJwtTokenByEmail(email: string): Promise<FullUserWithJwtTokenDto | null>;
 
+	getActivatedUsersByNickname(nickname: string, page?: number, take?: number): Promise<UserDto[]>;
+
 	/**
 	 * Method for creating user from signup data with some default settings
 	 * @param otpCode - 6-digit number for creating OTP code

@@ -99,6 +99,23 @@ export class UsersRepository implements IUsersRepository {
 			.getOne();
 	}
 
+	public async findActivatedUsersByNickname(
+		nickname: string,
+		skip: number,
+		take: number,
+	): Promise<User[]> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.where('user.nickname LIKE :nickname', { nickname: `%${nickname}%` })
+			.andWhere('user.isActivated = :isActivated', { isActivated: true })
+			.orderBy('user.nickname')
+			.skip(skip)
+			.take(take)
+			.getMany();
+	}
+
 	public async createUser(
 		otpCode: number,
 		otpCodeExpiresAt: string,
@@ -250,20 +267,6 @@ export class UsersRepository implements IUsersRepository {
 			.execute();
 	}
 
-	//
-	// // TODO check if needed
-	// public async getPublicUsers(nickname: string, skip: number, take: number): Promise<User[]> {
-	// 	return await this._dataSource
-	// 		.createQueryBuilder()
-	// 		.select('user')
-	// 		.from(User, 'user')
-	// 		.where('user.nickname LIKE :nickname', { nickname: `%${nickname}%` })
-	// 		.andWhere('user.isActivated = :isActivated', { isActivated: true })
-	// 		.orderBy('user.nickname')
-	// 		.skip(skip)
-	// 		.take(take)
-	// 		.getMany();
-	// }
 	//
 	// // TODO check if needed
 	// public async getByField(fieldName: TUserGetFields, fieldValue: string): Promise<User | null> {

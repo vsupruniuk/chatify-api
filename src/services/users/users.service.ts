@@ -10,6 +10,7 @@ import { UserWithOtpCodeDto } from '@dtos/users/UserWithOtpCodeDto';
 import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
 import { UserWithPasswordResetTokenDto } from '@dtos/users/UserWithPasswordResetTokenDto';
 import { FullUserWithJwtTokenDto } from '@dtos/users/FullUserWithJwtTokenDto';
+import { PaginationHelper } from '@helpers/pagination.helper';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -61,6 +62,22 @@ export class UsersService implements IUsersService {
 		const user: User | null = await this._usersRepository.findFullUserWithJwtTokenByEmail(email);
 
 		return TransformHelper.toTargetDto(FullUserWithJwtTokenDto, user);
+	}
+
+	public async getActivatedUsersByNickname(
+		nickname: string,
+		page?: number,
+		take?: number,
+	): Promise<UserDto[]> {
+		const { skip: skipRecords, take: takeRecords } = PaginationHelper.toSQLPagination(page, take);
+
+		const users: User[] = await this._usersRepository.findActivatedUsersByNickname(
+			nickname,
+			skipRecords,
+			takeRecords,
+		);
+
+		return users.map((user: User) => TransformHelper.toTargetDto(UserDto, user));
 	}
 
 	public async createUser(
