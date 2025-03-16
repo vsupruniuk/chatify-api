@@ -8,7 +8,7 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { IStaticController } from '@interfaces/static/IStaticController';
+import { IStaticController } from '@controllers/static/IStaticController';
 import { plainToInstance } from 'class-transformer';
 import { users } from '@testMocks/User/users';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
@@ -17,7 +17,7 @@ import { TUserPayload } from '@customTypes/types/users/TUserPayload';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@modules/app.module';
 import { SearchModule } from '@modules/search.module';
-import { StaticController } from '@controllers/static.controller';
+import { StaticController } from '@controllers/static/static.controller';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { Readable } from 'stream';
