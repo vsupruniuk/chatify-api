@@ -1,5 +1,5 @@
 import { WSEvents } from '@enums/WSEvents.enum';
-import { DirectChatsGateway } from '@gateways/directChats.gateway';
+import { DirectChatsGateway } from '@gateways/directChats/directChats.gateway';
 import { plainToInstance } from 'class-transformer';
 import { io, Socket } from 'socket.io-client';
 import { Headers } from '@enums/Headers.enum';
@@ -9,16 +9,16 @@ import { directChats } from '@testMocks/DirectChat/directChats';
 import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { users } from '@testMocks/User/users';
-import { IDirectChatsService } from '@interfaces/directChats/IDirectChatsService';
+import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
 import { DirectChatShortDto } from '../../../types/dto/directChat/DirectChatShort.dto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CustomProviders } from '@enums/CustomProviders.enum';
-import { CreateDirectChatDto } from '../../../types/dto/directChat/CreateDIrectChat.dto';
+import { CreateDirectChatRequestDto } from '@dtos/directChats/CreateDirectChatRequest.dto';
 import { ErrorWSResponseResult } from '@responses/errorResponses/ErrorWSResponseResult';
 import { ErrorField } from '@responses/errors/ErrorField';
 import { ResponseStatus } from '@enums/ResponseStatus.enum';
 import { SuccessfulWSResponseResult } from '@responses/successfulResponses/SuccessfulWSResponseResult';
-import { CreateDirectChatResponseDto } from '../../../types/dto/directChat/CreateDirectChatResponse.dto';
+import { CreateDirectChatResponseDto } from '@dtos/directChats/CreateDirectChatResponse.dto';
 
 describe.skip('Direct chat gateway', (): void => {
 	let app: INestApplication;
@@ -224,7 +224,7 @@ describe.skip('Direct chat gateway', (): void => {
 
 			const createDirectChatDto = {
 				messageText: 'Hello, world!',
-			} as CreateDirectChatDto;
+			} as CreateDirectChatRequestDto;
 
 			const errorResponse: ErrorWSResponseResult<ErrorField> = {
 				status: ResponseStatus.ERROR,
@@ -258,7 +258,7 @@ describe.skip('Direct chat gateway', (): void => {
 			const createDirectChatDto = {
 				receiverId: '123',
 				messageText: 'Hello, world!',
-			} as CreateDirectChatDto;
+			} as CreateDirectChatRequestDto;
 
 			const errorResponse: ErrorWSResponseResult<ErrorField> = {
 				status: ResponseStatus.ERROR,
@@ -291,7 +291,7 @@ describe.skip('Direct chat gateway', (): void => {
 
 			const createDirectChatDto = {
 				receiverId: '083dc6f8-cbfb-4f0f-8f15-87410aa8ea21',
-			} as CreateDirectChatDto;
+			} as CreateDirectChatRequestDto;
 
 			const errorResponse: ErrorWSResponseResult<ErrorField> = {
 				status: ResponseStatus.ERROR,
@@ -379,7 +379,7 @@ describe.skip('Direct chat gateway', (): void => {
 			const createDirectChatDto = {
 				receiverId: '083dc6f8-cbfb-4f0f-8f15-87410aa8ea21',
 				messageText: '',
-			} as CreateDirectChatDto;
+			} as CreateDirectChatRequestDto;
 
 			const errorResponse: ErrorWSResponseResult<ErrorField> = {
 				status: ResponseStatus.ERROR,
@@ -418,7 +418,7 @@ describe.skip('Direct chat gateway', (): void => {
 			const createDirectChatDto = {
 				receiverId: '083dc6f8-cbfb-4f0f-8f15-87410aa8ea21',
 				messageText: 'H'.padEnd(501, 'H'),
-			} as CreateDirectChatDto;
+			} as CreateDirectChatRequestDto;
 
 			const errorResponse: ErrorWSResponseResult<ErrorField> = {
 				status: ResponseStatus.ERROR,
@@ -457,7 +457,7 @@ describe.skip('Direct chat gateway', (): void => {
 			const createDirectChatDto = {
 				receiverId: '083dc6f8-cbfb-4f0f-8f15-87410aa8ea21',
 				messageText: 'Hello, world!',
-			} as CreateDirectChatDto;
+			} as CreateDirectChatRequestDto;
 
 			const successfulResponse: SuccessfulWSResponseResult<CreateDirectChatResponseDto> = {
 				status: ResponseStatus.SUCCESS,
@@ -493,7 +493,7 @@ describe.skip('Direct chat gateway', (): void => {
 			const createDirectChatDto = {
 				receiverId: '699901e8-653f-4ac2-841e-b85388c4b89c',
 				messageText: 'Hello, world!',
-			} as CreateDirectChatDto;
+			} as CreateDirectChatRequestDto;
 
 			const successfulResponse: SuccessfulWSResponseResult<CreateDirectChatResponseDto> = {
 				status: ResponseStatus.SUCCESS,
@@ -526,7 +526,7 @@ describe.skip('Direct chat gateway', (): void => {
 			const createDirectChatDto = {
 				receiverId: '699901e8-653f-4ac2-841e-b85388c4b89c',
 				messageText: 'Hello, world!',
-			} as CreateDirectChatDto;
+			} as CreateDirectChatRequestDto;
 
 			socket.connect();
 

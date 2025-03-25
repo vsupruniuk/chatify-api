@@ -1,60 +1,77 @@
-import { Injectable } from '@nestjs/common';
-import { IDirectChatsService } from '@interfaces/directChats/IDirectChatsService';
+import {
+	BadRequestException,
+	ConflictException,
+	Inject,
+	Injectable,
+	UnprocessableEntityException,
+} from '@nestjs/common';
+import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
+import { DirectChat } from '@entities/DirectChat.entity';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { IDirectChatsRepository } from '@repositories/directChats/IDirectChatsRepository';
+import { IUsersService } from '@services/users/IUsersService';
+import { UserDto } from '@dtos/users/UserDto';
+import { DateHelper } from '@helpers/date.helper';
+import { TransformHelper } from '@helpers/transform.helper';
+import { CreateDirectChatResponseDto } from '@dtos/directChats/CreateDirectChatResponse.dto';
+import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
 
 @Injectable()
 export class DirectChatsService implements IDirectChatsService {
-	constructor() // private readonly _directChatsRepository: IDirectChatsRepository, // @Inject(CustomProviders.CTF_DIRECT_CHATS_REPOSITORY)
-	//
-	// @Inject(CustomProviders.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY)
-	// private readonly _directChatMessagesRepository: IDirectChatMessagesRepository,
-	//
-	// @Inject(CustomProviders.CTF_CRYPTO_SERVICE)
-	// private readonly _cryptoService: ICryptoService,
-	{}
+	constructor(
+		@Inject(CustomProviders.CTF_DIRECT_CHATS_REPOSITORY)
+		private readonly _directChatsRepository: IDirectChatsRepository,
 
-	// // TODO check if needed
-	// public async createChat(
-	// 	senderId: string,
-	// 	receiverId: string,
-	// 	messageText: string,
-	// ): Promise<DirectChatShortDto> {
-	// 	const existingChat: DirectChat | null = await this._directChatsRepository.getChatByUsers(
-	// 		senderId,
-	// 		receiverId,
-	// 	);
-	//
-	// 	if (existingChat) {
-	// 		throw new UnprocessableEntityException('Direct chat between these users already exists');
-	// 	}
-	//
-	// 	const createdChatId: string = await this._directChatsRepository.createChat(
-	// 		senderId,
-	// 		receiverId,
-	// 		await this._cryptoService.encryptText(messageText),
-	// 		DateHelper.dateTimeNow(),
-	// 	);
-	//
-	// 	const createdChat: DirectChat | null =
-	// 		await this._directChatsRepository.getChatById(createdChatId);
-	//
-	// 	if (!createdChat) {
-	// 		throw new UnprocessableEntityException('Failed to create chat. Please, try again');
-	// 	}
-	//
-	// 	const decryptedChat: DirectChat = {
-	// 		...createdChat,
-	// 		messages: await Promise.all(
-	// 			createdChat.messages.map(async (message: DirectChatMessage) => {
-	// 				return {
-	// 					...message,
-	// 					messageText: await this._cryptoService.decryptText(message.messageText),
-	// 				};
-	// 			}),
-	// 		),
-	// 	};
-	//
-	// 	return plainToInstance(DirectChatShortDto, decryptedChat, { excludeExtraneousValues: true });
-	// }
+		@Inject(CustomProviders.CTF_USERS_SERVICE)
+		private readonly _usersService: IUsersService,
+
+		@Inject(CustomProviders.CTF_DECRYPTION_STRATEGY_MANAGER)
+		private readonly _decryptionStrategyManager: IDecryptionStrategyManager,
+	) {}
+
+	public async createChat(
+		senderId: string,
+		receiverId: string,
+		messageText: string,
+	): Promise<CreateDirectChatResponseDto> {
+		const chatUsers: UserDto[] = await this._usersService.getAllByIds([senderId, receiverId]);
+
+		const isBothUsersExist: boolean = [senderId, receiverId].every((id: string) =>
+			chatUsers.some((user: UserDto) => user.id === id),
+		);
+
+		if (!isBothUsersExist) {
+			throw new BadRequestException('One of the chat members does not exist');
+		}
+
+		const existingChat: DirectChat | null = await this._directChatsRepository.getChatByUsersIds(
+			senderId,
+			receiverId,
+		);
+
+		if (existingChat) {
+			throw new ConflictException('Direct chat between these users already exists');
+		}
+
+		const sender: UserDto = chatUsers[0].id === senderId ? chatUsers[0] : chatUsers[1];
+		const receiver: UserDto = chatUsers[0].id === receiverId ? chatUsers[0] : chatUsers[1];
+
+		const createdChat: DirectChat | null = await this._directChatsRepository.createChat(
+			sender,
+			receiver,
+			messageText,
+			DateHelper.dateTimeNow(),
+		);
+
+		if (!createdChat) {
+			throw new UnprocessableEntityException('Failed to create chat. Please, try again');
+		}
+
+		return await this._decryptionStrategyManager.decrypt(
+			TransformHelper.toTargetDto(CreateDirectChatResponseDto, createdChat),
+		);
+	}
+
 	//
 	// // TODO check if needed
 	// public async getLastChats(

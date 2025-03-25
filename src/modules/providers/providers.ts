@@ -19,6 +19,8 @@ import {
 	otpCodesRepositoryProvider,
 	directChatMessagesProvider,
 	appUserServiceProvider,
+	wsClientsServiceProvider,
+	decryptionStrategyManagerProvider,
 } from '@modules/providers';
 
 const providers: Record<CustomProviders, Provider> = {
@@ -50,6 +52,10 @@ const providers: Record<CustomProviders, Provider> = {
 	[CustomProviders.CTF_APP_USER_SERVICE]: appUserServiceProvider,
 	[CustomProviders.CTF_USERS_SERVICE]: usersServiceProvider,
 	[CustomProviders.CTF_USERS_REPOSITORY]: usersRepositoryProvider,
+
+	[CustomProviders.CTF_WS_CLIENTS_SERVICE]: wsClientsServiceProvider,
+
+	[CustomProviders.CTF_DECRYPTION_STRATEGY_MANAGER]: decryptionStrategyManagerProvider,
 };
 
 export default providers;

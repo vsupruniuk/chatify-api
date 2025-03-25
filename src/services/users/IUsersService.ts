@@ -18,6 +18,13 @@ export interface IUsersService {
 	getById(id: string): Promise<UserDto | null>;
 
 	/**
+	 * Method for searching all users by ids
+	 * @param ids - array of users ids
+	 * @returns UserDto[] - array of founded users
+	 */
+	getAllByIds(ids: string[]): Promise<UserDto[]>;
+
+	/**
 	 * Method for searching user by its email or nickname
 	 * @param email - user email to search
 	 * @param nickname - user nickname to search

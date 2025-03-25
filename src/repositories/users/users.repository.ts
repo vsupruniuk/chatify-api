@@ -32,6 +32,15 @@ export class UsersRepository implements IUsersRepository {
 			.getOne();
 	}
 
+	public async findAllByIds(ids: string[]): Promise<User[]> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('user')
+			.from(User, 'user')
+			.where('user.id IN (:...ids)', { ids })
+			.getMany();
+	}
+
 	public async findByNickname(nickname: string): Promise<User | null> {
 		return await this._dataSource
 			.createQueryBuilder()

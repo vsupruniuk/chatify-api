@@ -1,44 +1,48 @@
 import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
-import { BaseWsExceptionFilter, WsException } from '@nestjs/websockets';
+import { BaseWsExceptionFilter } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { WSEvents } from '@enums/WSEvents.enum';
+import { ErrorWSResponseResult } from '@responses/errorResponses/ErrorWSResponseResult';
+import { ErrorField } from '@responses/errors/ErrorField';
+import { ResponseStatus } from '@enums/ResponseStatus.enum';
+import { IValidationErrorResponse } from '@interfaces/errors/IValidationError';
 
 /**
  * Exception filter for handling websockets exceptions and errors in app.
  */
-@Catch(HttpException, WsException)
+@Catch()
 export class wsExceptionFilter extends BaseWsExceptionFilter {
-	public catch(exception: WsException | HttpException, host: ArgumentsHost): void {
+	private readonly MESSAGE_FIELD_SEPARATOR: string = '|';
+
+	public catch(exception: HttpException | Error, host: ArgumentsHost): void {
 		const client: Socket = host.switchToWs().getClient();
 
-		// const responseResult: ErrorWSResponseResult<ErrorField> = new ErrorWSResponseResult<ErrorField>(
-		// 	ResponseStatus.ERROR,
-		// );
-		//
-		// responseResult.title = (exception as unknown as IValidationError).response?.error || '';
-		//
-		// responseResult.errors = Array.isArray(
-		// 	(exception as unknown as IValidationError).response?.message || null,
-		// )
-		// 	? (exception as unknown as IValidationError).response?.message?.map((error: string) => {
-		// 			const [message, field = null] = error.split('|');
-		//
-		// 			return { message, field };
-		// 		}) || []
-		// 	: ([
-		// 			{
-		// 				message: (exception as unknown as IValidationError).response?.message || '',
-		// 				field: null,
-		// 			},
-		// 		] as unknown as ErrorField[]);
-		//
-		// responseResult.errorsLength = responseResult.errors.length;
-		//
-		// if (process.env.NODE_ENV === Environments.DEV) {
-		// 	responseResult.stack = exception.stack;
-		// 	responseResult.dateTime = DateHelper.dateTimeNow();
-		// }
+		const responseResult: ErrorWSResponseResult<ErrorField[]> = new ErrorWSResponseResult<
+			ErrorField[]
+		>(ResponseStatus.ERROR);
 
-		client.emit(WSEvents.ON_ERROR, null);
+		if (exception instanceof HttpException) {
+			responseResult.message =
+				exception.getStatus() < 500 && exception.getStatus() >= 400
+					? 'Client error'
+					: 'Internal server error';
+
+			const errorMessages: string[] | string = (exception.getResponse() as IValidationErrorResponse)
+				.message;
+
+			const messages: string[] = Array.isArray(errorMessages) ? errorMessages : [errorMessages];
+
+			responseResult.errors = messages.map((msg: string) => {
+				const [message, field = null] = msg.split(this.MESSAGE_FIELD_SEPARATOR);
+
+				return { message, field };
+			});
+		} else {
+			responseResult.message = 'Internal server error';
+
+			responseResult.errors = [{ message: exception.message, field: null }];
+		}
+
+		client.emit(WSEvents.ON_ERROR, responseResult);
 	}
 }

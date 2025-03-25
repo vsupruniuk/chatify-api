@@ -1,6 +1,6 @@
-import { DirectChatsRepository } from '@repositories/directChats.repository';
-import { CryptoService } from '@services/crypto.service';
-import { DirectChatsService } from '@services/directChats.service';
+import { DirectChatsRepository } from '@repositories/directChats/directChats.repository';
+import { CryptoService } from '@services/crypto/crypto.service';
+import { DirectChatsService } from '@services/directChats/directChats.service';
 import { DirectChatMessagesRepository } from '@repositories/directChatMessages.repository';
 import { connectionSource } from '@db/typeOrmConfig';
 import SpyInstance = jest.SpyInstance;

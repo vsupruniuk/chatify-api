@@ -1,12 +1,12 @@
 import { connectionSource } from '@db/typeOrmConfig';
-import { IDirectChatsService } from '@interfaces/directChats/IDirectChatsService';
-import { IDirectChatsRepository } from '@interfaces/directChats/IDirectChatsRepository';
+import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
+import { IDirectChatsRepository } from '@repositories/directChats/IDirectChatsRepository';
 import { IDirectChatMessagesRepository } from '@interfaces/directChatMessages/IDirectChatMessagesRepository';
-import { ICryptoService } from '@interfaces/crypto/ICryptoService';
-import { DirectChatsRepository } from '@repositories/directChats.repository';
+import { ICryptoService } from '@services/crypto/ICryptoService';
+import { DirectChatsRepository } from '@repositories/directChats/directChats.repository';
 import { DirectChatMessagesRepository } from '@repositories/directChatMessages.repository';
-import { CryptoService } from '@services/crypto.service';
-import { DirectChatsService } from '@services/directChats.service';
+import { CryptoService } from '@services/crypto/crypto.service';
+import { DirectChatsService } from '@services/directChats/directChats.service';
 import SpyInstance = jest.SpyInstance;
 import { DirectChat } from '@entities/DirectChat.entity';
 import { directChats } from '@testMocks/DirectChat/directChats';

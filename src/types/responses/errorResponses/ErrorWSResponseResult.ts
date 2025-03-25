@@ -6,11 +6,9 @@ import { WSResponseResult } from '@responses/WSResponseResult';
  * Class representing error web sockets response result
  */
 export class ErrorWSResponseResult<T> extends WSResponseResult {
-	public title: string;
+	public message: string;
 
-	public errors: T[];
-
-	public errorsLength: number;
+	public errors: T;
 
 	public stack?: string;
 

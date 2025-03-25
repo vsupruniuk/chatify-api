@@ -13,7 +13,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { Headers } from '@enums/Headers.enum';
 import { DirectChatMessageWithChatDto } from 'src/types/dto/directChatMessages/DirectChatMessageWithChat.dto';
-import { IDirectChatsService } from '@interfaces/directChats/IDirectChatsService';
+import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
 import { DirectChatsController } from '@controllers/directChats.controller';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';

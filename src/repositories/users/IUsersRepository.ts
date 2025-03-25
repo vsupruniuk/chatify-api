@@ -24,6 +24,13 @@ export interface IUsersRepository {
 	findById(id: string): Promise<User | null>;
 
 	/**
+	 * Method for searching all users by ids
+	 * @param ids - array of users ids
+	 * @returns User[] - array of founded users
+	 */
+	findAllByIds(ids: string[]): Promise<User[]>;
+
+	/**
 	 * Method for searching user by its nickname
 	 * @param nickname - user nickname to search
 	 * @returns User - if user was found

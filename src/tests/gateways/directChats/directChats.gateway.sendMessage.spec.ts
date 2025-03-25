@@ -1,7 +1,7 @@
 import { DirectChatMessage } from '@db/entities/DirectChatMessage.entity';
 import { CustomProviders } from '@enums/CustomProviders.enum';
-import { DirectChatsGateway } from '@gateways/directChats.gateway';
-import { IDirectChatsService } from '@interfaces/directChats/IDirectChatsService';
+import { DirectChatsGateway } from '@gateways/directChats/directChats.gateway';
+import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
 import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';

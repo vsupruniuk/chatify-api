@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import { promisify } from 'util';
-import { ICryptoService } from '@interfaces/crypto/ICryptoService';
-import { CryptoService } from '@services/crypto.service';
+import { ICryptoService } from '@services/crypto/ICryptoService';
+import { CryptoService } from '@services/crypto/crypto.service';
 
 describe.skip('Crypto service', (): void => {
 	let cryptoService: ICryptoService;

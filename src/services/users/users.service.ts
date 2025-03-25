@@ -25,6 +25,12 @@ export class UsersService implements IUsersService {
 		return TransformHelper.toTargetDto(UserDto, user);
 	}
 
+	public async getAllByIds(ids: string[]): Promise<UserDto[]> {
+		const users: User[] = await this._usersRepository.findAllByIds(ids);
+
+		return users.map((user: User) => TransformHelper.toTargetDto(UserDto, user));
+	}
+
 	public async getByEmailOrNickname(email: string, nickname: string): Promise<UserDto | null> {
 		return TransformHelper.toTargetDto(
 			UserDto,

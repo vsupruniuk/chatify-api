@@ -1,5 +1,5 @@
 import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
-import { DirectChatsRepository } from '@repositories/directChats.repository';
+import { DirectChatsRepository } from '@repositories/directChats/directChats.repository';
 import { DirectChat } from '@entities/DirectChat.entity';
 import { directChats } from '@testMocks/DirectChat/directChats';
 import { User } from '@entities/User.entity';
