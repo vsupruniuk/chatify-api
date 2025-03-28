@@ -23,6 +23,9 @@ import { MessageEncryptionPipe } from '@pipes/messageEncryption.pipe';
 import { CreateDirectChatResponseDto } from '@dtos/directChats/CreateDirectChatResponse.dto';
 import { IWSClientsService } from '@services/wsClients/IWSClientsService';
 import { GlobalTypes } from '../../typesNew/global';
+import { SendDirectChatMessageRequestDto } from '@dtos/directChatMessages/SendDirectChatMessageRequest.dto';
+import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
+import { UserDto } from '@dtos/users/UserDto';
 
 @UsePipes(
 	new ValidationPipe({
@@ -79,37 +82,23 @@ export class DirectChatsGateway
 		);
 	}
 
-	// // TODO check if needed
-	// @SubscribeMessage(WSEvents.SEND_MESSAGE)
-	// public async sendMessage(
-	// 	@AppUserPayload() appUserPayload: JWTPayloadDto,
-	// 	@MessageBody() sendDirectMessageDto: SendDirectMessageDto,
-	// ): Promise<WsResponse<WSResponseResult>> {
-	// 	const responseResult: SuccessfulWSResponseResult<DirectChatMessageWithChatDto> =
-	// 		new SuccessfulWSResponseResult<DirectChatMessageWithChatDto>(ResponseStatus.SUCCESS);
-	//
-	// 	const createdMessage: DirectChatMessageWithChatDto = await this._directChatsService.sendMessage(
-	// 		appUserPayload.id,
-	// 		sendDirectMessageDto.directChatId,
-	// 		sendDirectMessageDto.messageText,
-	// 	);
-	//
-	// 	responseResult.data = createdMessage;
-	//
-	// 	const messageReceiver: UserPublicDto =
-	// 		createdMessage.directChat.users[0].id === appUserPayload.id
-	// 			? createdMessage.directChat.users[1]
-	// 			: createdMessage.directChat.users[0];
-	//
-	// 	const receiverClient: Socket | undefined = this._clients.get(messageReceiver.id);
-	//
-	// 	if (receiverClient) {
-	// 		receiverClient.emit(WSEvents.ON_RECEIVE_MESSAGE, responseResult);
-	// 	}
-	//
-	// 	return {
-	// 		event: WSEvents.SEND_MESSAGE,
-	// 		data: responseResult,
-	// 	};
-	// }
+	@SubscribeMessage(WSEvents.SEND_MESSAGE)
+	public async sendMessage(
+		@AppUserPayload() appUserPayload: JWTPayloadDto,
+		@MessageBody(MessageEncryptionPipe)
+		sendDirectChatMessageRequestDto: SendDirectChatMessageRequestDto,
+	): Promise<void> {
+		const createdMessage: SendDirectChatMessageResponseDto =
+			await this._directChatsService.sendMessage(
+				appUserPayload.id,
+				sendDirectChatMessageRequestDto.directChatId,
+				sendDirectChatMessageRequestDto.messageText,
+			);
+
+		await this._wsClientsService.notifyAllClients(
+			createdMessage.directChat.users.map((user: UserDto) => user.id),
+			WSEvents.ON_RECEIVE_MESSAGE,
+			createdMessage,
+		);
+	}
 }

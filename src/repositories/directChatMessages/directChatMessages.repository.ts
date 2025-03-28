@@ -1,10 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { IDirectChatMessagesRepository } from '@interfaces/directChatMessages/IDirectChatMessagesRepository';
+import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
+import { DataSource, EntityManager, InsertResult } from 'typeorm';
+import { DirectChat } from '@entities/DirectChat.entity';
+import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
+import { UserDto } from '@dtos/users/UserDto';
 
 @Injectable()
 export class DirectChatMessagesRepository implements IDirectChatMessagesRepository {
-	// constructor(private readonly _dataSource: DataSource) {}
-	//
+	constructor(private readonly _dataSource: DataSource) {}
+
+	public async createMessage(
+		sender: UserDto,
+		directChat: DirectChat,
+		messageText: string,
+		messageDateTime: string,
+	): Promise<DirectChatMessage | null> {
+		return this._dataSource.transaction(async (transactionalEntityManager: EntityManager) => {
+			const insertMessageResult: InsertResult = await transactionalEntityManager
+				.createQueryBuilder()
+				.insert()
+				.into(DirectChatMessage)
+				.values({ dateTime: messageDateTime, messageText, directChat, sender })
+				.execute();
+
+			return await transactionalEntityManager
+				.createQueryBuilder()
+				.select('direct_chat_message')
+				.from(DirectChatMessage, 'direct_chat_message')
+				.leftJoinAndSelect('direct_chat_message.directChat', 'directChat')
+				.leftJoinAndSelect('direct_chat_message.sender', 'sender')
+				.leftJoinAndSelect('directChat.users', 'direct_chat_users')
+				.where('direct_chat_message.id = :id', { id: insertMessageResult.identifiers[0].id })
+				.getOne();
+		});
+	}
+
 	// // TODO check if needed
 	// public async getChatMessages(
 	// 	userId: string,

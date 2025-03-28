@@ -11,13 +11,13 @@ import { plainToInstance } from 'class-transformer';
 import { Socket, io } from 'socket.io-client';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { Headers } from '@enums/Headers.enum';
-import { SendDirectMessageDto } from '../../../types/dto/directChatMessages/SendDirectMessage.dto';
+import { SendDirectChatMessageRequestDto } from '@dtos/directChatMessages/SendDirectChatMessageRequest.dto';
 import { ErrorWSResponseResult } from '@responses/errorResponses/ErrorWSResponseResult';
 import { ErrorField } from '@responses/errors/ErrorField';
 import { ResponseStatus } from '@enums/ResponseStatus.enum';
 import { WSEvents } from '@enums/WSEvents.enum';
 import { SuccessfulWSResponseResult } from '@responses/successfulResponses/SuccessfulWSResponseResult';
-import { DirectChatMessageWithChatDto } from '../../../types/dto/directChatMessages/DirectChatMessageWithChat.dto';
+import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
 
 describe.skip('Direct chats gateway', (): void => {
 	let app: INestApplication;
@@ -221,7 +221,7 @@ describe.skip('Direct chats gateway', (): void => {
 
 			const sendDirectMessageDto = {
 				messageText: 'Hello, world!',
-			} as SendDirectMessageDto;
+			} as SendDirectChatMessageRequestDto;
 
 			const errorResponse: ErrorWSResponseResult<ErrorField> = {
 				status: ResponseStatus.ERROR,
@@ -255,7 +255,7 @@ describe.skip('Direct chats gateway', (): void => {
 			const sendDirectMessageDto = {
 				directChatId: '123',
 				messageText: 'Hello, world!',
-			} as SendDirectMessageDto;
+			} as SendDirectChatMessageRequestDto;
 
 			const errorResponse: ErrorWSResponseResult<ErrorField> = {
 				status: ResponseStatus.ERROR,
@@ -288,7 +288,7 @@ describe.skip('Direct chats gateway', (): void => {
 
 			const sendDirectMessageDto = {
 				directChatId: '8612e6df-1600-4eeb-bd1d-64dfda26dc06',
-			} as SendDirectMessageDto;
+			} as SendDirectChatMessageRequestDto;
 
 			const errorResponse: ErrorWSResponseResult<ErrorField> = {
 				status: ResponseStatus.ERROR,
@@ -382,7 +382,7 @@ describe.skip('Direct chats gateway', (): void => {
 			const sendDirectMessageDto = {
 				directChatId: '8612e6df-1600-4eeb-bd1d-64dfda26dc06',
 				messageText: '',
-			} as SendDirectMessageDto;
+			} as SendDirectChatMessageRequestDto;
 
 			const errorResponse: ErrorWSResponseResult<ErrorField> = {
 				status: ResponseStatus.ERROR,
@@ -418,7 +418,7 @@ describe.skip('Direct chats gateway', (): void => {
 			const sendDirectMessageDto = {
 				directChatId: '8612e6df-1600-4eeb-bd1d-64dfda26dc06',
 				messageText: 'H'.padEnd(501, 'H'),
-			} as SendDirectMessageDto;
+			} as SendDirectChatMessageRequestDto;
 
 			const errorResponse: ErrorWSResponseResult<ErrorField> = {
 				status: ResponseStatus.ERROR,
@@ -454,9 +454,9 @@ describe.skip('Direct chats gateway', (): void => {
 			const sendDirectMessageDto = {
 				directChatId: '8612e6df-1600-4eeb-bd1d-64dfda26dc06',
 				messageText: 'Hello world',
-			} as SendDirectMessageDto;
+			} as SendDirectChatMessageRequestDto;
 
-			const successfulResponse: SuccessfulWSResponseResult<DirectChatMessageWithChatDto> = {
+			const successfulResponse: SuccessfulWSResponseResult<SendDirectChatMessageResponseDto> = {
 				status: ResponseStatus.SUCCESS,
 				data: createdMessage,
 			};
@@ -486,9 +486,9 @@ describe.skip('Direct chats gateway', (): void => {
 			const sendDirectMessageDto = {
 				directChatId: 'a9bdc525-1c35-48c0-a0c6-79601d842f43',
 				messageText: 'Hello world',
-			} as SendDirectMessageDto;
+			} as SendDirectChatMessageRequestDto;
 
-			const successfulResponse: SuccessfulWSResponseResult<DirectChatMessageWithChatDto> = {
+			const successfulResponse: SuccessfulWSResponseResult<SendDirectChatMessageResponseDto> = {
 				status: ResponseStatus.SUCCESS,
 				data: createdMessage,
 			};
@@ -515,7 +515,7 @@ describe.skip('Direct chats gateway', (): void => {
 			const sendDirectMessageDto = {
 				directChatId: 'a9bdc525-1c35-48c0-a0c6-79601d842f43',
 				messageText: 'Hello world',
-			} as SendDirectMessageDto;
+			} as SendDirectChatMessageRequestDto;
 
 			socket.connect();
 

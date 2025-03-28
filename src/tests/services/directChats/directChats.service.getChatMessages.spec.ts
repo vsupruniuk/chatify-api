@@ -1,7 +1,7 @@
-import { DirectChatMessagesRepository } from '@repositories/directChatMessages.repository';
+import { DirectChatMessagesRepository } from '@repositories/directChatMessages/directChatMessages.repository';
 import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
 import { IDirectChatsRepository } from '@repositories/directChats/IDirectChatsRepository';
-import { IDirectChatMessagesRepository } from '@interfaces/directChatMessages/IDirectChatMessagesRepository';
+import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
 import { ICryptoService } from '@services/crypto/ICryptoService';
 import { DirectChatsRepository } from '@repositories/directChats/directChats.repository';
 import { connectionSource } from '@db/typeOrmConfig';
@@ -12,7 +12,7 @@ import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
 import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
 import { directChats } from '@testMocks/DirectChat/directChats';
 import { users } from '@testMocks/User/users';
-import { DirectChatMessageWithChatDto } from '../../../types/dto/directChatMessages/DirectChatMessageWithChat.dto';
+import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
 
 describe.skip('directChatsService', (): void => {
 	let directChatsService: IDirectChatsService;
@@ -105,22 +105,18 @@ describe.skip('directChatsService', (): void => {
 		});
 
 		it('should return response as instance of Array', async (): Promise<void> => {
-			const chatMessages: DirectChatMessageWithChatDto[] = await directChatsService.getChatMessages(
-				userIdMock,
-				directChatIdMock,
-			);
+			const chatMessages: SendDirectChatMessageResponseDto[] =
+				await directChatsService.getChatMessages(userIdMock, directChatIdMock);
 
 			expect(chatMessages).toBeInstanceOf(Array);
 		});
 
 		it('should return each chat as instance of DirectChatMessageWithChatDto', async (): Promise<void> => {
-			const chatMessages: DirectChatMessageWithChatDto[] = await directChatsService.getChatMessages(
-				userIdMock,
-				directChatIdMock,
-			);
+			const chatMessages: SendDirectChatMessageResponseDto[] =
+				await directChatsService.getChatMessages(userIdMock, directChatIdMock);
 
-			chatMessages.forEach((message: DirectChatMessageWithChatDto) => {
-				expect(message).toBeInstanceOf(DirectChatMessageWithChatDto);
+			chatMessages.forEach((message: SendDirectChatMessageResponseDto) => {
+				expect(message).toBeInstanceOf(SendDirectChatMessageResponseDto);
 			});
 		});
 	});

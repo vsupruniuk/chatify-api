@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import providers from '@modules/providers/providers';
 import { CreateDirectChatResponseDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/CreateDirectChatResponseDtoDecryptionStrategy';
+import { SendDirectChatMessageResponseDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/SendDirectChatMessageResponseDtoDecryptionStrategy';
 
 @Module({
 	controllers: [
@@ -13,6 +14,7 @@ import { CreateDirectChatResponseDtoDecryptionStrategy } from '@services/crypto/
 		JwtService,
 
 		CreateDirectChatResponseDtoDecryptionStrategy,
+		SendDirectChatMessageResponseDtoDecryptionStrategy,
 
 		providers.CTF_DIRECT_CHATS_SERVICE,
 		providers.CTF_DIRECT_CHATS_REPOSITORY,

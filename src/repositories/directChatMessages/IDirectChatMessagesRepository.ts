@@ -1,4 +1,24 @@
+import { DirectChat } from '@entities/DirectChat.entity';
+import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
+import { UserDto } from '@dtos/users/UserDto';
+
 export interface IDirectChatMessagesRepository {
+	/**
+	 * Create message for direct chat
+	 * @param sender - user that sent a message
+	 * @param directChat - direct chat related to message
+	 * @param messageText - message text to send
+	 * @param messageDateTime - message date and times
+	 * @returns DirectChatMessage - created message with related chat if message was created
+	 * @returns null - if message wasn't created
+	 */
+	createMessage(
+		sender: UserDto,
+		directChat: DirectChat,
+		messageText: string,
+		messageDateTime: string,
+	): Promise<DirectChatMessage | null>;
+
 	// /**
 	//  * Get last messages for direct chat
 	//  * @param userId - user id that send request for messages
@@ -14,21 +34,7 @@ export interface IDirectChatMessagesRepository {
 	// 	take: number,
 	// ): Promise<DirectChatMessage[]>;
 	//
-	// /**
-	//  * Create message for direct chat
-	//  * @param senderId - id of user that send message
-	//  * @param directChatId - id of chat to create message
-	//  * @param messageText - message text to send
-	//  * @param messageDateTime - message date and times
-	//  * @throws NotFoundException - if message sender or chat not found
-	//  * @returns created chat id
-	//  */
-	// createMessage(
-	// 	senderId: string,
-	// 	directChatId: string,
-	// 	messageText: string,
-	// 	messageDateTime: string,
-	// ): Promise<string>;
+
 	//
 	// /**
 	//  * Retrieve message by id

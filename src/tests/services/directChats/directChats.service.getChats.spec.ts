@@ -1,10 +1,10 @@
 import { connectionSource } from '@db/typeOrmConfig';
 import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
 import { IDirectChatsRepository } from '@repositories/directChats/IDirectChatsRepository';
-import { IDirectChatMessagesRepository } from '@interfaces/directChatMessages/IDirectChatMessagesRepository';
+import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
 import { ICryptoService } from '@services/crypto/ICryptoService';
 import { DirectChatsRepository } from '@repositories/directChats/directChats.repository';
-import { DirectChatMessagesRepository } from '@repositories/directChatMessages.repository';
+import { DirectChatMessagesRepository } from '@repositories/directChatMessages/directChatMessages.repository';
 import { CryptoService } from '@services/crypto/crypto.service';
 import { DirectChatsService } from '@services/directChats/directChats.service';
 import SpyInstance = jest.SpyInstance;

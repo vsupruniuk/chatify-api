@@ -1,6 +1,6 @@
 import { directChats } from '@testMocks/DirectChat/directChats';
 import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
-import { DirectChatMessagesRepository } from '@repositories/directChatMessages.repository';
+import { DirectChatMessagesRepository } from '@repositories/directChatMessages/directChatMessages.repository';
 import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
 import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
 import { users } from '@testMocks/User/users';

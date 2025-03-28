@@ -1,5 +1,5 @@
 import { connectionSource } from '@db/typeOrmConfig';
-import { DirectChatMessagesRepository } from '@repositories/directChatMessages.repository';
+import { DirectChatMessagesRepository } from '@repositories/directChatMessages/directChatMessages.repository';
 import { DirectChatsRepository } from '@repositories/directChats/directChats.repository';
 import { CryptoService } from '@services/crypto/crypto.service';
 import { DirectChatsService } from '@services/directChats/directChats.service';
@@ -8,7 +8,7 @@ import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
 import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
 import { DateHelper } from '@helpers/date.helper';
 import { UnprocessableEntityException } from '@nestjs/common';
-import { DirectChatMessageWithChatDto } from '../../../types/dto/directChatMessages/DirectChatMessageWithChat.dto';
+import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
 
 describe.skip('Direct chats service', (): void => {
 	let directChatsService: DirectChatsService;
@@ -155,14 +155,14 @@ describe.skip('Direct chats service', (): void => {
 		});
 
 		it('should return created message as instance of DirectChatMessageWithChatDto', async (): Promise<void> => {
-			const createdMessage: DirectChatMessageWithChatDto = await directChatsService.sendMessage(
+			const createdMessage: SendDirectChatMessageResponseDto = await directChatsService.sendMessage(
 				senderId,
 				directChatId,
 				messageText,
 			);
 
 			expect(createdMessage.id).toBe(createdMessageId);
-			expect(createdMessage).toBeInstanceOf(DirectChatMessageWithChatDto);
+			expect(createdMessage).toBeInstanceOf(SendDirectChatMessageResponseDto);
 		});
 	});
 });

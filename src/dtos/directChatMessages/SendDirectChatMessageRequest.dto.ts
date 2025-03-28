@@ -1,6 +1,6 @@
 import { IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
 
-export class SendDirectMessageDto {
+export class SendDirectChatMessageRequestDto {
 	@IsUUID('4', { message: 'Wrong $property format. UUID is expected' })
 	public directChatId: string;
 

@@ -1,4 +1,4 @@
-import { DirectChatMessagesRepository } from '@repositories/directChatMessages.repository';
+import { DirectChatMessagesRepository } from '@repositories/directChatMessages/directChatMessages.repository';
 import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
 import { DataSource } from 'typeorm';
 import { DirectChatMessage } from '@entities/DirectChatMessage.entity';

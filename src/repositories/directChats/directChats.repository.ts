@@ -10,7 +10,16 @@ import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
 export class DirectChatsRepository implements IDirectChatsRepository {
 	constructor(private readonly _dataSource: DataSource) {}
 
-	public async getChatByUsersIds(
+	public async getById(id: string): Promise<DirectChat | null> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('direct_chat')
+			.from(DirectChat, 'direct_chat')
+			.where('direct_chat.id = :id', { id })
+			.getOne();
+	}
+
+	public async getByUsersIds(
 		firstUserId: string,
 		secondUserId: string,
 	): Promise<DirectChat | null> {

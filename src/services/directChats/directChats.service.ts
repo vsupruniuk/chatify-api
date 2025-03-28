@@ -3,6 +3,7 @@ import {
 	ConflictException,
 	Inject,
 	Injectable,
+	NotFoundException,
 	UnprocessableEntityException,
 } from '@nestjs/common';
 import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
@@ -15,6 +16,9 @@ import { DateHelper } from '@helpers/date.helper';
 import { TransformHelper } from '@helpers/transform.helper';
 import { CreateDirectChatResponseDto } from '@dtos/directChats/CreateDirectChatResponse.dto';
 import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
+import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
+import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
+import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
 
 @Injectable()
 export class DirectChatsService implements IDirectChatsService {
@@ -27,6 +31,9 @@ export class DirectChatsService implements IDirectChatsService {
 
 		@Inject(CustomProviders.CTF_DECRYPTION_STRATEGY_MANAGER)
 		private readonly _decryptionStrategyManager: IDecryptionStrategyManager,
+
+		@Inject(CustomProviders.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY)
+		private readonly _directChatMessagesRepository: IDirectChatMessagesRepository,
 	) {}
 
 	public async createChat(
@@ -44,7 +51,7 @@ export class DirectChatsService implements IDirectChatsService {
 			throw new BadRequestException('One of the chat members does not exist');
 		}
 
-		const existingChat: DirectChat | null = await this._directChatsRepository.getChatByUsersIds(
+		const existingChat: DirectChat | null = await this._directChatsRepository.getByUsersIds(
 			senderId,
 			receiverId,
 		);
@@ -69,6 +76,40 @@ export class DirectChatsService implements IDirectChatsService {
 
 		return await this._decryptionStrategyManager.decrypt(
 			TransformHelper.toTargetDto(CreateDirectChatResponseDto, createdChat),
+		);
+	}
+
+	public async sendMessage(
+		senderId: string,
+		directChatId: string,
+		messageText: string,
+	): Promise<SendDirectChatMessageResponseDto> {
+		const user: UserDto | null = await this._usersService.getById(senderId);
+
+		if (!user) {
+			throw new NotFoundException('User with provided id does not exist');
+		}
+
+		const directChat: DirectChat | null = await this._directChatsRepository.getById(directChatId);
+
+		if (!directChat) {
+			throw new NotFoundException('Direct chat with provided id does not exist');
+		}
+
+		const createdMessage: DirectChatMessage | null =
+			await this._directChatMessagesRepository.createMessage(
+				user,
+				directChat,
+				messageText,
+				DateHelper.dateTimeNow(),
+			);
+
+		if (!createdMessage) {
+			throw new UnprocessableEntityException('Failed to create message. Please try again');
+		}
+
+		return this._decryptionStrategyManager.decrypt(
+			TransformHelper.toTargetDto(SendDirectChatMessageResponseDto, createdMessage),
 		);
 	}
 
@@ -138,32 +179,7 @@ export class DirectChatsService implements IDirectChatsService {
 	// 	});
 	// }
 	//
-	// // TODO check if needed
-	// public async sendMessage(
-	// 	senderId: string,
-	// 	directChatId: string,
-	// 	messageText: string,
-	// ): Promise<DirectChatMessageWithChatDto> {
-	// 	const createdMessageId: string = await this._directChatMessagesRepository.createMessage(
-	// 		senderId,
-	// 		directChatId,
-	// 		await this._cryptoService.encryptText(messageText),
-	// 		DateHelper.dateTimeNow(),
-	// 	);
-	//
-	// 	const createdMessage: DirectChatMessage | null =
-	// 		await this._directChatMessagesRepository.getMessageById(createdMessageId);
-	//
-	// 	if (!createdMessage) {
-	// 		throw new UnprocessableEntityException('Failed to create message. Please try again');
-	// 	}
-	//
-	// 	createdMessage.messageText = await this._cryptoService.decryptText(createdMessage.messageText);
-	//
-	// 	return plainToInstance(DirectChatMessageWithChatDto, createdMessage, {
-	// 		excludeExtraneousValues: true,
-	// 	});
-	// }
+
 	//
 	// // TODO check if needed
 	// private _getPagination(page?: number, take: number = 10): { skip: number; take: number } {

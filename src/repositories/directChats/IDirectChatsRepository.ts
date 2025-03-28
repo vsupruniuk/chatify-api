@@ -3,13 +3,21 @@ import { UserDto } from '@dtos/users/UserDto';
 
 export interface IDirectChatsRepository {
 	/**
+	 * Retrieve direct chat by id
+	 * @param id - chat id for searching
+	 * @returns DirectChat - if direct chat was found
+	 * @returns null - if direct chat was not found
+	 */
+	getById(id: string): Promise<DirectChat | null>;
+
+	/**
 	 * Retrieve direct chat by both of its users
 	 * @param firstUserId - first user id
 	 * @param secondUserId - second user id
 	 * @returns direct chat if it was found
 	 * @returns null if direct chat wasn't found
 	 */
-	getChatByUsersIds(firstUserId: string, secondUserId: string): Promise<DirectChat | null>;
+	getByUsersIds(firstUserId: string, secondUserId: string): Promise<DirectChat | null>;
 
 	/**
 	 * Creating direct chat between 2 users with initial message
@@ -35,13 +43,5 @@ export interface IDirectChatsRepository {
 	//  * @returns DirectChat list
 	//  */
 	// getLastChats(userId: string, skip: number, take: number): Promise<DirectChat[]>;
-	//
-	// /**
-	//  * Retrieve direct chat by id
-	//  * @param chatId - chat id for searching
-	//  * @returns DirectChat - if direct chat was found
-	//  * @returns null - if direct chat was not found
-	//  */
-	// getChatById(chatId: string): Promise<DirectChat | null>;
 	//
 }

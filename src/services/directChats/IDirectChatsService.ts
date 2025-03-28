@@ -1,4 +1,5 @@
 import { CreateDirectChatResponseDto } from '@dtos/directChats/CreateDirectChatResponse.dto';
+import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
 
 export interface IDirectChatsService {
 	/**
@@ -16,6 +17,21 @@ export interface IDirectChatsService {
 		receiverId: string,
 		messageText: string,
 	): Promise<CreateDirectChatResponseDto>;
+
+	/**
+	 * Create message for direct chat and retrieve it back
+	 * @param senderId - id of user who send this message
+	 * @param directChatId - id of chat for creating message
+	 * @param messageText - message text to send
+	 * @returns SendDirectChatMessageResponseDto - created message
+	 * @throws NotFoundException - if message sender or chat is not found
+	 * @throws UnprocessableEntityException - if failed to create a message
+	 */
+	sendMessage(
+		senderId: string,
+		directChatId: string,
+		messageText: string,
+	): Promise<SendDirectChatMessageResponseDto>;
 	//
 	// /**
 	//  * Retrieve last direct chat, decrypt their last messages and return in public form
@@ -41,17 +57,4 @@ export interface IDirectChatsService {
 	// 	take?: number,
 	// ): Promise<DirectChatMessageWithChatDto[]>;
 	//
-	// /**
-	//  * Create message for direct chat and retrieve it back
-	//  * @param senderId - id of user who send this message
-	//  * @param directChatId - id of chat for creating message
-	//  * @param messageText - message text to send
-	//  * @throws UnprocessableEntityException - if failed to create message
-	//  * @returns DirectChatMessageWithChatDto
-	//  */
-	// sendMessage(
-	// 	senderId: string,
-	// 	directChatId: string,
-	// 	messageText: string,
-	// ): Promise<DirectChatMessageWithChatDto>;
 }
