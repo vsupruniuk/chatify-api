@@ -20,7 +20,7 @@ import { CreateDirectChatRequestDto } from '@dtos/directChats/CreateDirectChatRe
 import { AppUserPayload } from '@decorators/data/AppUser.decorator';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { MessageEncryptionPipe } from '@pipes/messageEncryption.pipe';
-import { CreateDirectChatResponseDto } from '@dtos/directChats/CreateDirectChatResponse.dto';
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
 import { IWSClientsService } from '@services/wsClients/IWSClientsService';
 import { GlobalTypes } from '../../typesNew/global';
 import { SendDirectChatMessageRequestDto } from '@dtos/directChatMessages/SendDirectChatMessageRequest.dto';
@@ -69,11 +69,12 @@ export class DirectChatsGateway
 
 		@MessageBody(MessageEncryptionPipe) createDirectChatRequestDto: CreateDirectChatRequestDto,
 	): Promise<void> {
-		const createdChat: CreateDirectChatResponseDto = await this._directChatsService.createChat(
-			appUserPayload.id,
-			createDirectChatRequestDto.receiverId,
-			createDirectChatRequestDto.messageText,
-		);
+		const createdChat: DirectChatWithUsersAndMessagesDto =
+			await this._directChatsService.createChat(
+				appUserPayload.id,
+				createDirectChatRequestDto.receiverId,
+				createDirectChatRequestDto.messageText,
+			);
 
 		await this._wsClientsService.notifyAllClients(
 			[appUserPayload.id, createDirectChatRequestDto.receiverId],

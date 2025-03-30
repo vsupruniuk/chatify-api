@@ -14,7 +14,7 @@ import * as request from 'supertest';
 import { Headers } from '@enums/Headers.enum';
 import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
 import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
-import { DirectChatsController } from '@controllers/directChats.controller';
+import { DirectChatsController } from '@controllers/directChats/directChats.controller';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
 import { DirectChatMessage } from '@entities/DirectChatMessage.entity';

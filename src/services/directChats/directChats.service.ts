@@ -14,11 +14,12 @@ import { IUsersService } from '@services/users/IUsersService';
 import { UserDto } from '@dtos/users/UserDto';
 import { DateHelper } from '@helpers/date.helper';
 import { TransformHelper } from '@helpers/transform.helper';
-import { CreateDirectChatResponseDto } from '@dtos/directChats/CreateDirectChatResponse.dto';
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
 import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
 import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
 import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
 import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
+import { PaginationHelper } from '@helpers/pagination.helper';
 
 @Injectable()
 export class DirectChatsService implements IDirectChatsService {
@@ -40,7 +41,7 @@ export class DirectChatsService implements IDirectChatsService {
 		senderId: string,
 		receiverId: string,
 		messageText: string,
-	): Promise<CreateDirectChatResponseDto> {
+	): Promise<DirectChatWithUsersAndMessagesDto> {
 		const chatUsers: UserDto[] = await this._usersService.getAllByIds([senderId, receiverId]);
 
 		const isBothUsersExist: boolean = [senderId, receiverId].every((id: string) =>
@@ -75,7 +76,7 @@ export class DirectChatsService implements IDirectChatsService {
 		}
 
 		return await this._decryptionStrategyManager.decrypt(
-			TransformHelper.toTargetDto(CreateDirectChatResponseDto, createdChat),
+			TransformHelper.toTargetDto(DirectChatWithUsersAndMessagesDto, createdChat),
 		);
 	}
 
@@ -108,46 +109,33 @@ export class DirectChatsService implements IDirectChatsService {
 			throw new UnprocessableEntityException('Failed to create message. Please try again');
 		}
 
-		return this._decryptionStrategyManager.decrypt(
+		return await this._decryptionStrategyManager.decrypt(
 			TransformHelper.toTargetDto(SendDirectChatMessageResponseDto, createdMessage),
 		);
 	}
 
-	//
-	// // TODO check if needed
-	// public async getLastChats(
-	// 	userId: string,
-	// 	page?: number,
-	// 	take?: number,
-	// ): Promise<DirectChatShortDto[]> {
-	// 	const { skip: skipRecords, take: takeRecords } = this._getPagination(page, take);
-	//
-	// 	const chats: DirectChat[] = await this._directChatsRepository.getLastChats(
-	// 		userId,
-	// 		skipRecords,
-	// 		takeRecords,
-	// 	);
-	//
-	// 	const decryptedChats: DirectChat[] = await Promise.all(
-	// 		chats.map(async (directChat: DirectChat) => {
-	// 			const decryptedMessages: DirectChatMessage[] = await Promise.all(
-	// 				directChat.messages.map(async (directChatsMessage: DirectChatMessage) => {
-	// 					return {
-	// 						...directChatsMessage,
-	// 						messageText: await this._cryptoService.decryptText(directChatsMessage.messageText),
-	// 					};
-	// 				}),
-	// 			);
-	//
-	// 			return {
-	// 				...directChat,
-	// 				messages: decryptedMessages,
-	// 			};
-	// 		}),
-	// 	);
-	//
-	// 	return plainToInstance(DirectChatShortDto, decryptedChats, { excludeExtraneousValues: true });
-	// }
+	public async getUserLastChats(
+		userId: string,
+		page?: number,
+		take?: number,
+	): Promise<DirectChatWithUsersAndMessagesDto[]> {
+		const { skip: skipRecords, take: takeRecords } = PaginationHelper.toSQLPagination(page, take);
+
+		const chats: DirectChat[] = await this._directChatsRepository.getLastChatsByUserId(
+			userId,
+			skipRecords,
+			takeRecords,
+		);
+
+		return await Promise.all(
+			chats.map(
+				async (chat: DirectChat) =>
+					await this._decryptionStrategyManager.decrypt(
+						TransformHelper.toTargetDto(DirectChatWithUsersAndMessagesDto, chat),
+					),
+			),
+		);
+	}
 	//
 	// // TODO check if needed
 	// public async getChatMessages(

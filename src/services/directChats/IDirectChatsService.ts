@@ -1,4 +1,4 @@
-import { CreateDirectChatResponseDto } from '@dtos/directChats/CreateDirectChatResponse.dto';
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
 import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
 
 export interface IDirectChatsService {
@@ -7,7 +7,7 @@ export interface IDirectChatsService {
 	 * @param senderId - id of user which sent the message
 	 * @param receiverId - if of user who will receive the message
 	 * @param messageText - text of the message
-	 * @returns CreateDirectChatResponseDto - created chat
+	 * @returns DirectChatWithUsersAndMessagesDto - created chat
 	 * @throws BadRequestException - if one of the users does not exist
 	 * @throws ConflictException - if chat between users already exist
 	 * @throws UnprocessableEntityException - if failed to create chat
@@ -16,7 +16,7 @@ export interface IDirectChatsService {
 		senderId: string,
 		receiverId: string,
 		messageText: string,
-	): Promise<CreateDirectChatResponseDto>;
+	): Promise<DirectChatWithUsersAndMessagesDto>;
 
 	/**
 	 * Create message for direct chat and retrieve it back
@@ -32,16 +32,20 @@ export interface IDirectChatsService {
 		directChatId: string,
 		messageText: string,
 	): Promise<SendDirectChatMessageResponseDto>;
-	//
-	// /**
-	//  * Retrieve last direct chat, decrypt their last messages and return in public form
-	//  * @param page - page of records
-	//  * @param take - number of records to take
-	//  * @param userId - user id for retrieving chats
-	//  * @returns DirectChatShortDto[] - array of direct chats with decrypted messages and without sensitive data
-	//  */
-	// getLastChats(userId: string, page?: number, take?: number): Promise<DirectChatShortDto[]>;
-	//
+
+	/**
+	 * Retrieve last direct chat, decrypt their last messages and return in public form
+	 * @param page - page of records
+	 * @param take - number of records to take
+	 * @param userId - user id for retrieving chats
+	 * @returns DirectChatWithUsersAndMessagesDto - array of direct chats with decrypted messages and without sensitive data
+	 */
+	getUserLastChats(
+		userId: string,
+		page?: number,
+		take?: number,
+	): Promise<DirectChatWithUsersAndMessagesDto[]>;
+
 	// /**
 	//  * Retrieve chat messages
 	//  * @param userId - user id that send request for messages

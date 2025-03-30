@@ -18,7 +18,7 @@ import { ErrorWSResponseResult } from '@responses/errorResponses/ErrorWSResponse
 import { ErrorField } from '@responses/errors/ErrorField';
 import { ResponseStatus } from '@enums/ResponseStatus.enum';
 import { SuccessfulWSResponseResult } from '@responses/successfulResponses/SuccessfulWSResponseResult';
-import { CreateDirectChatResponseDto } from '@dtos/directChats/CreateDirectChatResponse.dto';
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
 
 describe.skip('Direct chat gateway', (): void => {
 	let app: INestApplication;
@@ -459,7 +459,7 @@ describe.skip('Direct chat gateway', (): void => {
 				messageText: 'Hello, world!',
 			} as CreateDirectChatRequestDto;
 
-			const successfulResponse: SuccessfulWSResponseResult<CreateDirectChatResponseDto> = {
+			const successfulResponse: SuccessfulWSResponseResult<DirectChatWithUsersAndMessagesDto> = {
 				status: ResponseStatus.SUCCESS,
 				data: {
 					directChat: plainToInstance(DirectChatShortDto, createdChat, {
@@ -495,7 +495,7 @@ describe.skip('Direct chat gateway', (): void => {
 				messageText: 'Hello, world!',
 			} as CreateDirectChatRequestDto;
 
-			const successfulResponse: SuccessfulWSResponseResult<CreateDirectChatResponseDto> = {
+			const successfulResponse: SuccessfulWSResponseResult<DirectChatWithUsersAndMessagesDto> = {
 				status: ResponseStatus.SUCCESS,
 				data: {
 					directChat: plainToInstance(DirectChatShortDto, createdChat, {

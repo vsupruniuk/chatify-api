@@ -12,7 +12,7 @@ import { Request } from 'express';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { Headers } from '@enums/Headers.enum';
-import { DirectChatsController } from '@controllers/directChats.controller';
+import { DirectChatsController } from '@controllers/directChats/directChats.controller';
 import { User } from '@db/entities/User.entity';
 import { DirectChat } from '@db/entities/DirectChat.entity';
 import { users } from '@testMocks/User/users';

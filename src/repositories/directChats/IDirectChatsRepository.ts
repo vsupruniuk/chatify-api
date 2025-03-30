@@ -34,14 +34,13 @@ export interface IDirectChatsRepository {
 		messageText: string,
 		messageDateTime: string,
 	): Promise<DirectChat | null>;
-	//
-	// /**
-	//  * Get last user direct chats
-	//  * @param skip - number of records to skip
-	//  * @param take - number of records to take
-	//  * @param userId - user id in UUID format
-	//  * @returns DirectChat list
-	//  */
-	// getLastChats(userId: string, skip: number, take: number): Promise<DirectChat[]>;
-	//
+
+	/**
+	 * Get last user direct chats
+	 * @param userId - user id in UUID format
+	 * @param skip - number of records to skip
+	 * @param take - number of records to take
+	 * @returns DirectChat list
+	 */
+	getLastChatsByUserId(userId: string, skip: number, take: number): Promise<DirectChat[]>;
 }

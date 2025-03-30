@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Query, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Inject, ParseIntPipe, Query, UseInterceptors } from '@nestjs/common';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { ISearchController } from '@controllers/search/ISearchController';
 import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
@@ -20,9 +20,9 @@ export class SearchController implements ISearchController {
 	public async findUsers(
 		@QueryRequired('nickname') nickname: string,
 
-		@Query('page') page?: number,
+		@Query('page', new ParseIntPipe({ optional: true })) page?: number,
 
-		@Query('take') take?: number,
+		@Query('take', new ParseIntPipe({ optional: true })) take?: number,
 	): Promise<UserDto[]> {
 		return this._usersService.getActivatedUsersByNickname(nickname, page, take);
 	}
