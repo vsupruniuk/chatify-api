@@ -8,7 +8,15 @@ export interface IDirectChatsRepository {
 	 * @returns DirectChat - if direct chat was found
 	 * @returns null - if direct chat was not found
 	 */
-	getById(id: string): Promise<DirectChat | null>;
+	findById(id: string): Promise<DirectChat | null>;
+
+	/**
+	 * Retrieve direct chat with users by id
+	 * @param id - chat id for searching
+	 * @returns DirectChat - if direct chat was found
+	 * @returns null - if direct chat was not found
+	 */
+	findByIdWithUsers(id: string): Promise<DirectChat | null>;
 
 	/**
 	 * Retrieve direct chat by both of its users
@@ -17,7 +25,16 @@ export interface IDirectChatsRepository {
 	 * @returns direct chat if it was found
 	 * @returns null if direct chat wasn't found
 	 */
-	getByUsersIds(firstUserId: string, secondUserId: string): Promise<DirectChat | null>;
+	findByUsersIds(firstUserId: string, secondUserId: string): Promise<DirectChat | null>;
+
+	/**
+	 * Get last user direct chats
+	 * @param userId - user id in UUID format
+	 * @param skip - number of records to skip
+	 * @param take - number of records to take
+	 * @returns DirectChat list
+	 */
+	findLastChatsByUserId(userId: string, skip: number, take: number): Promise<DirectChat[]>;
 
 	/**
 	 * Creating direct chat between 2 users with initial message
@@ -34,13 +51,4 @@ export interface IDirectChatsRepository {
 		messageText: string,
 		messageDateTime: string,
 	): Promise<DirectChat | null>;
-
-	/**
-	 * Get last user direct chats
-	 * @param userId - user id in UUID format
-	 * @param skip - number of records to skip
-	 * @param take - number of records to take
-	 * @returns DirectChat list
-	 */
-	getLastChatsByUserId(userId: string, skip: number, take: number): Promise<DirectChat[]>;
 }

@@ -2,7 +2,7 @@ import { Expose, Type } from 'class-transformer';
 import { UserDto } from '@dtos/users/UserDto';
 import { DirectChatWithUsersDto } from '@dtos/directChats/DirectChatWithUsers.dto';
 
-export class SendDirectChatMessageResponseDto {
+export class DirectChatMessageWithChatAndUserDto {
 	@Expose()
 	public id: string;
 

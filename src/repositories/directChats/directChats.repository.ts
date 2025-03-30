@@ -10,7 +10,7 @@ import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
 export class DirectChatsRepository implements IDirectChatsRepository {
 	constructor(private readonly _dataSource: DataSource) {}
 
-	public async getById(id: string): Promise<DirectChat | null> {
+	public async findById(id: string): Promise<DirectChat | null> {
 		return await this._dataSource
 			.createQueryBuilder()
 			.select('direct_chat')
@@ -19,7 +19,17 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 			.getOne();
 	}
 
-	public async getByUsersIds(
+	public async findByIdWithUsers(id: string): Promise<DirectChat | null> {
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('direct_chat')
+			.from(DirectChat, 'direct_chat')
+			.leftJoinAndSelect('direct_chat.users', 'users')
+			.where('direct_chat.id = :id', { id })
+			.getOne();
+	}
+
+	public async findByUsersIds(
 		firstUserId: string,
 		secondUserId: string,
 	): Promise<DirectChat | null> {
@@ -44,6 +54,47 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 			.whereExists(chatWithFirstUserExistCondition)
 			.andWhereExists(chatWithSecondUserExistCondition)
 			.getOne();
+	}
+
+	public async findLastChatsByUserId(
+		userId: string,
+		skip: number,
+		take: number,
+	): Promise<DirectChat[]> {
+		const lastMessageSubQuery: string = this._dataSource
+			.createQueryBuilder()
+			.select('direct_chat_message.id')
+			.from(DirectChatMessage, 'direct_chat_message')
+			.where('direct_chat_message.direct_chat_id = direct_chat.id')
+			.orderBy('direct_chat_message.updated_at', 'DESC')
+			.limit(1)
+			.getQuery();
+
+		const userDirectChatsSubQuery: string = this._dataSource
+			.createQueryBuilder()
+			.select('direct_chats_users.direct_chat_id')
+			.from('direct_chats_users', 'direct_chats_users')
+			.where('direct_chats_users.user_id = :userId')
+			.getQuery();
+
+		return await this._dataSource
+			.createQueryBuilder()
+			.select('direct_chat')
+			.from(DirectChat, 'direct_chat')
+			.leftJoinAndSelect('direct_chat.users', 'users')
+			.leftJoinAndMapMany(
+				'direct_chat.messages',
+				DirectChatMessage,
+				'last_message',
+				`last_message.id = (${lastMessageSubQuery})`,
+			)
+			.leftJoinAndSelect('last_message.sender', 'sender')
+			.where(`direct_chat.id IN (${userDirectChatsSubQuery})`)
+			.setParameter('userId', userId)
+			.orderBy('last_message.updatedAt', 'DESC')
+			.skip(skip)
+			.take(take)
+			.getMany();
 	}
 
 	public async createChat(
@@ -105,46 +156,5 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 				.where('direct_chat.id = :id', { id: chatInsertResult.generatedMaps[0].id })
 				.getOne();
 		});
-	}
-
-	public async getLastChatsByUserId(
-		userId: string,
-		skip: number,
-		take: number,
-	): Promise<DirectChat[]> {
-		const lastMessageSubQuery: string = this._dataSource
-			.createQueryBuilder()
-			.select('direct_chat_message.id')
-			.from(DirectChatMessage, 'direct_chat_message')
-			.where('direct_chat_message.direct_chat_id = direct_chat.id')
-			.orderBy('direct_chat_message.updated_at', 'DESC')
-			.limit(1)
-			.getQuery();
-
-		const userDirectChatsSubQuery: string = this._dataSource
-			.createQueryBuilder()
-			.select('direct_chats_users.direct_chat_id')
-			.from('direct_chats_users', 'direct_chats_users')
-			.where('direct_chats_users.user_id = :userId')
-			.getQuery();
-
-		return await this._dataSource
-			.createQueryBuilder()
-			.select('direct_chat')
-			.from(DirectChat, 'direct_chat')
-			.leftJoinAndSelect('direct_chat.users', 'users')
-			.leftJoinAndMapMany(
-				'direct_chat.messages',
-				DirectChatMessage,
-				'last_message',
-				`last_message.id = (${lastMessageSubQuery})`,
-			)
-			.leftJoinAndSelect('last_message.sender', 'sender')
-			.where(`direct_chat.id IN (${userDirectChatsSubQuery})`)
-			.setParameter('userId', userId)
-			.orderBy('last_message.updatedAt', 'DESC')
-			.skip(skip)
-			.take(take)
-			.getMany();
 	}
 }

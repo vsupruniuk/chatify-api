@@ -12,7 +12,7 @@ import { Request } from 'express';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { Headers } from '@enums/Headers.enum';
-import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
 import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
 import { DirectChatsController } from '@controllers/directChats/directChats.controller';
 import { User } from '@entities/User.entity';
@@ -59,7 +59,7 @@ describe.skip('Direct chats controller', (): void => {
 
 	const directChatsServiceMock: Partial<IDirectChatsService> = {
 		getChatMessages: jest.fn().mockImplementation(() =>
-			plainToInstance(SendDirectChatMessageResponseDto, [directChatsMessagesMock[0]], {
+			plainToInstance(DirectChatMessageWithChatAndUserDto, [directChatsMessagesMock[0]], {
 				excludeExtraneousValues: true,
 			}),
 		),
@@ -168,11 +168,11 @@ describe.skip('Direct chats controller', (): void => {
 			const page: number = 1;
 			const take: number = 10;
 
-			const response: SendDirectChatMessageResponseDto[] =
+			const response: DirectChatMessageWithChatAndUserDto[] =
 				await directChatsController.getChatMessages(appUserPayload, chatIdMock, page, take);
 
-			response.forEach((message: SendDirectChatMessageResponseDto) => {
-				expect(message).toBeInstanceOf(SendDirectChatMessageResponseDto);
+			response.forEach((message: DirectChatMessageWithChatAndUserDto) => {
+				expect(message).toBeInstanceOf(DirectChatMessageWithChatAndUserDto);
 			});
 		});
 	});

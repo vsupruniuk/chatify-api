@@ -1,11 +1,11 @@
 import { IDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/IDecryptionStrategy';
-import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
 import { Inject } from '@nestjs/common';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { ICryptoService } from '@services/crypto/ICryptoService';
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
 
-export class SendDirectChatMessageResponseDtoDecryptionStrategy
-	implements IDecryptionStrategy<SendDirectChatMessageResponseDto>
+export class DirectChatMessageWithChatAndUserDtoDecryptionStrategy
+	implements IDecryptionStrategy<DirectChatMessageWithChatAndUserDto>
 {
 	constructor(
 		@Inject(CustomProviders.CTF_CRYPTO_SERVICE)
@@ -13,8 +13,8 @@ export class SendDirectChatMessageResponseDtoDecryptionStrategy
 	) {}
 
 	public async decrypt(
-		data: SendDirectChatMessageResponseDto,
-	): Promise<SendDirectChatMessageResponseDto> {
+		data: DirectChatMessageWithChatAndUserDto,
+	): Promise<DirectChatMessageWithChatAndUserDto> {
 		return {
 			...data,
 			messageText: await this._cryptoService.decryptText(data.messageText),

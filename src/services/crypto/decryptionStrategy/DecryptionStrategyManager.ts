@@ -3,8 +3,8 @@ import { IDecryptionStrategy } from '@services/crypto/decryptionStrategy/strateg
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DirectChatWithUsersAndMessagesDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesDtoDecryptionStrategy';
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
-import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
-import { SendDirectChatMessageResponseDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/SendDirectChatMessageResponseDtoDecryptionStrategy';
+import { DirectChatMessageWithChatAndUserDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserDtoDecryptionStrategy';
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
 
 @Injectable()
 export class DecryptionStrategyManager implements IDecryptionStrategyManager {
@@ -12,13 +12,13 @@ export class DecryptionStrategyManager implements IDecryptionStrategyManager {
 
 	constructor(
 		directChatWithUsersAndMessagesDtoDecryptionStrategy: DirectChatWithUsersAndMessagesDtoDecryptionStrategy,
-		sendDirectChatMessageResponseDtoDecryptionStrategy: SendDirectChatMessageResponseDtoDecryptionStrategy,
+		directChatMessageWithChatAndUserDtoDecryptionStrategy: DirectChatMessageWithChatAndUserDtoDecryptionStrategy,
 	) {
 		this.strategies[DirectChatWithUsersAndMessagesDto.name] =
 			directChatWithUsersAndMessagesDtoDecryptionStrategy;
 
-		this.strategies[SendDirectChatMessageResponseDto.name] =
-			sendDirectChatMessageResponseDtoDecryptionStrategy;
+		this.strategies[DirectChatMessageWithChatAndUserDto.name] =
+			directChatMessageWithChatAndUserDtoDecryptionStrategy;
 	}
 
 	public async decrypt<T extends object>(data: T): Promise<T> {

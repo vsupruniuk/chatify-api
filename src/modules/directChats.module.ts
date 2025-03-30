@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import providers from '@modules/providers/providers';
 import { DirectChatWithUsersAndMessagesDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesDtoDecryptionStrategy';
-import { SendDirectChatMessageResponseDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/SendDirectChatMessageResponseDtoDecryptionStrategy';
+import { DirectChatMessageWithChatAndUserDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserDtoDecryptionStrategy';
 import { DirectChatsController } from '@controllers/directChats/directChats.controller';
 
 @Module({
@@ -13,7 +13,7 @@ import { DirectChatsController } from '@controllers/directChats/directChats.cont
 		JwtService,
 
 		DirectChatWithUsersAndMessagesDtoDecryptionStrategy,
-		SendDirectChatMessageResponseDtoDecryptionStrategy,
+		DirectChatMessageWithChatAndUserDtoDecryptionStrategy,
 
 		providers.CTF_DIRECT_CHATS_SERVICE,
 		providers.CTF_DIRECT_CHATS_REPOSITORY,

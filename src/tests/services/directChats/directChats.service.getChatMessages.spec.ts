@@ -12,7 +12,7 @@ import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
 import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
 import { directChats } from '@testMocks/DirectChat/directChats';
 import { users } from '@testMocks/User/users';
-import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
 
 describe.skip('directChatsService', (): void => {
 	let directChatsService: IDirectChatsService;
@@ -105,18 +105,18 @@ describe.skip('directChatsService', (): void => {
 		});
 
 		it('should return response as instance of Array', async (): Promise<void> => {
-			const chatMessages: SendDirectChatMessageResponseDto[] =
+			const chatMessages: DirectChatMessageWithChatAndUserDto[] =
 				await directChatsService.getChatMessages(userIdMock, directChatIdMock);
 
 			expect(chatMessages).toBeInstanceOf(Array);
 		});
 
 		it('should return each chat as instance of DirectChatMessageWithChatDto', async (): Promise<void> => {
-			const chatMessages: SendDirectChatMessageResponseDto[] =
+			const chatMessages: DirectChatMessageWithChatAndUserDto[] =
 				await directChatsService.getChatMessages(userIdMock, directChatIdMock);
 
-			chatMessages.forEach((message: SendDirectChatMessageResponseDto) => {
-				expect(message).toBeInstanceOf(SendDirectChatMessageResponseDto);
+			chatMessages.forEach((message: DirectChatMessageWithChatAndUserDto) => {
+				expect(message).toBeInstanceOf(DirectChatMessageWithChatAndUserDto);
 			});
 		});
 	});

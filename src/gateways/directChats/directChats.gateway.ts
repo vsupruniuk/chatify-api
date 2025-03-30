@@ -24,7 +24,7 @@ import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatW
 import { IWSClientsService } from '@services/wsClients/IWSClientsService';
 import { GlobalTypes } from '../../typesNew/global';
 import { SendDirectChatMessageRequestDto } from '@dtos/directChatMessages/SendDirectChatMessageRequest.dto';
-import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
 import { UserDto } from '@dtos/users/UserDto';
 
 @UsePipes(
@@ -89,7 +89,7 @@ export class DirectChatsGateway
 		@MessageBody(MessageEncryptionPipe)
 		sendDirectChatMessageRequestDto: SendDirectChatMessageRequestDto,
 	): Promise<void> {
-		const createdMessage: SendDirectChatMessageResponseDto =
+		const createdMessage: DirectChatMessageWithChatAndUserDto =
 			await this._directChatsService.sendMessage(
 				appUserPayload.id,
 				sendDirectChatMessageRequestDto.directChatId,

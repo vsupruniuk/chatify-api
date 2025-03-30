@@ -18,8 +18,9 @@ import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatW
 import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
 import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
 import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
-import { SendDirectChatMessageResponseDto } from '@dtos/directChatMessages/SendDirectChatMessageResponse.dto';
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
 import { PaginationHelper } from '@helpers/pagination.helper';
+import { User } from '@entities/User.entity';
 
 @Injectable()
 export class DirectChatsService implements IDirectChatsService {
@@ -37,6 +38,63 @@ export class DirectChatsService implements IDirectChatsService {
 		private readonly _directChatMessagesRepository: IDirectChatMessagesRepository,
 	) {}
 
+	public async getUserLastChats(
+		userId: string,
+		page?: number,
+		take?: number,
+	): Promise<DirectChatWithUsersAndMessagesDto[]> {
+		const { skip: skipRecords, take: takeRecords } = PaginationHelper.toSQLPagination(page, take);
+
+		const chats: DirectChat[] = await this._directChatsRepository.findLastChatsByUserId(
+			userId,
+			skipRecords,
+			takeRecords,
+		);
+
+		return await Promise.all(
+			chats.map(async (chat: DirectChat) => {
+				return await this._decryptionStrategyManager.decrypt(
+					TransformHelper.toTargetDto(DirectChatWithUsersAndMessagesDto, chat),
+				);
+			}),
+		);
+	}
+
+	public async getChatMessages(
+		userId: string,
+		directChatId: string,
+		page?: number,
+		take?: number,
+	): Promise<DirectChatMessageWithChatAndUserDto[]> {
+		const { skip: skipRecords, take: takeRecords } = PaginationHelper.toSQLPagination(page, take);
+
+		const chat: DirectChat | null =
+			await this._directChatsRepository.findByIdWithUsers(directChatId);
+
+		if (!chat) {
+			throw new NotFoundException('Chat with provided id does not exist');
+		}
+
+		if (!chat.users.some((user: User) => user.id === userId)) {
+			throw new BadRequestException('User does not belong to this chat');
+		}
+
+		const messages: DirectChatMessage[] =
+			await this._directChatMessagesRepository.findLastMessagesByDirectChatId(
+				directChatId,
+				skipRecords,
+				takeRecords,
+			);
+
+		return await Promise.all(
+			messages.map(async (message: DirectChatMessage) => {
+				return await this._decryptionStrategyManager.decrypt(
+					TransformHelper.toTargetDto(DirectChatMessageWithChatAndUserDto, message),
+				);
+			}),
+		);
+	}
+
 	public async createChat(
 		senderId: string,
 		receiverId: string,
@@ -52,7 +110,7 @@ export class DirectChatsService implements IDirectChatsService {
 			throw new BadRequestException('One of the chat members does not exist');
 		}
 
-		const existingChat: DirectChat | null = await this._directChatsRepository.getByUsersIds(
+		const existingChat: DirectChat | null = await this._directChatsRepository.findByUsersIds(
 			senderId,
 			receiverId,
 		);
@@ -84,14 +142,14 @@ export class DirectChatsService implements IDirectChatsService {
 		senderId: string,
 		directChatId: string,
 		messageText: string,
-	): Promise<SendDirectChatMessageResponseDto> {
+	): Promise<DirectChatMessageWithChatAndUserDto> {
 		const user: UserDto | null = await this._usersService.getById(senderId);
 
 		if (!user) {
 			throw new NotFoundException('User with provided id does not exist');
 		}
 
-		const directChat: DirectChat | null = await this._directChatsRepository.getById(directChatId);
+		const directChat: DirectChat | null = await this._directChatsRepository.findById(directChatId);
 
 		if (!directChat) {
 			throw new NotFoundException('Direct chat with provided id does not exist');
@@ -110,70 +168,7 @@ export class DirectChatsService implements IDirectChatsService {
 		}
 
 		return await this._decryptionStrategyManager.decrypt(
-			TransformHelper.toTargetDto(SendDirectChatMessageResponseDto, createdMessage),
+			TransformHelper.toTargetDto(DirectChatMessageWithChatAndUserDto, createdMessage),
 		);
 	}
-
-	public async getUserLastChats(
-		userId: string,
-		page?: number,
-		take?: number,
-	): Promise<DirectChatWithUsersAndMessagesDto[]> {
-		const { skip: skipRecords, take: takeRecords } = PaginationHelper.toSQLPagination(page, take);
-
-		const chats: DirectChat[] = await this._directChatsRepository.getLastChatsByUserId(
-			userId,
-			skipRecords,
-			takeRecords,
-		);
-
-		return await Promise.all(
-			chats.map(
-				async (chat: DirectChat) =>
-					await this._decryptionStrategyManager.decrypt(
-						TransformHelper.toTargetDto(DirectChatWithUsersAndMessagesDto, chat),
-					),
-			),
-		);
-	}
-	//
-	// // TODO check if needed
-	// public async getChatMessages(
-	// 	userId: string,
-	// 	directChatId: string,
-	// 	page?: number,
-	// 	take?: number,
-	// ): Promise<DirectChatMessageWithChatDto[]> {
-	// 	const { skip: skipRecords, take: takeRecords } = this._getPagination(page, take);
-	//
-	// 	const messages: DirectChatMessage[] = await this._directChatMessagesRepository.getChatMessages(
-	// 		userId,
-	// 		directChatId,
-	// 		skipRecords,
-	// 		takeRecords,
-	// 	);
-	//
-	// 	const decryptedMessages: DirectChatMessage[] = await Promise.all(
-	// 		messages.map(async (message: DirectChatMessage) => {
-	// 			return {
-	// 				...message,
-	// 				messageText: await this._cryptoService.decryptText(message.messageText),
-	// 			};
-	// 		}),
-	// 	);
-	//
-	// 	return plainToInstance(DirectChatMessageWithChatDto, decryptedMessages, {
-	// 		excludeExtraneousValues: true,
-	// 	});
-	// }
-	//
-
-	//
-	// // TODO check if needed
-	// private _getPagination(page?: number, take: number = 10): { skip: number; take: number } {
-	// 	return {
-	// 		skip: !page ? 0 : page * take - take,
-	// 		take,
-	// 	};
-	// }
 }
