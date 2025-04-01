@@ -132,23 +132,4 @@ export interface IUsersRepository {
 	 * @param avatarUrl - new avatar url
 	 */
 	updateUserAvatarUrl(userId: string, avatarUrl: string | null): Promise<void>;
-
-	//
-	// /**
-	//  * Method for searching user by one of its fields
-	//  * @param fieldName - acceptable field for searching
-	//  * @param fieldValue - value of field for searching
-	//  * @returns User - if user was found
-	//  * @returns null - if user wasn't found
-	//  */
-	// getByField(fieldName: TUserGetFields, fieldValue: string): Promise<User | null>;
-	//
-	// /**
-	//  * Method for updating existing user
-	//  * @param userId - id of user that will be updated
-	//  * @param updateUserDto - new user data for updating
-	//  * @returns true - user was updated
-	//  * @returns false - user wasn't created
-	//  */
-	// updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean>;
 }

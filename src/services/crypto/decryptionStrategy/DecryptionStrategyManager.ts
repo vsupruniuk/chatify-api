@@ -1,24 +1,24 @@
 import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
 import { IDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/IDecryptionStrategy';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { DirectChatWithUsersAndMessagesDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesDtoDecryptionStrategy';
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
-import { DirectChatMessageWithChatAndUserDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserDtoDecryptionStrategy';
+import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
 import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
+import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
 
 @Injectable()
 export class DecryptionStrategyManager implements IDecryptionStrategyManager {
 	private readonly strategies: Record<string, IDecryptionStrategy<object>> = {};
 
 	constructor(
-		directChatWithUsersAndMessagesDtoDecryptionStrategy: DirectChatWithUsersAndMessagesDtoDecryptionStrategy,
-		directChatMessageWithChatAndUserDtoDecryptionStrategy: DirectChatMessageWithChatAndUserDtoDecryptionStrategy,
+		directChatWithUsersAndMessagesStrategy: DirectChatWithUsersAndMessagesStrategy,
+		directChatMessageWithChatAndUserStrategy: DirectChatMessageWithChatAndUserStrategy,
 	) {
 		this.strategies[DirectChatWithUsersAndMessagesDto.name] =
-			directChatWithUsersAndMessagesDtoDecryptionStrategy;
+			directChatWithUsersAndMessagesStrategy;
 
 		this.strategies[DirectChatMessageWithChatAndUserDto.name] =
-			directChatMessageWithChatAndUserDtoDecryptionStrategy;
+			directChatMessageWithChatAndUserStrategy;
 	}
 
 	public async decrypt<T extends object>(data: T): Promise<T> {

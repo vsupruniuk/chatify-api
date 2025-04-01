@@ -5,10 +5,10 @@ import { Response } from 'express';
 import { ErrorResponseResult } from '@responses/errorResponses/ErrorResponseResult';
 import { ErrorField } from '@responses/errors/ErrorField';
 import { ResponseStatus } from '@enums/ResponseStatus.enum';
-import { IValidationErrorResponse } from '@interfaces/errors/IValidationError';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { Environments } from '@enums/Environments.enum';
 import { DateHelper } from '@helpers/date.helper';
+import { GlobalTypes } from '@customTypes/global';
 
 /**
  * Global exception filter for handling all exceptions and errors in app.
@@ -34,8 +34,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 					? 'Client error'
 					: 'Internal server error';
 
-			const errorMessages: string[] | string = (exception.getResponse() as IValidationErrorResponse)
-				.message;
+			const errorMessages: string[] | string = (
+				exception.getResponse() as GlobalTypes.IValidationErrorResponse
+			).message;
 
 			const messages: string[] = Array.isArray(errorMessages) ? errorMessages : [errorMessages];
 

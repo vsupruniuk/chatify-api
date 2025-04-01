@@ -22,7 +22,7 @@ import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { MessageEncryptionPipe } from '@pipes/messageEncryption.pipe';
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
 import { IWSClientsService } from '@services/wsClients/IWSClientsService';
-import { GlobalTypes } from '../../typesNew/global';
+import { GlobalTypes } from '../../types/global';
 import { SendDirectChatMessageRequestDto } from '@dtos/directChatMessages/SendDirectChatMessageRequest.dto';
 import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
 import { UserDto } from '@dtos/users/UserDto';

@@ -5,7 +5,7 @@ import { WSEvents } from '@enums/WSEvents.enum';
 import { ErrorWSResponseResult } from '@responses/errorResponses/ErrorWSResponseResult';
 import { ErrorField } from '@responses/errors/ErrorField';
 import { ResponseStatus } from '@enums/ResponseStatus.enum';
-import { IValidationErrorResponse } from '@interfaces/errors/IValidationError';
+import { GlobalTypes } from '../types/global';
 
 /**
  * Exception filter for handling websockets exceptions and errors in app.
@@ -27,8 +27,9 @@ export class wsExceptionFilter extends BaseWsExceptionFilter {
 					? 'Client error'
 					: 'Internal server error';
 
-			const errorMessages: string[] | string = (exception.getResponse() as IValidationErrorResponse)
-				.message;
+			const errorMessages: string[] | string = (
+				exception.getResponse() as GlobalTypes.IValidationErrorResponse
+			).message;
 
 			const messages: string[] = Array.isArray(errorMessages) ? errorMessages : [errorMessages];
 

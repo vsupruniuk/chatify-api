@@ -57,18 +57,4 @@ export class JwtTokensService implements IJWTTokensService {
 
 		return updatedToken.token === null;
 	}
-
-	// // TODO check if needed
-	// public async getById(id: string): Promise<JWTTokenFullDto | null> {
-	// 	const token: JWTToken | null = await this._jwtTokensRepository.getById(id);
-	//
-	// 	return token
-	// 		? plainToInstance(JWTTokenFullDto, token, { excludeExtraneousValues: true })
-	// 		: null;
-	// }
-	//
-	// // TODO check if needed
-	// public async deleteToken(id: string): Promise<boolean> {
-	// 	return await this._jwtTokensRepository.deleteToken(id);
-	// }
 }

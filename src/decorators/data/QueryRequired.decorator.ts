@@ -1,13 +1,25 @@
-import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
+import {
+	BadRequestException,
+	createParamDecorator,
+	ExecutionContext,
+	PipeTransform,
+} from '@nestjs/common';
 import { Request } from 'express';
 
-export const QueryRequired = createParamDecorator((queryName: string, ctx: ExecutionContext) => {
-	const request: Request = ctx.switchToHttp().getRequest();
-	const queryParamData = request.query[queryName];
+export const QueryRequired = createParamDecorator(
+	(queryName: string, ctx: ExecutionContext, ...pipes: PipeTransform[]) => {
+		const request: Request = ctx.switchToHttp().getRequest();
 
-	if (!queryParamData) {
-		throw new BadRequestException(`Missing required query parameter: ${queryName}`);
-	}
+		let queryParamData = request.query[queryName];
 
-	return queryParamData;
-});
+		if (!queryParamData) {
+			throw new BadRequestException(`Missing required query parameter: ${queryName}`);
+		}
+
+		pipes.forEach((pipe: PipeTransform) => {
+			queryParamData = pipe.transform(queryParamData, { type: 'query' });
+		});
+
+		return queryParamData;
+	},
+);

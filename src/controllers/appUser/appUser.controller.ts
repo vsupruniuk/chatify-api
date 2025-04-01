@@ -24,7 +24,7 @@ import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings/Accoun
 import { IAccountSettingsService } from '@services/accountSettings/IAccountSettingsService';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileFields } from '@enums/FileFields.enum';
-import { GlobalTypes } from '../../typesNew/global';
+import { GlobalTypes } from '../../types/global';
 import { diskStorage } from 'multer';
 import { FileHelper } from '@helpers/file.helper';
 import { IUsersService } from '@services/users/IUsersService';

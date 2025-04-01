@@ -9,8 +9,6 @@ import { ResponseStatus } from '@enums/ResponseStatus.enum';
 export class WsClientsService implements IWSClientsService {
 	private readonly _clients: Map<string, Socket> = new Map();
 
-	constructor() {}
-
 	public set(userId: string, client: Socket): void {
 		this._clients.set(userId, client);
 	}

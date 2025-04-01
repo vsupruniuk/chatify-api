@@ -1,4 +1,12 @@
-import { Controller, Get, Inject, ParseIntPipe, Query, UseInterceptors } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	Inject,
+	ParseIntPipe,
+	ParseUUIDPipe,
+	Query,
+	UseInterceptors,
+} from '@nestjs/common';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { ISearchController } from '@controllers/search/ISearchController';
 import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
@@ -18,7 +26,7 @@ export class SearchController implements ISearchController {
 
 	@Get('find-users')
 	public async findUsers(
-		@QueryRequired('nickname') nickname: string,
+		@QueryRequired('nickname', ParseUUIDPipe) nickname: string,
 
 		@Query('page', new ParseIntPipe({ optional: true })) page?: number,
 

@@ -1,5 +1,13 @@
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
-import { Controller, Get, Inject, ParseIntPipe, Query, UseInterceptors } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	Inject,
+	ParseIntPipe,
+	ParseUUIDPipe,
+	Query,
+	UseInterceptors,
+} from '@nestjs/common';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { AppUserPayload } from '@decorators/data/AppUser.decorator';
 import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
@@ -34,7 +42,7 @@ export class DirectChatsController implements IDirectChatsController {
 	public async getChatMessages(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 
-		@QueryRequired('chatId') chatId: string,
+		@QueryRequired('chatId', ParseUUIDPipe) chatId: string,
 
 		@Query('page', new ParseIntPipe({ optional: true })) page?: number,
 

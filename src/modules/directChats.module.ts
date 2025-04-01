@@ -2,8 +2,8 @@ import { DirectChatsGateway } from '@gateways/directChats/directChats.gateway';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import providers from '@modules/providers/providers';
-import { DirectChatWithUsersAndMessagesDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesDtoDecryptionStrategy';
-import { DirectChatMessageWithChatAndUserDtoDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserDtoDecryptionStrategy';
+import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
+import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
 import { DirectChatsController } from '@controllers/directChats/directChats.controller';
 
 @Module({
@@ -12,8 +12,8 @@ import { DirectChatsController } from '@controllers/directChats/directChats.cont
 		DirectChatsGateway,
 		JwtService,
 
-		DirectChatWithUsersAndMessagesDtoDecryptionStrategy,
-		DirectChatMessageWithChatAndUserDtoDecryptionStrategy,
+		DirectChatWithUsersAndMessagesStrategy,
+		DirectChatMessageWithChatAndUserStrategy,
 
 		providers.CTF_DIRECT_CHATS_SERVICE,
 		providers.CTF_DIRECT_CHATS_REPOSITORY,

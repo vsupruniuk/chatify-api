@@ -272,36 +272,6 @@ export class UsersRepository implements IUsersRepository {
 			.update(User)
 			.set(<User>{ avatarUrl })
 			.where('id = :userId', { userId })
-			.returning('*')
 			.execute();
 	}
-
-	//
-	// // TODO check if needed
-	// public async getByField(fieldName: TUserGetFields, fieldValue: string): Promise<User | null> {
-	// 	return await this._dataSource
-	// 		.createQueryBuilder()
-	// 		.select('user')
-	// 		.from(User, 'user')
-	// 		.leftJoinAndSelect('user.accountSettings', 'accountSettings')
-	// 		.leftJoinAndSelect('user.OTPCode', 'OTPCode')
-	// 		.leftJoinAndSelect('user.JWTToken', 'JWTToken')
-	// 		.leftJoinAndSelect('user.passwordResetToken', 'passwordResetToken')
-	// 		.where(`user.${fieldName} = :fieldValue`, { fieldValue })
-	// 		.getOne();
-	// }
-	//
-
-	//
-	// // TODO check if needed
-	// public async updateUser(userId: string, updateUserDto: Partial<UpdateUserDto>): Promise<boolean> {
-	// 	const updateResult: UpdateResult = await this._dataSource
-	// 		.createQueryBuilder()
-	// 		.update(User)
-	// 		.set(updateUserDto)
-	// 		.where('id = :userId', { userId })
-	// 		.execute();
-	//
-	// 	return updateResult.affected ? updateResult.affected > 0 : false;
-	// }
 }

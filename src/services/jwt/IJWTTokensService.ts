@@ -45,21 +45,4 @@ export interface IJWTTokensService {
 	 * @returns false if token wasn't set to null
 	 */
 	resetUserToken(userId: string): Promise<boolean>;
-
-	// /**
-	//  * Get user JWT refresh token by id
-	//  * @param id - token id
-	//  * @returns JWTTokenFullDto - if token was found
-	//  * @returns null - if token wasn't found
-	//  */
-	// getById(id: string): Promise<JWTTokenFullDto | null>;
-
-	//
-	// /**
-	//  * Delete user refresh token from DB
-	//  * @param id - user JWT token id
-	//  * @returns true - if token was deleted
-	//  * @returns false - if token wasn't deleted
-	//  */
-	// deleteToken(id: string): Promise<boolean>;
 }

@@ -41,40 +41,4 @@ export class JwtTokensRepository implements IJWTTokensRepository {
 
 		return updateTokenResult.raw[0] as JWTToken;
 	}
-
-	//
-	// // TODO check if needed
-	// public async getById(id: string): Promise<JWTToken | null> {
-	// 	return await this._dataSource
-	// 		.createQueryBuilder()
-	// 		.select('jwtToken')
-	// 		.from(JWTToken, 'jwtToken')
-	// 		.where('jwtToken.id = :id', { id })
-	// 		.getOne();
-	// }
-
-	//
-	// // TODO check if needed
-	// public async updateToken(id: string, token: string): Promise<boolean> {
-	// 	const updateResult: UpdateResult = await this._dataSource
-	// 		.createQueryBuilder()
-	// 		.update(JWTToken)
-	// 		.set({ token })
-	// 		.where('id = :id', { id })
-	// 		.execute();
-	//
-	// 	return updateResult.affected ? updateResult.affected > 0 : false;
-	// }
-	//
-	// // TODO check if needed
-	// public async deleteToken(id: string): Promise<boolean> {
-	// 	const result: DeleteResult = await this._dataSource
-	// 		.createQueryBuilder()
-	// 		.delete()
-	// 		.from(JWTToken)
-	// 		.where('id = :id', { id })
-	// 		.execute();
-	//
-	// 	return result.affected ? result.affected > 0 : false;
-	// }
 }

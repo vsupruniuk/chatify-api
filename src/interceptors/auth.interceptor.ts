@@ -12,7 +12,7 @@ import { Request } from 'express';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { GlobalTypes } from '../typesNew/global';
+import { GlobalTypes } from '../types/global';
 
 @Injectable()
 export class AuthInterceptor implements NestInterceptor {
