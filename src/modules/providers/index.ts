@@ -9,3 +9,6 @@ export * from './guards';
 export * from './directChats';
 export * from './crypto';
 export * from './directChatMessages';
+export * from './appUser';
+export * from './wsClients';
+export * from './decryptionStrategy';

@@ -1,7 +1,8 @@
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
 import { BadRequestException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+import { DateHelper } from '@helpers/date.helper';
 
 /**
  * Helper class for actions related to static files
@@ -40,9 +41,9 @@ export class FileHelper {
 	): void {
 		const fileExtension: string = file.originalname.split('.').at(-1) || '';
 		const userId: string = user.id;
-		const dateNow: number = Date.now();
+		const timestamp: number = DateHelper.timestampNow();
 
-		const fileName: string = `${userId}-${dateNow}.${fileExtension}`;
+		const fileName: string = `${userId}-${timestamp}.${fileExtension}`;
 
 		callback(null, fileName);
 	}

@@ -1,5 +1,5 @@
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { CryptoService } from '@Services/crypto.service';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { CryptoService } from '@services/crypto/crypto.service';
 import { ClassProvider } from '@nestjs/common';
 
 export const cryptoServiceProvider: ClassProvider = {

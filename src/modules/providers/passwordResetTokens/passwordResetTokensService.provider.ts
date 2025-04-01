@@ -1,5 +1,5 @@
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { PasswordResetTokensService } from '@Services/passwordResetTokens.service';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { PasswordResetTokensService } from '@services/passwordResetToken/passwordResetTokens.service';
 import { ClassProvider } from '@nestjs/common';
 
 export const passwordResetTokensServiceProvider: ClassProvider = {

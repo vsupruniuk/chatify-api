@@ -1,4 +1,4 @@
-import { CustomProviders } from '@Enums/CustomProviders.enum';
+import { CustomProviders } from '@enums/CustomProviders.enum';
 import { Provider } from '@nestjs/common';
 import {
 	accountSettingsRepositoryProvider,
@@ -18,7 +18,10 @@ import {
 	otpCodesServiceProvider,
 	otpCodesRepositoryProvider,
 	directChatMessagesProvider,
-} from '@Modules/providers';
+	appUserServiceProvider,
+	wsClientsServiceProvider,
+	decryptionStrategyManagerProvider,
+} from '@modules/providers';
 
 const providers: Record<CustomProviders, Provider> = {
 	[CustomProviders.CTF_ACCOUNT_SETTINGS_SERVICE]: accountSettingsServiceProvider,
@@ -46,8 +49,13 @@ const providers: Record<CustomProviders, Provider> = {
 	[CustomProviders.CTF_PASSWORD_RESET_TOKENS_SERVICE]: passwordResetTokensServiceProvider,
 	[CustomProviders.CTF_PASSWORD_RESET_TOKENS_REPOSITORY]: passwordResetTokensRepositoryProvider,
 
+	[CustomProviders.CTF_APP_USER_SERVICE]: appUserServiceProvider,
 	[CustomProviders.CTF_USERS_SERVICE]: usersServiceProvider,
 	[CustomProviders.CTF_USERS_REPOSITORY]: usersRepositoryProvider,
+
+	[CustomProviders.CTF_WS_CLIENTS_SERVICE]: wsClientsServiceProvider,
+
+	[CustomProviders.CTF_DECRYPTION_STRATEGY_MANAGER]: decryptionStrategyManagerProvider,
 };
 
 export default providers;

@@ -1,5 +1,5 @@
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { AccountSettingsService } from '@Services/accountSettings.service';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { AccountSettingsService } from '@services/accountSettings/accountSettings.service';
 import { ClassProvider } from '@nestjs/common';
 
 export const accountSettingsServiceProvider: ClassProvider = {

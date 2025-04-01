@@ -1,0 +1,379 @@
+import { Headers } from '@enums/Headers.enum';
+import {
+	CallHandler,
+	ExecutionContext,
+	HttpStatus,
+	INestApplication,
+	UnauthorizedException,
+	ValidationPipe,
+} from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { plainToInstance } from 'class-transformer';
+import { Request } from 'express';
+import { Observable } from 'rxjs';
+import * as request from 'supertest';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+import { AppUserController } from '@controllers/appUser/appUser.controller';
+import { User } from '@entities/User.entity';
+import { users } from '@testMocks/User/users';
+import { AuthInterceptor } from '@interceptors/auth.interceptor';
+import { TUserPayload } from '@customTypes/types/users/TUserPayload';
+import { IUsersService } from '@services/users/IUsersService';
+import { UserShortDto } from '../../../types/dto/users/UserShort.dto';
+import { AppModule } from '@modules/app.module';
+import { AuthModule } from '@modules/auth.module';
+import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
+
+describe.skip('AppUserController', (): void => {
+	let app: INestApplication;
+	let appUserController: AppUserController;
+
+	let isAuthorized: boolean = false;
+
+	const validToken: string = 'valid-token';
+	const invalidToken: string = 'invalid-token';
+	const userId: string = 'f46845d7-90af-4c29-8e1a-227c90b33852';
+	const usersMock: User[] = [...users];
+	const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, usersMock[0], {
+		excludeExtraneousValues: true,
+	});
+
+	const authInterceptorMock: Partial<AuthInterceptor> = {
+		async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<unknown>> {
+			if (!isAuthorized) {
+				throw new UnauthorizedException(['Please, login to perform this action']);
+			}
+
+			const request: Request & TUserPayload = context.switchToHttp().getRequest();
+
+			request.user = appUserPayload;
+
+			return next.handle();
+		},
+	};
+	const usersServiceMock: Partial<IUsersService> = {
+		updateUser: jest.fn().mockImplementation(async (id: string): Promise<boolean> => {
+			return id === userId;
+		}),
+
+		getByNickname: jest
+			.fn()
+			.mockImplementation(async (nickname: string): Promise<UserShortDto | null> => {
+				const user: User | null =
+					usersMock.find((user: User) => user.nickname === nickname) || null;
+
+				return user ? plainToInstance(UserShortDto, user, { excludeExtraneousValues: true }) : null;
+			}),
+	};
+
+	beforeAll(async (): Promise<void> => {
+		const moduleFixture: TestingModule = await Test.createTestingModule({
+			imports: [AppModule, AuthModule],
+		})
+			.overrideProvider(CustomProviders.CTF_USERS_SERVICE)
+			.useValue(usersServiceMock)
+			.overrideInterceptor(AuthInterceptor)
+			.useValue(authInterceptorMock)
+			.compile();
+
+		app = moduleFixture.createNestApplication();
+		appUserController = moduleFixture.get<AppUserController>(AppUserController);
+
+		app.useGlobalPipes(new ValidationPipe({ whitelist: true, stopAtFirstError: false }));
+
+		await app.init();
+	});
+
+	afterAll(async (): Promise<void> => {
+		await app.close();
+	});
+
+	describe('PATCH /app-user', (): void => {
+		beforeEach((): void => {
+			jest.clearAllMocks();
+		});
+
+		it('should be defined', (): void => {
+			expect(appUserController.updateUser).toBeDefined();
+		});
+
+		it('should be a function', (): void => {
+			expect(appUserController.updateUser).toBeInstanceOf(Function);
+		});
+
+		it('should return 401 status if authorization header is not passed', async (): Promise<void> => {
+			await request(app.getHttpServer()).patch('/app-user').expect(HttpStatus.UNAUTHORIZED);
+		});
+
+		it('should return 401 status if access token not passed to authorization header', async (): Promise<void> => {
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.set(Headers.AUTHORIZATION, 'Bearer')
+				.expect(HttpStatus.UNAUTHORIZED);
+		});
+
+		it('should return 401 status if access token invalid', async (): Promise<void> => {
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.set(Headers.AUTHORIZATION, `Bearer ${invalidToken}`)
+				.expect(HttpStatus.UNAUTHORIZED);
+		});
+
+		it('should return 400 status if body is not passed to request', async (): Promise<void> => {
+			isAuthorized = true;
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if empty body is passed to request', async (): Promise<void> => {
+			isAuthorized = true;
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send({})
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if about present in body, but its not a string', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto = {
+				about: 1,
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if about present in body, but its too long', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				about: 'Iron man'.padEnd(256, 'n'),
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if firstName present in body, but its not a string', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto = {
+				firstName: 1,
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if firstName present in body, but its too short', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				firstName: 'To',
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if firstName present in body, but its too long', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				firstName: 'Tony'.padEnd(256, 'y'),
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if lastName present in body, but its not a string', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto = {
+				lastName: 1,
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if lastName present in body, but its too short', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				lastName: 'St',
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if lastName present in body, but its too long', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				lastName: 'Stark'.padEnd(256, 'k'),
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if nickname present in body, but its not a string', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto = {
+				nickname: 1,
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if nickname present in body, but its too short', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				nickname: 'st',
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 status if nickname present in body, but its too long', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				nickname: 't.stark'.padEnd(256, 'k'),
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 409 status if nickname present in body, but its already taken', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				nickname: 't.stark',
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.CONFLICT);
+		});
+
+		it('should return 200 status if all data valid', async (): Promise<void> => {
+			isAuthorized = true;
+
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				about: 'Iron man',
+				firstName: 'Tony',
+				lastName: 'Stark',
+				nickname: 'tony.stark',
+			};
+
+			await request(app.getHttpServer())
+				.patch('/app-user')
+				.send(updateAppUserDto)
+				.set(Headers.AUTHORIZATION, `Bearer ${validToken}`)
+				.expect(HttpStatus.OK);
+		});
+
+		it('should return nothing', async (): Promise<void> => {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				about: 'Iron man',
+				firstName: 'Tony',
+				lastName: 'Stark',
+				nickname: 'tony.stark',
+			};
+
+			const result: void = await appUserController.updateUser(appUserPayload, updateAppUserDto);
+
+			expect(result).toBeUndefined();
+		});
+
+		it('should call getByNickname in users service to check if user with given nickname already exist', async (): Promise<void> => {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				about: 'Iron man',
+				firstName: 'Tony',
+				lastName: 'Stark',
+				nickname: 'tony.stark',
+			};
+
+			await appUserController.updateUser(appUserPayload, updateAppUserDto);
+
+			expect(usersServiceMock.getByNickname).toHaveBeenCalledTimes(1);
+			expect(usersServiceMock.getByNickname).toHaveBeenCalledWith(updateAppUserDto.nickname);
+		});
+
+		it('should not to call getByNickname in users service if nickname was not passed to body', async (): Promise<void> => {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				about: 'Iron man',
+				firstName: 'Tony',
+				lastName: 'Stark',
+			};
+
+			await appUserController.updateUser(appUserPayload, updateAppUserDto);
+
+			expect(usersServiceMock.getByNickname).not.toHaveBeenCalled();
+		});
+
+		it('should call updateUser method in users service to update user', async (): Promise<void> => {
+			const updateAppUserDto: UpdateAppUserRequestDto = {
+				about: 'Iron man',
+				firstName: 'Tony',
+				lastName: 'Stark',
+				nickname: 'tony.stark',
+			};
+
+			await appUserController.updateUser(appUserPayload, updateAppUserDto);
+
+			expect(usersServiceMock.updateUser).toHaveBeenCalledTimes(1);
+			expect(usersServiceMock.updateUser).toHaveBeenCalledWith(userId, updateAppUserDto);
+		});
+	});
+});

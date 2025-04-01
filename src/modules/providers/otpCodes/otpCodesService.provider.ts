@@ -1,5 +1,5 @@
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { OTPCodesService } from '@Services/OTPCodes.service';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { OTPCodesService } from '@services/otpCode/OTPCodes.service';
 import { ClassProvider } from '@nestjs/common';
 
 export const otpCodesServiceProvider: ClassProvider = {

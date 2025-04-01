@@ -1,8 +1,8 @@
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
-import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
-import { UnauthorizedException } from '@nestjs/common';
-import { TUserPayload } from '@Types/users/TUserPayload';
+import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
 import { Socket, Event } from 'socket.io';
+import { UnauthorizedException } from '@nestjs/common';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+import { GlobalTypes } from '../types/global';
 
 type WSMiddleware = (event: Event, next: (error?: Error) => void) => void;
 
@@ -28,7 +28,7 @@ export const WsAuthMiddleware = (jwtTokensService: IJWTTokensService): WSMiddlew
 				throw new UnauthorizedException(['Please, login to perform this action']);
 			}
 
-			(event as unknown as Socket & TUserPayload).user = userData;
+			(event as unknown as GlobalTypes.TAuthorizedSocket).user = userData;
 
 			next();
 		} catch (error) {

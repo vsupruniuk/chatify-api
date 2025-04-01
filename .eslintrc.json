@@ -17,5 +17,6 @@
     "spaced-comment": "off",
     "no-console": "off",
     "object-shorthand": "off"
-  }
+  },
+  "ignorePatterns": ["src/testsOld/"]
 }

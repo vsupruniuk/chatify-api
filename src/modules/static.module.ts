@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { StaticController } from '@Controllers/static.controller';
 import { JwtService } from '@nestjs/jwt';
-import providers from '@Modules/providers/providers';
+import providers from '@modules/providers/providers';
+import { StaticController } from '@controllers/static/static.controller';
 
 @Module({
 	controllers: [StaticController],
