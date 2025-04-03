@@ -90,7 +90,7 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 			)
 			.leftJoinAndSelect('last_message.sender', 'sender')
 			.where(`direct_chat.id IN (${userDirectChatsSubQuery})`)
-			.setParameter('userId', userId)
+			.setParameters({ userId })
 			.orderBy('last_message.updatedAt', 'DESC')
 			.skip(skip)
 			.take(take)

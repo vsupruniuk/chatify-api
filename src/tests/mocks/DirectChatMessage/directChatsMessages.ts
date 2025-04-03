@@ -1,5 +1,5 @@
-import { DirectChat } from '@db/entities/DirectChat.entity';
-import { User } from '@db/entities/User.entity';
+import { DirectChat } from '@entities/DirectChat.entity';
+import { User } from '@entities/User.entity';
 import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
 
 export const directChatsMessages: DirectChatMessage[] = [

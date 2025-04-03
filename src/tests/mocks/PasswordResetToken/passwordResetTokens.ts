@@ -1,4 +1,4 @@
-import { PasswordResetToken } from '@db/entities/PasswordResetToken.entity';
+import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 import { User } from '@entities/User.entity';
 
 export const passwordResetTokens: PasswordResetToken[] = [
