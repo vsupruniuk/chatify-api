@@ -16,10 +16,7 @@ describe('Account settings repository', (): void => {
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			providers: [{ provide: DataSource, useValue: queryBuilderMock }, AccountSettingsRepository],
-		})
-			.overrideProvider(DataSource)
-			.useValue(queryBuilderMock)
-			.compile();
+		}).compile();
 
 		accountSettingsRepository = moduleFixture.get(AccountSettingsRepository);
 	});
@@ -152,7 +149,7 @@ describe('Account settings repository', (): void => {
 				updateAccountSettingsRequestDto,
 			);
 
-			expect(result).toBe(expectedAccountSettings);
+			expect(result).toEqual(expectedAccountSettings);
 		});
 
 		it('should return null if query builder failed to find updated settings', async (): Promise<void> => {
