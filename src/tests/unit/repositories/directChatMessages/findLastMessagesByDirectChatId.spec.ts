@@ -126,7 +126,7 @@ describe('Direct chat messages repository', (): void => {
 					expectedMessages.some(
 						(expectedMessage: DirectChatMessage) => expectedMessage.id === message.id,
 					),
-				);
+				).toBe(true);
 			});
 		});
 	});
