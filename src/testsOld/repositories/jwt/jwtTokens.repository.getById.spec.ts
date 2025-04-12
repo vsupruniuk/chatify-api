@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { JwtTokensRepository } from '@repositories/jwt/jwtTokens.repository';
+import { JwtTokensRepository } from '@repositories/jwtTokens/jwtTokens.repository';
 import { JWTToken } from '@entities/JWTToken.entity';
 import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
 

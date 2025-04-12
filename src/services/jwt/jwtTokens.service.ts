@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { Inject } from '@nestjs/common';
 import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IJWTTokensRepository } from '@repositories/jwt/IJWTTokensRepository';
+import { IJWTTokensRepository } from '@repositories/jwtTokens/IJWTTokensRepository';
 import { JWTToken } from '@entities/JWTToken.entity';
 
 export class JwtTokensService implements IJWTTokensService {

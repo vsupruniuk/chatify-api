@@ -1,6 +1,6 @@
 import { JwtTokensService } from '@services/jwt/jwtTokens.service';
 import { JwtService } from '@nestjs/jwt';
-import { JwtTokensRepository } from '@repositories/jwt/jwtTokens.repository';
+import { JwtTokensRepository } from '@repositories/jwtTokens/jwtTokens.repository';
 import { connectionSource } from '@db/typeOrmConfig';
 import SpyInstance = jest.SpyInstance;
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';

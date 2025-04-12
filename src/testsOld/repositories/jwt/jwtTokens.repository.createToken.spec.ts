@@ -1,6 +1,6 @@
 import { DataSource, InsertResult } from 'typeorm';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
-import { JwtTokensRepository } from '@repositories/jwt/jwtTokens.repository';
+import { JwtTokensRepository } from '@repositories/jwtTokens/jwtTokens.repository';
 import { JWTToken } from '@entities/JWTToken.entity';
 
 describe.skip('jwtTokensRepository', (): void => {
