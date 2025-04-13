@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { IOTPCodesRepository } from '@repositories/otpCode/IOTPCodesRepository';
+import { IOTPCodesRepository } from '@repositories/otpCodes/IOTPCodesRepository';
 import { DataSource, UpdateResult } from 'typeorm';
 import { OTPCode } from '@entities/OTPCode.entity';
 

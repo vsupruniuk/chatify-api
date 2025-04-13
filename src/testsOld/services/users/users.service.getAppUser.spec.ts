@@ -1,12 +1,12 @@
 import { IUsersRepository } from '@repositories/users/IUsersRepository';
 import { IUsersService } from '@services/users/IUsersService';
 import { IAccountSettingsRepository } from '@repositories/accountSettings/IAccountSettingsRepository';
-import { IOTPCodesRepository } from '@repositories/otpCode/IOTPCodesRepository';
+import { IOTPCodesRepository } from '@repositories/otpCodes/IOTPCodesRepository';
 import { IPasswordResetTokensRepository } from '@repositories/passwordResetToken/IPasswordResetTokensRepository';
 import { UsersRepository } from '@repositories/users/users.repository';
 import { connectionSource } from '@db/typeOrmConfig';
 import { AccountSettingsRepository } from '@repositories/accountSettings/accountSettings.repository';
-import { OTPCodesRepository } from '@repositories/otpCode/OTPCodes.repository';
+import { OTPCodesRepository } from '@repositories/otpCodes/OTPCodes.repository';
 import { PasswordResetTokensRepository } from '@repositories/passwordResetToken/passwordResetTokens.repository';
 import { UsersService } from '@services/users/users.service';
 import SpyInstance = jest.SpyInstance;

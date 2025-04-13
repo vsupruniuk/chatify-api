@@ -5,7 +5,7 @@ import { DateHelper } from '@helpers/date.helper';
 import { otpCodeConfig } from '@configs/otpCode.config';
 import { OTPCode } from '@entities/OTPCode.entity';
 import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IOTPCodesRepository } from '@repositories/otpCode/IOTPCodesRepository';
+import { IOTPCodesRepository } from '@repositories/otpCodes/IOTPCodesRepository';
 
 @Injectable()
 export class OTPCodesService implements IOTPCodesService {

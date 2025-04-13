@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { OTPCodesRepository } from '@repositories/otpCode/OTPCodes.repository';
+import { OTPCodesRepository } from '@repositories/otpCodes/OTPCodes.repository';
 import { OTPCode } from '@entities/OTPCode.entity';
 import { otpCodes } from '@testMocks/OTPCode/otpCodes';
 

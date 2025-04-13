@@ -1,4 +1,4 @@
-import { OTPCodesRepository } from '@repositories/otpCode/OTPCodes.repository';
+import { OTPCodesRepository } from '@repositories/otpCodes/OTPCodes.repository';
 import { OTPCodesService } from '@services/otpCode/OTPCodes.service';
 import { connectionSource } from '@db/typeOrmConfig';
 import SpyInstance = jest.SpyInstance;
