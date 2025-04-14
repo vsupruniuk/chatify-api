@@ -15,7 +15,7 @@ export const users: User[] = [
 		isActivated: false,
 		lastName: 'Stark',
 		nickname: 't.stark',
-		password: '$2b$10$kJGx0Z6eQpO6YqCNYk1s9eAd5jUZZY8/HIVZl8vJ5cLsXPi/lUqC2', // Hashed
+		password: '$2b$10$kJGx0Z6eQpO6YqCNYk1s9eAd5jUZZY8/HIVZl8vJ5cLsXPi/lUqC2',
 		updatedAt: '2025-01-01 10:00:00',
 		accountSettings: {} as AccountSettings,
 		jwtToken: {} as JWTToken,
@@ -35,7 +35,7 @@ export const users: User[] = [
 		isActivated: false,
 		lastName: 'Rogers',
 		nickname: 's.rogers',
-		password: '$2b$10$aDFk4JHYlwEjKt76A5VtfO3YZObT1hxU56/WdlWyYToOH4GLUObHS', // Hashed
+		password: '$2b$10$aDFk4JHYlwEjKt76A5VtfO3YZObT1hxU56/WdlWyYToOH4GLUObHS',
 		updatedAt: '2025-01-02 14:30:00',
 		accountSettings: {} as AccountSettings,
 		jwtToken: {} as JWTToken,
@@ -55,7 +55,7 @@ export const users: User[] = [
 		isActivated: true,
 		lastName: 'Odinson',
 		nickname: 't.odinson',
-		password: '$2b$10$bMC2Fqdm5jJHgT4XH6uZ6.LJmJHzS79dYZ2kXLnD5.Xjx5eIc42.q', // Hashed
+		password: '$2b$10$bMC2Fqdm5jJHgT4XH6uZ6.LJmJHzS79dYZ2kXLnD5.Xjx5eIc42.q',
 		updatedAt: '2025-01-03 18:20:00',
 		accountSettings: {} as AccountSettings,
 		jwtToken: {} as JWTToken,
@@ -75,7 +75,7 @@ export const users: User[] = [
 		isActivated: true,
 		lastName: 'Romanoff',
 		nickname: 'n.romanoff',
-		password: '$2b$10$5WmG0rD9Qt.vJHdPiUZ23eV8U5W/oLgX3URrPxMpeS7zTkQm/bmJm', // Hashed
+		password: '$2b$10$5WmG0rD9Qt.vJHdPiUZ23eV8U5W/oLgX3URrPxMpeS7zTkQm/bmJm',
 		updatedAt: '2025-01-04 09:10:00',
 		accountSettings: {} as AccountSettings,
 		jwtToken: {} as JWTToken,
@@ -95,7 +95,7 @@ export const users: User[] = [
 		isActivated: true,
 		lastName: 'Barton',
 		nickname: 'c.barton',
-		password: '$2b$10$4eJ/YNBb5c6fLXnPwD/nk.XUo/Z27GvYFmBumv2bBxhUpE.Zb7RtG', // Hashed
+		password: '$2b$10$4eJ/YNBb5c6fLXnPwD/nk.XUo/Z27GvYFmBumv2bBxhUpE.Zb7RtG',
 		updatedAt: '2025-01-05 16:40:00',
 		accountSettings: {} as AccountSettings,
 		jwtToken: {} as JWTToken,
@@ -115,7 +115,7 @@ export const users: User[] = [
 		isActivated: true,
 		lastName: 'Banner',
 		nickname: 'b.banner',
-		password: '$2b$10$FTB13pKHQk02HlpY1JxozuIM1czJWOhgANf6OBCmaPH3v5TRFoAy2', // Hashed
+		password: '$2b$10$FTB13pKHQk02HlpY1JxozuIM1czJWOhgANf6OBCmaPH3v5TRFoAy2',
 		updatedAt: '2025-01-06 11:55:00',
 		accountSettings: {} as AccountSettings,
 		jwtToken: {} as JWTToken,
@@ -135,7 +135,7 @@ export const users: User[] = [
 		isActivated: true,
 		lastName: 'Parker',
 		nickname: 'p.parker',
-		password: '$2b$10$R9aYZTgEztfNU23XMj01mO6ffDzRkPmEuo3ZUdWszGJY7E3qWn7eq', // Hashed
+		password: '$2b$10$R9aYZTgEztfNU23XMj01mO6ffDzRkPmEuo3ZUdWszGJY7E3qWn7eq',
 		updatedAt: '2025-01-07 14:15:00',
 		accountSettings: {} as AccountSettings,
 		jwtToken: {} as JWTToken,
@@ -155,7 +155,7 @@ export const users: User[] = [
 		isActivated: true,
 		lastName: 'Maximoff',
 		nickname: 'w.maximoff',
-		password: '$2b$10$M8Oiy5Iks6hZ5aRtLQn8OeLMLzQxZz61povh50J/6XpKv9yZ/xBv2', // Hashed
+		password: '$2b$10$M8Oiy5Iks6hZ5aRtLQn8OeLMLzQxZz61povh50J/6XpKv9yZ/xBv2',
 		updatedAt: '2025-01-08 17:05:00',
 		accountSettings: {} as AccountSettings,
 		jwtToken: {} as JWTToken,
