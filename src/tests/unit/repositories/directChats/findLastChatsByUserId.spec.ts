@@ -177,7 +177,7 @@ describe('Direct chats repository', (): void => {
 				takeMock,
 			);
 
-			expect(chats.length).toBe(0);
+			expect(chats).toHaveLength(0);
 		});
 
 		it('should return all found relevant chats', async (): Promise<void> => {
@@ -187,13 +187,9 @@ describe('Direct chats repository', (): void => {
 				takeMock,
 			);
 
-			expect(chats.length).toBe(expectedChats.length);
+			expect(chats).toHaveLength(expectedChats.length);
 
-			chats.forEach((chat: DirectChat) => {
-				expect(expectedChats.some((expectedChat: DirectChat) => expectedChat.id === chat.id)).toBe(
-					true,
-				);
-			});
+			expect(chats.sort()).toEqual(expectedChats.sort());
 		});
 	});
 });

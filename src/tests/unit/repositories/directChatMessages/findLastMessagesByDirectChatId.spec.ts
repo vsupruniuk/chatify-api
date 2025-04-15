@@ -110,7 +110,7 @@ describe('Direct chat messages repository', (): void => {
 			const messages: DirectChatMessage[] =
 				await directChatMessagesRepository.findLastMessagesByDirectChatId(directChatId, skip, take);
 
-			expect(messages.length).toBe(0);
+			expect(messages).toHaveLength(0);
 		});
 
 		it('should return array of relevant messages', async (): Promise<void> => {
@@ -119,15 +119,9 @@ describe('Direct chat messages repository', (): void => {
 			const messages: DirectChatMessage[] =
 				await directChatMessagesRepository.findLastMessagesByDirectChatId(directChatId, skip, take);
 
-			expect(messages.length).toBe(expectedMessages.length);
+			expect(messages).toHaveLength(expectedMessages.length);
 
-			messages.forEach((message: DirectChatMessage) => {
-				expect(
-					expectedMessages.some(
-						(expectedMessage: DirectChatMessage) => expectedMessage.id === message.id,
-					),
-				).toBe(true);
-			});
+			expect(messages.sort()).toEqual(expectedMessages.sort());
 		});
 	});
 });
