@@ -30,6 +30,7 @@ export class QueryBuilderMock<T extends ObjectLiteral>
 	public leftJoinAndSelect: jest.Mock = jest.fn().mockReturnThis();
 	public leftJoinAndMapMany: jest.Mock = jest.fn().mockReturnThis();
 	public innerJoin: jest.Mock = jest.fn().mockReturnThis();
+	public innerJoinAndSelect: jest.Mock = jest.fn().mockReturnThis();
 
 	public insert: jest.Mock = jest.fn().mockReturnThis();
 	public into: jest.Mock = jest.fn().mockReturnThis();
