@@ -48,7 +48,7 @@ export const users: User[] = [
 	{
 		id: 'c51e2b5f-7268-4cd7-bb3d-b28c2f7c8a2d',
 		about: null,
-		avatarUrl: null,
+		avatarUrl: 'thor.png',
 		createdAt: '2025-01-03 18:20:00',
 		email: 'thor@avengers.com',
 		firstName: 'Thor',

@@ -56,7 +56,7 @@ describe('Account settings service', (): void => {
 		});
 
 		afterEach((): void => {
-			jest.clearAllMocks();
+			jest.restoreAllMocks();
 		});
 
 		it('should be defined', (): void => {
