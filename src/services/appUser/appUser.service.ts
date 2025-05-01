@@ -4,6 +4,7 @@ import { User } from '@entities/User.entity';
 import {
 	ConflictException,
 	Inject,
+	Injectable,
 	NotFoundException,
 	UnprocessableEntityException,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { IUsersRepository } from '@repositories/users/IUsersRepository';
 import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 
+@Injectable()
 export class AppUserService implements IAppUserService {
 	constructor(
 		@Inject(CustomProviders.CTF_USERS_REPOSITORY)

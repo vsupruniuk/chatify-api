@@ -1,4 +1,5 @@
 import type { Config } from 'jest';
+import 'reflect-metadata';
 
 export default async (): Promise<Config> => {
 	return {
@@ -33,7 +34,7 @@ export default async (): Promise<Config> => {
 		preset: 'ts-jest',
 		testEnvironment: 'node',
 		moduleDirectories: ['node_modules', 'src', 'dist'],
-		setupFiles: ['dotenv/config'],
+		setupFiles: ['dotenv/config', 'reflect-metadata'],
 		coveragePathIgnorePatterns: ['node_modules', 'types', 'db', 'tests', '.mock.ts', 'main.ts'],
 	};
 };

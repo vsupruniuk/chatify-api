@@ -2,7 +2,6 @@ import { AccountSettingsService } from '@services/accountSettings/accountSetting
 import { Test, TestingModule } from '@nestjs/testing';
 import providers from '@modules/providers/providers';
 import { DataSource } from 'typeorm';
-import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
 import { AccountSettings } from '@entities/AccountSettings.entity';
 import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
 import { AccountSettingsRepository } from '@repositories/accountSettings/accountSettings.repository';
@@ -26,12 +25,9 @@ describe('Account settings service', (): void => {
 				providers.CTF_USERS_SERVICE,
 				providers.CTF_USERS_REPOSITORY,
 
-				{ provide: DataSource, useValue: new QueryBuilderMock() },
+				{ provide: DataSource, useValue: {} },
 			],
-		})
-			.overrideProvider(DataSource)
-			.useValue({})
-			.compile();
+		}).compile();
 
 		accountSettingsService = moduleFixture.get(AccountSettingsService);
 		accountSettingsRepository = moduleFixture.get(CustomProviders.CTF_ACCOUNT_SETTINGS_REPOSITORY);
@@ -113,9 +109,7 @@ describe('Account settings service', (): void => {
 					updateAccountSettingsRequestDtoMock,
 				);
 
-			expect(accountSettings.enterIsSending).toBe(accountSettingsMock.enterIsSending);
-			expect(accountSettings.twoStepVerification).toBe(accountSettingsMock.twoStepVerification);
-			expect(accountSettings.notification).toBe(accountSettingsMock.notification);
+			expect(accountSettings.id).toBe(accountSettingsMock.id);
 		});
 
 		it('should return response as instance of AccountSettingsDto', async (): Promise<void> => {

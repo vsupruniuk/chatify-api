@@ -2,7 +2,6 @@ import { AccountSettingsService } from '@services/accountSettings/accountSetting
 import { Test, TestingModule } from '@nestjs/testing';
 import providers from '@modules/providers/providers';
 import { DataSource } from 'typeorm';
-import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
 import { UsersService } from '@services/users/users.service';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { User } from '@entities/User.entity';
@@ -23,12 +22,9 @@ describe('Account settings service', (): void => {
 				providers.CTF_USERS_SERVICE,
 				providers.CTF_USERS_REPOSITORY,
 
-				{ provide: DataSource, useValue: new QueryBuilderMock() },
+				{ provide: DataSource, useValue: {} },
 			],
-		})
-			.overrideProvider(DataSource)
-			.useValue({})
-			.compile();
+		}).compile();
 
 		accountSettingsService = moduleFixture.get(AccountSettingsService);
 		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
