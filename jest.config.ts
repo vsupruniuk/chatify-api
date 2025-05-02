@@ -1,5 +1,4 @@
 import type { Config } from 'jest';
-import 'reflect-metadata';
 
 export default async (): Promise<Config> => {
 	return {
