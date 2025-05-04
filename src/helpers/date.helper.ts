@@ -37,15 +37,15 @@ export class DateHelper {
 		return targetDate.isBefore(currentDate);
 	}
 
-	private static _formatDate(date: Dayjs): string {
-		return date.toISOString();
-	}
-
 	/**
 	 * Generate and return current timestamp
 	 * @returns - current timestamp
 	 */
 	public static timestampNow(): number {
 		return dayjs().unix();
+	}
+
+	private static _formatDate(date: Dayjs): string {
+		return date.toISOString();
 	}
 }

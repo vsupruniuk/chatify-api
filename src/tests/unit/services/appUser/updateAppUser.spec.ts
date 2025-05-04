@@ -1,5 +1,4 @@
 import { AppUserService } from '@services/appUser/appUser.service';
-import { UsersRepository } from '@repositories/users/users.repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import providers from '@modules/providers/providers';
 import { DataSource } from 'typeorm';
@@ -11,10 +10,11 @@ import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto'
 import { TransformHelper } from '@helpers/transform.helper';
 import { ConflictException, UnprocessableEntityException } from '@nestjs/common';
 import { AppUserDto } from '@dtos/appUser/AppUser.dto';
+import { IUsersRepository } from '@repositories/users/IUsersRepository';
 
 describe('App user service', (): void => {
 	let appUserService: AppUserService;
-	let usersRepository: UsersRepository;
+	let usersRepository: IUsersRepository;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({

@@ -2,16 +2,16 @@ import { AccountSettingsService } from '@services/accountSettings/accountSetting
 import { Test, TestingModule } from '@nestjs/testing';
 import providers from '@modules/providers/providers';
 import { DataSource } from 'typeorm';
-import { UsersService } from '@services/users/users.service';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
 import { FileHelper } from '@helpers/file.helper';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { IUsersService } from '@services/users/IUsersService';
 
 describe('Account settings service', (): void => {
 	let accountSettingsService: AccountSettingsService;
-	let usersService: UsersService;
+	let usersService: IUsersService;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({

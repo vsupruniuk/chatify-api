@@ -4,17 +4,17 @@ import providers from '@modules/providers/providers';
 import { DataSource } from 'typeorm';
 import { AccountSettings } from '@entities/AccountSettings.entity';
 import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
-import { AccountSettingsRepository } from '@repositories/accountSettings/accountSettings.repository';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { users } from '@testMocks/User/users';
 import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
 import { TransformHelper } from '@helpers/transform.helper';
 import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings/AccountSettings.dto';
 import { UnprocessableEntityException } from '@nestjs/common';
+import { IAccountSettingsRepository } from '@repositories/accountSettings/IAccountSettingsRepository';
 
 describe('Account settings service', (): void => {
 	let accountSettingsService: AccountSettingsService;
-	let accountSettingsRepository: AccountSettingsRepository;
+	let accountSettingsRepository: IAccountSettingsRepository;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
