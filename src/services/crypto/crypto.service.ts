@@ -44,6 +44,7 @@ export class CryptoService implements ICryptoService {
 		const key = (await promisify(crypto.scrypt)(this._password, salt, this._keyLength)) as Buffer;
 
 		const decipher: crypto.Decipher = crypto.createDecipheriv(this._algorithm, key, iv);
+
 		const decryptedText: Buffer = Buffer.concat([
 			decipher.update(encryptedTextContent),
 			decipher.final(),
