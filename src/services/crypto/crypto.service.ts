@@ -1,7 +1,9 @@
 import { ICryptoService } from '@services/crypto/ICryptoService';
 import * as crypto from 'crypto';
 import { promisify } from 'util';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class CryptoService implements ICryptoService {
 	private readonly _ivLength: number = Number(process.env.CRYPTO_IV_LENGTH);
 	private readonly _saltLength: number = Number(process.env.CRYPTO_SALT_LENGTH);
@@ -16,7 +18,7 @@ export class CryptoService implements ICryptoService {
 		const key = (await promisify(crypto.scrypt)(this._password, salt, this._keyLength)) as Buffer;
 
 		const cipher: crypto.Cipher = crypto.createCipheriv(this._algorithm, key, iv);
-		const encryptedText: Buffer = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
+		const encryptedText: Buffer = Buffer.concat([cipher.update(text, 'utf-8'), cipher.final()]);
 
 		return Buffer.concat([salt, iv, encryptedText]).toString(
 			this._encryptionEncoding as BufferEncoding,
