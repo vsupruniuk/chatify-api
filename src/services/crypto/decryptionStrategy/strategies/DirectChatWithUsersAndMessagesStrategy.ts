@@ -3,6 +3,7 @@ import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatW
 import { Inject, Injectable } from '@nestjs/common';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { ICryptoService } from '@services/crypto/ICryptoService';
+import { TransformHelper } from '@helpers/transform.helper';
 import { DirectChatMessageWithUserDto } from '@dtos/directChatMessages/DirectChatMessageWithUser.dto';
 
 @Injectable()
@@ -17,7 +18,7 @@ export class DirectChatWithUsersAndMessagesStrategy
 	public async decrypt(
 		data: DirectChatWithUsersAndMessagesDto,
 	): Promise<DirectChatWithUsersAndMessagesDto> {
-		return {
+		return TransformHelper.toTargetDto(DirectChatWithUsersAndMessagesDto, {
 			...data,
 			messages: await Promise.all(
 				data.messages.map(async (message: DirectChatMessageWithUserDto) => {
@@ -27,6 +28,6 @@ export class DirectChatWithUsersAndMessagesStrategy
 					};
 				}),
 			),
-		};
+		});
 	}
 }
