@@ -83,6 +83,7 @@ describe('Direct chat service', (): void => {
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
+			jest.clearAllMocks();
 		});
 
 		it('should be defined', () => {
