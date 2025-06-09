@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
+import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
 
 describe('JWT tokens service', (): void => {
 	let jwtTokensService: JwtTokensService;
@@ -39,7 +40,7 @@ describe('JWT tokens service', (): void => {
 	});
 
 	describe('Generate access token', (): void => {
-		const accessTokenMock: string = 'accessTokenMock';
+		const accessTokenMock: string = jwtTokens[2].token as string;
 		const userMock: User = users[5];
 
 		const payload: JWTPayloadDto = {
