@@ -67,7 +67,7 @@ describe('JWT tokens service', (): void => {
 			expect(jwtTokensService.generateRefreshToken).toBeInstanceOf(Function);
 		});
 
-		it('should call sign async method from jwt to generate refresh token', async (): Promise<void> => {
+		it('should call sign async method from jwt service to generate refresh token', async (): Promise<void> => {
 			await jwtTokensService.generateRefreshToken(payload);
 
 			expect(jwtService.signAsync).toHaveBeenCalledTimes(1);

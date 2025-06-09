@@ -13,11 +13,9 @@ describe('JWT tokens service', (): void => {
 	let jwtService: JwtService;
 
 	const accessTokenSecretMock: string = 'accessTokenSecretMock';
-	const accessTokenExpiresInMock: string = '10000';
 
 	beforeAll(async (): Promise<void> => {
 		process.env.JWT_ACCESS_TOKEN_SECRET = accessTokenSecretMock;
-		process.env.JWT_ACCESS_TOKEN_EXPIRES_IN = accessTokenExpiresInMock;
 
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			providers: [
@@ -36,14 +34,11 @@ describe('JWT tokens service', (): void => {
 
 	afterAll((): void => {
 		delete process.env.JWT_ACCESS_TOKEN_SECRET;
-		delete process.env.JWT_ACCESS_TOKEN_EXPIRES_IN;
 	});
 
-	describe('Generate access token', (): void => {
-		const accessTokenMock: string = jwtTokens[2].token as string;
+	describe('Verify access token', (): void => {
 		const userMock: User = users[5];
-
-		const payload: JWTPayloadDto = {
+		const payloadMock: JWTPayloadDto = {
 			id: userMock.id,
 			email: userMock.email,
 			firstName: userMock.firstName,
@@ -51,8 +46,10 @@ describe('JWT tokens service', (): void => {
 			nickname: userMock.nickname,
 		};
 
+		const accessToken: string = jwtTokens[2].token as string;
+
 		beforeEach((): void => {
-			jest.spyOn(jwtService, 'signAsync').mockResolvedValue(accessTokenMock);
+			jest.spyOn(jwtService, 'verifyAsync').mockResolvedValue(payloadMock);
 		});
 
 		afterEach((): void => {
@@ -60,27 +57,34 @@ describe('JWT tokens service', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(jwtTokensService.generateAccessToken).toBeDefined();
+			expect(jwtTokensService.verifyAccessToken).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(jwtTokensService.generateAccessToken).toBeInstanceOf(Function);
+			expect(jwtTokensService.verifyAccessToken).toBeInstanceOf(Function);
 		});
 
-		it('should call sign async method from jwt service to generate access token', async (): Promise<void> => {
-			await jwtTokensService.generateAccessToken(payload);
+		it('should call verify async method from jwt service to verify access token', async (): Promise<void> => {
+			await jwtTokensService.verifyAccessToken(accessToken);
 
-			expect(jwtService.signAsync).toHaveBeenCalledTimes(1);
-			expect(jwtService.signAsync).toHaveBeenNthCalledWith(1, payload, {
+			expect(jwtService.verifyAsync).toHaveBeenCalledTimes(1);
+			expect(jwtService.verifyAsync).toHaveBeenNthCalledWith(1, accessToken, {
 				secret: accessTokenSecretMock,
-				expiresIn: Number(accessTokenExpiresInMock),
 			});
 		});
 
-		it('should return generated access token', async (): Promise<void> => {
-			const accessToken: string = await jwtTokensService.generateAccessToken(payload);
+		it('should return user payload if access token valid', async (): Promise<void> => {
+			const payload: JWTPayloadDto | null = await jwtTokensService.verifyAccessToken(accessToken);
 
-			expect(accessToken).toBe(accessTokenMock);
+			expect(payload).toBe(payloadMock);
+		});
+
+		it('should return null if access token is not valid', async (): Promise<void> => {
+			jest.spyOn(jwtService, 'verifyAsync').mockRejectedValue(new Error());
+
+			const payload: JWTPayloadDto | null = await jwtTokensService.verifyAccessToken(accessToken);
+
+			expect(payload).toBeNull();
 		});
 	});
 });
