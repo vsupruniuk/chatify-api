@@ -11,12 +11,12 @@ describe('JWT tokens service', (): void => {
 	let jwtTokensService: JwtTokensService;
 	let jwtService: JwtService;
 
-	const accessTokenSecretMock: string = 'accessTokenSecretMock';
-	const accessTokenExpiresInMock: string = '10000';
+	const refreshTokenSecretMock: string = 'refreshTokenSecretMock';
+	const refreshTokenExpiresInMock: string = '50000';
 
 	beforeAll(async (): Promise<void> => {
-		process.env.JWT_ACCESS_TOKEN_SECRET = accessTokenSecretMock;
-		process.env.JWT_ACCESS_TOKEN_EXPIRES_IN = accessTokenExpiresInMock;
+		process.env.JWT_REFRESH_TOKEN_SECRET = refreshTokenSecretMock;
+		process.env.JWT_REFRESH_TOKEN_EXPIRES_IN = refreshTokenExpiresInMock;
 
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			providers: [
@@ -34,12 +34,12 @@ describe('JWT tokens service', (): void => {
 	});
 
 	afterAll((): void => {
-		delete process.env.JWT_ACCESS_TOKEN_SECRET;
-		delete process.env.JWT_ACCESS_TOKEN_EXPIRES_IN;
+		delete process.env.JWT_REFRESH_TOKEN_SECRET;
+		delete process.env.JWT_REFRESH_TOKEN_EXPIRES_IN;
 	});
 
-	describe('Generate access token', (): void => {
-		const accessTokenMock: string = 'accessTokenMock';
+	describe('Generate refresh token', (): void => {
+		const refreshTokenMock: string = 'refreshTokenMock';
 		const userMock: User = users[5];
 
 		const payload: JWTPayloadDto = {
@@ -51,7 +51,7 @@ describe('JWT tokens service', (): void => {
 		};
 
 		beforeEach((): void => {
-			jest.spyOn(jwtService, 'signAsync').mockResolvedValue(accessTokenMock);
+			jest.spyOn(jwtService, 'signAsync').mockResolvedValue(refreshTokenMock);
 		});
 
 		afterEach((): void => {
@@ -59,27 +59,27 @@ describe('JWT tokens service', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(jwtTokensService.generateAccessToken).toBeDefined();
+			expect(jwtTokensService.generateRefreshToken).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(jwtTokensService.generateAccessToken).toBeInstanceOf(Function);
+			expect(jwtTokensService.generateRefreshToken).toBeInstanceOf(Function);
 		});
 
-		it('should call sign async method from jwt to generate access token', async (): Promise<void> => {
-			await jwtTokensService.generateAccessToken(payload);
+		it('should call sign async method from jwt to generate refresh token', async (): Promise<void> => {
+			await jwtTokensService.generateRefreshToken(payload);
 
 			expect(jwtService.signAsync).toHaveBeenCalledTimes(1);
 			expect(jwtService.signAsync).toHaveBeenNthCalledWith(1, payload, {
-				secret: accessTokenSecretMock,
-				expiresIn: Number(accessTokenExpiresInMock),
+				secret: refreshTokenSecretMock,
+				expiresIn: Number(refreshTokenExpiresInMock),
 			});
 		});
 
-		it('should return generated access token', async (): Promise<void> => {
-			const accessToken: string = await jwtTokensService.generateAccessToken(payload);
+		it('should return generated refresh token', async (): Promise<void> => {
+			const refreshToken: string = await jwtTokensService.generateRefreshToken(payload);
 
-			expect(accessToken).toBe(accessTokenMock);
+			expect(refreshToken).toBe(refreshTokenMock);
 		});
 	});
 });
