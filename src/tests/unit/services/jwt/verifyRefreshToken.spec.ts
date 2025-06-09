@@ -12,10 +12,10 @@ describe('JWT tokens service', (): void => {
 	let jwtTokensService: JwtTokensService;
 	let jwtService: JwtService;
 
-	const accessTokenSecretMock: string = 'accessTokenSecretMock';
+	const refreshTokenSecretMock: string = 'refreshTokenSecretMock';
 
 	beforeAll(async (): Promise<void> => {
-		process.env.JWT_ACCESS_TOKEN_SECRET = accessTokenSecretMock;
+		process.env.JWT_REFRESH_TOKEN_SECRET = refreshTokenSecretMock;
 
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			providers: [
@@ -33,10 +33,10 @@ describe('JWT tokens service', (): void => {
 	});
 
 	afterAll((): void => {
-		delete process.env.JWT_ACCESS_TOKEN_SECRET;
+		delete process.env.JWT_REFRESH_TOKEN_SECRET;
 	});
 
-	describe('Verify access token', (): void => {
+	describe('Verify refresh token', (): void => {
 		const userMock: User = users[5];
 		const payloadMock: JWTPayloadDto = {
 			id: userMock.id,
@@ -46,7 +46,7 @@ describe('JWT tokens service', (): void => {
 			nickname: userMock.nickname,
 		};
 
-		const accessToken: string = jwtTokens[2].token as string;
+		const refreshToken: string = jwtTokens[2].token as string;
 
 		beforeEach((): void => {
 			jest.spyOn(jwtService, 'verifyAsync').mockResolvedValue(payloadMock);
@@ -57,32 +57,32 @@ describe('JWT tokens service', (): void => {
 		});
 
 		it('should be declared', (): void => {
-			expect(jwtTokensService.verifyAccessToken).toBeDefined();
+			expect(jwtTokensService.verifyRefreshToken).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(jwtTokensService.verifyAccessToken).toBeInstanceOf(Function);
+			expect(jwtTokensService.verifyRefreshToken).toBeInstanceOf(Function);
 		});
 
-		it('should call verify async method from jwt service to verify access token', async (): Promise<void> => {
-			await jwtTokensService.verifyAccessToken(accessToken);
+		it('should call verify async method from jwt service to verify refresh token', async (): Promise<void> => {
+			await jwtTokensService.verifyRefreshToken(refreshToken);
 
 			expect(jwtService.verifyAsync).toHaveBeenCalledTimes(1);
-			expect(jwtService.verifyAsync).toHaveBeenNthCalledWith(1, accessToken, {
-				secret: accessTokenSecretMock,
+			expect(jwtService.verifyAsync).toHaveBeenNthCalledWith(1, refreshToken, {
+				secret: refreshTokenSecretMock,
 			});
 		});
 
-		it('should return user payload if access token valid', async (): Promise<void> => {
-			const payload: JWTPayloadDto | null = await jwtTokensService.verifyAccessToken(accessToken);
+		it('should return user payload if refresh token valid', async (): Promise<void> => {
+			const payload: JWTPayloadDto | null = await jwtTokensService.verifyRefreshToken(refreshToken);
 
 			expect(payload).toEqual(payloadMock);
 		});
 
-		it('should return null if access token is not valid', async (): Promise<void> => {
+		it('should return null if refresh token is not valid', async (): Promise<void> => {
 			jest.spyOn(jwtService, 'verifyAsync').mockRejectedValue(new Error());
 
-			const payload: JWTPayloadDto | null = await jwtTokensService.verifyAccessToken(accessToken);
+			const payload: JWTPayloadDto | null = await jwtTokensService.verifyRefreshToken(refreshToken);
 
 			expect(payload).toBeNull();
 		});
