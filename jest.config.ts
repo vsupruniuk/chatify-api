@@ -34,17 +34,21 @@ export default async (): Promise<Config> => {
 		testEnvironment: 'node',
 		moduleDirectories: ['node_modules', 'src', 'dist'],
 		setupFiles: ['dotenv/config', 'reflect-metadata'],
-		coveragePathIgnorePatterns: [
-			'configs',
-			'db',
-			'decorators',
-			'dtos',
-			'emailTemplates',
-			'enums',
-			'modules',
-			'responses',
-			'tests',
-			'types',
+		collectCoverage: true,
+		collectCoverageFrom: [
+			'src/**/*.{ts,tsx}',
+
+			'!src/**/*.d.ts',
+
+			'!src/configs/**',
+			'!src/db/**',
+			'!src/decorators/**',
+			'!src/dtos/**',
+			'!src/emailTemplates/**',
+			'!src/enums/**',
+			'!src/modules/**',
+			'!src/responses/**',
+			'!src/tests/**',
 		],
 	};
 };
