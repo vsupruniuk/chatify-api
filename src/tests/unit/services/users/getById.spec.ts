@@ -8,6 +8,7 @@ import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
 import { TransformHelper } from '@helpers/transform.helper';
 import { UserDto } from '@dtos/users/UserDto';
+import { plainToInstance } from 'class-transformer';
 
 describe('Users service', (): void => {
 	let usersService: UsersService;
@@ -69,7 +70,7 @@ describe('Users service', (): void => {
 		it('should return founded user', async (): Promise<void> => {
 			const user: UserDto | null = await usersService.getById(id);
 
-			expect(user!.id).toBe(userMock.id);
+			expect(user).toEqual(plainToInstance(UserDto, userMock, { excludeExtraneousValues: true }));
 		});
 
 		it('should call to target dto method from transform helper to transform user to appropriate dto', async (): Promise<void> => {
