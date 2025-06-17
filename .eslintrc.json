@@ -16,7 +16,8 @@
     "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
     "spaced-comment": "off",
     "no-console": "off",
-    "object-shorthand": "off"
+    "object-shorthand": "off",
+    "eqeqeq": "error"
   },
   "ignorePatterns": ["src/testsOld/"]
 }
