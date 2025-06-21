@@ -70,15 +70,7 @@ export class AuthService implements IAuthService {
 		const otpCode: number = OTPCodesHelper.generateOTPCode();
 		const otpCodeExpirationDate: string = DateHelper.dateTimeFuture(otpCodeConfig.ttl);
 
-		const isUserCreated: boolean = await this._usersService.createUser(
-			otpCode,
-			otpCodeExpirationDate,
-			signupRequestDto,
-		);
-
-		if (!isUserCreated) {
-			throw new UnprocessableEntityException('Failed to create a user. Please try again');
-		}
+		await this._usersService.createUser(otpCode, otpCodeExpirationDate, signupRequestDto);
 
 		await this._emailService.sendActivationEmail(signupRequestDto.email, otpCode);
 	}

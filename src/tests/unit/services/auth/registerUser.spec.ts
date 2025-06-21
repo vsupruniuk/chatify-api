@@ -11,7 +11,7 @@ import { DateHelper } from '@helpers/date.helper';
 import { IEmailService } from '@services/email/IEmailService';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { ConflictException, UnprocessableEntityException } from '@nestjs/common';
+import { ConflictException } from '@nestjs/common';
 import { otpCodeConfig } from '@configs/otpCode.config';
 
 describe('Auth service', (): void => {
@@ -62,7 +62,7 @@ describe('Auth service', (): void => {
 
 		beforeEach((): void => {
 			jest.spyOn(usersService, 'getByEmailOrNickname').mockResolvedValue(null);
-			jest.spyOn(usersService, 'createUser').mockResolvedValue(true);
+			jest.spyOn(usersService, 'createUser').mockImplementation(jest.fn());
 
 			jest.spyOn(OTPCodesHelper, 'generateOTPCode').mockReturnValue(otpCodeMock);
 			jest.spyOn(DateHelper, 'dateTimeFuture').mockReturnValue(otpCodeExpirationDateMock);
@@ -72,6 +72,7 @@ describe('Auth service', (): void => {
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
+			jest.clearAllMocks();
 		});
 
 		it('should be defined', (): void => {
@@ -137,14 +138,6 @@ describe('Auth service', (): void => {
 				otpCodeMock,
 				otpCodeExpirationDateMock,
 				signupRequestDto,
-			);
-		});
-
-		it('should throw unprocessable entity exception if users service failed to create a user', async (): Promise<void> => {
-			jest.spyOn(usersService, 'createUser').mockResolvedValue(false);
-
-			await expect(authService.registerUser(signupRequestDto)).rejects.toThrow(
-				UnprocessableEntityException,
 			);
 		});
 
