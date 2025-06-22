@@ -72,7 +72,7 @@ describe('Users service', (): void => {
 			);
 		});
 
-		it('should return true nothing', async (): Promise<void> => {
+		it('should return nothing', async (): Promise<void> => {
 			const result: void = await usersService.createUser(
 				otpCode,
 				otpCodeExpiresAt,
