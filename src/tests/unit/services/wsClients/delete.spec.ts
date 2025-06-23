@@ -13,62 +13,56 @@ describe('Ws clients', (): void => {
 		wsClientsService = moduleFixture.get(WsClientsService);
 	});
 
-	describe('Set', (): void => {
+	describe('Delete', (): void => {
 		const userOneId: string = '123';
 		const userTwoId: string = '456';
 		const clientOneMock: Socket = { id: '123' } as Socket;
 		const clientTwoMock: Socket = { id: '456' } as Socket;
 
 		beforeEach((): void => {
-			const clientsMap: Map<string, Socket> = (
-				wsClientsService as unknown as { _clients: Map<string, Socket> }
-			)._clients;
-
-			clientsMap.clear();
+			wsClientsService.set(userOneId, clientOneMock);
 		});
 
 		it('should be defined', (): void => {
-			expect(wsClientsService.set).toBeDefined();
+			expect(wsClientsService.delete).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(wsClientsService.set).toBeInstanceOf(Function);
+			expect(wsClientsService.delete).toBeInstanceOf(Function);
 		});
 
-		it('should store client socket by user id', (): void => {
-			wsClientsService.set(userOneId, clientOneMock);
+		it('should delete a client by user id', (): void => {
+			wsClientsService.delete(userOneId);
 
 			const clientsMap: Map<string, Socket> = (
 				wsClientsService as unknown as { _clients: Map<string, Socket> }
 			)._clients;
 
-			expect(clientsMap.has(userOneId)).toBe(true);
-			expect(clientsMap.get(userOneId)).toBe(clientOneMock);
+			expect(clientsMap.has(userOneId)).toBe(false);
+			expect(clientsMap.get(userOneId)).toBeUndefined();
 		});
 
-		it('should override existing client', (): void => {
-			wsClientsService.set(userOneId, clientOneMock);
-			wsClientsService.set(userOneId, clientTwoMock);
+		it('should do nothing and not throw errors on delete not existing client', (): void => {
+			expect(() => wsClientsService.delete(userTwoId)).not.toThrow();
 
 			const clientsMap: Map<string, Socket> = (
 				wsClientsService as unknown as { _clients: Map<string, Socket> }
 			)._clients;
 
-			expect(clientsMap.get(userOneId)).toBe(clientTwoMock);
+			expect(clientsMap.size).toBe(1);
 		});
 
-		it('should store multiple sockets', (): void => {
-			wsClientsService.set(userOneId, clientOneMock);
+		it('should delete a client only for provided id', (): void => {
 			wsClientsService.set(userTwoId, clientTwoMock);
 
+			wsClientsService.delete(userOneId);
+
 			const clientsMap: Map<string, Socket> = (
 				wsClientsService as unknown as { _clients: Map<string, Socket> }
 			)._clients;
 
-			expect(clientsMap.has(userOneId)).toBe(true);
 			expect(clientsMap.has(userTwoId)).toBe(true);
 
-			expect(clientsMap.get(userOneId)).toBe(clientOneMock);
 			expect(clientsMap.get(userTwoId)).toBe(clientTwoMock);
 		});
 	});
