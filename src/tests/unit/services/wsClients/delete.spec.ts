@@ -23,6 +23,14 @@ describe('Ws clients', (): void => {
 			wsClientsService.set(userOneId, clientOneMock);
 		});
 
+		afterEach((): void => {
+			const clientsMap: Map<string, Socket> = (
+				wsClientsService as unknown as { _clients: Map<string, Socket> }
+			)._clients;
+
+			clientsMap.clear();
+		});
+
 		it('should be defined', (): void => {
 			expect(wsClientsService.delete).toBeDefined();
 		});

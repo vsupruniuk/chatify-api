@@ -76,7 +76,7 @@ export class DirectChatsGateway
 				createDirectChatRequestDto.messageText,
 			);
 
-		await this._wsClientsService.notifyAllClients(
+		this._wsClientsService.notifyAllClients(
 			[appUserPayload.id, createDirectChatRequestDto.receiverId],
 			WSEvents.ON_CREATE_CHAT,
 			createdChat,
@@ -96,7 +96,7 @@ export class DirectChatsGateway
 				sendDirectChatMessageRequestDto.messageText,
 			);
 
-		await this._wsClientsService.notifyAllClients(
+		this._wsClientsService.notifyAllClients(
 			createdMessage.directChat.users.map((user: UserDto) => user.id),
 			WSEvents.ON_RECEIVE_MESSAGE,
 			createdMessage,
