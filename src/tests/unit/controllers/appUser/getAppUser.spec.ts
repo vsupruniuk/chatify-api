@@ -1,0 +1,91 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppUserController } from '@controllers/appUser/appUser.controller';
+import providers from '@modules/providers/providers';
+import { JwtService } from '@nestjs/jwt';
+import { DataSource } from 'typeorm';
+import { User } from '@entities/User.entity';
+import { users } from '@testMocks/User/users';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+import { plainToInstance } from 'class-transformer';
+import { IAppUserService } from '@services/appUser/IAppUserService';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { AppUserDto } from '@dtos/appUser/AppUser.dto';
+
+describe('App user controller', (): void => {
+	let appUserController: AppUserController;
+	let appUserService: IAppUserService;
+
+	beforeAll(async (): Promise<void> => {
+		const moduleFixture: TestingModule = await Test.createTestingModule({
+			controllers: [AppUserController],
+			providers: [
+				JwtService,
+
+				providers.CTF_JWT_TOKENS_SERVICE,
+				providers.CTF_JWT_TOKENS_REPOSITORY,
+
+				providers.CTF_APP_USER_SERVICE,
+
+				providers.CTF_ACCOUNT_SETTINGS_SERVICE,
+				providers.CTF_ACCOUNT_SETTINGS_REPOSITORY,
+
+				providers.CTF_USERS_SERVICE,
+				providers.CTF_USERS_REPOSITORY,
+
+				{ provide: DataSource, useValue: {} },
+			],
+		}).compile();
+
+		appUserController = moduleFixture.get(AppUserController);
+		appUserService = moduleFixture.get(CustomProviders.CTF_APP_USER_SERVICE);
+	});
+
+	describe('Get app user', (): void => {
+		const userMock: User = users[5];
+
+		const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, userMock, {
+			excludeExtraneousValues: true,
+		});
+
+		beforeEach((): void => {
+			jest.spyOn(appUserService, 'getAppUser').mockResolvedValue(
+				plainToInstance(AppUserDto, userMock, {
+					excludeExtraneousValues: true,
+				}),
+			);
+		});
+
+		afterEach((): void => {
+			jest.restoreAllMocks();
+		});
+
+		it('should be defined', (): void => {
+			expect(appUserController.getAppUser).toBeDefined();
+		});
+
+		it('should be a function', (): void => {
+			expect(appUserController.getAppUser).toBeInstanceOf(Function);
+		});
+
+		it('should call get app user method from app user service to get the full app user', async (): Promise<void> => {
+			await appUserController.getAppUser(appUserPayload);
+
+			expect(appUserService.getAppUser).toHaveBeenCalledTimes(1);
+			expect(appUserService.getAppUser).toHaveBeenNthCalledWith(1, appUserPayload.id);
+		});
+
+		it('should return founded user', async (): Promise<void> => {
+			const user: AppUserDto = await appUserController.getAppUser(appUserPayload);
+
+			expect(user).toEqual(
+				plainToInstance(AppUserDto, userMock, { excludeExtraneousValues: true }),
+			);
+		});
+
+		it('should return a user as instance of AppUserDto', async (): Promise<void> => {
+			const user: AppUserDto = await appUserController.getAppUser(appUserPayload);
+
+			expect(user).toBeInstanceOf(AppUserDto);
+		});
+	});
+});
