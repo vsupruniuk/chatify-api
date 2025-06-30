@@ -21,4 +21,12 @@ export interface IAppUserService {
 		appUserPayload: JWTPayloadDto,
 		updateAppUserDto: UpdateAppUserRequestDto,
 	): Promise<AppUserDto>;
+
+	/**
+	 * Method for deleting user avatar
+	 * @param userId - user id
+	 * @throws UnauthorizedException - if failed to find user by id
+	 * @throws BadRequestException - if user does not have an avatar
+	 */
+	deleteUserAvatar(userId: string): Promise<void>;
 }

@@ -1,4 +1,3 @@
-import { AccountSettingsService } from '@services/accountSettings/accountSettings.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import providers from '@modules/providers/providers';
 import { DataSource } from 'typeorm';
@@ -8,17 +7,17 @@ import { users } from '@testMocks/User/users';
 import { FileHelper } from '@helpers/file.helper';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { IUsersService } from '@services/users/IUsersService';
+import { AppUserService } from '@services/appUser/appUser.service';
 
-describe('Account settings service', (): void => {
-	let accountSettingsService: AccountSettingsService;
+describe('App user service', (): void => {
+	let appUserService: AppUserService;
 	let usersService: IUsersService;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			providers: [
-				AccountSettingsService,
+				AppUserService,
 
-				providers.CTF_ACCOUNT_SETTINGS_REPOSITORY,
 				providers.CTF_USERS_SERVICE,
 				providers.CTF_USERS_REPOSITORY,
 
@@ -26,7 +25,7 @@ describe('Account settings service', (): void => {
 			],
 		}).compile();
 
-		accountSettingsService = moduleFixture.get(AccountSettingsService);
+		appUserService = moduleFixture.get(AppUserService);
 		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
 	});
 
@@ -45,29 +44,29 @@ describe('Account settings service', (): void => {
 		});
 
 		it('should be defined', (): void => {
-			expect(accountSettingsService.deleteUserAvatar).toBeDefined();
+			expect(appUserService.deleteUserAvatar).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(accountSettingsService.deleteUserAvatar).toBeInstanceOf(Function);
+			expect(appUserService.deleteUserAvatar).toBeInstanceOf(Function);
 		});
 
 		it('should call get by id method from user service to find a user by provided id', async (): Promise<void> => {
-			await accountSettingsService.deleteUserAvatar(userIdMock);
+			await appUserService.deleteUserAvatar(userIdMock);
 
 			expect(usersService.getById).toHaveBeenCalledTimes(1);
 			expect(usersService.getById).toHaveBeenNthCalledWith(1, userIdMock);
 		});
 
 		it('should call delete file method file helper to delete user avatar', async (): Promise<void> => {
-			await accountSettingsService.deleteUserAvatar(userIdMock);
+			await appUserService.deleteUserAvatar(userIdMock);
 
 			expect(FileHelper.deleteFile).toHaveBeenCalledTimes(1);
 			expect(FileHelper.deleteFile).toHaveBeenNthCalledWith(1, userMock.avatarUrl);
 		});
 
 		it('should call update user avatar url method from users service to set user avatar url to null', async (): Promise<void> => {
-			await accountSettingsService.deleteUserAvatar(userIdMock);
+			await appUserService.deleteUserAvatar(userIdMock);
 
 			expect(usersService.updateUserAvatarUrl).toHaveBeenCalledTimes(1);
 			expect(usersService.updateUserAvatarUrl).toHaveBeenNthCalledWith(1, userIdMock, null);
@@ -76,7 +75,7 @@ describe('Account settings service', (): void => {
 		it('should throw unauthorized exception if user service failed to find user by id', async (): Promise<void> => {
 			jest.spyOn(usersService, 'getById').mockResolvedValue(null);
 
-			await expect(accountSettingsService.deleteUserAvatar(userIdMock)).rejects.toThrow(
+			await expect(appUserService.deleteUserAvatar(userIdMock)).rejects.toThrow(
 				UnauthorizedException,
 			);
 		});
@@ -84,13 +83,13 @@ describe('Account settings service', (): void => {
 		it('should throw bad request exception if user does not have an saved avatar', async (): Promise<void> => {
 			jest.spyOn(usersService, 'getById').mockResolvedValue({ ...userMock, avatarUrl: null });
 
-			await expect(accountSettingsService.deleteUserAvatar(userIdMock)).rejects.toThrow(
+			await expect(appUserService.deleteUserAvatar(userIdMock)).rejects.toThrow(
 				BadRequestException,
 			);
 		});
 
 		it('should return nothing', async (): Promise<void> => {
-			const result: void = await accountSettingsService.deleteUserAvatar(userIdMock);
+			const result: void = await appUserService.deleteUserAvatar(userIdMock);
 
 			expect(result).toBeUndefined();
 		});

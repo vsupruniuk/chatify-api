@@ -21,6 +21,7 @@ describe('App user service', (): void => {
 			providers: [
 				AppUserService,
 
+				providers.CTF_USERS_SERVICE,
 				providers.CTF_USERS_REPOSITORY,
 
 				{ provide: DataSource, useValue: {} },

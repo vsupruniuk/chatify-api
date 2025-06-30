@@ -106,6 +106,6 @@ export class AppUserController implements IAppUserController {
 
 	@Delete('user-avatar')
 	public async deleteAvatar(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<void> {
-		await this._accountSettingsService.deleteUserAvatar(appUserPayload.id);
+		await this._appUserService.deleteUserAvatar(appUserPayload.id);
 	}
 }
