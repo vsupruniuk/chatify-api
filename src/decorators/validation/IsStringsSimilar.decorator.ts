@@ -13,7 +13,9 @@ export class IsStringsSimilarConstraint implements ValidatorConstraintInterface 
 		validationArguments?: ValidationArguments,
 	): Promise<boolean> | boolean {
 		const [relatedPropertyName] = validationArguments?.constraints || '';
-		const relatedValue = validationArguments?.object[relatedPropertyName] || '';
+		const args = validationArguments?.object as Record<string, string>;
+
+		const relatedValue: string = args[relatedPropertyName] || '';
 
 		return value === relatedValue;
 	}

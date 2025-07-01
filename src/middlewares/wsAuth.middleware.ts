@@ -32,7 +32,7 @@ export const WsAuthMiddleware = (jwtTokensService: IJWTTokensService): WSMiddlew
 
 			next();
 		} catch (error) {
-			next(error);
+			next(error as Error);
 		}
 	};
 };
