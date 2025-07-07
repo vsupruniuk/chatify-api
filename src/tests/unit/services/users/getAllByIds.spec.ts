@@ -98,7 +98,7 @@ describe('Users service', (): void => {
 
 			const users: UserDto[] = await usersService.getAllByIds(ids);
 
-			expect(users.length).toBe(0);
+			expect(users).toHaveLength(0);
 		});
 	});
 });
