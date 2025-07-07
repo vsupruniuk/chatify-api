@@ -52,7 +52,7 @@ describe('Direct chats controller', (): void => {
 		directChatsService = moduleFixture.get(CustomProviders.CTF_DIRECT_CHATS_SERVICE);
 	});
 
-	describe('Get lats chats', (): void => {
+	describe('Get last chats', (): void => {
 		const userMock: User = users[2];
 		const directChatsMock: DirectChat[] = directChats.slice(1, 3);
 
@@ -96,7 +96,7 @@ describe('Direct chats controller', (): void => {
 			);
 		});
 
-		it('should should call get user last chats method without pagination parameters if they were not provided', async (): Promise<void> => {
+		it('should call get user last chats method without pagination parameters if they were not provided', async (): Promise<void> => {
 			await directChatsController.getLastChats(appUserPayload);
 
 			expect(directChatsService.getUserLastChats).toHaveBeenCalledTimes(1);
