@@ -1,0 +1,89 @@
+import { StaticController } from '@controllers/static/static.controller';
+import { Test, TestingModule } from '@nestjs/testing';
+import providers from '@modules/providers/providers';
+import { JwtService } from '@nestjs/jwt';
+import { DataSource } from 'typeorm';
+import * as path from 'path';
+import * as fs from 'fs';
+import { Readable } from 'stream';
+import { ReadStream } from 'fs';
+import { NotFoundException, StreamableFile } from '@nestjs/common';
+
+describe('Static controller', (): void => {
+	const publicFolderPathMock: string = '/tmp/public';
+
+	let staticController: StaticController;
+
+	beforeAll(async (): Promise<void> => {
+		const moduleFixture: TestingModule = await Test.createTestingModule({
+			providers: [
+				StaticController,
+
+				JwtService,
+
+				providers.CTF_JWT_TOKENS_SERVICE,
+				providers.CTF_JWT_TOKENS_REPOSITORY,
+
+				{ provide: DataSource, useValue: {} },
+			],
+		}).compile();
+
+		staticController = moduleFixture.get(StaticController);
+
+		(staticController as unknown as { _publicFolderPath: string })._publicFolderPath =
+			publicFolderPathMock;
+	});
+
+	describe('Get file', (): void => {
+		const fileName: string = 'user.png';
+
+		const streamMock = new Readable();
+
+		beforeEach((): void => {
+			jest.spyOn(path, 'resolve').mockImplementation((...parts: string[]) => parts.join('/'));
+			jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+			jest.spyOn(fs, 'createReadStream').mockReturnValue(streamMock as ReadStream);
+		});
+
+		afterEach((): void => {
+			jest.restoreAllMocks();
+		});
+
+		it('should be defined', (): void => {
+			expect(staticController.getFile).toBeDefined();
+		});
+
+		it('should be a function', (): void => {
+			expect(staticController.getFile).toBeInstanceOf(Function);
+		});
+
+		it('should return streamable file if file is exist', (): void => {
+			const result: StreamableFile = staticController.getFile(fileName);
+
+			expect(result.getStream()).toBe(streamMock);
+			expect(result.options).toEqual({ type: 'image/jpeg' });
+		});
+
+		it('should return response as instance of StreamableFile', (): void => {
+			const result: StreamableFile = staticController.getFile(fileName);
+
+			expect(result).toBeInstanceOf(StreamableFile);
+		});
+
+		it('should throw NotFoundException if file does not exist', (): void => {
+			jest.spyOn(fs, 'existsSync').mockReturnValue(false);
+
+			expect(() => staticController.getFile(fileName)).toThrow(NotFoundException);
+		});
+
+		it('should throw NotFoundException on path traversal attempt', (): void => {
+			jest
+				.spyOn(path, 'resolve')
+				.mockImplementation((...parts: string[]) =>
+					parts.join('/').replace('/tmp/public/../', '/tmp/'),
+				);
+
+			expect(() => staticController.getFile(`../${fileName}`)).toThrow(NotFoundException);
+		});
+	});
+});

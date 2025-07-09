@@ -24,7 +24,7 @@ export class StaticController implements IStaticController {
 		const filePath: string = resolve(this._publicFolderPath, fileName);
 
 		if (!filePath.startsWith(this._publicFolderPath) || !existsSync(filePath)) {
-			throw new NotFoundException();
+			throw new NotFoundException('File not found');
 		}
 
 		const fileStream: ReadStream = createReadStream(filePath);
