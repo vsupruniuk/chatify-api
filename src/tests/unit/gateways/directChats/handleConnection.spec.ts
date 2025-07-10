@@ -5,12 +5,17 @@ import { DataSource } from 'typeorm';
 import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
 import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
 import { JwtService } from '@nestjs/jwt';
-import { Socket } from 'socket.io';
-import * as wsAuthModule from '@middlewares/wsAuth.middleware';
-import Mock = jest.Mock;
+import { WsClientsService } from '@services/wsClients/wsClients.service';
+import { CustomProviders } from '@enums/CustomProviders.enum';
+import { GlobalTypes } from '@customTypes/global';
+import { User } from '@entities/User.entity';
+import { users } from '@testMocks/User/users';
+import { plainToInstance } from 'class-transformer';
+import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 
 describe('Direct chats gateway', (): void => {
 	let directChatsGateway: DirectChatsGateway;
+	let wsClientsService: WsClientsService;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -44,34 +49,37 @@ describe('Direct chats gateway', (): void => {
 		}).compile();
 
 		directChatsGateway = moduleFixture.get(DirectChatsGateway);
+		wsClientsService = moduleFixture.get(CustomProviders.CTF_WS_CLIENTS_SERVICE);
 	});
 
-	describe('After init', (): void => {
-		const client: Socket = { use: jest.fn() } as unknown as Socket;
+	describe('Handle connection', (): void => {
+		const userMock: User = users[4];
 
-		const authMiddlewareMock: Mock = jest.fn();
+		const client: GlobalTypes.TAuthorizedSocket = {
+			user: plainToInstance(JWTPayloadDto, userMock, { excludeExtraneousValues: true }),
+		} as GlobalTypes.TAuthorizedSocket;
 
 		beforeEach((): void => {
-			jest.spyOn(wsAuthModule, 'WsAuthMiddleware').mockReturnValue(authMiddlewareMock);
+			jest.spyOn(wsClientsService, 'set');
 		});
 
 		afterEach((): void => {
-			jest.restoreAllMocks();
+			jest.clearAllMocks();
 		});
 
 		it('should be defined', (): void => {
-			expect(directChatsGateway.afterInit).toBeDefined();
+			expect(directChatsGateway.handleConnection).toBeDefined();
 		});
 
 		it('should be a function', (): void => {
-			expect(directChatsGateway.afterInit).toBeInstanceOf(Function);
+			expect(directChatsGateway.handleConnection).toBeInstanceOf(Function);
 		});
 
-		it('should use ws auth middleware to create authentication middleware and apply it for clients', (): void => {
-			directChatsGateway.afterInit(client);
+		it('should call set method from ws clients service to save a connection', (): void => {
+			directChatsGateway.handleConnection(client);
 
-			expect(client.use).toHaveBeenCalledTimes(1);
-			expect(client.use).toHaveBeenNthCalledWith(1, authMiddlewareMock);
+			expect(wsClientsService.set).toHaveBeenCalledTimes(1);
+			expect(wsClientsService.set).toHaveBeenNthCalledWith(1, client.user.id, client);
 		});
 	});
 });
