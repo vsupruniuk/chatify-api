@@ -16,9 +16,8 @@ describe('Search controller', (): void => {
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
+			controllers: [SearchController],
 			providers: [
-				SearchController,
-
 				JwtService,
 
 				providers.CTF_USERS_SERVICE,

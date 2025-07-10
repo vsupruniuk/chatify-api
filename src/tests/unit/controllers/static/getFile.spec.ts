@@ -16,9 +16,8 @@ describe('Static controller', (): void => {
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
+			controllers: [StaticController],
 			providers: [
-				StaticController,
-
 				JwtService,
 
 				providers.CTF_JWT_TOKENS_SERVICE,

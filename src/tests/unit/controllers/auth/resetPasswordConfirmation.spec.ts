@@ -13,9 +13,8 @@ describe('Auth controller', (): void => {
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
+			controllers: [AuthController],
 			providers: [
-				AuthController,
-
 				providers.CTF_AUTH_SERVICE,
 
 				providers.CTF_USERS_SERVICE,

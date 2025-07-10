@@ -23,9 +23,8 @@ describe('Direct chats controller', (): void => {
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
+			controllers: [DirectChatsController],
 			providers: [
-				DirectChatsController,
-
 				DirectChatMessageWithChatAndUserStrategy,
 				DirectChatWithUsersAndMessagesStrategy,
 
