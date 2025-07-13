@@ -5,17 +5,17 @@ import { DataSource } from 'typeorm';
 import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
 import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
 import { JwtService } from '@nestjs/jwt';
-import { WsClientsService } from '@services/wsClients/wsClients.service';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { GlobalTypes } from '@customTypes/global';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
 import { plainToInstance } from 'class-transformer';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+import { IWSClientsService } from '@services/wsClients/IWSClientsService';
 
 describe('Direct chats gateway', (): void => {
 	let directChatsGateway: DirectChatsGateway;
-	let wsClientsService: WsClientsService;
+	let wsClientsService: IWSClientsService;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({

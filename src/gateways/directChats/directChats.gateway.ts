@@ -86,6 +86,7 @@ export class DirectChatsGateway
 	@SubscribeMessage(WSEvents.SEND_MESSAGE)
 	public async sendMessage(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
+
 		@MessageBody(MessageEncryptionPipe)
 		sendDirectChatMessageRequestDto: SendDirectChatMessageRequestDto,
 	): Promise<void> {
