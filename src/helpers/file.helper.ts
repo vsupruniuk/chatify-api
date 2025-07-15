@@ -24,7 +24,7 @@ export class FileHelper {
 		if (this.ACCEPTABLE_FILE_EXTENSIONS.includes(fileExtension)) {
 			callback(null, true);
 		} else {
-			callback(new BadRequestException(['File extension unacceptable|user-avatar']), false);
+			callback(new BadRequestException('File extension unacceptable|user-avatar'), false);
 		}
 	}
 
