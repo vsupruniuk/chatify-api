@@ -15,6 +15,10 @@ export class PasswordResetTokensHelper {
 	}
 
 	public static isExpired(passwordResetToken: PasswordResetTokenDto): boolean {
+		if (!passwordResetToken.expiresAt) {
+			return true;
+		}
+
 		return DateHelper.isDateLessThanCurrent(passwordResetToken.expiresAt);
 	}
 }

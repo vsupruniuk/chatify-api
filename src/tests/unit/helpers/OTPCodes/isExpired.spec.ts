@@ -36,8 +36,8 @@ describe('OTP codes helper', (): void => {
 			expect(DateHelper.isDateLessThanCurrent).toHaveBeenNthCalledWith(1, otpCodeMock.expiresAt);
 		});
 
-		it('should return true if expires at is empty string', (): void => {
-			const isExpired: boolean = OTPCodesHelper.isExpired({ ...otpCode, expiresAt: '' });
+		it('should return true if expires at is null', (): void => {
+			const isExpired: boolean = OTPCodesHelper.isExpired({ ...otpCode, expiresAt: null });
 
 			expect(isExpired).toBe(true);
 		});
