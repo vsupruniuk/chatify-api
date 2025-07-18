@@ -1,4 +1,4 @@
-import * as crypto from 'node:crypto';
+import * as crypto from 'crypto';
 import { DateHelper } from '@helpers/date.helper';
 import { PasswordResetTokenDto } from '@dtos/passwordResetToken/PasswordResetToken.dto';
 
