@@ -13,7 +13,7 @@ describe('Response helper', (): void => {
 		delete process.env.JWT_REFRESH_TOKEN_EXPIRES_IN;
 	});
 
-	describe('Set refresh token', (): void => {
+	describe('Set refresh token cookie', (): void => {
 		const refreshToken: string = 'refreshToken';
 		const response: Response = {
 			cookie: jest.fn(),
