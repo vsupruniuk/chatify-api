@@ -38,11 +38,11 @@ export default async (): Promise<Config> => {
 		collectCoverageFrom: [
 			'src/**/*.{ts,tsx}',
 
+			'!src/main.ts',
 			'!src/**/*.d.ts',
 
 			'!src/configs/**',
 			'!src/db/**',
-			'!src/decorators/**',
 			'!src/dtos/**',
 			'!src/emailTemplates/**',
 			'!src/enums/**',
