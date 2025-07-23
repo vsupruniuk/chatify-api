@@ -13,7 +13,7 @@ import { ResponseTransformInterceptor } from '@interceptors/responseTransform.in
 import { IAppUserController } from '@controllers/appUser/IAppUserController';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { AppUserPayload } from '@decorators/data/AppUser.decorator';
+import { AppUserPayload } from '@decorators/data/AppUserPayload.decorator';
 import { AppUserDto } from '@dtos/appUser/AppUser.dto';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';

@@ -2,7 +2,6 @@ import 'dotenv/config';
 import { Environments } from '@enums/Environments.enum';
 
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 /**
@@ -27,5 +26,3 @@ export const typeOrmConfigMock: TypeOrmModuleOptions = {
 	database: ':memory:',
 	synchronize: true,
 };
-
-export const connectionSource = new DataSource(typeOrmConfig);

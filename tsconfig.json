@@ -41,6 +41,7 @@
       "@repositories/*": ["src/repositories/*"],
       "@responses/*": ["src/responses/*"],
       "@services/*": ["src/services/*"],
+      "@testHelpers/*": ["src/tests/helpers/*"],
       "@testMocks/*": ["src/tests/mocks/*"],
     },
     "forceConsistentCasingInFileNames": false,

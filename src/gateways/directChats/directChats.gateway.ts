@@ -17,7 +17,7 @@ import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
 import { WsAuthMiddleware } from '@middlewares/wsAuth.middleware';
 import { WSEvents } from '@enums/WSEvents.enum';
 import { CreateDirectChatRequestDto } from '@dtos/directChats/CreateDirectChatRequest.dto';
-import { AppUserPayload } from '@decorators/data/AppUser.decorator';
+import { AppUserPayload } from '@decorators/data/AppUserPayload.decorator';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { MessageEncryptionPipe } from '@pipes/messageEncryption.pipe';
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';

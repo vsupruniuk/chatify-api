@@ -27,6 +27,7 @@ export default async (): Promise<Config> => {
 			'@repositories/(.*)': '<rootDir>/src/repositories/$1',
 			'@responses/(.*)': '<rootDir>/src/responses/$1',
 			'@services/(.*)': '<rootDir>/src/services/$1',
+			'@testHelpers/(.*)': '<rootDir>/src/tests/helpers/$1',
 			'@testMocks/(.*)': '<rootDir>/src/tests/mocks/$1',
 		},
 		verbose: true,

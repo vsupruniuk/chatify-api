@@ -9,7 +9,7 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
-import { AppUserPayload } from '@decorators/data/AppUser.decorator';
+import { AppUserPayload } from '@decorators/data/AppUserPayload.decorator';
 import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { IDirectChatsController } from '@controllers/directChats/IDirectChatsController';

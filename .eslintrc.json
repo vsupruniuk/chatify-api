@@ -12,7 +12,7 @@
     "node": true
   },
   "rules": {
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "req|res|next" }],
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "req|res|next|metadataValue" }],
     "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
     "spaced-comment": "off",
     "no-console": "off",

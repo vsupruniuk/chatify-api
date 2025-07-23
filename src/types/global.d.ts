@@ -12,4 +12,12 @@ export declare namespace GlobalTypes {
 		error: string;
 		statusCode: number;
 	}
+
+	interface IMetadataArguments<T = unknown> {
+		[key: string]: {
+			index: number;
+			factory: CallableFunction;
+			data: T;
+		};
+	}
 }
