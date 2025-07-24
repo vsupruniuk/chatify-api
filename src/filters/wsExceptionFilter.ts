@@ -6,12 +6,14 @@ import { ErrorWSResponseResult } from '@responses/errorResponses/ErrorWSResponse
 import { ErrorField } from '@responses/errors/ErrorField';
 import { ResponseStatus } from '@enums/ResponseStatus.enum';
 import { GlobalTypes } from '../types/global';
+import { Environments } from '@enums/Environments.enum';
+import { DateHelper } from '@helpers/date.helper';
 
 /**
  * Exception filter for handling websockets exceptions and errors in app.
  */
 @Catch()
-export class wsExceptionFilter extends BaseWsExceptionFilter {
+export class WsExceptionFilter extends BaseWsExceptionFilter {
 	private readonly MESSAGE_FIELD_SEPARATOR: string = '|';
 
 	public catch(exception: HttpException | Error, host: ArgumentsHost): void {
@@ -42,6 +44,11 @@ export class wsExceptionFilter extends BaseWsExceptionFilter {
 			responseResult.message = 'Internal server error';
 
 			responseResult.errors = [{ message: exception.message, field: null }];
+		}
+
+		if (process.env.NODE_ENV === Environments.DEV) {
+			responseResult.stack = exception.stack;
+			responseResult.dateTime = DateHelper.dateTimeNow();
 		}
 
 		client.emit(WSEvents.ON_ERROR, responseResult);

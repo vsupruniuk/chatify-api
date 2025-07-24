@@ -10,7 +10,7 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { IDirectChatsGateway } from '@gateways/directChats/IDirectChatsGateway';
-import { wsExceptionFilter } from '@filters/wsException.filter';
+import { WsExceptionFilter } from '@filters/wsExceptionFilter';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
 import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
@@ -33,7 +33,7 @@ import { UserDto } from '@dtos/users/UserDto';
 		stopAtFirstError: false,
 	}),
 )
-@UseFilters(wsExceptionFilter)
+@UseFilters(WsExceptionFilter)
 @WebSocketGateway()
 export class DirectChatsGateway
 	implements IDirectChatsGateway, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
