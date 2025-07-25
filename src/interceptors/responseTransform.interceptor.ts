@@ -4,7 +4,7 @@ import { SuccessfulResponseResult } from '@responses/successfulResponses/Success
 import { ResponseStatus } from '@enums/ResponseStatus.enum';
 
 @Injectable()
-export class ResponseTransformInterceptor<T> implements NestInterceptor {
+export class ResponseTransformInterceptor<T = object> implements NestInterceptor {
 	public intercept(
 		context: ExecutionContext,
 		next: CallHandler<T>,
