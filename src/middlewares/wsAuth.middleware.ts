@@ -4,7 +4,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { GlobalTypes } from '../types/global';
 
-type WSMiddleware = (event: Event, next: (error?: Error) => void) => void;
+type WSMiddleware = (event: Event, next: (error?: Error) => void) => Promise<void>;
 
 export const WsAuthMiddleware = (jwtTokensService: IJWTTokensService): WSMiddleware => {
 	return async (event: Event, next: (error?: Error) => void): Promise<void> => {
