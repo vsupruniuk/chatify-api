@@ -67,14 +67,6 @@ describe('Direct chats gateway', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(directChatsGateway.handleConnection).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatsGateway.handleConnection).toBeInstanceOf(Function);
-		});
-
 		it('should call set method from ws clients service to save a connection', (): void => {
 			directChatsGateway.handleConnection(client);
 

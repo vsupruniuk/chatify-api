@@ -31,14 +31,6 @@ describe('Message encryption pipe', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(messageEncryptionPipe.transform).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(messageEncryptionPipe.transform).toBeInstanceOf(Function);
-		});
-
 		it('should call encrypt text method from crypto service', async (): Promise<void> => {
 			await messageEncryptionPipe.transform(directChatMessageMock);
 

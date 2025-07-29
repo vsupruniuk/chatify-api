@@ -30,14 +30,6 @@ describe('Response transform interceptor', (): void => {
 			handle: jest.fn().mockReturnValue(of(userResponse)),
 		};
 
-		it('should be defined', (): void => {
-			expect(responseTransformInterceptor.intercept).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(responseTransformInterceptor.intercept).toBeInstanceOf(Function);
-		});
-
 		it('should wrap a response to a valid response format', async (): Promise<void> => {
 			const result: SuccessfulResponseResult<object | null> = await firstValueFrom(
 				responseTransformInterceptor.intercept({} as ExecutionContext, next),

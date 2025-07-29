@@ -46,14 +46,6 @@ describe('Direct chats repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(directChatsRepository.createChat).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatsRepository.createChat).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and insert empty direct chat', async (): Promise<void> => {
 			await directChatsRepository.createChat(
 				senderMock,

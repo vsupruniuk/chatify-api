@@ -14,14 +14,6 @@ describe('Password reset token', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(PasswordResetTokensHelper.generateToken).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(PasswordResetTokensHelper.generateToken).toBeInstanceOf(Function);
-		});
-
 		it('should use random uuid method from crypto package to generate random uuid', (): void => {
 			PasswordResetTokensHelper.generateToken();
 

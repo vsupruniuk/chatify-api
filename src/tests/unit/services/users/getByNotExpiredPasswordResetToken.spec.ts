@@ -4,7 +4,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import providers from '@modules/providers/providers';
 import { DataSource } from 'typeorm';
 import { CustomProviders } from '@enums/CustomProviders.enum';
-import { TransformHelper } from '@helpers/transform.helper';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
 import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
@@ -41,20 +40,11 @@ describe('Users service', (): void => {
 			jest
 				.spyOn(usersRepository, 'findByNotExpiredPasswordResetToken')
 				.mockResolvedValue({ ...userMock, passwordResetToken: { ...passwordResetTokenMock } });
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
 			jest.clearAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(usersService.getByNotExpiredPasswordResetToken).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersService.getByNotExpiredPasswordResetToken).toBeInstanceOf(Function);
 		});
 
 		it('should call find by not expired password reset token method from users repository to find a user', async (): Promise<void> => {
@@ -71,17 +61,6 @@ describe('Users service', (): void => {
 				await usersService.getByNotExpiredPasswordResetToken(token);
 
 			expect(user).toBeNull();
-		});
-
-		it('should call to target dto method from transform helper to transform response to appropriate dto', async (): Promise<void> => {
-			await usersService.getByNotExpiredPasswordResetToken(token);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(
-				1,
-				UserWithPasswordResetTokenDto,
-				{ ...userMock, passwordResetToken: { ...passwordResetTokenMock } },
-			);
 		});
 
 		it('should return a user if it was found', async (): Promise<void> => {

@@ -67,14 +67,6 @@ describe('Auth controller', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(authController.login).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(authController.login).toBeInstanceOf(Function);
-		});
-
 		it('should call login method from auth service to proceed user login', async (): Promise<void> => {
 			await authController.login(response, loginRequestDto);
 

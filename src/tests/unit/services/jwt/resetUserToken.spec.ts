@@ -42,14 +42,6 @@ describe('JWT tokens service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(jwtTokensService.resetUserToken).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(jwtTokensService.resetUserToken).toBeInstanceOf(Function);
-		});
-
 		it('should call reset token by user id method from jwt tokens repository to reset user jwt token', async (): Promise<void> => {
 			await jwtTokensService.resetUserToken(userId);
 

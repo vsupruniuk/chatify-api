@@ -62,14 +62,6 @@ describe('Decryption strategy manager', (): void => {
 			});
 		});
 
-		it('should be defined', (): void => {
-			expect(decryptionStrategyManager.decrypt).toBeDefined();
-		});
-
-		it('should a function', (): void => {
-			expect(decryptionStrategyManager.decrypt).toBeInstanceOf(Function);
-		});
-
 		it('should throw internal server error if strategy for provided entity not implemented', async (): Promise<void> => {
 			const originalClassName: string = directChatMock.constructor.name;
 

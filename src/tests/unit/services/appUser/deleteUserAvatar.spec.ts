@@ -43,14 +43,6 @@ describe('App user service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(appUserService.deleteUserAvatar).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(appUserService.deleteUserAvatar).toBeInstanceOf(Function);
-		});
-
 		it('should call get by id method from user service to find a user by provided id', async (): Promise<void> => {
 			await appUserService.deleteUserAvatar(userIdMock);
 

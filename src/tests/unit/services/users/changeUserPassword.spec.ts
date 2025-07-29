@@ -44,14 +44,6 @@ describe('Users service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(usersService.changeUserPassword).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersService.changeUserPassword).toBeInstanceOf(Function);
-		});
-
 		it('should call update password method from users repository to update user password', async (): Promise<void> => {
 			await usersService.changeUserPassword(userId, tokenId, password);
 

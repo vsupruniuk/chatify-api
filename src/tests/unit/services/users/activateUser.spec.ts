@@ -10,7 +10,6 @@ import { OTPCode } from '@entities/OTPCode.entity';
 import { otpCodes } from '@testMocks/OTPCode/otpCodes';
 import { JWTToken } from '@entities/JWTToken.entity';
 import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
-import { TransformHelper } from '@helpers/transform.helper';
 import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
 import { plainToInstance } from 'class-transformer';
 
@@ -45,20 +44,11 @@ describe('Users service', (): void => {
 			jest
 				.spyOn(usersRepository, 'activateUser')
 				.mockResolvedValue({ ...userMock, jwtToken: { ...jwtTokenMock } });
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.clearAllMocks();
 			jest.restoreAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(usersService.activateUser).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersService.activateUser).toBeInstanceOf(Function);
 		});
 
 		it('should call activate user method from users repository to activate user account', async (): Promise<void> => {
@@ -86,16 +76,6 @@ describe('Users service', (): void => {
 					{ excludeExtraneousValues: true },
 				),
 			);
-		});
-
-		it('should call to target dto method from transform helper to transform response to appropriate dto', async (): Promise<void> => {
-			await usersService.activateUser(userId, otpCodeId);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(1, UserWithJwtTokenDto, {
-				...userMock,
-				jwtToken: { ...jwtTokenMock },
-			});
 		});
 
 		it('should return user as instance of UserWithJwtTokenDto', async (): Promise<void> => {

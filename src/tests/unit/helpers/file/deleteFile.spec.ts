@@ -15,14 +15,6 @@ describe('File helper', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(FileHelper.deleteFile).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(FileHelper.deleteFile).toBeInstanceOf(Function);
-		});
-
 		it('should call join method from path module to build correct path to a folder with public files', (): void => {
 			FileHelper.deleteFile(fileName);
 

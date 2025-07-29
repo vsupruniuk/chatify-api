@@ -70,14 +70,6 @@ describe('Auth service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', async (): Promise<void> => {
-			expect(authService.resendActivationCode).toBeDefined();
-		});
-
-		it('should be a function', async (): Promise<void> => {
-			expect(authService.resendActivationCode).toBeInstanceOf(Function);
-		});
-
 		it('should call get by email and not active with otp code method from users service to get user by email', async (): Promise<void> => {
 			await authService.resendActivationCode(resendActivationCodeRequestDto);
 

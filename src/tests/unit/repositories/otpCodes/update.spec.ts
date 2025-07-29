@@ -34,14 +34,6 @@ describe('OTP codes repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(otpCodesRepository.update).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(otpCodesRepository.update).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create a query for updating OPT code', async (): Promise<void> => {
 			await otpCodesRepository.update(idMock, codeMock, expiresAtMock);
 

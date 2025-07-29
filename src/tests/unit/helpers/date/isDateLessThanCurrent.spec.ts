@@ -12,14 +12,6 @@ describe('Date helper', (): void => {
 			jest.useRealTimers();
 		});
 
-		it('should be defined', (): void => {
-			expect(DateHelper.isDateLessThanCurrent).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(DateHelper.isDateLessThanCurrent).toBeInstanceOf(Function);
-		});
-
 		it('should return true if date less than current', (): void => {
 			jest.setSystemTime(dateMock);
 

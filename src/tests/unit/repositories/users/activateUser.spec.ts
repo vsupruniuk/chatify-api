@@ -34,14 +34,6 @@ describe('Users service', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(usersRepository.activateUser).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersRepository.activateUser).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create a query for activating user account', async (): Promise<void> => {
 			await usersRepository.activateUser(userIdMock, otpCodeIdMock);
 

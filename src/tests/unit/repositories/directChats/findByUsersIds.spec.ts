@@ -42,14 +42,6 @@ describe('Direct chats repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(directChatsRepository.findByUsersIds).toBeDefined();
-		});
-
-		it('should be a functions', (): void => {
-			expect(directChatsRepository.findByUsersIds).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create a query condition for existing chats for a first user', async (): Promise<void> => {
 			await directChatsRepository.findByUsersIds(firstUserIdMock, secondUserIdMock);
 

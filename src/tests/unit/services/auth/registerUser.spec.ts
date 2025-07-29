@@ -75,14 +75,6 @@ describe('Auth service', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(authService.registerUser).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(authService.registerUser).toBeInstanceOf(Function);
-		});
-
 		it('should call find by nickname or email method from users service to check if user tich provided email or nickname already exist', async (): Promise<void> => {
 			await authService.registerUser(signupRequestDto);
 

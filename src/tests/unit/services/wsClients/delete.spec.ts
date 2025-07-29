@@ -31,14 +31,6 @@ describe('Ws clients', (): void => {
 			clientsMap.clear();
 		});
 
-		it('should be defined', (): void => {
-			expect(wsClientsService.delete).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(wsClientsService.delete).toBeInstanceOf(Function);
-		});
-
 		it('should delete a client by user id', (): void => {
 			wsClientsService.delete(userOneId);
 

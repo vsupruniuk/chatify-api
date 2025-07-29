@@ -31,14 +31,6 @@ describe('Users repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', async (): Promise<void> => {
-			expect(usersRepository.findByEmailWithPasswordResetToken).toBeDefined();
-		});
-
-		it('should be a function', async (): Promise<void> => {
-			expect(usersRepository.findByEmailWithPasswordResetToken).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create a query for searching a user with password reset token by email', async (): Promise<void> => {
 			await usersRepository.findByEmailWithPasswordResetToken(emailMock);
 

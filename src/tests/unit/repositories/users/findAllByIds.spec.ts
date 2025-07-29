@@ -31,14 +31,6 @@ describe('Users repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(usersRepository.findAllByIds).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersRepository.findAllByIds).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create a query for searching all users by provided ids', async (): Promise<void> => {
 			await usersRepository.findAllByIds(usersIdsMock);
 
@@ -56,12 +48,6 @@ describe('Users repository', (): void => {
 			});
 
 			expect(queryBuilderMock.getMany).toHaveBeenCalledTimes(1);
-		});
-
-		it('should return an Array', async (): Promise<void> => {
-			const foundedUsers: User[] = await usersRepository.findAllByIds(usersIdsMock);
-
-			expect(foundedUsers).toBeInstanceOf(Array);
 		});
 
 		it('should return all founded users with provided ids', async (): Promise<void> => {

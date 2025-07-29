@@ -20,14 +20,6 @@ describe('App user payload decorator', () => {
 		}),
 	} as ExecutionContext;
 
-	it('should be defined', (): void => {
-		expect(AppUserPayload).toBeDefined();
-	});
-
-	it('should be a function', (): void => {
-		expect(AppUserPayload).toBeInstanceOf(Function);
-	});
-
 	it('should return authorized user data from the request object', () => {
 		const factory: CallableFunction = MetadataHelper.getParamDecoratorFactory(AppUserPayload);
 

@@ -7,7 +7,6 @@ import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { users } from '@testMocks/User/users';
 import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
-import { TransformHelper } from '@helpers/transform.helper';
 import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings/AccountSettings.dto';
 import { UnprocessableEntityException } from '@nestjs/common';
 import { IAccountSettingsRepository } from '@repositories/accountSettings/IAccountSettingsRepository';
@@ -47,20 +46,10 @@ describe('Account settings service', (): void => {
 			jest
 				.spyOn(accountSettingsRepository, 'updateAccountSettings')
 				.mockResolvedValue(accountSettingsMock);
-
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(accountSettingsService.updateAccountSettings).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(accountSettingsService.updateAccountSettings).toBeInstanceOf(Function);
 		});
 
 		it('should call update account settings method from account settings repository to update user account settings', async (): Promise<void> => {
@@ -74,20 +63,6 @@ describe('Account settings service', (): void => {
 				1,
 				userIdMock,
 				updateAccountSettingsRequestDtoMock,
-			);
-		});
-
-		it('should call to target dto method from transform helper to transform response to appropriate dto', async (): Promise<void> => {
-			await accountSettingsService.updateAccountSettings(
-				userIdMock,
-				updateAccountSettingsRequestDtoMock,
-			);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(
-				1,
-				AccountSettingsDto,
-				accountSettingsMock,
 			);
 		});
 

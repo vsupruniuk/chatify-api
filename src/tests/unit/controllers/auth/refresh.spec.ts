@@ -63,14 +63,6 @@ describe('Auth controller', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(authController.refresh).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(authController.refresh).toBeInstanceOf(Function);
-		});
-
 		it('should call refresh method from auth service to update user access and refresh tokens', async (): Promise<void> => {
 			await authController.refresh(response, refreshToken);
 

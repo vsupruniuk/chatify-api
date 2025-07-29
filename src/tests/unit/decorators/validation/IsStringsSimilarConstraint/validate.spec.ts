@@ -18,14 +18,6 @@ describe('Is strings similar', (): void => {
 			object: { relatedPropertyName: relatedValue },
 		} as ValidationArguments;
 
-		it('should be defined', (): void => {
-			expect(isStringsSimilarConstraint.validate).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(isStringsSimilarConstraint.validate).toBeInstanceOf(Function);
-		});
-
 		it('should return true if value and related value are the same', (): void => {
 			const isSimilar: boolean = isStringsSimilarConstraint.validate(value, {
 				...validationArguments,

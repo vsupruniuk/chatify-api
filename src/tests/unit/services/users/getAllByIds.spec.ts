@@ -6,7 +6,6 @@ import { DataSource } from 'typeorm';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
-import { TransformHelper } from '@helpers/transform.helper';
 import { UserDto } from '@dtos/users/UserDto';
 import { plainToInstance } from 'class-transformer';
 
@@ -36,7 +35,6 @@ describe('Users service', (): void => {
 
 		beforeEach((): void => {
 			jest.spyOn(usersRepository, 'findAllByIds').mockResolvedValue(usersMock);
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
@@ -69,24 +67,10 @@ describe('Users service', (): void => {
 			);
 		});
 
-		it('should call to target dto method from transform helper to transform each user to appropriate dto', async (): Promise<void> => {
-			await usersService.getAllByIds(ids);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(usersMock.length);
-
-			usersMock.forEach((user: User, index: number) => {
-				expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(index + 1, UserDto, user);
-			});
-		});
-
-		it('should return an Array', async (): Promise<void> => {
+		it('should return all user as array of UserDto', async (): Promise<void> => {
 			const users: UserDto[] = await usersService.getAllByIds(ids);
 
 			expect(users).toBeInstanceOf(Array);
-		});
-
-		it('should return each user as instance of UserDto', async (): Promise<void> => {
-			const users: UserDto[] = await usersService.getAllByIds(ids);
 
 			users.forEach((user: UserDto) => {
 				expect(user).toBeInstanceOf(UserDto);

@@ -25,14 +25,6 @@ describe('Password reset tokens helper', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(PasswordResetTokensHelper.isExpired).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(PasswordResetTokensHelper.isExpired).toBeInstanceOf(Function);
-		});
-
 		it('should call is date less than current method from date helper to check if token is not expired', (): void => {
 			PasswordResetTokensHelper.isExpired(passwordResetToken);
 

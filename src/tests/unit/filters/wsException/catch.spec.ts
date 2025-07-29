@@ -40,14 +40,6 @@ describe('WS exception filter', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', () => {
-			expect(wsExceptionFilter.catch).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(wsExceptionFilter.catch).toBeInstanceOf(Function);
-		});
-
 		it('should emit response for on error event', (): void => {
 			wsExceptionFilter.catch(exception, host);
 

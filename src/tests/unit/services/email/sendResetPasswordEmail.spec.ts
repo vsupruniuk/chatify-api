@@ -56,14 +56,6 @@ describe('Email service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(emailService.sendResetPasswordEmail).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(emailService.sendResetPasswordEmail).toBeInstanceOf(Function);
-		});
-
 		it('should call reset password template method to get an email template', async (): Promise<void> => {
 			await emailService.sendResetPasswordEmail(receiverEmail, userName, token);
 

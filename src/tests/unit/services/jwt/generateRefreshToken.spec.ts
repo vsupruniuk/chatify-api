@@ -59,14 +59,6 @@ describe('JWT tokens service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be declared', (): void => {
-			expect(jwtTokensService.generateRefreshToken).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(jwtTokensService.generateRefreshToken).toBeInstanceOf(Function);
-		});
-
 		it('should call sign async method from jwt service to generate refresh token', async (): Promise<void> => {
 			await jwtTokensService.generateRefreshToken(payload);
 

@@ -54,14 +54,6 @@ describe('Auth controller', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(authController.resendActivationCode).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(authController.resendActivationCode).toBeInstanceOf(Function);
-		});
-
 		it('should call resend activation code method from auth service to send a new activation code for user', async (): Promise<void> => {
 			await authController.resendActivationCode(resendActivationCodeRequestDto);
 

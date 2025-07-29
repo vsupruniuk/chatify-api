@@ -12,14 +12,6 @@ describe('Transform helper', (): void => {
 
 		const userDto: UserDto = plainToInstance(UserDto, userMock, { excludeExtraneousValues: true });
 
-		it('should be defined', (): void => {
-			expect(TransformHelper.toTargetDto).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(TransformHelper.toTargetDto).toBeDefined();
-		});
-
 		it('should return null if provided data is null', (): void => {
 			const result: UserDto = TransformHelper.toTargetDto(targetDto, null);
 

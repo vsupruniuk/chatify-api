@@ -24,14 +24,6 @@ describe('File helper', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(FileHelper.renameAndSave).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(FileHelper.renameAndSave).toBeInstanceOf(Function);
-		});
-
 		it('should call callback with a null and correct file name', (): void => {
 			FileHelper.renameAndSave(user, file, callback);
 

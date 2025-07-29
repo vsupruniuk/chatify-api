@@ -21,14 +21,6 @@ describe('OTP codes helper', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(OTPCodesHelper.isExpired).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(OTPCodesHelper.isExpired).toBeInstanceOf(Function);
-		});
-
 		it('should call is date less than current method from date helper to check if code is not expired', (): void => {
 			OTPCodesHelper.isExpired(otpCode);
 

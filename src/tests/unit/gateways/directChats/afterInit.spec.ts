@@ -59,14 +59,6 @@ describe('Direct chats gateway', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(directChatsGateway.afterInit).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatsGateway.afterInit).toBeInstanceOf(Function);
-		});
-
 		it('should use ws auth middleware to create authentication middleware and apply it for clients', (): void => {
 			directChatsGateway.afterInit(client);
 

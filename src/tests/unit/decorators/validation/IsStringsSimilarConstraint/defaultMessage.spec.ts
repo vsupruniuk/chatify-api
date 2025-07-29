@@ -17,14 +17,6 @@ describe('Is strings similar decorator', (): void => {
 			constraints: [relatedPropertyName],
 		} as ValidationArguments;
 
-		it('should be defined', (): void => {
-			expect(isStringsSimilarConstraint.defaultMessage).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(isStringsSimilarConstraint.defaultMessage).toBeInstanceOf(Function);
-		});
-
 		it('should return a message that contains both fields names', (): void => {
 			const message: string = isStringsSimilarConstraint.defaultMessage(validationArguments);
 

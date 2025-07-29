@@ -19,14 +19,6 @@ describe('Query required decorator', () => {
 		}),
 	} as ExecutionContext;
 
-	it('should be defined', (): void => {
-		expect(QueryRequired).toBeDefined();
-	});
-
-	it('should be a function', (): void => {
-		expect(QueryRequired).toBeInstanceOf(Function);
-	});
-
 	it('should throw bad request exception if query is not provided', (): void => {
 		const factory: CallableFunction = MetadataHelper.getParamDecoratorFactory(QueryRequired);
 

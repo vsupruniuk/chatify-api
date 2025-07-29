@@ -72,14 +72,6 @@ describe('Auth service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(authService.resetPassword).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(authService.resetPassword).toBeInstanceOf(Function);
-		});
-
 		it('should call get by email with password reset token method from users service to find user', async (): Promise<void> => {
 			await authService.resetPassword(resetPasswordRequestDto);
 

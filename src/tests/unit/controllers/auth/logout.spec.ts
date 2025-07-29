@@ -54,14 +54,6 @@ describe('Auth controller', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(authController.logout).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(authController.logout).toBeInstanceOf(Function);
-		});
-
 		it('should call logout method from auth service to proceed user logout', async (): Promise<void> => {
 			await authController.logout(response, refreshToken);
 

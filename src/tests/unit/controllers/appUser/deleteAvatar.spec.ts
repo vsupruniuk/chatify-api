@@ -54,14 +54,6 @@ describe('App user controller', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(appUserController.deleteAvatar).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(appUserController.deleteAvatar).toBeInstanceOf(Function);
-		});
-
 		it('should call delete user avatar method from app user service to delete user avatar', async (): Promise<void> => {
 			await appUserController.deleteAvatar(appUserPayload);
 

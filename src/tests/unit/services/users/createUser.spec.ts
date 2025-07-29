@@ -52,14 +52,6 @@ describe('Users service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(usersService.createUser).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersService.createUser).toBeInstanceOf(Function);
-		});
-
 		it('should call create user method from users repository to create a user', async (): Promise<void> => {
 			await usersService.createUser(otpCode, otpCodeExpiresAt, signupRequestDto);
 

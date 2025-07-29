@@ -65,14 +65,6 @@ describe('Auth interceptor', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(authInterceptor.intercept).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(authInterceptor.intercept).toBeInstanceOf(Function);
-		});
-
 		it('should call verify access token method from jwt tokens service', async (): Promise<void> => {
 			await authInterceptor.intercept(executionContext, next);
 

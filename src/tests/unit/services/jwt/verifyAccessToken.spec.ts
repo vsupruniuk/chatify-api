@@ -56,14 +56,6 @@ describe('JWT tokens service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be declared', (): void => {
-			expect(jwtTokensService.verifyAccessToken).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(jwtTokensService.verifyAccessToken).toBeInstanceOf(Function);
-		});
-
 		it('should call verify async method from jwt service to verify access token', async (): Promise<void> => {
 			await jwtTokensService.verifyAccessToken(accessToken);
 

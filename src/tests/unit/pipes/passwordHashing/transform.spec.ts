@@ -27,14 +27,6 @@ describe('Password hashing pipe', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(passwordHashingPipe.transform).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(passwordHashingPipe.transform).toBeInstanceOf(Function);
-		});
-
 		it('should call hash password method from password helper with password field if it present in object', async (): Promise<void> => {
 			await passwordHashingPipe.transform({ password });
 

@@ -18,14 +18,6 @@ describe('OTP codes helper', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(OTPCodesHelper.generateOTPCode).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(OTPCodesHelper.generateOTPCode).toBeInstanceOf(Function);
-		});
-
 		it('should use random int method from crypto module to generate otp code', (): void => {
 			OTPCodesHelper.generateOTPCode();
 

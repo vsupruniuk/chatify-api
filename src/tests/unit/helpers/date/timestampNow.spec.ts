@@ -12,14 +12,6 @@ describe('Date helper', (): void => {
 			jest.useRealTimers();
 		});
 
-		it('should be defined', (): void => {
-			expect(DateHelper.timestampNow).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(DateHelper.timestampNow).toBeInstanceOf(Function);
-		});
-
 		it('should return current date and time in timestamp format', (): void => {
 			jest.setSystemTime(dateMock);
 

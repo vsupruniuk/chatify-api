@@ -14,14 +14,6 @@ describe('Password helper', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(PasswordHelper.validatePassword).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(PasswordHelper.validatePassword).toBeInstanceOf(Function);
-		});
-
 		it('should call compare method from bcrypt package to validate the password', async (): Promise<void> => {
 			await PasswordHelper.validatePassword(password, encryptedPassword);
 

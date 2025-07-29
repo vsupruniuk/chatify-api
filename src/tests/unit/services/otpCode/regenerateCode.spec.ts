@@ -47,14 +47,6 @@ describe('OTP codes service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be a function', (): void => {
-			expect(otpCodesService.regenerateCode).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(otpCodesService.regenerateCode).toBeInstanceOf(Function);
-		});
-
 		it('should call generate otp code method from otp codes helper to generate new code', async (): Promise<void> => {
 			await otpCodesService.regenerateCode(id);
 

@@ -36,14 +36,6 @@ describe('JWT token repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(jwtTokensRepository.resetTokenByUserId).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(jwtTokensRepository.resetTokenByUserId).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create a sub query for searching token by user id', async (): Promise<void> => {
 			await jwtTokensRepository.resetTokenByUserId(userIdMock);
 

@@ -19,14 +19,6 @@ describe('Response helper', (): void => {
 			cookie: jest.fn(),
 		} as unknown as Response;
 
-		it('should be defined', (): void => {
-			expect(ResponseHelper.setRefreshTokenCookie).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(ResponseHelper.setRefreshTokenCookie).toBeInstanceOf(Function);
-		});
-
 		it('should call cookie method in the response object to save refresh token in cookies', (): void => {
 			ResponseHelper.setRefreshTokenCookie(response, refreshToken);
 

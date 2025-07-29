@@ -33,14 +33,6 @@ describe('JWT tokens repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(jwtTokensRepository.updateToken).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(jwtTokensRepository.updateToken).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and build a query for updating JWT token', async (): Promise<void> => {
 			await jwtTokensRepository.updateToken(idMock, tokenMock);
 

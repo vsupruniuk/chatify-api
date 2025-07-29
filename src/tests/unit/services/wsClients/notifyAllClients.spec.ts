@@ -33,14 +33,6 @@ describe('Ws clients', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(wsClientsService.notifyAllClients).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(wsClientsService.notifyAllClients).toBeInstanceOf(Function);
-		});
-
 		it('should emit event for all provided and connected users', (): void => {
 			wsClientsService.set(userOneId, clientOneMock);
 			wsClientsService.set(userTwoId, clientTwoMock);

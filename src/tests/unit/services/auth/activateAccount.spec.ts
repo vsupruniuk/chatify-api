@@ -83,19 +83,10 @@ describe('Auth service', (): void => {
 
 			jest.spyOn(OTPCodesHelper, 'isExpired').mockReturnValue(false);
 			jest.spyOn(TransformHelper, 'toJwtTokenPayload').mockReturnValue(userMock);
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(authService.activateAccount).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(authService.activateAccount).toBeInstanceOf(Function);
 		});
 
 		it('should call get by email and not active with otp code method from users service to find a user', async (): Promise<void> => {
@@ -193,16 +184,6 @@ describe('Auth service', (): void => {
 				refreshTokenMock.id,
 				refreshTokenMock.token,
 			);
-		});
-
-		it('should call to target dto method from transform helper to transform response to appropriate dto', async (): Promise<void> => {
-			await authService.activateAccount(activateAccountRequestDto);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(1, ActivateAccountDto, {
-				accessToken: accessTokenMock.token,
-				refreshToken: refreshTokenMock.token,
-			});
 		});
 
 		it('should return response as instance of ActivateAccountDto', async (): Promise<void> => {

@@ -68,14 +68,6 @@ describe('App user controller', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(appUserController.updateAccountSettings).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(appUserController.updateAccountSettings).toBeInstanceOf(Function);
-		});
-
 		it('should call update account settings method from account settings service to update user account settings', async (): Promise<void> => {
 			await appUserController.updateAccountSettings(
 				appUserPayload,

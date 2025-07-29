@@ -56,14 +56,6 @@ describe('Auth controller', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(authController.resetPasswordConfirmation).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(authController.resetPasswordConfirmation).toBeInstanceOf(Function);
-		});
-
 		it('should call confirm reset password to change user password', async (): Promise<void> => {
 			await authController.resetPasswordConfirmation(
 				resetPasswordConfirmationRequestDto,

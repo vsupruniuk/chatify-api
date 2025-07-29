@@ -6,7 +6,6 @@ import { IUsersRepository } from '@repositories/users/IUsersRepository';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
-import { TransformHelper } from '@helpers/transform.helper';
 import { UserDto } from '@dtos/users/UserDto';
 import { plainToInstance } from 'class-transformer';
 
@@ -36,7 +35,6 @@ describe('Users service', (): void => {
 
 		beforeEach((): void => {
 			jest.spyOn(usersRepository, 'findById').mockResolvedValue(userMock);
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
@@ -71,13 +69,6 @@ describe('Users service', (): void => {
 			const user: UserDto | null = await usersService.getById(id);
 
 			expect(user).toEqual(plainToInstance(UserDto, userMock, { excludeExtraneousValues: true }));
-		});
-
-		it('should call to target dto method from transform helper to transform user to appropriate dto', async (): Promise<void> => {
-			await usersService.getById(id);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(1, UserDto, userMock);
 		});
 
 		it('should return founded user as instance of UserDto', async (): Promise<void> => {

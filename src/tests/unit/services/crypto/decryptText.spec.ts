@@ -83,14 +83,6 @@ describe('Crypto service', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(cryptoService.decryptText).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(cryptoService.decryptText).toBeInstanceOf(Function);
-		});
-
 		it('should convert encrypted text to buffer', async (): Promise<void> => {
 			await cryptoService.decryptText(encryptedText);
 

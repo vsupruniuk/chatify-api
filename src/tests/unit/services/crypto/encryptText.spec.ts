@@ -67,14 +67,6 @@ describe('Crypto service', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be declared', (): void => {
-			expect(cryptoService.encryptText).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(cryptoService.encryptText).toBeInstanceOf(Function);
-		});
-
 		it('should call random bytes method from crypto to create initialization vector', async () => {
 			await cryptoService.encryptText(text);
 

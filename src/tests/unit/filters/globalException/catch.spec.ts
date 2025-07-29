@@ -40,14 +40,6 @@ describe('Global exception filter', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', () => {
-			expect(globalExceptionFilter.catch).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(globalExceptionFilter.catch).toBeInstanceOf(Function);
-		});
-
 		it('should call status method from a response object with the exception status if exception is instance of http exception', (): void => {
 			globalExceptionFilter.catch(exception, host);
 

@@ -40,14 +40,6 @@ describe('Users service', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(usersService.updateUserAvatarUrl).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersService.updateUserAvatarUrl).toBeInstanceOf(Function);
-		});
-
 		it('should call update user avatar url method from users repository with avatar url', async (): Promise<void> => {
 			await usersService.updateUserAvatarUrl(userId, avatarUrl);
 

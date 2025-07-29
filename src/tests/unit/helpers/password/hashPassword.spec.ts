@@ -24,14 +24,6 @@ describe('Password helper', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(PasswordHelper.hashPassword).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(PasswordHelper.hashPassword).toBeInstanceOf(Function);
-		});
-
 		it('should call hash method from bcrypt package to hash the password', async (): Promise<void> => {
 			await PasswordHelper.hashPassword(rawPassword);
 

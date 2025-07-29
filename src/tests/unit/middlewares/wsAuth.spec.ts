@@ -55,14 +55,6 @@ describe('WS auth middleware', (): void => {
 		jest.restoreAllMocks();
 	});
 
-	it('should be defined', (): void => {
-		expect(WsAuthMiddleware).toBeDefined();
-	});
-
-	it('should be a function', (): void => {
-		expect(WsAuthMiddleware).toBeInstanceOf(Function);
-	});
-
 	it('should call verify access token method from jwt tokens service to verify user access token', async (): Promise<void> => {
 		await WsAuthMiddleware(jwtTokensService)(event, next);
 

@@ -53,14 +53,6 @@ describe('Search controller', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(searchController.findUsers).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(searchController.findUsers).toBeInstanceOf(Function);
-		});
-
 		it('should call get activated users by nickname method from users service to find users by nickname', async (): Promise<void> => {
 			await searchController.findUsers(nickname, page, take);
 
@@ -85,12 +77,6 @@ describe('Search controller', (): void => {
 			);
 		});
 
-		it('should return an Array', async (): Promise<void> => {
-			const users: UserDto[] = await searchController.findUsers(nickname, page, take);
-
-			expect(users).toBeInstanceOf(Array);
-		});
-
 		it('should return empty array if no users were found', async (): Promise<void> => {
 			jest.spyOn(usersService, 'getActivatedUsersByNickname').mockResolvedValue([]);
 
@@ -113,8 +99,10 @@ describe('Search controller', (): void => {
 			);
 		});
 
-		it('should return all founded users as instance of UserDto', async (): Promise<void> => {
+		it('should return all founded users as array of UserDto', async (): Promise<void> => {
 			const users: UserDto[] = await searchController.findUsers(nickname, page, take);
+
+			expect(users).toBeInstanceOf(Array);
 
 			users.forEach((user: UserDto) => {
 				expect(user).toBeInstanceOf(UserDto);

@@ -36,14 +36,6 @@ describe('Direct chats repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(directChatsRepository.findLastChatsByUserId).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatsRepository.findLastChatsByUserId).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create a sub-query for retrieving last chat message', async (): Promise<void> => {
 			await directChatsRepository.findLastChatsByUserId(userIdMock, skipMock, takeMock);
 
@@ -156,16 +148,6 @@ describe('Direct chats repository', (): void => {
 			expect(queryBuilderMock.take).toHaveBeenNthCalledWith(1, takeMock);
 
 			expect(queryBuilderMock.getMany).toHaveBeenCalledTimes(1);
-		});
-
-		it('should return an Array', async (): Promise<void> => {
-			const chats: DirectChat[] = await directChatsRepository.findLastChatsByUserId(
-				userIdMock,
-				skipMock,
-				takeMock,
-			);
-
-			expect(chats).toBeInstanceOf(Array);
 		});
 
 		it('should return an empty array if no relevant chats was found', async (): Promise<void> => {

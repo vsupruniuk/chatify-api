@@ -6,7 +6,6 @@ import { DataSource } from 'typeorm';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
-import { TransformHelper } from '@helpers/transform.helper';
 import { plainToInstance } from 'class-transformer';
 import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
@@ -41,20 +40,11 @@ describe('Users service', (): void => {
 			jest
 				.spyOn(usersRepository, 'findByEmailWithPasswordResetToken')
 				.mockResolvedValue({ ...userMock, passwordResetToken: { ...passwordResetTokenMock } });
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
 			jest.clearAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(usersService.getByEmailWithPasswordResetToken).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersService.getByEmailWithPasswordResetToken).toBeInstanceOf(Function);
 		});
 
 		it('should call find by email with password reset token method from users repository to find a user', async (): Promise<void> => {
@@ -71,20 +61,6 @@ describe('Users service', (): void => {
 				await usersService.getByEmailWithPasswordResetToken(email);
 
 			expect(user).toBeNull();
-		});
-
-		it('should call to target dto method from transform helper to transform response to appropriate dto', async (): Promise<void> => {
-			await usersService.getByEmailWithPasswordResetToken(email);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(
-				1,
-				UserWithPasswordResetTokenDto,
-				{
-					...userMock,
-					passwordResetToken: { ...passwordResetTokenMock },
-				},
-			);
 		});
 
 		it('should return a user if it was found', async (): Promise<void> => {

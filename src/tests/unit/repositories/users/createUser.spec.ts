@@ -49,14 +49,6 @@ describe('Users repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(usersRepository.createUser).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersRepository.createUser).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create user default account setting', async (): Promise<void> => {
 			await usersRepository.createUser(otpCodeMock, otpCodeExpiresAtMock, signupRequestDto);
 

@@ -10,14 +10,6 @@ describe('File helper', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(FileHelper.validateFileExtension).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(FileHelper.validateFileExtension).toBeInstanceOf(Function);
-		});
-
 		it('should call callback without error and true, if file extension is valid', (): void => {
 			FileHelper.validateFileExtension(file, callback);
 

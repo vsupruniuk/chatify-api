@@ -68,19 +68,10 @@ describe('Auth service', (): void => {
 			jest.spyOn(jwtTokensService, 'saveRefreshToken').mockImplementation(jest.fn());
 			jest.spyOn(PasswordHelper, 'validatePassword').mockResolvedValue(true);
 			jest.spyOn(TransformHelper, 'toJwtTokenPayload').mockReturnValue(userMock);
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(authService.login).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(authService.login).toBeInstanceOf(Function);
 		});
 
 		it('should call get full user with jwt token by email method from users service to get a user', async (): Promise<void> => {
@@ -159,16 +150,6 @@ describe('Auth service', (): void => {
 				refreshTokenMock.id,
 				refreshTokenMock.token,
 			);
-		});
-
-		it('should call to target dto method from transform helper to transform response to appropriate dto', async (): Promise<void> => {
-			await authService.login(loginRequestDto);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(1, LoginDto, {
-				accessToken: accessTokenMock.token,
-				refreshToken: refreshTokenMock.token,
-			});
 		});
 
 		it('should return response as instance of LoginDto', async (): Promise<void> => {

@@ -86,14 +86,6 @@ describe('Direct chats gateway', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(directChatsGateway.createDirectChat).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatsGateway.createDirectChat).toBeInstanceOf(Function);
-		});
-
 		it('should call create chat method from direct chats service to create a chat', async (): Promise<void> => {
 			await directChatsGateway.createDirectChat(appUserPayload, createDirectChatRequestDto);
 

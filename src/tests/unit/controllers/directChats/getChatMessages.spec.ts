@@ -79,14 +79,6 @@ describe('Direct chats controller', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(directChatsController.getChatMessages).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatsController.getChatMessages).toBeInstanceOf(Function);
-		});
-
 		it('should call get chat messages method from direct chats service to get chat messages', async (): Promise<void> => {
 			await directChatsController.getChatMessages(appUserPayload, chatId, page, take);
 
@@ -113,13 +105,6 @@ describe('Direct chats controller', (): void => {
 			);
 		});
 
-		it('should return an Array', async (): Promise<void> => {
-			const messages: DirectChatMessageWithChatAndUserDto[] =
-				await directChatsController.getChatMessages(appUserPayload, chatId, page, take);
-
-			expect(messages).toBeInstanceOf(Array);
-		});
-
 		it('should return empty array if no messages were found', async (): Promise<void> => {
 			jest.spyOn(directChatsService, 'getChatMessages').mockResolvedValue([]);
 
@@ -144,9 +129,11 @@ describe('Direct chats controller', (): void => {
 			);
 		});
 
-		it('should return all founded messages as instance of DirectChatMessageWithChatAndUserDto', async (): Promise<void> => {
+		it('should return all founded messages as array of DirectChatMessageWithChatAndUserDto', async (): Promise<void> => {
 			const messages: DirectChatMessageWithChatAndUserDto[] =
 				await directChatsController.getChatMessages(appUserPayload, chatId, page, take);
+
+			expect(messages).toBeInstanceOf(Array);
 
 			messages.forEach((message: DirectChatMessageWithChatAndUserDto) => {
 				expect(message).toBeInstanceOf(DirectChatMessageWithChatAndUserDto);

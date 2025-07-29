@@ -6,7 +6,6 @@ import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMes
 import { users } from '@testMocks/User/users';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { ICryptoService } from '@services/crypto/ICryptoService';
-import { TransformHelper } from '@helpers/transform.helper';
 import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
 import { DirectChatMessageWithUserDto } from '@dtos/directChatMessages/DirectChatMessageWithUser.dto';
@@ -37,20 +36,11 @@ describe('Direct chat message with chat and user strategy', (): void => {
 
 		beforeEach((): void => {
 			jest.spyOn(cryptoService, 'decryptText').mockResolvedValue(decryptedTextMock);
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
 			jest.clearAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(directChatWithUsersAndMessagesStrategy.decrypt).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatWithUsersAndMessagesStrategy.decrypt).toBeInstanceOf(Function);
 		});
 
 		it('should call decrypt text method from crypto service to decrypt message text', async (): Promise<void> => {
@@ -79,18 +69,6 @@ describe('Direct chat message with chat and user strategy', (): void => {
 				await directChatWithUsersAndMessagesStrategy.decrypt(data);
 
 			expect(directChatWithUsersAndMessagesDto).toBeInstanceOf(data.constructor);
-		});
-
-		it('should use to target dto method from transform helper to transform data to appropriate dto', async (): Promise<void> => {
-			const directChatWithUsersAndMessagesDto: DirectChatWithUsersAndMessagesDto =
-				await directChatWithUsersAndMessagesStrategy.decrypt(data);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(
-				1,
-				DirectChatWithUsersAndMessagesDto,
-				directChatWithUsersAndMessagesDto,
-			);
 		});
 	});
 });

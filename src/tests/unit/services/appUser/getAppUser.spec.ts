@@ -5,7 +5,6 @@ import { CustomProviders } from '@enums/CustomProviders.enum';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
 import providers from '@modules/providers/providers';
-import { TransformHelper } from '@helpers/transform.helper';
 import { AppUserDto } from '@dtos/appUser/AppUser.dto';
 import { NotFoundException } from '@nestjs/common';
 import { IUsersRepository } from '@repositories/users/IUsersRepository';
@@ -36,18 +35,10 @@ describe('App user service', (): void => {
 
 		beforeEach((): void => {
 			jest.spyOn(usersRepository, 'findByIdWithAccountSettings').mockResolvedValue(userMock);
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-		});
-		it('should be defined', (): void => {
-			expect(appUserService.getAppUser).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(appUserService.getAppUser).toBeInstanceOf(Function);
 		});
 
 		it('should call find by id with account settings method from users repository to find user', async (): Promise<void> => {
@@ -55,13 +46,6 @@ describe('App user service', (): void => {
 
 			expect(usersRepository.findByIdWithAccountSettings).toHaveBeenCalledTimes(1);
 			expect(usersRepository.findByIdWithAccountSettings).toHaveBeenNthCalledWith(1, userIdMock);
-		});
-
-		it('should call to target dto method from transform helper to transform response to appropriate dto', async (): Promise<void> => {
-			await appUserService.getAppUser(userIdMock);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(1, AppUserDto, userMock);
 		});
 
 		it('should throw not found exception if user was not found', async (): Promise<void> => {

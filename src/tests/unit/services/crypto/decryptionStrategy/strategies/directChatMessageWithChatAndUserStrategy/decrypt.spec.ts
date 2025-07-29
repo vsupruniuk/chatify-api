@@ -8,7 +8,6 @@ import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMes
 import { users } from '@testMocks/User/users';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { ICryptoService } from '@services/crypto/ICryptoService';
-import { TransformHelper } from '@helpers/transform.helper';
 
 describe('Direct chat message with chat and user strategy', (): void => {
 	let directChatMessageWithChatAndUserStrategy: DirectChatMessageWithChatAndUserStrategy;
@@ -36,20 +35,11 @@ describe('Direct chat message with chat and user strategy', (): void => {
 
 		beforeEach((): void => {
 			jest.spyOn(cryptoService, 'decryptText').mockResolvedValue(decryptedTextMock);
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
 			jest.clearAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(directChatMessageWithChatAndUserStrategy.decrypt).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatMessageWithChatAndUserStrategy.decrypt).toBeInstanceOf(Function);
 		});
 
 		it('should call decrypt text method from crypto service to decrypt message text', async (): Promise<void> => {
@@ -71,18 +61,6 @@ describe('Direct chat message with chat and user strategy', (): void => {
 				await directChatMessageWithChatAndUserStrategy.decrypt(data);
 
 			expect(directChatMessageWithChatAndUserDto).toBeInstanceOf(data.constructor);
-		});
-
-		it('should use to target dto method from transform helper to transform data to appropriate dto', async (): Promise<void> => {
-			const directChatMessageWithChatAndUserDto: DirectChatMessageWithChatAndUserDto =
-				await directChatMessageWithChatAndUserStrategy.decrypt(data);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(
-				1,
-				DirectChatMessageWithChatAndUserDto,
-				directChatMessageWithChatAndUserDto,
-			);
 		});
 	});
 });

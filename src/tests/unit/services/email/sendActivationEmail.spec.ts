@@ -54,14 +54,6 @@ describe('Email service', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(emailService.sendActivationEmail).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(emailService.sendActivationEmail).toBeInstanceOf(Function);
-		});
-
 		it('should use email template from account activation template method', async (): Promise<void> => {
 			await emailService.sendActivationEmail(receiverEmail, otpCode);
 

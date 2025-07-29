@@ -33,14 +33,6 @@ describe('Users service', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(usersRepository.findActivatedUsersByNickname).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersRepository.findActivatedUsersByNickname).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create a query for a searching activated users by nickname pattern', async (): Promise<void> => {
 			await usersRepository.findActivatedUsersByNickname(nicknameMock, skipMock, takeMock);
 
@@ -74,16 +66,6 @@ describe('Users service', (): void => {
 			expect(queryBuilderMock.take).toHaveBeenNthCalledWith(1, takeMock);
 
 			expect(queryBuilderMock.getMany).toHaveBeenCalledTimes(1);
-		});
-
-		it('should return an Array', async (): Promise<void> => {
-			const users: User[] = await usersRepository.findActivatedUsersByNickname(
-				nicknameMock,
-				skipMock,
-				takeMock,
-			);
-
-			expect(users).toBeInstanceOf(Array);
 		});
 
 		it('should return all founded users matching the query', async (): Promise<void> => {

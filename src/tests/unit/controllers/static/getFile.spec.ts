@@ -48,14 +48,6 @@ describe('Static controller', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(staticController.getFile).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(staticController.getFile).toBeInstanceOf(Function);
-		});
-
 		it('should return streamable file if file is exist', (): void => {
 			const result: StreamableFile = staticController.getFile(fileName);
 
@@ -69,13 +61,13 @@ describe('Static controller', (): void => {
 			expect(result).toBeInstanceOf(StreamableFile);
 		});
 
-		it('should throw NotFoundException if file does not exist', (): void => {
+		it('should throw not found exception if file does not exist', (): void => {
 			jest.spyOn(fs, 'existsSync').mockReturnValue(false);
 
 			expect(() => staticController.getFile(fileName)).toThrow(NotFoundException);
 		});
 
-		it('should throw NotFoundException on path traversal attempt', (): void => {
+		it('should throw not found exception on path traversal attempt', (): void => {
 			jest
 				.spyOn(path, 'resolve')
 				.mockImplementation((...parts: string[]) =>

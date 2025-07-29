@@ -7,7 +7,6 @@ import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
-import { TransformHelper } from '@helpers/transform.helper';
 import { ConflictException, UnprocessableEntityException } from '@nestjs/common';
 import { AppUserDto } from '@dtos/appUser/AppUser.dto';
 import { IUsersRepository } from '@repositories/users/IUsersRepository';
@@ -52,19 +51,10 @@ describe('App user service', (): void => {
 		beforeEach((): void => {
 			jest.spyOn(usersRepository, 'findByNickname').mockResolvedValue(userMock);
 			jest.spyOn(usersRepository, 'updateAppUser').mockResolvedValue(userMock);
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(appUserService.updateAppUser).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(appUserService.updateAppUser).toBeInstanceOf(Function);
 		});
 
 		it('should call find by nickname method from users repository if nickname is present in dto and its a new', async (): Promise<void> => {
@@ -133,13 +123,6 @@ describe('App user service', (): void => {
 			await expect(
 				appUserService.updateAppUser(appUserPayload, updateAppUserRequestDto),
 			).rejects.toThrow(UnprocessableEntityException);
-		});
-
-		it('should call to target dto method of transform helper to transform response to appropriate dto', async (): Promise<void> => {
-			await appUserService.updateAppUser(appUserPayload, updateAppUserRequestDto);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(1, AppUserDto, userMock);
 		});
 
 		it('should return response as instance of AppUserDto', async (): Promise<void> => {

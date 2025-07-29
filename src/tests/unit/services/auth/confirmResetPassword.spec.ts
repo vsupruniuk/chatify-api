@@ -60,14 +60,6 @@ describe('Auth service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', async (): Promise<void> => {
-			expect(authService.confirmResetPassword).toBeDefined();
-		});
-
-		it('should be a function', async (): Promise<void> => {
-			expect(authService.confirmResetPassword).toBeInstanceOf(Function);
-		});
-
 		it('should call get by not expired password reset token method from users service to get a user', async (): Promise<void> => {
 			await authService.confirmResetPassword(password, passwordResetTokenMock.token as string);
 

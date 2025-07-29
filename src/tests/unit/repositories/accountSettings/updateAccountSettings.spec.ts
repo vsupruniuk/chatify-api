@@ -42,14 +42,6 @@ describe('Account settings repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', () => {
-			expect(accountSettingsRepository.updateAccountSettings).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(accountSettingsRepository.updateAccountSettings).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder to create a sub-query to get settings by user id', async (): Promise<void> => {
 			await accountSettingsRepository.updateAccountSettings(
 				userId,

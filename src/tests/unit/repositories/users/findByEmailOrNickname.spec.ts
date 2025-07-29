@@ -32,14 +32,6 @@ describe('Users repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(usersRepository.findByEmailOrNickname).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersRepository.findByEmailOrNickname).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create a query for searching a user by email or nickname', async (): Promise<void> => {
 			await usersRepository.findByEmailOrNickname(emailMock, nicknameMock);
 

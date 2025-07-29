@@ -16,7 +16,6 @@ import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMes
 import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
 import { plainToInstance } from 'class-transformer';
 import { DateHelper } from '@helpers/date.helper';
-import { TransformHelper } from '@helpers/transform.helper';
 import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
 import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
 import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
@@ -82,20 +81,11 @@ describe('Direct chats service', (): void => {
 			});
 
 			jest.spyOn(DateHelper, 'dateTimeNow').mockReturnValue(dateTimeMock);
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
 			jest.clearAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(directChatsService.sendMessage).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatsService.sendMessage).toBeInstanceOf(Function);
 		});
 
 		it('should call get by id method from user service to find message sender', async (): Promise<void> => {
@@ -153,17 +143,6 @@ describe('Direct chats service', (): void => {
 			await expect(
 				directChatsService.sendMessage(senderId, directChatId, messageText),
 			).rejects.toThrow(UnprocessableEntityException);
-		});
-
-		it('should call to target dto method from transform helper to transform response to appropriate dto', async (): Promise<void> => {
-			await directChatsService.sendMessage(senderId, directChatId, messageText);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(
-				1,
-				DirectChatMessageWithChatAndUserDto,
-				directChatMessageMock,
-			);
 		});
 
 		it('should call decrypt method from decryption strategy manager to decrypt message', async (): Promise<void> => {

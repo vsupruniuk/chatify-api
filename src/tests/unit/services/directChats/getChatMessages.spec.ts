@@ -8,7 +8,6 @@ import { CustomProviders } from '@enums/CustomProviders.enum';
 import { IDirectChatsRepository } from '@repositories/directChats/IDirectChatsRepository';
 import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
 import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
-import { TransformHelper } from '@helpers/transform.helper';
 import { PaginationHelper } from '@helpers/pagination.helper';
 import { DirectChat } from '@entities/DirectChat.entity';
 import { directChats } from '@testMocks/DirectChat/directChats';
@@ -66,7 +65,6 @@ describe('Direct chats service', (): void => {
 		const take: number = 10;
 
 		beforeEach((): void => {
-			jest.spyOn(TransformHelper, 'toTargetDto');
 			jest.spyOn(PaginationHelper, 'toSQLPagination').mockReturnValue({ skip: page, take });
 
 			jest
@@ -87,14 +85,6 @@ describe('Direct chats service', (): void => {
 		afterEach((): void => {
 			jest.clearAllMocks();
 			jest.restoreAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(directChatsService.getChatMessages).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatsService.getChatMessages).toBeInstanceOf(Function);
 		});
 
 		it('should call to sql pagination method from pagination helper to create pagination parameters for repository method', async (): Promise<void> => {
@@ -137,20 +127,6 @@ describe('Direct chats service', (): void => {
 			);
 		});
 
-		it('should call to target dto method from transform helper to transform each founded message to appropriate dto', async (): Promise<void> => {
-			await directChatsService.getChatMessages(userId, directChatId, page, take);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(directChatMessagesMock.length);
-
-			directChatMessagesMock.forEach((message: DirectChatMessage, index: number) => {
-				expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(
-					index + 1,
-					DirectChatMessageWithChatAndUserDto,
-					message,
-				);
-			});
-		});
-
 		it('should call decrypt method from decryption strategy manager to decrypt each founded message', async (): Promise<void> => {
 			const messages: DirectChatMessageWithChatAndUserDto[] =
 				await directChatsService.getChatMessages(userId, directChatId, page, take);
@@ -162,11 +138,15 @@ describe('Direct chats service', (): void => {
 			});
 		});
 
-		it('should return an Array', async (): Promise<void> => {
+		it('should return response as array of DirectChatMessageWithChatAndUserDto', async (): Promise<void> => {
 			const messages: DirectChatMessageWithChatAndUserDto[] =
 				await directChatsService.getChatMessages(userId, directChatId, page, take);
 
 			expect(messages).toBeInstanceOf(Array);
+
+			messages.forEach((message: DirectChatMessageWithChatAndUserDto) => {
+				expect(message).toBeInstanceOf(DirectChatMessageWithChatAndUserDto);
+			});
 		});
 	});
 });

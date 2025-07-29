@@ -75,14 +75,6 @@ describe('Direct chats controller', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(directChatsController.getLastChats).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatsController.getLastChats).toBeInstanceOf(Function);
-		});
-
 		it('should call get user last chats from direct chats service to obtain last chats', async (): Promise<void> => {
 			await directChatsController.getLastChats(appUserPayload, page, take);
 
@@ -105,16 +97,6 @@ describe('Direct chats controller', (): void => {
 				undefined,
 				undefined,
 			);
-		});
-
-		it('should return an Array', async (): Promise<void> => {
-			const chats: DirectChatWithUsersAndMessagesDto[] = await directChatsController.getLastChats(
-				appUserPayload,
-				page,
-				take,
-			);
-
-			expect(chats).toBeInstanceOf(Array);
 		});
 
 		it('should return empty array if no chats were found', async (): Promise<void> => {
@@ -147,12 +129,14 @@ describe('Direct chats controller', (): void => {
 			);
 		});
 
-		it('should return all founded chats as instance of DirectChatWithUsersAndMessagesDto', async (): Promise<void> => {
+		it('should return all founded chats as array of DirectChatWithUsersAndMessagesDto', async (): Promise<void> => {
 			const chats: DirectChatWithUsersAndMessagesDto[] = await directChatsController.getLastChats(
 				appUserPayload,
 				page,
 				take,
 			);
+
+			expect(chats).toBeInstanceOf(Array);
 
 			chats.forEach((chat: DirectChatWithUsersAndMessagesDto) => {
 				expect(chat).toBeInstanceOf(DirectChatWithUsersAndMessagesDto);

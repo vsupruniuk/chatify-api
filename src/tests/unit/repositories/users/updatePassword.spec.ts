@@ -35,14 +35,6 @@ describe('Users repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(usersRepository.updatePassword).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersRepository.updatePassword).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and update user password', async (): Promise<void> => {
 			await usersRepository.updatePassword(userIdMock, tokenIdMock, passwordMock);
 

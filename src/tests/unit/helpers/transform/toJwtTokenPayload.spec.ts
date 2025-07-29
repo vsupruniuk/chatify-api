@@ -7,14 +7,6 @@ describe('Transform helper', (): void => {
 	describe('To jwt token payload', (): void => {
 		const userMock: User = users[4];
 
-		it('should be defined', (): void => {
-			expect(TransformHelper.toJwtTokenPayload).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(TransformHelper.toJwtTokenPayload).toBeInstanceOf(Function);
-		});
-
 		it('should return only properties from the JWTPayloadDto', (): void => {
 			const payload: JWTPayloadDto = TransformHelper.toJwtTokenPayload(userMock);
 

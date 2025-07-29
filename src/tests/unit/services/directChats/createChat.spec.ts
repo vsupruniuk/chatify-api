@@ -12,7 +12,6 @@ import { IDirectChatsRepository } from '@repositories/directChats/IDirectChatsRe
 import { DirectChat } from '@entities/DirectChat.entity';
 import { directChats } from '@testMocks/DirectChat/directChats';
 import { DateHelper } from '@helpers/date.helper';
-import { TransformHelper } from '@helpers/transform.helper';
 import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
 import { plainToInstance } from 'class-transformer';
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
@@ -78,20 +77,11 @@ describe('Direct chat service', (): void => {
 			});
 
 			jest.spyOn(DateHelper, 'dateTimeNow').mockReturnValue(dateTimeMock);
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
 			jest.clearAllMocks();
-		});
-
-		it('should be defined', () => {
-			expect(directChatsService.createChat).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(directChatsService.createChat).toBeInstanceOf(Function);
 		});
 
 		it('should call get all by ids to find both chat users', async (): Promise<void> => {
@@ -157,17 +147,6 @@ describe('Direct chat service', (): void => {
 			await expect(
 				directChatsService.createChat(senderId, receiverId, messageText),
 			).rejects.toThrow(UnprocessableEntityException);
-		});
-
-		it('should call to target dto method from transform helper to transform response to appropriate dto', async (): Promise<void> => {
-			await directChatsService.createChat(senderId, receiverId, messageText);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(1);
-			expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(
-				1,
-				DirectChatWithUsersAndMessagesDto,
-				directChatMock,
-			);
 		});
 
 		it('should should call decrypt method from decryption strategy manager to decrypt messages in the chat', async (): Promise<void> => {

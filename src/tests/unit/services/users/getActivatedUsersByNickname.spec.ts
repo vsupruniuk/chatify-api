@@ -7,7 +7,6 @@ import { CustomProviders } from '@enums/CustomProviders.enum';
 import { User } from '@entities/User.entity';
 import { users } from '@testMocks/User/users';
 import { PaginationHelper } from '@helpers/pagination.helper';
-import { TransformHelper } from '@helpers/transform.helper';
 import { UserDto } from '@dtos/users/UserDto';
 import { plainToInstance } from 'class-transformer';
 
@@ -40,21 +39,11 @@ describe('Users service', () => {
 		beforeEach((): void => {
 			jest.spyOn(usersRepository, 'findActivatedUsersByNickname').mockResolvedValue(usersMock);
 			jest.spyOn(PaginationHelper, 'toSQLPagination').mockReturnValue({ skip: page, take: take });
-
-			jest.spyOn(TransformHelper, 'toTargetDto');
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
 			jest.clearAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(usersService.getActivatedUsersByNickname).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersService.getActivatedUsersByNickname).toBeInstanceOf(Function);
 		});
 
 		it('should call to sql pagination method from pagination helper to transform page and take to correct sql pagination', async (): Promise<void> => {
@@ -88,12 +77,6 @@ describe('Users service', () => {
 			);
 		});
 
-		it('should return an array', async (): Promise<void> => {
-			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname);
-
-			expect(users).toBeInstanceOf(Array);
-		});
-
 		it('should return all found users', async (): Promise<void> => {
 			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname);
 
@@ -104,18 +87,10 @@ describe('Users service', () => {
 			);
 		});
 
-		it('should call to target dto method from transform helper to transform all users to appropriate dto', async (): Promise<void> => {
-			await usersService.getActivatedUsersByNickname(nickname);
-
-			expect(TransformHelper.toTargetDto).toHaveBeenCalledTimes(usersMock.length);
-
-			usersMock.forEach((user: User, index: number) => {
-				expect(TransformHelper.toTargetDto).toHaveBeenNthCalledWith(index + 1, UserDto, user);
-			});
-		});
-
-		it('should return every user as instance of UserDto', async (): Promise<void> => {
+		it('should return users as array of UserDto', async (): Promise<void> => {
 			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname);
+
+			expect(users).toBeInstanceOf(Array);
 
 			users.every((user: UserDto) => {
 				expect(user).toBeInstanceOf(UserDto);

@@ -67,14 +67,6 @@ describe('Auth controller', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(authController.activateAccount).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(authController.activateAccount).toBeInstanceOf(Function);
-		});
-
 		it('should call activate account method from auth service to activate user account', async (): Promise<void> => {
 			await authController.activateAccount(response, activateAccountRequestDto);
 

@@ -51,14 +51,6 @@ describe('Password reset tokens service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(passwordResetTokensService.regenerateToken).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(passwordResetTokensService.regenerateToken).toBeInstanceOf(Function);
-		});
-
 		it('should call generate token method from password reset tokens helper to generate new token', async (): Promise<void> => {
 			await passwordResetTokensService.regenerateToken(id);
 

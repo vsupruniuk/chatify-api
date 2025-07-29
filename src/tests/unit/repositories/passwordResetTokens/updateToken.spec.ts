@@ -37,14 +37,6 @@ describe('Password reset tokens repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(passwordResetTokensRepository.updateToken).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(passwordResetTokensRepository.updateToken).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create a query for updating password reset token', async (): Promise<void> => {
 			await passwordResetTokensRepository.updateToken(idMock, tokenMock, expiresAtMock);
 

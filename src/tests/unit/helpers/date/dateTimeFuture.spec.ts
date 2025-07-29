@@ -12,14 +12,6 @@ describe('Date helper', (): void => {
 			jest.useRealTimers();
 		});
 
-		it('should be defined', (): void => {
-			expect(DateHelper.dateTimeFuture).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(DateHelper.dateTimeFuture).toBeInstanceOf(Function);
-		});
-
 		it('should return future date and time after provided time', (): void => {
 			jest.setSystemTime(dateMock);
 

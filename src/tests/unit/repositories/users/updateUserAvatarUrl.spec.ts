@@ -26,14 +26,6 @@ describe('Users repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(usersRepository.updateUserAvatarUrl).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersRepository.updateUserAvatarUrl).toBeInstanceOf(Function);
-		});
-
 		it('should use query builder and create a query for updating user avatar url', async (): Promise<void> => {
 			await usersRepository.updateUserAvatarUrl(userIdMock, userAvatarUrlMock);
 

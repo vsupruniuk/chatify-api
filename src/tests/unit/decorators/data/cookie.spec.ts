@@ -16,14 +16,6 @@ describe('Cookie decorator', () => {
 		}),
 	} as ExecutionContext;
 
-	it('should be defined', (): void => {
-		expect(Cookie).toBeDefined();
-	});
-
-	it('should be a function', (): void => {
-		expect(Cookie).toBeInstanceOf(Function);
-	});
-
 	it('should return a cookie value by the name, if name is provided', (): void => {
 		const factory: CallableFunction = MetadataHelper.getParamDecoratorFactory(Cookie);
 

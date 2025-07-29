@@ -27,14 +27,6 @@ describe('Ws clients', (): void => {
 			clientsMap.clear();
 		});
 
-		it('should be defined', (): void => {
-			expect(wsClientsService.set).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(wsClientsService.set).toBeInstanceOf(Function);
-		});
-
 		it('should store client socket by user id', (): void => {
 			wsClientsService.set(userOneId, clientOneMock);
 

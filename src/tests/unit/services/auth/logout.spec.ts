@@ -53,14 +53,6 @@ describe('Auth service', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should be defined', async (): Promise<void> => {
-			expect(authService.logout).toBeDefined();
-		});
-
-		it('should be a function', async (): Promise<void> => {
-			expect(authService.logout).toBeInstanceOf(Function);
-		});
-
 		it('should call verify refresh token method from jwt tokens service to verify provided refresh token', async (): Promise<void> => {
 			await authService.logout(refreshToken);
 

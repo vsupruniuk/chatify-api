@@ -56,14 +56,6 @@ describe('App user controller', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should be defined', (): void => {
-			expect(appUserController.uploadAvatar).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(appUserController.uploadAvatar).toBeInstanceOf(Function);
-		});
-
 		it('should call update user avatar url method from users service to update user avatar', async (): Promise<void> => {
 			await appUserController.uploadAvatar(appUserPayload, file);
 
