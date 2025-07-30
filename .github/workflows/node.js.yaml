@@ -44,4 +44,43 @@ jobs:
       run: npm run lint
 
     - name: E2E tests
+      env:
+        PORT: ${{ secrets.PORT }}
+        TESTS_PORT: ${{ secrets.TESTS_PORT }}
+        CLIENT_URL: ${{ secrets.CLIENT_URL }}
+        APP_LOGO_URL: ${{ secrets.APP_LOGO_URL }}
+        APP_NAME: ${{ secrets.APP_NAME }}
+
+        DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+        DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+        DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+        DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+
+        SMTP_HOST: ${{ secrets.SMTP_HOST }}
+        SMTP_PORT: ${{ secrets.SMTP_PORT }}
+        SMTP_USER: ${{ secrets.SMTP_USER }}
+        SMTP_PASS: ${{ secrets.SMTP_PASS }}
+
+        THROTTLE_TIME_TO_LIVE: ${{ secrets.THROTTLE_TIME_TO_LIVE }}
+        THROTTLE_REQUESTS_LIMIT: ${{ secrets.THROTTLE_REQUESTS_LIMIT }}
+
+        PASSWORD_SALT_HASH_ROUNDS: ${{ secrets.PASSWORD_SALT_HASH_ROUNDS }}
+        COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
+
+        JWT_ACCESS_TOKEN_SECRET: ${{ secrets.JWT_ACCESS_TOKEN_SECRET }}
+        JWT_ACCESS_TOKEN_EXPIRES_IN: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRES_IN }}
+        JWT_REFRESH_TOKEN_SECRET: ${{ secrets.JWT_REFRESH_TOKEN_SECRET }}
+        JWT_REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.JWT_REFRESH_TOKEN_EXPIRES_IN }}
+
+        CRYPTO_IV_LENGTH: ${{ secrets.CRYPTO_IV_LENGTH }}
+        CRYPTO_SALT_LENGTH: ${{ secrets.CRYPTO_SALT_LENGTH }}
+        CRYPTO_KEY_LENGTH: ${{ secrets.CRYPTO_KEY_LENGTH }}
+        CRYPTO_PASSWORD: ${{ secrets.CRYPTO_PASSWORD }}
+        CRYPTO_CIPHER_ALGORITHM: ${{ secrets.CRYPTO_CIPHER_ALGORITHM }}
+        CRYPTO_ENCRYPTION_ENCODING: ${{ secrets.CRYPTO_ENCRYPTION_ENCODING }}
+
+        PUBLIC_FILES_FOLDER: ${{ secrets.PUBLIC_FILES_FOLDER }}
+        DATABASE_ENTITIES_PATH: ${{ secrets.DATABASE_ENTITIES_PATH }}
+        DATABASE_MIGRATIONS_PATH: ${{ secrets.DATABASE_MIGRATIONS_PATH }}
       run: npm run test:e2e
