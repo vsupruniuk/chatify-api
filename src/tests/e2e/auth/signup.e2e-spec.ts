@@ -76,5 +76,17 @@ describe('Signup', (): void => {
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
+
+		it('should fail', async (): Promise<void> => {
+			const response: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.post('/auth/signup')
+				.send({
+					firstName: notExistingUser.firstName,
+					lastName: notExistingUser.lastName,
+				});
+
+			expect(response.status).toBe(HttpStatus.CREATED);
+		});
 	});
 });
