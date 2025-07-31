@@ -5,11 +5,13 @@ import * as nodemailer from 'nodemailer';
 import { accountActivationTemplate } from '@emailTemplates/accountActivationTemplate';
 import { EmailPriority } from '@enums/EmailPriority.enum';
 import { resetPasswordTemplate } from '@emailTemplates/resetPasswordTemplate';
+import { Environments } from '@enums/Environments.enum';
 
 @Injectable()
 export class EmailService implements IEmailService {
 	private readonly APP_NAME: string = String(process.env.APP_NAME);
 	private readonly APP_EMAIL: string = String(process.env.SMTP_USER);
+	private readonly SUPPORTED_ENVIRONMENTS: string[] = [Environments.PROD];
 	private _transporter: Transporter;
 
 	constructor() {
@@ -69,14 +71,16 @@ export class EmailService implements IEmailService {
 		emailHtml: string,
 		emailPriority: EmailPriority = EmailPriority.NORMAL,
 	): Promise<void> {
-		await this._transporter.sendMail({
-			from: { name: this.APP_NAME, address: this.APP_EMAIL },
-			sender: { name: this.APP_NAME, address: this.APP_EMAIL },
-			to: receiverEmail,
-			subject: emailSubject,
-			text: emailText,
-			html: emailHtml,
-			priority: emailPriority,
-		});
+		if (this.SUPPORTED_ENVIRONMENTS.includes(process.env.NODE_ENV as string)) {
+			await this._transporter.sendMail({
+				from: { name: this.APP_NAME, address: this.APP_EMAIL },
+				sender: { name: this.APP_NAME, address: this.APP_EMAIL },
+				to: receiverEmail,
+				subject: emailSubject,
+				text: emailText,
+				html: emailHtml,
+				priority: emailPriority,
+			});
+		}
 	}
 }
