@@ -44,14 +44,14 @@ describe('Signup', (): void => {
 
 	describe('POST /auth/signup', (): void => {
 		const existingUser: User = users[2];
-		const existingUserAccountSettings: AccountSettings = accountSettings[0];
+		const existingAccountSettings: AccountSettings = accountSettings[0];
 
 		const notExistingUser: User = users[0];
 
 		beforeEach(async (): Promise<void> => {
 			const accountSettings: AccountSettings = dataSource
 				.getRepository(AccountSettings)
-				.create(existingUserAccountSettings);
+				.create(existingAccountSettings);
 			const user: User = dataSource
 				.getRepository(User)
 				.create({ ...existingUser, accountSettings });
@@ -61,8 +61,7 @@ describe('Signup', (): void => {
 		});
 
 		afterEach(async (): Promise<void> => {
-			await dataSource.dropDatabase();
-			await dataSource.synchronize();
+			await dataSource.synchronize(true);
 		});
 
 		it('should return 400 Bad Request error if email is missed', async (): Promise<void> => {
@@ -96,7 +95,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if email more than 255 characters long', async (): Promise<void> => {
+		it('should return 400 Bad Request error if email more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -191,7 +190,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if first name is missed', async (): Promise<void> => {
+		it('should return 400 Bad Request error if first name is missed', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -206,7 +205,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if first name is not a string', async (): Promise<void> => {
+		it('should return 400 Bad Request error if first name is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -222,7 +221,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if first name is less than 3 characters long', async (): Promise<void> => {
+		it('should return 400 Bad Request error if first name is less than 3 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -238,7 +237,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if first name is more than 255 characters long', async (): Promise<void> => {
+		it('should return 400 Bad Request error if first name is more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -254,7 +253,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if last name present but it is not a string', async (): Promise<void> => {
+		it('should return 400 Bad Request error if last name present but it is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -270,7 +269,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if last name present but less than 3 characters long', async (): Promise<void> => {
+		it('should return 400 Bad Request error if last name present but less than 3 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -286,7 +285,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if last name present but more than 255 characters long', async (): Promise<void> => {
+		it('should return 400 Bad Request error if last name present but more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -302,7 +301,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password is missed', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password is missed', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -317,7 +316,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password is not a string', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -333,7 +332,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password is less than 6 characters long', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password is less than 6 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -349,7 +348,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password is more than 255 characters long', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password is more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -365,7 +364,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password does not include at least 1 number', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password does not include at least 1 number', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -381,7 +380,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password does not include at least 1 upper case letter', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password does not include at least 1 upper case letter', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -397,7 +396,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password confirmation is missed', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password confirmation is missed', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -412,7 +411,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password confirmation is not a string', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password confirmation is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -428,7 +427,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password confirmation is less than 6 characters long', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password confirmation is less than 6 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -444,7 +443,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password confirmation is more than 255 characters long', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password confirmation is more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -460,7 +459,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password confirmation does not include at least 1 number', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password confirmation does not include at least 1 number', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -476,7 +475,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password confirmation does not include at least 1 uppercase letter', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password confirmation does not include at least 1 uppercase letter', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')
@@ -492,7 +491,7 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 400 Bad Request if password and password confirmation valid but does not match', async (): Promise<void> => {
+		it('should return 400 Bad Request error if password and password confirmation valid but does not match', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/auth/signup')

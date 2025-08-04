@@ -5,6 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as templates from '@emailTemplates/resetPasswordTemplate';
 import * as Mail from 'nodemailer/lib/mailer';
 import { EmailPriority } from '@enums/EmailPriority.enum';
+import { Environments } from '@enums/Environments.enum';
 
 describe('Email service', (): void => {
 	let emailService: EmailService;
@@ -12,6 +13,7 @@ describe('Email service', (): void => {
 	const appNameMock: string = 'Chatify';
 	const smtpUserMock: string = 'smtpUserMock';
 	const clientUrlMock: string = 'very-secret-web-app';
+	const environmentMock: string = Environments.PROD;
 
 	const transporterMock: Transporter = {
 		verify: jest.fn(),
@@ -22,6 +24,7 @@ describe('Email service', (): void => {
 		process.env.APP_NAME = appNameMock;
 		process.env.SMTP_USER = smtpUserMock;
 		process.env.CLIENT_URL = clientUrlMock;
+		process.env.NODE_ENV = environmentMock;
 
 		jest.spyOn(nodemailer, 'createTransport').mockReturnValue(transporterMock);
 
@@ -36,6 +39,7 @@ describe('Email service', (): void => {
 		delete process.env.APP_NAME;
 		delete process.env.SMTP_USER;
 		delete process.env.CLIENT_URL;
+		delete process.env.NODE_ENV;
 
 		jest.restoreAllMocks();
 	});
@@ -83,6 +87,14 @@ describe('Email service', (): void => {
 
 			expect(transporterMock.sendMail).toHaveBeenCalledTimes(1);
 			expect(transporterMock.sendMail).toHaveBeenNthCalledWith(1, expectedMailOptions);
+		});
+
+		it('should not call send mail method from nodemailer transporter if current environment is not in list of supported', async (): Promise<void> => {
+			process.env.NODE_ENV = Environments.DEV;
+
+			await emailService.sendResetPasswordEmail(receiverEmail, userName, token);
+
+			expect(transporterMock.sendMail).not.toHaveBeenCalled();
 		});
 
 		it('should return nothing', async (): Promise<void> => {

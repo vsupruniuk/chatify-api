@@ -5,12 +5,14 @@ import * as nodemailer from 'nodemailer';
 import * as templates from '@emailTemplates/accountActivationTemplate';
 import { EmailPriority } from '@enums/EmailPriority.enum';
 import * as Mail from 'nodemailer/lib/mailer';
+import { Environments } from '@enums/Environments.enum';
 
 describe('Email service', (): void => {
 	let emailService: EmailService;
 
 	const appNameMock: string = 'Chatify';
 	const smtpUserMock: string = 'smtpUserMock';
+	const environmentMock: string = Environments.PROD;
 
 	const transporterMock: Transporter = {
 		verify: jest.fn(),
@@ -20,6 +22,7 @@ describe('Email service', (): void => {
 	beforeAll(async (): Promise<void> => {
 		process.env.APP_NAME = appNameMock;
 		process.env.SMTP_USER = smtpUserMock;
+		process.env.NODE_ENV = environmentMock;
 
 		jest.spyOn(nodemailer, 'createTransport').mockReturnValue(transporterMock);
 
@@ -33,6 +36,7 @@ describe('Email service', (): void => {
 	afterAll((): void => {
 		delete process.env.APP_NAME;
 		delete process.env.SMTP_USER;
+		delete process.env.NODE_ENV;
 
 		jest.restoreAllMocks();
 	});
@@ -76,6 +80,14 @@ describe('Email service', (): void => {
 
 			expect(transporterMock.sendMail).toHaveBeenCalledTimes(1);
 			expect(transporterMock.sendMail).toHaveBeenNthCalledWith(1, expectedMailOptions);
+		});
+
+		it('should not call send mail method from nodemailer transporter if current environment is not in list of supported', async (): Promise<void> => {
+			process.env.NODE_ENV = Environments.DEV;
+
+			await emailService.sendActivationEmail(receiverEmail, otpCode);
+
+			expect(transporterMock.sendMail).not.toHaveBeenCalled();
 		});
 
 		it('should return nothing', async (): Promise<void> => {
