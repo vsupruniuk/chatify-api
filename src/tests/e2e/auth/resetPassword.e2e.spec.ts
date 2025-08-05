@@ -6,14 +6,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@modules/app.module';
 import { validationPipeConfig } from '@configs/validationPipe.config';
 import { GlobalExceptionFilter } from '@filters/globalException.filter';
-import { AccountSettings, OTPCode, User } from '@db/entities';
+import { AccountSettings, PasswordResetToken, User } from '@db/entities';
 import { users } from '@testMocks/User/users';
 import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
-import { otpCodes } from '@testMocks/OTPCode/otpCodes';
+import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
 import * as supertest from 'supertest';
 import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
 
-describe('Resend activation code', (): void => {
+describe('Reset password', (): void => {
 	let app: INestApplication;
 	let postgresContainer: StartedTestContainer;
 	let dataSource: DataSource;
@@ -43,24 +43,26 @@ describe('Resend activation code', (): void => {
 		await app.close();
 	});
 
-	describe('PATCH /auth/resend-activation-code', (): void => {
-		const createdUser: User = users[3];
-		const createdAccountSettings: AccountSettings = accountSettings[3];
-		const createdOtpCode: OTPCode = otpCodes[3];
+	describe('PATCH /auth/reset-password', (): void => {
+		const createdUser: User = users[4];
+		const createdAccountSettings: AccountSettings = accountSettings[4];
+		const createdPasswordResetToken: PasswordResetToken = passwordResetTokens[4];
 
-		const notCreatedUser: User = users[0];
+		const notCreatedUser: User = users[1];
 
 		beforeEach(async (): Promise<void> => {
-			const otpCode: OTPCode = dataSource.getRepository(OTPCode).create(createdOtpCode);
+			const passwordResetToken: PasswordResetToken = dataSource
+				.getRepository(PasswordResetToken)
+				.create(createdPasswordResetToken);
 			const accountSettings: AccountSettings = dataSource
 				.getRepository(AccountSettings)
 				.create(createdAccountSettings);
 
 			const user: User = dataSource
 				.getRepository(User)
-				.create({ ...createdUser, isActivated: false, accountSettings, otpCode });
+				.create({ ...createdUser, accountSettings, passwordResetToken });
 
-			await dataSource.getRepository(OTPCode).save([otpCode]);
+			await dataSource.getRepository(PasswordResetToken).save([passwordResetToken]);
 			await dataSource.getRepository(AccountSettings).save([accountSettings]);
 
 			await dataSource.getRepository(User).save([user]);
@@ -73,7 +75,7 @@ describe('Resend activation code', (): void => {
 		it('should return 400 Bad Request error if email is missed', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch('/auth/reset-password')
 				.send({});
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -82,7 +84,7 @@ describe('Resend activation code', (): void => {
 		it('should return 400 Bad Request error if email is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch('/auth/reset-password')
 				.send({ email: 123456 });
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -91,7 +93,7 @@ describe('Resend activation code', (): void => {
 		it('should return 400 Bad Request error if email is not valid', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch('/auth/reset-password')
 				.send({ email: 't.odinson' });
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -100,7 +102,7 @@ describe('Resend activation code', (): void => {
 		it('should return 400 Bad Request error if email is more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch('/auth/reset-password')
 				.send({ email: createdUser.email.padStart(256, 't') });
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -109,25 +111,25 @@ describe('Resend activation code', (): void => {
 		it('should return 404 Not Found error if user with this email was not found', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch('/auth/reset-password')
 				.send({ email: notCreatedUser.email });
 
 			expect(response.status).toBe(HttpStatus.NOT_FOUND);
 		});
 
-		it('should return 200 OK status if new activation code was generated and sent', async (): Promise<void> => {
+		it('should return 200 OK status if password reset token was generated and sent', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch('/auth/reset-password')
 				.send({ email: createdUser.email });
 
 			expect(response.status).toBe(HttpStatus.OK);
 		});
 
-		it('should return null in response data if new activation code was generated and sent', async (): Promise<void> => {
+		it('should return null body data if password reset token was generated and sent', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch('/auth/reset-password')
 				.send({ email: createdUser.email });
 
 			expect((response.body as SuccessfulResponseResult).data).toBeNull();
