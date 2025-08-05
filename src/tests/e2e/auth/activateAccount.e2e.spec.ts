@@ -183,7 +183,7 @@ describe('Activate account', (): void => {
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 200 OK status and generated access token if user was activated', async (): Promise<void> => {
+		it('should return 200 OK status if user was activated', async (): Promise<void> => {
 			jest.setSystemTime(dayjs(createdOtpCode.expiresAt).subtract(10, 'minutes').toDate());
 
 			const response: supertest.Response = await supertest
@@ -192,6 +192,16 @@ describe('Activate account', (): void => {
 				.send({ email: createdUser.email, code: <number>createdOtpCode.code });
 
 			expect(response.status).toBe(HttpStatus.OK);
+		});
+
+		it('should return generated access token if user was activated', async (): Promise<void> => {
+			jest.setSystemTime(dayjs(createdOtpCode.expiresAt).subtract(10, 'minutes').toDate());
+
+			const response: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.patch('/auth/activate-account')
+				.send({ email: createdUser.email, code: <number>createdOtpCode.code });
+
 			expect(
 				(response.body as SuccessfulResponseResult<ActivateAccountResponseDto>).data.accessToken,
 			).toBeDefined();
