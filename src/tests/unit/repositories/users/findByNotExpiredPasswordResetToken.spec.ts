@@ -23,8 +23,11 @@ describe('Users repository', (): void => {
 		const expectedUser: User = users[7];
 
 		const tokenMock: string = passwordResetTokens[2].token as string;
+		const dateMock: Date = new Date('2025-08-07');
 
 		beforeEach((): void => {
+			jest.useFakeTimers();
+
 			queryBuilderMock.getOne.mockReturnValue(expectedUser);
 			queryBuilderMock.andWhere.mockImplementation((bracketsInstance: unknown) => {
 				if (bracketsInstance instanceof Brackets) {
@@ -36,10 +39,13 @@ describe('Users repository', (): void => {
 		});
 
 		afterEach((): void => {
+			jest.useRealTimers();
 			jest.clearAllMocks();
 		});
 
 		it('should use query builder and create a query for searching user by a not expired password reset token', async (): Promise<void> => {
+			jest.setSystemTime(dateMock);
+
 			await usersRepository.findByNotExpiredPasswordResetToken(tokenMock);
 
 			expect(queryBuilderMock.createQueryBuilder).toHaveBeenCalledTimes(1);
@@ -75,7 +81,8 @@ describe('Users repository', (): void => {
 			expect(queryBuilderMock.orWhere).toHaveBeenCalledTimes(1);
 			expect(queryBuilderMock.orWhere).toHaveBeenNthCalledWith(
 				1,
-				'passwordResetToken.expiresAt > NOW()',
+				'passwordResetToken.expiresAt > :now',
+				{ now: dateMock },
 			);
 
 			expect(queryBuilderMock.getOne).toHaveBeenCalledTimes(1);
