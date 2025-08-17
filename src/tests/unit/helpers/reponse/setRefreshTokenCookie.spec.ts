@@ -1,16 +1,20 @@
 import { Response } from 'express';
 import { ResponseHelper } from '@helpers/response.helper';
 import { CookiesNames } from '@enums/CookiesNames.enum';
+import { Environments } from '@enums/Environments.enum';
 
 describe('Response helper', (): void => {
 	const jwtRefreshTokenExpiresInMock: string = '1000';
+	const nodeEnvMock: string = Environments.DEV;
 
 	beforeAll((): void => {
 		process.env.JWT_REFRESH_TOKEN_EXPIRES_IN = jwtRefreshTokenExpiresInMock;
+		process.env.NODE_ENV = nodeEnvMock;
 	});
 
 	afterAll((): void => {
 		delete process.env.JWT_REFRESH_TOKEN_EXPIRES_IN;
+		delete process.env.NODE_ENV;
 	});
 
 	describe('Set refresh token cookie', (): void => {
