@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -97,8 +98,12 @@ export class AppUserController implements IAppUserController {
 	public async uploadAvatar(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 
-		@UploadedFile() file: Express.Multer.File,
+		@UploadedFile() file?: Express.Multer.File,
 	): Promise<UploadAvatarResponseDto> {
+		if (!file) {
+			throw new BadRequestException('File extension unacceptable|user-avatar');
+		}
+
 		await this._usersService.updateUserAvatarUrl(appUserPayload.id, file.filename);
 
 		return { avatarUrl: file.filename };

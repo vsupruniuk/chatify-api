@@ -10,6 +10,7 @@ import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { plainToInstance } from 'class-transformer';
 import { IUsersService } from '@services/users/IUsersService';
 import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar/UploadAvatarResponse.dto';
+import { BadRequestException } from '@nestjs/common';
 
 describe('App user controller', (): void => {
 	let appUserController: AppUserController;
@@ -64,6 +65,12 @@ describe('App user controller', (): void => {
 				1,
 				appUserPayload.id,
 				file.filename,
+			);
+		});
+
+		it('should throw Bad Request exception if file is undefined', async (): Promise<void> => {
+			await expect(appUserController.uploadAvatar(appUserPayload, undefined)).rejects.toThrow(
+				BadRequestException,
 			);
 		});
 
