@@ -4,6 +4,8 @@ import {
 	Controller,
 	Delete,
 	Get,
+	HttpCode,
+	HttpStatus,
 	Inject,
 	Patch,
 	Post,
@@ -110,6 +112,7 @@ export class AppUserController implements IAppUserController {
 	}
 
 	@Delete('user-avatar')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	public async deleteAvatar(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<void> {
 		await this._appUserService.deleteUserAvatar(appUserPayload.id);
 	}
