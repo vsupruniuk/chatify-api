@@ -1,13 +1,13 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { StartedTestContainer } from 'testcontainers';
 import { DataSource } from 'typeorm';
+import * as path from 'node:path';
 import { TestDatabaseHelper } from '@testHelpers/TestDatabase.helper';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@modules/app.module';
 import { validationPipeConfig } from '@configs/validationPipe.config';
 import { GlobalExceptionFilter } from '@filters/globalException.filter';
 import * as cookieParser from 'cookie-parser';
-import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { User } from '@db/entities';
 import { users } from '@testMocks/User/users';
@@ -17,9 +17,9 @@ import { FileFields } from '@enums/FileFields.enum';
 import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
 import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
 import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar/UploadAvatarResponse.dto';
-import { AppUserDto } from '@dtos/appUser/AppUser.dto';
+import { ContentTypes } from '@enums/ContentTypes.enum';
 
-describe('Upload avatar', (): void => {
+describe('Get file', (): void => {
 	let app: INestApplication;
 	let postgresContainer: StartedTestContainer;
 	let dataSource: DataSource;
@@ -56,12 +56,11 @@ describe('Upload avatar', (): void => {
 		fs.rmSync(publicDir, { recursive: true });
 	});
 
-	describe('POST /app-user/user-avatar', (): void => {
+	describe('GET /static/file-name', (): void => {
 		const passwordMock: string = 'Qwerty12345!';
-		const createdUser: User = users[1];
+		const createdUser: User = users[4];
 
-		const validImagePath: string = path.join(__dirname, '..', '..', 'files', 'user.png');
-		const invalidImagePath: string = path.join(__dirname, '..', '..', 'files', 'user.txt');
+		const imagePath: string = path.join(__dirname, '..', '..', 'files', 'user.png');
 
 		beforeEach(async (): Promise<void> => {
 			await supertest.agent(app.getHttpServer()).post('/auth/signup').send({
@@ -81,7 +80,7 @@ describe('Upload avatar', (): void => {
 		it('should return 401 Unauthorized error if user does not provided authorization header', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/app-user/user-avatar');
+				.get('/static/user.png');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -89,7 +88,7 @@ describe('Upload avatar', (): void => {
 		it('should return 401 Unauthorized error if user provided empty authorization header', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/app-user/user-avatar')
+				.get('/static/user.png')
 				.set(Headers.AUTHORIZATION, '');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
@@ -98,7 +97,7 @@ describe('Upload avatar', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header without access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/app-user/user-avatar')
+				.get('/static/user.png')
 				.set(Headers.AUTHORIZATION, 'Bearer');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
@@ -107,122 +106,104 @@ describe('Upload avatar', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header with invalid access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/app-user/user-avatar')
+				.get('/static/user.png')
 				.set(Headers.AUTHORIZATION, 'Bearer accessToken');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
 
-		it('should return 400 Bad Request error if file extension is not acceptable', async (): Promise<void> => {
+		it('should return 404 Not Found error if file not exist', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
 			const loginResponse: supertest.Response = await agent
 				.post('/auth/login')
 				.send({ email: createdUser.email, password: passwordMock });
 
-			const userAvatarResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/app-user/user-avatar')
-				.attach(FileFields.USER_AVATAR, invalidImagePath)
+			const imageResponse = await agent
+				.get('/static/not-exist.png')
 				.set(
 					Headers.AUTHORIZATION,
 					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
 				);
 
-			expect(userAvatarResponse.status).toBe(HttpStatus.BAD_REQUEST);
+			expect(imageResponse.status).toBe(HttpStatus.NOT_FOUND);
 		});
 
-		it('should return 413 Payload Too Larger error if file size is more than 10 MB', async (): Promise<void> => {
+		it('should return 404 Not Found error on path traversal', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
-
-			const largeFile = Buffer.alloc(10_485_760 + 100);
 
 			const loginResponse: supertest.Response = await agent
 				.post('/auth/login')
 				.send({ email: createdUser.email, password: passwordMock });
 
-			const userAvatarResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/app-user/user-avatar')
-				.attach(FileFields.USER_AVATAR, largeFile, 'avatar.png')
+			const imageResponse = await agent
+				.get('/static/../../not-exist.png')
 				.set(
 					Headers.AUTHORIZATION,
 					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
 				);
 
-			expect(userAvatarResponse.status).toBe(HttpStatus.PAYLOAD_TOO_LARGE);
+			expect(imageResponse.status).toBe(HttpStatus.NOT_FOUND);
 		});
 
-		it('should return 201 Created status if file valid and was saved', async (): Promise<void> => {
+		it('should return 200 OK status if file exist', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
 			const loginResponse: supertest.Response = await agent
 				.post('/auth/login')
 				.send({ email: createdUser.email, password: passwordMock });
 
-			const userAvatarResponse: supertest.Response = await supertest
+			const uploadAvatarResponse: supertest.Response = await supertest
 				.agent(app.getHttpServer())
 				.post('/app-user/user-avatar')
-				.attach(FileFields.USER_AVATAR, validImagePath)
+				.attach(FileFields.USER_AVATAR, imagePath)
 				.set(
 					Headers.AUTHORIZATION,
 					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
 				);
 
-			expect(userAvatarResponse.status).toBe(HttpStatus.CREATED);
-		});
-
-		it('should return new user avatar url in response body data', async (): Promise<void> => {
-			const agent = supertest.agent(app.getHttpServer());
-
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
-
-			const userAvatarResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/app-user/user-avatar')
-				.attach(FileFields.USER_AVATAR, validImagePath)
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
-
-			const responseData: UploadAvatarResponseDto = (
-				userAvatarResponse.body as SuccessfulResponseResult<UploadAvatarResponseDto>
-			).data;
-
-			expect(responseData.avatarUrl.length > 0).toBe(true);
-		});
-
-		it('should save user avatar file name in DB', async (): Promise<void> => {
-			const agent = supertest.agent(app.getHttpServer());
-
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
-
-			await supertest
-				.agent(app.getHttpServer())
-				.post('/app-user/user-avatar')
-				.attach(FileFields.USER_AVATAR, validImagePath)
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
-
-			const appUserResponse: supertest.Response = await agent
-				.get('/app-user')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
-
-			const appUserAvatar: string | null = (
-				appUserResponse.body as SuccessfulResponseResult<AppUserDto>
+			const imageUrl: string = (
+				uploadAvatarResponse.body as SuccessfulResponseResult<UploadAvatarResponseDto>
 			).data.avatarUrl;
 
-			expect(appUserAvatar).not.toBeNull();
+			const imageResponse = await agent
+				.get(`/static/${imageUrl}`)
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				);
+
+			expect(imageResponse.status).toBe(HttpStatus.OK);
+		});
+
+		it('should return response as streamable file of type image', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const loginResponse: supertest.Response = await agent
+				.post('/auth/login')
+				.send({ email: createdUser.email, password: passwordMock });
+
+			const uploadAvatarResponse: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.post('/app-user/user-avatar')
+				.attach(FileFields.USER_AVATAR, imagePath)
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				);
+
+			const imageUrl: string = (
+				uploadAvatarResponse.body as SuccessfulResponseResult<UploadAvatarResponseDto>
+			).data.avatarUrl;
+
+			const imageResponse = await agent
+				.get(`/static/${imageUrl}`)
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				);
+
+			expect(imageResponse.headers[Headers.CONTENT_TYPE]).toBe(ContentTypes.IMAGE_JPEG);
 		});
 	});
 });
