@@ -33,7 +33,7 @@ describe('Signup', (): void => {
 		app.useGlobalPipes(new ValidationPipe(validationPipeConfig));
 		app.useGlobalFilters(new GlobalExceptionFilter());
 
-		await app.init();
+		await app.listen(Number(process.env.TESTS_PORT));
 	});
 
 	afterAll(async (): Promise<void> => {

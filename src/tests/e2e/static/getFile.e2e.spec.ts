@@ -43,7 +43,7 @@ describe('Get file', (): void => {
 		app.useGlobalFilters(new GlobalExceptionFilter());
 		app.use(cookieParser(process.env.COOKIE_SECRET));
 
-		await app.init();
+		await app.listen(Number(process.env.TESTS_PORT));
 
 		fs.mkdirSync(publicDir, { recursive: true });
 	});
