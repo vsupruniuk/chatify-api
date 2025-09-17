@@ -1,8 +1,11 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
 	Get,
+	HttpCode,
+	HttpStatus,
 	Inject,
 	Patch,
 	Post,
@@ -13,7 +16,7 @@ import { ResponseTransformInterceptor } from '@interceptors/responseTransform.in
 import { IAppUserController } from '@controllers/appUser/IAppUserController';
 import { AuthInterceptor } from '@interceptors/auth.interceptor';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { AppUserPayload } from '@decorators/data/AppUser.decorator';
+import { AppUserPayload } from '@decorators/data/AppUserPayload.decorator';
 import { AppUserDto } from '@dtos/appUser/AppUser.dto';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
@@ -97,15 +100,20 @@ export class AppUserController implements IAppUserController {
 	public async uploadAvatar(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 
-		@UploadedFile() file: Express.Multer.File,
+		@UploadedFile() file?: Express.Multer.File,
 	): Promise<UploadAvatarResponseDto> {
+		if (!file) {
+			throw new BadRequestException('File extension unacceptable|user-avatar');
+		}
+
 		await this._usersService.updateUserAvatarUrl(appUserPayload.id, file.filename);
 
 		return { avatarUrl: file.filename };
 	}
 
 	@Delete('user-avatar')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	public async deleteAvatar(@AppUserPayload() appUserPayload: JWTPayloadDto): Promise<void> {
-		await this._accountSettingsService.deleteUserAvatar(appUserPayload.id);
+		await this._appUserService.deleteUserAvatar(appUserPayload.id);
 	}
 }

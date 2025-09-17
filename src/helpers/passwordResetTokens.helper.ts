@@ -1,4 +1,4 @@
-import * as crypto from 'node:crypto';
+import * as crypto from 'crypto';
 import { DateHelper } from '@helpers/date.helper';
 import { PasswordResetTokenDto } from '@dtos/passwordResetToken/PasswordResetToken.dto';
 
@@ -15,6 +15,10 @@ export class PasswordResetTokensHelper {
 	}
 
 	public static isExpired(passwordResetToken: PasswordResetTokenDto): boolean {
+		if (!passwordResetToken.expiresAt) {
+			return true;
+		}
+
 		return DateHelper.isDateLessThanCurrent(passwordResetToken.expiresAt);
 	}
 }

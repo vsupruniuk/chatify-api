@@ -79,7 +79,7 @@ export interface IUsersService {
 		otpCode: number,
 		otpCodeExpiresAt: string,
 		signupRequestDto: SignupRequestDto,
-	): Promise<boolean>;
+	): Promise<void>;
 
 	/**
 	 * Method for activating user and clearing user OTP code

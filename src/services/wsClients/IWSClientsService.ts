@@ -21,5 +21,5 @@ export interface IWSClientsService {
 	 * @param event - name of the event
 	 * @param data - data for notification
 	 */
-	notifyAllClients<T extends object>(usersIds: string[], event: WSEvents, data: T): Promise<void>;
+	notifyAllClients<T extends object>(usersIds: string[], event: WSEvents, data: T): void;
 }

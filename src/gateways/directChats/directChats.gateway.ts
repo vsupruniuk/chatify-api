@@ -10,14 +10,14 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { IDirectChatsGateway } from '@gateways/directChats/IDirectChatsGateway';
-import { wsExceptionFilter } from '@filters/wsException.filter';
+import { WsExceptionFilter } from '@filters/wsExceptionFilter';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
 import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
 import { WsAuthMiddleware } from '@middlewares/wsAuth.middleware';
 import { WSEvents } from '@enums/WSEvents.enum';
 import { CreateDirectChatRequestDto } from '@dtos/directChats/CreateDirectChatRequest.dto';
-import { AppUserPayload } from '@decorators/data/AppUser.decorator';
+import { AppUserPayload } from '@decorators/data/AppUserPayload.decorator';
 import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { MessageEncryptionPipe } from '@pipes/messageEncryption.pipe';
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
@@ -33,7 +33,7 @@ import { UserDto } from '@dtos/users/UserDto';
 		stopAtFirstError: false,
 	}),
 )
-@UseFilters(wsExceptionFilter)
+@UseFilters(WsExceptionFilter)
 @WebSocketGateway()
 export class DirectChatsGateway
 	implements IDirectChatsGateway, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -76,7 +76,7 @@ export class DirectChatsGateway
 				createDirectChatRequestDto.messageText,
 			);
 
-		await this._wsClientsService.notifyAllClients(
+		this._wsClientsService.notifyAllClients(
 			[appUserPayload.id, createDirectChatRequestDto.receiverId],
 			WSEvents.ON_CREATE_CHAT,
 			createdChat,
@@ -86,6 +86,7 @@ export class DirectChatsGateway
 	@SubscribeMessage(WSEvents.SEND_MESSAGE)
 	public async sendMessage(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
+
 		@MessageBody(MessageEncryptionPipe)
 		sendDirectChatMessageRequestDto: SendDirectChatMessageRequestDto,
 	): Promise<void> {
@@ -96,7 +97,7 @@ export class DirectChatsGateway
 				sendDirectChatMessageRequestDto.messageText,
 			);
 
-		await this._wsClientsService.notifyAllClients(
+		this._wsClientsService.notifyAllClients(
 			createdMessage.directChat.users.map((user: UserDto) => user.id),
 			WSEvents.ON_RECEIVE_MESSAGE,
 			createdMessage,

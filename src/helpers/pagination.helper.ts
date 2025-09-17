@@ -5,7 +5,7 @@ export class PaginationHelper {
 	 * @param take
 	 */
 	public static toSQLPagination(
-		page: number = 0,
+		page: number = 1,
 		take: number = 10,
 	): { skip: number; take: number } {
 		return {

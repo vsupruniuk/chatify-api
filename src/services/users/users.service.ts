@@ -90,14 +90,8 @@ export class UsersService implements IUsersService {
 		otpCode: number,
 		otpCodeExpiresAt: string,
 		signupRequestDto: SignupRequestDto,
-	): Promise<boolean> {
-		const user: User | null = await this._usersRepository.createUser(
-			otpCode,
-			otpCodeExpiresAt,
-			signupRequestDto,
-		);
-
-		return Boolean(user);
+	): Promise<void> {
+		await this._usersRepository.createUser(otpCode, otpCodeExpiresAt, signupRequestDto);
 	}
 
 	public async activateUser(

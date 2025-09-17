@@ -8,5 +8,5 @@ export class OTPCodeDto {
 	public code: number;
 
 	@Expose()
-	public expiresAt: string;
+	public expiresAt: string | null;
 }

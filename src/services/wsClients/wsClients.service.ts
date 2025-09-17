@@ -17,11 +17,7 @@ export class WsClientsService implements IWSClientsService {
 		this._clients.delete(userId);
 	}
 
-	public async notifyAllClients<T extends object>(
-		usersIds: string[],
-		event: WSEvents,
-		data: T,
-	): Promise<void> {
+	public notifyAllClients<T extends object>(usersIds: string[], event: WSEvents, data: T): void {
 		const responseResult: SuccessfulWSResponseResult<T> = new SuccessfulWSResponseResult<T>(
 			ResponseStatus.SUCCESS,
 		);

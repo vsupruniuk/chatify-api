@@ -1,13 +1,13 @@
 import { PipeTransform } from '@nestjs/common';
 import { PasswordHelper } from '@helpers/password.helper';
 
-interface PasswordFields {
+interface IPasswordFields {
 	password?: string;
 	passwordConfirmation?: string;
 }
 
 export class PasswordHashingPipe implements PipeTransform {
-	public async transform<T extends PasswordFields>(value: T): Promise<T> {
+	public async transform<T extends IPasswordFields>(value: T): Promise<T> {
 		if (value.password) {
 			value.password = await PasswordHelper.hashPassword(value.password);
 		}

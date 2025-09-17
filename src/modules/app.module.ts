@@ -7,8 +7,7 @@ import { AuthModule } from '@modules/auth.module';
 import { SearchModule } from '@modules/search.module';
 import { DirectChatsModule } from '@modules/directChats.module';
 import { StaticModule } from '@modules/static.module';
-import { Environments } from '@enums/Environments.enum';
-import { typeOrmConfig, typeOrmConfigMock } from '@db/typeOrmConfig';
+import { typeOrmConfig } from '@db/typeOrmConfig';
 import providers from '@modules/providers/providers';
 
 @Module({
@@ -19,15 +18,7 @@ import providers from '@modules/providers/providers';
 		DirectChatsModule,
 		StaticModule,
 		ConfigModule.forRoot(),
-		TypeOrmModule.forRootAsync({
-			useFactory: () => {
-				if (process.env.NODE_ENV === Environments.TEST) {
-					return typeOrmConfigMock;
-				}
-
-				return typeOrmConfig;
-			},
-		}),
+		TypeOrmModule.forRoot(typeOrmConfig),
 		ThrottlerModule.forRoot([
 			{
 				ttl: Number(process.env.THROTTLE_TIME_TO_LIVE),

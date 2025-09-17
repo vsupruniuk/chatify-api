@@ -1,9 +1,11 @@
 import { IDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/IDecryptionStrategy';
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CustomProviders } from '@enums/CustomProviders.enum';
 import { ICryptoService } from '@services/crypto/ICryptoService';
 import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
+import { TransformHelper } from '@helpers/transform.helper';
 
+@Injectable()
 export class DirectChatMessageWithChatAndUserStrategy
 	implements IDecryptionStrategy<DirectChatMessageWithChatAndUserDto>
 {
@@ -15,9 +17,9 @@ export class DirectChatMessageWithChatAndUserStrategy
 	public async decrypt(
 		data: DirectChatMessageWithChatAndUserDto,
 	): Promise<DirectChatMessageWithChatAndUserDto> {
-		return {
+		return TransformHelper.toTargetDto(DirectChatMessageWithChatAndUserDto, {
 			...data,
 			messageText: await this._cryptoService.decryptText(data.messageText),
-		};
+		});
 	}
 }

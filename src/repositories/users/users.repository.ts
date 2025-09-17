@@ -8,6 +8,7 @@ import { JWTToken } from '@entities/JWTToken.entity';
 import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 import { OTPCode } from '@entities/OTPCode.entity';
 import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class UsersRepository implements IUsersRepository {
@@ -60,7 +61,8 @@ export class UsersRepository implements IUsersRepository {
 			.andWhere(
 				new Brackets((qb: WhereExpressionBuilder) => {
 					qb.where('passwordResetToken.expiresAt IS NULL').orWhere(
-						'passwordResetToken.expiresAt > NOW()',
+						'passwordResetToken.expiresAt > :now',
+						{ now: dayjs().toDate() },
 					);
 				}),
 			)

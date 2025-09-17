@@ -5,7 +5,7 @@ export class PasswordResetTokenDto {
 	public id: string;
 
 	@Expose()
-	public expiresAt: string;
+	public expiresAt: string | null;
 
 	@Expose()
 	public token: string;
