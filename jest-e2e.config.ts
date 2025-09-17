@@ -5,7 +5,7 @@ const config: Config = {
 	...baseConfig.default,
 
 	testTimeout: 60_000,
-	testMatch: ['<rootDir>/src/tests/**/*.e2e.spec.ts'],
+	testMatch: ['<rootDir>/src/tests/e2e/**/*.e2e.spec.ts'],
 };
 
 export default config;

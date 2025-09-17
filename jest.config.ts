@@ -50,7 +50,7 @@ const config: Config = {
 		'!src/responses/**',
 		'!src/tests/**',
 	],
-	testMatch: ['<rootDir>/src/tests/**/*.spec.ts'],
+	testMatch: ['<rootDir>/src/tests/unit/**/*.spec.ts'],
 };
 
 export default config;
