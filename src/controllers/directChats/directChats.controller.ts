@@ -1,4 +1,3 @@
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
 import {
 	Controller,
 	Get,
@@ -8,15 +7,20 @@ import {
 	Query,
 	UseInterceptors,
 } from '@nestjs/common';
-import { AuthInterceptor } from '@interceptors/auth.interceptor';
-import { AppUserPayload } from '@decorators/data/AppUserPayload.decorator';
-import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IDirectChatsController } from '@controllers/directChats/IDirectChatsController';
-import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { QueryRequired } from '@decorators/data/QueryRequired.decorator';
-import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
+
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
+import { JWTPayloadDto } from '@dtos/jwt';
+
+import { AuthInterceptor, ResponseTransformInterceptor } from '@interceptors';
+
+import { AppUserPayload, QueryRequired } from '@decorators/data';
+
+import { CustomProviders } from '@enums';
+
+import { IDirectChatsController } from '@controllers';
+
+import { IDirectChatsService } from '@services';
 
 @Controller('direct-chats')
 @UseInterceptors(AuthInterceptor)

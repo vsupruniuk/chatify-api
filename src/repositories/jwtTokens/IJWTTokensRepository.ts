@@ -1,4 +1,4 @@
-import { JWTToken } from '@entities/JWTToken.entity';
+import { JWTToken } from '@entities';
 
 export interface IJWTTokensRepository {
 	/**

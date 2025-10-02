@@ -1,5 +1,6 @@
 import { PipeTransform } from '@nestjs/common';
-import { PasswordHelper } from '@helpers/password.helper';
+
+import { PasswordHelper } from '@helpers';
 
 interface IPasswordFields {
 	password?: string;

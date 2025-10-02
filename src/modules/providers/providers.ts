@@ -1,29 +1,35 @@
-import { CustomProviders } from '@enums/CustomProviders.enum';
 import { Provider } from '@nestjs/common';
+
+import { CustomProviders } from '@enums';
+
 import {
 	accountSettingsRepositoryProvider,
 	accountSettingsServiceProvider,
-	passwordResetTokensServiceProvider,
-	directChatsServiceProvider,
+} from '@modules/providers/accountSettings';
+import { authServiceProvider } from '@modules/providers/auth';
+import { cryptoServiceProvider } from '@modules/providers/crypto';
+import {
 	directChatsRepositoryProvider,
-	authServiceProvider,
-	cryptoServiceProvider,
-	emailServiceProvider,
-	passwordResetTokensRepositoryProvider,
+	directChatsServiceProvider,
+} from '@modules/providers/directChats';
+import { directChatMessagesProvider } from '@modules/providers/directChatMessages';
+import { emailServiceProvider } from '@modules/providers/email';
+import { throttlerGuardProvider } from '@modules/providers/guards';
+import {
 	jwtTokensRepositoryProvider,
 	jwtTokensServiceProvider,
-	usersServiceProvider,
-	usersRepositoryProvider,
-	throttlerGuardProvider,
-	otpCodesServiceProvider,
-	otpCodesRepositoryProvider,
-	directChatMessagesProvider,
-	appUserServiceProvider,
-	wsClientsServiceProvider,
-	decryptionStrategyManagerProvider,
-} from '@modules/providers';
+} from '@modules/providers/jwtTokens';
+import { otpCodesRepositoryProvider, otpCodesServiceProvider } from '@modules/providers/otpCodes';
+import {
+	passwordResetTokensRepositoryProvider,
+	passwordResetTokensServiceProvider,
+} from '@modules/providers/passwordResetTokens';
+import { appUserServiceProvider } from '@modules/providers/appUser';
+import { usersRepositoryProvider, usersServiceProvider } from '@modules/providers/users';
+import { wsClientsServiceProvider } from '@modules/providers/wsClients';
+import { decryptionStrategyManagerProvider } from '@modules/providers/decryptionStrategy';
 
-const providers: Record<CustomProviders, Provider> = {
+export const providers: Record<CustomProviders, Provider> = {
 	[CustomProviders.CTF_ACCOUNT_SETTINGS_SERVICE]: accountSettingsServiceProvider,
 	[CustomProviders.CTF_ACCOUNT_SETTINGS_REPOSITORY]: accountSettingsRepositoryProvider,
 
@@ -57,5 +63,3 @@ const providers: Record<CustomProviders, Provider> = {
 
 	[CustomProviders.CTF_DECRYPTION_STRATEGY_MANAGER]: decryptionStrategyManagerProvider,
 };
-
-export default providers;

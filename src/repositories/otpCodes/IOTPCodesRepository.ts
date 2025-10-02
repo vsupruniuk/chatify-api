@@ -1,4 +1,4 @@
-import { OTPCode } from '@entities/OTPCode.entity';
+import { OTPCode } from '@entities';
 
 /**
  * Interface representing public methods of OTP codes repository

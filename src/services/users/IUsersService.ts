@@ -1,9 +1,9 @@
-import { UserDto } from '@dtos/users/UserDto';
-import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { UserWithOtpCodeDto } from '@dtos/users/UserWithOtpCodeDto';
-import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
-import { UserWithPasswordResetTokenDto } from '@dtos/users/UserWithPasswordResetTokenDto';
-import { FullUserWithJwtTokenDto } from '@dtos/users/FullUserWithJwtTokenDto';
+import { UserDto } from '@dtos/users';
+import { UserWithOtpCodeDto } from '@dtos/users';
+import { UserWithJwtTokenDto } from '@dtos/users';
+import { UserWithPasswordResetTokenDto } from '@dtos/users';
+import { FullUserWithJwtTokenDto } from '@dtos/users';
+import { SignupRequestDto } from '@dtos/auth/signup';
 
 /**
  * Interface representing public methods of users service

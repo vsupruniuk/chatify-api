@@ -1,7 +1,8 @@
 import { StartedTestContainer } from 'testcontainers';
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import { DataSource } from 'typeorm';
-import { typeOrmConfig } from '@db/typeOrmConfig';
+
+import { typeOrmConfig } from '@configs';
 
 export class TestDatabaseHelper {
 	private static readonly _postgresImage: string = 'postgres:14';

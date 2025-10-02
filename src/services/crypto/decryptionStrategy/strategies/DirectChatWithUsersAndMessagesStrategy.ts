@@ -1,10 +1,14 @@
-import { IDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/IDecryptionStrategy';
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
 import { Inject, Injectable } from '@nestjs/common';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { ICryptoService } from '@services/crypto/ICryptoService';
-import { TransformHelper } from '@helpers/transform.helper';
-import { DirectChatMessageWithUserDto } from '@dtos/directChatMessages/DirectChatMessageWithUser.dto';
+
+import { IDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies';
+import { ICryptoService } from '@services';
+
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
+import { DirectChatMessageWithUserDto } from '@dtos/directChatMessages';
+
+import { CustomProviders } from '@enums';
+
+import { TransformHelper } from '@helpers';
 
 @Injectable()
 export class DirectChatWithUsersAndMessagesStrategy

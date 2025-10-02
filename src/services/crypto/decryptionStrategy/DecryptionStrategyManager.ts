@@ -1,10 +1,12 @@
-import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
-import { IDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies/IDecryptionStrategy';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
-import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
+
+import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy';
+import { IDecryptionStrategy } from '@services/crypto/decryptionStrategy/strategies';
+import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies';
+import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies';
+
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
 
 @Injectable()
 export class DecryptionStrategyManager implements IDecryptionStrategyManager {

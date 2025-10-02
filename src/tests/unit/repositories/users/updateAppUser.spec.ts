@@ -1,10 +1,14 @@
-import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
-import { UsersRepository } from '@repositories/users/users.repository';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { DataSource } from 'typeorm';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
+
+import { QueryBuilderMock, users } from '@testMocks';
+
+import { UsersRepository } from '@repositories';
+
+import { User } from '@entities';
+
+import { UpdateAppUserRequestDto } from '@dtos/appUser';
 
 describe('Users repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();

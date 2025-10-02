@@ -1,14 +1,22 @@
-import { PasswordResetTokensService } from '@services/passwordResetToken/passwordResetTokens.service';
-import { IPasswordResetTokensRepository } from '@repositories/passwordResetToken/IPasswordResetTokensRepository';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
+
 import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
-import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
-import { PasswordResetTokensHelper } from '@helpers/passwordResetTokens.helper';
-import { DateHelper } from '@helpers/date.helper';
-import { passwordResetTokenConfig } from '@configs/passwordResetToken.config';
+
+import { PasswordResetTokensService } from '@services';
+
+import { IPasswordResetTokensRepository } from '@repositories';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { PasswordResetToken } from '@entities';
+
+import { passwordResetTokens } from '@testMocks';
+
+import { PasswordResetTokensHelper, DateHelper } from '@helpers';
+
+import { passwordResetTokenConfig } from '@configs';
 
 describe('Password reset tokens service', (): void => {
 	let passwordResetTokensService: PasswordResetTokensService;

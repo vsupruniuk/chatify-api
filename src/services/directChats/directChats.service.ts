@@ -6,21 +6,21 @@ import {
 	NotFoundException,
 	UnprocessableEntityException,
 } from '@nestjs/common';
-import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
-import { DirectChat } from '@entities/DirectChat.entity';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IDirectChatsRepository } from '@repositories/directChats/IDirectChatsRepository';
-import { IUsersService } from '@services/users/IUsersService';
-import { UserDto } from '@dtos/users/UserDto';
-import { DateHelper } from '@helpers/date.helper';
-import { TransformHelper } from '@helpers/transform.helper';
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
-import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
-import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
-import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
-import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
-import { PaginationHelper } from '@helpers/pagination.helper';
-import { User } from '@entities/User.entity';
+
+import { IDirectChatsService, IUsersService } from '@services';
+import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy';
+
+import { DirectChat, DirectChatMessage, User } from '@entities';
+
+import { CustomProviders } from '@enums';
+
+import { IDirectChatsRepository, IDirectChatMessagesRepository } from '@repositories';
+
+import { UserDto } from '@dtos/users';
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
+
+import { DateHelper, TransformHelper, PaginationHelper } from '@helpers';
 
 @Injectable()
 export class DirectChatsService implements IDirectChatsService {

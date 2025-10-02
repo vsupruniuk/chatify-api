@@ -1,14 +1,22 @@
-import { OTPCodesService } from '@services/otpCode/OTPCodes.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
+
 import { DataSource } from 'typeorm';
-import { IOTPCodesRepository } from '@repositories/otpCodes/IOTPCodesRepository';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { OTPCode } from '@entities/OTPCode.entity';
-import { otpCodes } from '@testMocks/OTPCode/otpCodes';
-import { OTPCodesHelper } from '@helpers/OTPCodes.helper';
-import { DateHelper } from '@helpers/date.helper';
-import { otpCodeConfig } from '@configs/otpCode.config';
+
+import { OTPCodesService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { IOTPCodesRepository } from '@repositories';
+
+import { CustomProviders } from '@enums';
+
+import { OTPCode } from '@entities';
+
+import { otpCodes } from '@testMocks';
+
+import { OTPCodesHelper, DateHelper } from '@helpers';
+
+import { otpCodeConfig } from '@configs';
 
 describe('OTP codes service', (): void => {
 	let otpCodesService: OTPCodesService;

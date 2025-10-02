@@ -1,12 +1,16 @@
-import { AuthController } from '@controllers/auth/auth.controller';
-import { IAuthService } from '@services/auth/IAuthService';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+
+import { DataSource } from 'typeorm';
 import { Response } from 'express';
-import { CookiesNames } from '@enums/CookiesNames.enum';
+
+import { AuthController } from '@controllers';
+
+import { IAuthService } from '@services';
+
+import { CustomProviders, CookiesNames } from '@enums';
+
+import { providers } from '@modules/providers';
 
 describe('Auth controller', (): void => {
 	let authController: AuthController;

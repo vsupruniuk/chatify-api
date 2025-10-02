@@ -1,8 +1,10 @@
-import { WsClientsService } from '@services/wsClients/wsClients.service';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { Socket } from 'socket.io';
-import { WSEvents } from '@enums/WSEvents.enum';
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
+
+import { WsClientsService } from '@services';
+
+import { WSEvents, ResponseStatus } from '@enums';
 
 describe('Ws clients', (): void => {
 	let wsClientsService: WsClientsService;

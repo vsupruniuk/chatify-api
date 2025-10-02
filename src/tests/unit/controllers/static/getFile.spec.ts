@@ -1,13 +1,16 @@
-import { StaticController } from '@controllers/static/static.controller';
+import { NotFoundException, StreamableFile } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
 import { JwtService } from '@nestjs/jwt';
+
 import { DataSource } from 'typeorm';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Readable } from 'stream';
 import { ReadStream } from 'fs';
-import { NotFoundException, StreamableFile } from '@nestjs/common';
+
+import { StaticController } from '@controllers';
+
+import { providers } from '@modules/providers';
 
 describe('Static controller', (): void => {
 	const publicFolderPathMock: string = '/tmp/public';

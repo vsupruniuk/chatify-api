@@ -1,11 +1,16 @@
-import { IPasswordResetTokensService } from '@services/passwordResetToken/IPasswordResetTokensService';
 import { Inject } from '@nestjs/common';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IPasswordResetTokensRepository } from '@repositories/passwordResetToken/IPasswordResetTokensRepository';
-import { PasswordResetTokensHelper } from '@helpers/passwordResetTokens.helper';
-import { DateHelper } from '@helpers/date.helper';
-import { passwordResetTokenConfig } from '@configs/passwordResetToken.config';
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
+
+import { IPasswordResetTokensService } from '@services';
+
+import { CustomProviders } from '@enums';
+
+import { IPasswordResetTokensRepository } from '@repositories';
+
+import { PasswordResetTokensHelper, DateHelper } from '@helpers';
+
+import { passwordResetTokenConfig } from '@configs';
+
+import { PasswordResetToken } from '@entities';
 
 export class PasswordResetTokensService implements IPasswordResetTokensService {
 	constructor(

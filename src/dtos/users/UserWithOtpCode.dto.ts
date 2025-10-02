@@ -1,7 +1,8 @@
 import { Expose, Type } from 'class-transformer';
-import { PasswordResetTokenDto } from '@dtos/passwordResetToken/PasswordResetToken.dto';
 
-export class UserWithPasswordResetTokenDto {
+import { OTPCodeDto } from '@dtos/otpCode';
+
+export class UserWithOtpCodeDto {
 	@Expose()
 	public id: string;
 
@@ -24,6 +25,6 @@ export class UserWithPasswordResetTokenDto {
 	public nickname: string;
 
 	@Expose()
-	@Type(() => PasswordResetTokenDto)
-	public passwordResetToken: PasswordResetTokenDto;
+	@Type(() => OTPCodeDto)
+	public otpCode: OTPCodeDto;
 }

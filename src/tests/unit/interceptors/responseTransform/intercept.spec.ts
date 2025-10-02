@@ -1,13 +1,20 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { UserDto } from '@dtos/users/UserDto';
-import { plainToInstance } from 'class-transformer';
 import { CallHandler, ExecutionContext } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { plainToInstance } from 'class-transformer';
 import { firstValueFrom, of } from 'rxjs';
-import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
+
+import { ResponseTransformInterceptor } from '@interceptors';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { UserDto } from '@dtos/users';
+
+import { SuccessfulResponseResult } from '@responses/successfulResponses';
+
+import { ResponseStatus } from '@enums';
 
 describe('Response transform interceptor', (): void => {
 	let responseTransformInterceptor: ResponseTransformInterceptor;

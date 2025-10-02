@@ -1,12 +1,16 @@
-import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AccountSettingsRepository } from '@repositories/accountSettings/accountSettings.repository';
+
 import { DataSource } from 'typeorm';
-import { AccountSettings } from '@entities/AccountSettings.entity';
-import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
-import { users } from '@testMocks/User/users';
-import { User } from '@entities/User.entity';
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
+
+import { QueryBuilderMock } from '@testMocks';
+
+import { AccountSettingsRepository } from '@repositories';
+
+import { AccountSettings, User } from '@entities';
+
+import { accountSettings, users } from '@testMocks';
+
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings';
 
 describe('Account settings repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();

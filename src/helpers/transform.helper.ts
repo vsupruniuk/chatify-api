@@ -1,6 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { ClassConstructor } from 'class-transformer/types/interfaces';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+
+import { JWTPayloadDto } from '@dtos/jwt';
 
 /**
  * Helper class for transforming data

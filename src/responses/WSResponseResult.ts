@@ -1,4 +1,4 @@
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
+import { ResponseStatus } from '@enums';
 
 /**
  * Abstract class representing general fields for web sockets responses

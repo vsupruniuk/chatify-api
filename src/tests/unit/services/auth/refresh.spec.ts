@@ -1,18 +1,22 @@
-import { AuthService } from '@services/auth/auth.service';
-import { IUsersService } from '@services/users/IUsersService';
-import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
-import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { JWTToken } from '@entities/JWTToken.entity';
-import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
-import { TransformHelper } from '@helpers/transform.helper';
 import { UnauthorizedException } from '@nestjs/common';
-import { LoginDto } from '@dtos/auth/login/Login.dto';
+import { JwtService } from '@nestjs/jwt';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { DataSource } from 'typeorm';
+
+import { AuthService, IJWTTokensService, IUsersService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { User, JWTToken } from '@entities';
+
+import { users, jwtTokens } from '@testMocks';
+
+import { TransformHelper } from '@helpers';
+
+import { LoginDto } from '@dtos/auth/login';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;

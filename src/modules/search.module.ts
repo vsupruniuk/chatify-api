@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { SearchController } from '@controllers/search/search.controller';
 import { JwtService } from '@nestjs/jwt';
-import providers from '@modules/providers/providers';
+
+import { SearchController } from '@controllers';
+
+import { providers } from '@modules/providers';
 
 @Module({
 	controllers: [SearchController],

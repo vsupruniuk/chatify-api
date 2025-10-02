@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
-import { PasswordResetTokensHelper } from '@helpers/passwordResetTokens.helper';
+
+import { PasswordResetTokensHelper } from '@helpers';
 
 describe('Password reset token', (): void => {
 	describe('Generate token', (): void => {

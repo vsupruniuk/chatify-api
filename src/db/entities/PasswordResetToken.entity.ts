@@ -1,4 +1,3 @@
-import { User } from '@entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
@@ -8,6 +7,8 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+
+import { User } from '@entities';
 
 @Entity('password_reset_tokens')
 export class PasswordResetToken {

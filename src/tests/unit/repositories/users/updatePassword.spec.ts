@@ -1,11 +1,12 @@
-import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
-import { UsersRepository } from '@repositories/users/users.repository';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { DataSource } from 'typeorm';
-import { users } from '@testMocks/User/users';
-import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
-import { User } from '@entities/User.entity';
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
+
+import { QueryBuilderMock, users, passwordResetTokens } from '@testMocks';
+
+import { UsersRepository } from '@repositories';
+
+import { User, PasswordResetToken } from '@entities';
 
 describe('Users repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();

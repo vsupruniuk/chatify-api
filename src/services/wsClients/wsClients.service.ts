@@ -1,9 +1,12 @@
-import { Socket } from 'socket.io';
-import { IWSClientsService } from '@services/wsClients/IWSClientsService';
 import { Injectable } from '@nestjs/common';
-import { WSEvents } from '@enums/WSEvents.enum';
-import { SuccessfulWSResponseResult } from '@responses/successfulResponses/SuccessfulWSResponseResult';
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
+
+import { Socket } from 'socket.io';
+
+import { IWSClientsService } from '@services';
+
+import { WSEvents, ResponseStatus } from '@enums';
+
+import { SuccessfulWSResponseResult } from '@responses/successfulResponses';
 
 @Injectable()
 export class WsClientsService implements IWSClientsService {

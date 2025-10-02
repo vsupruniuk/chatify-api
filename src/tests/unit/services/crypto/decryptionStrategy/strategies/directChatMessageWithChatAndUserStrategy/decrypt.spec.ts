@@ -1,13 +1,17 @@
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
+
 import { plainToInstance } from 'class-transformer';
-import { directChats } from '@testMocks/DirectChat/directChats';
-import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
-import { users } from '@testMocks/User/users';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { ICryptoService } from '@services/crypto/ICryptoService';
+
+import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies';
+import { ICryptoService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
+
+import { directChats, directChatsMessages, users } from '@testMocks';
+
+import { CustomProviders } from '@enums';
 
 describe('Direct chat message with chat and user strategy', (): void => {
 	let directChatMessageWithChatAndUserStrategy: DirectChatMessageWithChatAndUserStrategy;

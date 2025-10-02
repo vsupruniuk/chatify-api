@@ -1,14 +1,20 @@
-import { UsersService } from '@services/users/users.service';
-import { IUsersRepository } from '@repositories/users/IUsersRepository';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
+
 import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { OTPCode } from '@entities/OTPCode.entity';
-import { otpCodes } from '@testMocks/OTPCode/otpCodes';
-import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
+
+import { UsersService } from '@services';
+
+import { IUsersRepository } from '@repositories';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { OTPCode, User } from '@entities';
+
+import { otpCodes, users } from '@testMocks';
+
+import { SignupRequestDto } from '@dtos/auth/signup';
 
 describe('Users service', (): void => {
 	let usersService: UsersService;

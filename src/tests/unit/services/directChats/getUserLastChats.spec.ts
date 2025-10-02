@@ -1,19 +1,28 @@
-import { DirectChatsService } from '@services/directChats/directChats.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
+
 import { plainToInstance } from 'class-transformer';
-import { directChats } from '@testMocks/DirectChat/directChats';
-import { users } from '@testMocks/User/users';
-import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
-import { DirectChat } from '@entities/DirectChat.entity';
-import { PaginationHelper } from '@helpers/pagination.helper';
-import { IDirectChatsRepository } from '@repositories/directChats/IDirectChatsRepository';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
+import { DataSource } from 'typeorm';
+
+import { providers } from '@modules/providers';
+
+import { DirectChatsService } from '@services';
+import {
+	DirectChatWithUsersAndMessagesStrategy,
+	DirectChatMessageWithChatAndUserStrategy,
+} from '@services/crypto/decryptionStrategy/strategies';
+import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy';
+
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
+
+import { directChats, users, directChatsMessages } from '@testMocks';
+
+import { DirectChat } from '@entities';
+
+import { PaginationHelper } from '@helpers';
+
+import { IDirectChatsRepository } from '@repositories';
+
+import { CustomProviders } from '@enums';
 
 describe('Direct chats service', (): void => {
 	let directChatsService: DirectChatsService;

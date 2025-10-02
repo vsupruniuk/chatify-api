@@ -1,5 +1,6 @@
 import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
-import { GlobalTypes } from '@customTypes/global';
+
+import { GlobalTypes } from '@customTypes';
 
 export class MetadataHelper {
 	public static getParamDecoratorFactory(decorator: CallableFunction): CallableFunction {

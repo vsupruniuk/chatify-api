@@ -1,15 +1,24 @@
-import { AccountSettingsService } from '@services/accountSettings/accountSettings.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { AccountSettings } from '@entities/AccountSettings.entity';
-import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { users } from '@testMocks/User/users';
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
-import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings/AccountSettings.dto';
 import { UnprocessableEntityException } from '@nestjs/common';
-import { IAccountSettingsRepository } from '@repositories/accountSettings/IAccountSettingsRepository';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { DataSource } from 'typeorm';
+
+import { AccountSettingsService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { AccountSettings } from '@entities';
+
+import { accountSettings, users } from '@testMocks';
+
+import { CustomProviders } from '@enums';
+
+import {
+	UpdateAccountSettingsRequestDto,
+	AccountSettingsDto,
+} from '@dtos/accountSettings/accountSettings';
+
+import { IAccountSettingsRepository } from '@repositories';
 
 describe('Account settings service', (): void => {
 	let accountSettingsService: AccountSettingsService;

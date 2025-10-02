@@ -1,11 +1,16 @@
 import { Controller, Get, Inject, ParseIntPipe, Query, UseInterceptors } from '@nestjs/common';
-import { AuthInterceptor } from '@interceptors/auth.interceptor';
-import { ISearchController } from '@controllers/search/ISearchController';
-import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
-import { UserDto } from '@dtos/users/UserDto';
-import { QueryRequired } from '@decorators/data/QueryRequired.decorator';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IUsersService } from '@services/users/IUsersService';
+
+import { AuthInterceptor, ResponseTransformInterceptor } from '@interceptors';
+
+import { ISearchController } from '@controllers';
+
+import { UserDto } from '@dtos/users';
+
+import { QueryRequired } from '@decorators/data';
+
+import { CustomProviders } from '@enums';
+
+import { IUsersService } from '@services';
 
 @Controller('search')
 @UseInterceptors(AuthInterceptor)

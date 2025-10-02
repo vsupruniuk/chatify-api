@@ -1,11 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IOTPCodesService } from '@services/otpCode/IOTPCodesService';
-import { OTPCodesHelper } from '@helpers/OTPCodes.helper';
-import { DateHelper } from '@helpers/date.helper';
-import { otpCodeConfig } from '@configs/otpCode.config';
-import { OTPCode } from '@entities/OTPCode.entity';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IOTPCodesRepository } from '@repositories/otpCodes/IOTPCodesRepository';
+
+import { IOTPCodesService } from '@services';
+
+import { OTPCodesHelper, DateHelper } from '@helpers';
+
+import { otpCodeConfig } from '@configs';
+
+import { OTPCode } from '@entities';
+
+import { CustomProviders } from '@enums';
+
+import { IOTPCodesRepository } from '@repositories';
 
 @Injectable()
 export class OTPCodesService implements IOTPCodesService {

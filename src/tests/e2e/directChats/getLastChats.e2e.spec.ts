@@ -1,21 +1,29 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { StartedTestContainer } from 'testcontainers';
 import { DataSource } from 'typeorm';
-import { TestDatabaseHelper } from '@testHelpers/TestDatabase.helper';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@modules/app.module';
-import { validationPipeConfig } from '@configs/validationPipe.config';
-import { GlobalExceptionFilter } from '@filters/globalException.filter';
-import { AccountSettings, DirectChat, User } from '@db/entities';
-import { users } from '@testMocks/User/users';
 import * as supertest from 'supertest';
-import { Headers } from '@enums/Headers.enum';
-import { directChats } from '@testMocks/DirectChat/directChats';
-import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
-import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
-import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
-import { UserDto } from '@dtos/users/UserDto';
+
+import { TestDatabaseHelper } from '@testHelpers';
+
+import { AppModule } from '@modules';
+
+import { validationPipeConfig } from '@configs';
+
+import { GlobalExceptionFilter } from '@filters';
+
+import { AccountSettings, DirectChat, User } from '@entities';
+
+import { users, directChats, accountSettings } from '@testMocks';
+
+import { Headers } from '@enums';
+
+import { SuccessfulResponseResult } from '@responses/successfulResponses';
+
+import { LoginResponseDto } from '@dtos/auth/login';
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
+import { UserDto } from '@dtos/users';
 
 describe('Get last chats', (): void => {
 	let app: INestApplication;

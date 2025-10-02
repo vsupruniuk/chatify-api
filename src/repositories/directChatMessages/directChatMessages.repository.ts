@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
+
 import { DataSource, EntityManager, InsertResult } from 'typeorm';
-import { DirectChat } from '@entities/DirectChat.entity';
-import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
-import { UserDto } from '@dtos/users/UserDto';
+
+import { IDirectChatMessagesRepository } from '@repositories';
+
+import { DirectChat, DirectChatMessage } from '@entities';
+
+import { UserDto } from '@dtos/users';
 
 @Injectable()
 export class DirectChatMessagesRepository implements IDirectChatMessagesRepository {

@@ -1,9 +1,12 @@
-import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
-import { PasswordResetTokensRepository } from '@repositories/passwordResetToken/passwordResetTokens.repository';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { DataSource, UpdateResult } from 'typeorm';
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
-import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
+
+import { QueryBuilderMock, passwordResetTokens } from '@testMocks';
+
+import { PasswordResetTokensRepository } from '@repositories';
+
+import { PasswordResetToken } from '@entities';
 
 describe('Password reset tokens repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();

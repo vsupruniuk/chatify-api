@@ -1,6 +1,6 @@
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
-import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
+import { JWTPayloadDto } from '@dtos/jwt';
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
 
 export interface IDirectChatsController {
 	/**

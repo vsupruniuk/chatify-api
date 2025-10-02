@@ -1,5 +1,6 @@
 import * as bcrypt from 'bcrypt';
-import { PasswordHelper } from '@helpers/password.helper';
+
+import { PasswordHelper } from '@helpers';
 
 describe('Password helper', (): void => {
 	const passwordSaltHashRoundsMock: string = '7';

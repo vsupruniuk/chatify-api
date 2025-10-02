@@ -1,9 +1,13 @@
-import { TransformHelper } from '@helpers/transform.helper';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { UserDto } from '@dtos/users/UserDto';
 import { plainToInstance } from 'class-transformer';
 import { ClassConstructor } from 'class-transformer/types/interfaces';
+
+import { TransformHelper } from '@helpers';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { UserDto } from '@dtos/users';
 
 describe('Transform helper', (): void => {
 	describe('To target dto', (): void => {

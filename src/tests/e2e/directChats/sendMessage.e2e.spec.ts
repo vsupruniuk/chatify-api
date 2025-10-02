@@ -1,25 +1,31 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { StartedTestContainer } from 'testcontainers';
 import { DataSource } from 'typeorm';
-import { TestDatabaseHelper } from '@testHelpers/TestDatabase.helper';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@modules/app.module';
-import { validationPipeConfig } from '@configs/validationPipe.config';
-import { GlobalExceptionFilter } from '@filters/globalException.filter';
 import { io, Socket } from 'socket.io-client';
-import { DirectChat, DirectChatMessage, User } from '@db/entities';
-import { users } from '@testMocks/User/users';
-import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
 import * as supertest from 'supertest';
-import { Headers } from '@enums/Headers.enum';
-import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
-import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
-import { WSEvents } from '@enums/WSEvents.enum';
-import { ErrorWSResponseResult } from '@responses/errorResponses/ErrorWSResponseResult';
-import { ErrorField } from '@responses/errors/ErrorField';
-import { directChats } from '@testMocks/DirectChat/directChats';
-import { WSResponseResult } from '@responses/WSResponseResult';
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
+
+import { TestDatabaseHelper } from '@testHelpers';
+
+import { AppModule } from '@modules';
+
+import { validationPipeConfig } from '@configs';
+
+import { GlobalExceptionFilter } from '@filters';
+
+import { DirectChat, DirectChatMessage, User } from '@entities';
+
+import { users, directChats, directChatsMessages } from '@testMocks';
+
+import { Headers, WSEvents, ResponseStatus } from '@enums';
+
+import { SuccessfulResponseResult } from '@responses/successfulResponses';
+import { ErrorWSResponseResult } from '@responses/errorResponses';
+import { WSResponseResult } from '@responses';
+import { ErrorField } from '@responses/errors';
+
+import { LoginResponseDto } from '@dtos/auth/login';
 
 describe('Send message', (): void => {
 	let app: INestApplication;

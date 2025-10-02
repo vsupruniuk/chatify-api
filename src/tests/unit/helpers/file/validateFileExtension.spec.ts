@@ -1,4 +1,4 @@
-import { FileHelper } from '@helpers/file.helper';
+import { FileHelper } from '@helpers';
 
 describe('File helper', (): void => {
 	describe('Validate file extension', (): void => {

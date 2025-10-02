@@ -1,14 +1,22 @@
-import { SearchController } from '@controllers/search/search.controller';
-import { IUsersService } from '@services/users/IUsersService';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
+
+import { DataSource } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { UserDto } from '@dtos/users/UserDto';
+
+import { SearchController } from '@controllers';
+
+import { IUsersService } from '@services';
+
+import { CustomProviders } from '@enums';
+
+import { providers } from '@modules/providers';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { UserDto } from '@dtos/users';
 
 describe('Search controller', (): void => {
 	let searchController: SearchController;

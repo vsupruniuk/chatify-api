@@ -1,7 +1,9 @@
-import { ICryptoService } from '@services/crypto/ICryptoService';
+import { Injectable } from '@nestjs/common';
+
 import * as crypto from 'crypto';
 import { promisify } from 'util';
-import { Injectable } from '@nestjs/common';
+
+import { ICryptoService } from '@services';
 
 @Injectable()
 export class CryptoService implements ICryptoService {

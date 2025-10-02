@@ -1,5 +1,3 @@
-import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
-import { User } from '@entities/User.entity';
 import {
 	CreateDateColumn,
 	Entity,
@@ -9,6 +7,8 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+
+import { DirectChatMessage, User } from '@entities';
 
 /**
  * Domain entity representing direct chat between 2 users

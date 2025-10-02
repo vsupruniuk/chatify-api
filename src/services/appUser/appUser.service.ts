@@ -1,6 +1,3 @@
-import { IAppUserService } from '@services/appUser/IAppUserService';
-import { AppUserDto } from '@dtos/appUser/AppUser.dto';
-import { User } from '@entities/User.entity';
 import {
 	BadRequestException,
 	ConflictException,
@@ -10,14 +7,20 @@ import {
 	UnauthorizedException,
 	UnprocessableEntityException,
 } from '@nestjs/common';
-import { TransformHelper } from '@helpers/transform.helper';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IUsersRepository } from '@repositories/users/IUsersRepository';
-import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { IUsersService } from '@services/users/IUsersService';
-import { UserDto } from '@dtos/users/UserDto';
-import { FileHelper } from '@helpers/file.helper';
+
+import { IAppUserService, IUsersService } from '@services';
+
+import { AppUserDto, UpdateAppUserRequestDto } from '@dtos/appUser';
+import { JWTPayloadDto } from '@dtos/jwt';
+import { UserDto } from '@dtos/users';
+
+import { User } from '@entities';
+
+import { TransformHelper, FileHelper } from '@helpers';
+
+import { CustomProviders } from '@enums';
+
+import { IUsersRepository } from '@repositories';
 
 @Injectable()
 export class AppUserService implements IAppUserService {

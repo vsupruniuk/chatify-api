@@ -1,16 +1,21 @@
-import { IUsersService } from '@services/users/IUsersService';
 import { Inject, Injectable } from '@nestjs/common';
-import { UserDto } from '@dtos/users/UserDto';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IUsersRepository } from '@repositories/users/IUsersRepository';
-import { TransformHelper } from '@helpers/transform.helper';
-import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { User } from '@entities/User.entity';
-import { UserWithOtpCodeDto } from '@dtos/users/UserWithOtpCodeDto';
-import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
-import { UserWithPasswordResetTokenDto } from '@dtos/users/UserWithPasswordResetTokenDto';
-import { FullUserWithJwtTokenDto } from '@dtos/users/FullUserWithJwtTokenDto';
-import { PaginationHelper } from '@helpers/pagination.helper';
+
+import { IUsersService } from '@services';
+
+import { UserDto } from '@dtos/users';
+import { SignupRequestDto } from '@dtos/auth/signup';
+import { UserWithOtpCodeDto } from '@dtos/users';
+import { UserWithJwtTokenDto } from '@dtos/users';
+import { UserWithPasswordResetTokenDto } from '@dtos/users';
+import { FullUserWithJwtTokenDto } from '@dtos/users';
+
+import { CustomProviders } from '@enums';
+
+import { IUsersRepository } from '@repositories';
+
+import { TransformHelper, PaginationHelper } from '@helpers';
+
+import { User } from '@entities';
 
 @Injectable()
 export class UsersService implements IUsersService {

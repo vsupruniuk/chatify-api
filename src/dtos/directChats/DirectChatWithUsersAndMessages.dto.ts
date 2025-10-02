@@ -1,6 +1,7 @@
 import { Expose, Type } from 'class-transformer';
-import { DirectChatMessageWithUserDto } from '@dtos/directChatMessages/DirectChatMessageWithUser.dto';
-import { UserDto } from '@dtos/users/UserDto';
+
+import { DirectChatMessageWithUserDto } from '@dtos/directChatMessages';
+import { UserDto } from '@dtos/users';
 
 export class DirectChatWithUsersAndMessagesDto {
 	@Expose()

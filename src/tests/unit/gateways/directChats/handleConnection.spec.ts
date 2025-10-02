@@ -1,17 +1,28 @@
-import { DirectChatsGateway } from '@gateways/directChats/directChats.gateway';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
 import { JwtService } from '@nestjs/jwt';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { GlobalTypes } from '@customTypes/global';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
+
+import { DataSource } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { IWSClientsService } from '@services/wsClients/IWSClientsService';
+
+import { DirectChatsGateway } from '@gateways';
+
+import { providers } from '@modules/providers';
+
+import { IWSClientsService } from '@services';
+import {
+	DirectChatWithUsersAndMessagesStrategy,
+	DirectChatMessageWithChatAndUserStrategy,
+} from '@services/crypto/decryptionStrategy/strategies';
+
+import { CustomProviders } from '@enums';
+
+import { GlobalTypes } from '@customTypes';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { JWTPayloadDto } from '@dtos/jwt';
 
 describe('Direct chats gateway', (): void => {
 	let directChatsGateway: DirectChatsGateway;

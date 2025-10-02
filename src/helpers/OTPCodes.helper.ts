@@ -1,6 +1,8 @@
 import * as crypto from 'crypto';
-import { DateHelper } from '@helpers/date.helper';
-import { OTPCodeDto } from '@dtos/otpCode/OTPCodeDto';
+
+import { DateHelper } from '@helpers';
+
+import { OTPCodeDto } from '@dtos/otpCode';
 
 /**
  * Helper clas for OTP codes

@@ -1,10 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MessageEncryptionPipe } from '@pipes/messageEncryption.pipe';
-import providers from '@modules/providers/providers';
-import { ICryptoService } from '@services/crypto/ICryptoService';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
-import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
+
+import { MessageEncryptionPipe } from '@pipes';
+
+import { providers } from '@modules/providers';
+
+import { ICryptoService } from '@services';
+
+import { CustomProviders } from '@enums';
+
+import { DirectChatMessage } from '@entities';
+
+import { directChatsMessages } from '@testMocks';
 
 describe('Message encryption pipe', (): void => {
 	let messageEncryptionPipe: MessageEncryptionPipe;

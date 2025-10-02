@@ -1,23 +1,29 @@
-import { DirectChatsService } from '@services/directChats/directChats.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IDirectChatsRepository } from '@repositories/directChats/IDirectChatsRepository';
-import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
-import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
-import { PaginationHelper } from '@helpers/pagination.helper';
-import { DirectChat } from '@entities/DirectChat.entity';
-import { directChats } from '@testMocks/DirectChat/directChats';
-import { users } from '@testMocks/User/users';
-import { User } from '@entities/User.entity';
-import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
-import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
-import { plainToInstance } from 'class-transformer';
-import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { plainToInstance } from 'class-transformer';
+import { DataSource } from 'typeorm';
+
+import { DirectChatsService } from '@services';
+import {
+	DirectChatWithUsersAndMessagesStrategy,
+	DirectChatMessageWithChatAndUserStrategy,
+} from '@services/crypto/decryptionStrategy/strategies';
+import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { IDirectChatsRepository, IDirectChatMessagesRepository } from '@repositories';
+
+import { PaginationHelper } from '@helpers';
+
+import { DirectChat, DirectChatMessage, User } from '@entities';
+
+import { directChats, users, directChatsMessages } from '@testMocks';
+
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
 
 describe('Direct chats service', (): void => {
 	let directChatsService: DirectChatsService;

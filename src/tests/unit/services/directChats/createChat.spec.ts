@@ -1,25 +1,33 @@
-import { DirectChatsService } from '@services/directChats/directChats.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { IUsersService } from '@services/users/IUsersService';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IDirectChatsRepository } from '@repositories/directChats/IDirectChatsRepository';
-import { DirectChat } from '@entities/DirectChat.entity';
-import { directChats } from '@testMocks/DirectChat/directChats';
-import { DateHelper } from '@helpers/date.helper';
-import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
-import { plainToInstance } from 'class-transformer';
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
 import {
 	BadRequestException,
 	ConflictException,
 	UnprocessableEntityException,
 } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { plainToInstance } from 'class-transformer';
+import { DataSource } from 'typeorm';
+
+import { DirectChatsService, IUsersService } from '@services';
+import {
+	DirectChatWithUsersAndMessagesStrategy,
+	DirectChatMessageWithChatAndUserStrategy,
+} from '@services/crypto/decryptionStrategy/strategies';
+import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy';
+
+import { providers } from '@modules/providers';
+
+import { User, DirectChat } from '@entities';
+
+import { users, directChats } from '@testMocks';
+
+import { CustomProviders } from '@enums';
+
+import { IDirectChatsRepository } from '@repositories';
+
+import { DateHelper } from '@helpers';
+
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
 
 describe('Direct chat service', (): void => {
 	let directChatsService: DirectChatsService;

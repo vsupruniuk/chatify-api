@@ -1,4 +1,4 @@
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+import { JWTPayloadDto } from '@dtos/jwt';
 
 export interface IJWTTokensService {
 	/**

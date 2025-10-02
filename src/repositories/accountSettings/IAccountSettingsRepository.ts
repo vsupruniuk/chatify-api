@@ -1,5 +1,6 @@
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
-import { AccountSettings } from '@entities/AccountSettings.entity';
+import { AccountSettings } from '@entities';
+
+import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings';
 
 /**
  * Interface representing public methods of account settings repository

@@ -1,10 +1,16 @@
 import { ExecutionContext } from '@nestjs/common';
-import { AppUserPayload } from '@decorators/data/AppUserPayload.decorator';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
+
 import { plainToInstance } from 'class-transformer';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { MetadataHelper } from '@testHelpers/Metadata.helper';
+
+import { AppUserPayload } from '@decorators/data';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+
+import { MetadataHelper } from '@testHelpers';
 
 describe('App user payload decorator', () => {
 	const userMock: User = users[2];

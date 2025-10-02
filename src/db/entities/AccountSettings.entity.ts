@@ -1,4 +1,3 @@
-import { User } from '@entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
@@ -7,6 +6,8 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+
+import { User } from '@entities';
 
 /**
  * Domain entity representing settings for user account

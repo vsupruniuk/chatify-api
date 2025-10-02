@@ -1,12 +1,14 @@
-import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/ActivateAccountRequest.dto';
 import { Response } from 'express';
-import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation/ActivateAccountResponse.dto';
-import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
-import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
-import { ResetPasswordConfirmationRequestDto } from '@dtos/auth/resetPasswordConfirmation/ResetPasswordConfirmationRequest.dto';
-import { LoginRequestDto } from '@dtos/auth/login/LoginRequest.dto';
-import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
+
+import { SignupRequestDto } from '@dtos/auth/signup';
+import {
+	ActivateAccountRequestDto,
+	ActivateAccountResponseDto,
+} from '@dtos/auth/accountActivation';
+import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode';
+import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword';
+import { ResetPasswordConfirmationRequestDto } from '@dtos/auth/resetPasswordConfirmation';
+import { LoginRequestDto, LoginResponseDto } from '@dtos/auth/login';
 
 /**
  * Interface representing public methods of auth controller

@@ -1,15 +1,22 @@
-import { AppUserService } from '@services/appUser/appUser.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
 import { ConflictException, UnprocessableEntityException } from '@nestjs/common';
-import { AppUserDto } from '@dtos/appUser/AppUser.dto';
-import { IUsersRepository } from '@repositories/users/IUsersRepository';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { DataSource } from 'typeorm';
+
+import { AppUserService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { IUsersRepository } from '@repositories';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+import { UpdateAppUserRequestDto, AppUserDto } from '@dtos/appUser';
 
 describe('App user service', (): void => {
 	let appUserService: AppUserService;

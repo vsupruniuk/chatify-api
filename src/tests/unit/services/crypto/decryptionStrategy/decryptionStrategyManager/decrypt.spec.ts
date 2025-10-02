@@ -1,14 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
-import { DecryptionStrategyManager } from '@services/crypto/decryptionStrategy/DecryptionStrategyManager';
-import providers from '@modules/providers/providers';
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
-import { plainToInstance } from 'class-transformer';
-import { directChats } from '@testMocks/DirectChat/directChats';
-import { users } from '@testMocks/User/users';
-import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
 import { InternalServerErrorException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { plainToInstance } from 'class-transformer';
+
+import {
+	DirectChatWithUsersAndMessagesStrategy,
+	DirectChatMessageWithChatAndUserStrategy,
+} from '@services/crypto/decryptionStrategy/strategies';
+import { DecryptionStrategyManager } from '@services/crypto/decryptionStrategy';
+
+import { providers } from '@modules/providers';
+
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
+
+import { directChats, users, directChatsMessages } from '@testMocks';
 
 describe('Decryption strategy manager', (): void => {
 	let decryptionStrategyManager: DecryptionStrategyManager;

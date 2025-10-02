@@ -1,11 +1,12 @@
-import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
-import { JwtTokensRepository } from '@repositories/jwtTokens/jwtTokens.repository';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { DataSource, UpdateResult } from 'typeorm';
-import { JWTToken } from '@entities/JWTToken.entity';
-import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
-import { users } from '@testMocks/User/users';
-import { User } from '@entities/User.entity';
+
+import { QueryBuilderMock, jwtTokens, users } from '@testMocks';
+
+import { JwtTokensRepository } from '@repositories';
+
+import { JWTToken, User } from '@entities';
 
 describe('JWT token repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();

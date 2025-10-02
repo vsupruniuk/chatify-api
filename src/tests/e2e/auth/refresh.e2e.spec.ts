@@ -1,19 +1,28 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { StartedTestContainer } from 'testcontainers';
 import { DataSource } from 'typeorm';
-import { TestDatabaseHelper } from '@testHelpers/TestDatabase.helper';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@modules/app.module';
-import { validationPipeConfig } from '@configs/validationPipe.config';
-import { GlobalExceptionFilter } from '@filters/globalException.filter';
 import * as cookieParser from 'cookie-parser';
-import { User } from '@db/entities';
-import { users } from '@testMocks/User/users';
 import * as supertest from 'supertest';
-import { CookiesNames } from '@enums/CookiesNames.enum';
-import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
-import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
-import { Headers } from '@enums/Headers.enum';
+
+import { TestDatabaseHelper } from '@testHelpers';
+
+import { AppModule } from '@modules';
+
+import { validationPipeConfig } from '@configs';
+
+import { GlobalExceptionFilter } from '@filters';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { CookiesNames, Headers } from '@enums';
+
+import { SuccessfulResponseResult } from '@responses/successfulResponses';
+
+import { LoginResponseDto } from '@dtos/auth/login';
 
 describe('Refresh', (): void => {
 	let app: INestApplication;

@@ -1,5 +1,6 @@
-import { IsStringsSimilarConstraint } from '@decorators/validation/IsStringsSimilar.decorator';
 import { ValidationArguments } from 'class-validator';
+
+import { IsStringsSimilarConstraint } from '@decorators/validation';
 
 describe('Is strings similar', (): void => {
 	let isStringsSimilarConstraint: IsStringsSimilarConstraint;

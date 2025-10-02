@@ -1,13 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { FileHelper } from '@helpers/file.helper';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { IUsersService } from '@services/users/IUsersService';
-import { AppUserService } from '@services/appUser/appUser.service';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { DataSource } from 'typeorm';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { FileHelper } from '@helpers';
+
+import { IUsersService, AppUserService } from '@services';
 
 describe('App user service', (): void => {
 	let appUserService: AppUserService;

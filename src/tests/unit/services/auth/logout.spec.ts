@@ -1,14 +1,18 @@
-import { AuthService } from '@services/auth/auth.service';
-import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
-import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
 import { UnprocessableEntityException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { DataSource } from 'typeorm';
+
+import { AuthService, IJWTTokensService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { User } from '@entities';
+
+import { users, jwtTokens } from '@testMocks';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;

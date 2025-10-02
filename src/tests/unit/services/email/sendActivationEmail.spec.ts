@@ -1,11 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EmailService } from '@services/email/email.service';
+
 import { Transporter } from 'nodemailer';
 import * as nodemailer from 'nodemailer';
-import * as templates from '@emailTemplates/accountActivationTemplate';
-import { EmailPriority } from '@enums/EmailPriority.enum';
 import * as Mail from 'nodemailer/lib/mailer';
-import { Environments } from '@enums/Environments.enum';
+
+import { EmailService } from '@services';
+
+import * as templates from '@emailTemplates/accountActivationTemplate';
+
+import { EmailPriority, Environments } from '@enums';
 
 describe('Email service', (): void => {
 	let emailService: EmailService;

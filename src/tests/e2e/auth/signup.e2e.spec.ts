@@ -1,16 +1,23 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@modules/app.module';
+
 import { StartedTestContainer } from 'testcontainers';
 import { DataSource } from 'typeorm';
 import * as supertest from 'supertest';
-import { validationPipeConfig } from '@configs/validationPipe.config';
-import { GlobalExceptionFilter } from '@filters/globalException.filter';
-import { TestDatabaseHelper } from '@testHelpers/TestDatabase.helper';
-import { AccountSettings, User } from '@db/entities';
-import { users } from '@testMocks/User/users';
-import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
-import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
+
+import { AppModule } from '@modules';
+
+import { validationPipeConfig } from '@configs';
+
+import { GlobalExceptionFilter } from '@filters';
+
+import { TestDatabaseHelper } from '@testHelpers';
+
+import { AccountSettings, User } from '@entities';
+
+import { users, accountSettings } from '@testMocks';
+
+import { SuccessfulResponseResult } from '@responses/successfulResponses';
 
 describe('Signup', (): void => {
 	let app: INestApplication;

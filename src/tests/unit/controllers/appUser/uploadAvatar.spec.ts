@@ -1,16 +1,24 @@
-import { AppUserController } from '@controllers/appUser/appUser.controller';
+import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+
 import { plainToInstance } from 'class-transformer';
-import { IUsersService } from '@services/users/IUsersService';
-import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar/UploadAvatarResponse.dto';
-import { BadRequestException } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+
+import { AppUserController } from '@controllers';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { IUsersService } from '@services';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar';
 
 describe('App user controller', (): void => {
 	let appUserController: AppUserController;

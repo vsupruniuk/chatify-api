@@ -1,19 +1,21 @@
-import { AuthService } from '@services/auth/auth.service';
-import { IUsersService } from '@services/users/IUsersService';
-import { IEmailService } from '@services/email/IEmailService';
-import { IPasswordResetTokensService } from '@services/passwordResetToken/IPasswordResetTokensService';
+import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
-import providers from '@modules/providers/providers';
+
 import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
-import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
-import { PasswordResetTokenDto } from '@dtos/passwordResetToken/PasswordResetToken.dto';
-import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+
+import { AuthService, IUsersService, IEmailService, IPasswordResetTokensService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { User, PasswordResetToken } from '@entities';
+
+import { users, passwordResetTokens } from '@testMocks';
+
+import { PasswordResetTokenDto } from '@dtos/passwordResetToken';
+import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;

@@ -1,8 +1,12 @@
-import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
-import { Socket, Event } from 'socket.io';
 import { UnauthorizedException } from '@nestjs/common';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { GlobalTypes } from '../types/global';
+
+import { Socket, Event } from 'socket.io';
+
+import { IJWTTokensService } from '@services';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+
+import { GlobalTypes } from '@customTypes';
 
 type WSMiddleware = (event: Event, next: (error?: Error) => void) => Promise<void>;
 

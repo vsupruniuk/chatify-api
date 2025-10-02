@@ -1,5 +1,6 @@
 import { Expose, Type } from 'class-transformer';
-import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings/AccountSettings.dto';
+
+import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings';
 
 export class AppUserDto {
 	@Expose()

@@ -1,19 +1,21 @@
-import { AuthService } from '@services/auth/auth.service';
+import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
-import providers from '@modules/providers/providers';
+
 import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IUsersService } from '@services/users/IUsersService';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { OTPCode } from '@entities/OTPCode.entity';
-import { otpCodes } from '@testMocks/OTPCode/otpCodes';
-import { IOTPCodesService } from '@services/otpCode/IOTPCodesService';
-import { IEmailService } from '@services/email/IEmailService';
-import { OTPCodeDto } from '@dtos/otpCode/OTPCodeDto';
-import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+
+import { AuthService, IEmailService, IUsersService, IOTPCodesService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { User, OTPCode } from '@entities';
+
+import { users, otpCodes } from '@testMocks';
+
+import { OTPCodeDto } from '@dtos/otpCode';
+import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;

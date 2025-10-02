@@ -1,18 +1,24 @@
-import { AuthService } from '@services/auth/auth.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { JwtService } from '@nestjs/jwt';
-import { DataSource } from 'typeorm';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { IUsersService } from '@services/users/IUsersService';
-import { OTPCodesHelper } from '@helpers/OTPCodes.helper';
-import { DateHelper } from '@helpers/date.helper';
-import { IEmailService } from '@services/email/IEmailService';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
 import { ConflictException } from '@nestjs/common';
-import { otpCodeConfig } from '@configs/otpCode.config';
+import { JwtService } from '@nestjs/jwt';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { DataSource } from 'typeorm';
+
+import { AuthService, IUsersService, IEmailService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { otpCodeConfig } from '@configs';
+
+import { OTPCodesHelper, DateHelper } from '@helpers';
+
+import { CustomProviders } from '@enums';
+
+import { SignupRequestDto } from '@dtos/auth/signup';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;

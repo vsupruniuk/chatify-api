@@ -1,5 +1,3 @@
-import { GroupChat } from '@entities/GroupChat.entity';
-import { User } from '@entities/User.entity';
 import {
 	Column,
 	CreateDateColumn,
@@ -9,6 +7,8 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+
+import { GroupChat, User } from '@entities';
 
 /**
  * Domain entity representing messages in group chats

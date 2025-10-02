@@ -1,4 +1,3 @@
-import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
 import {
 	Body,
 	Controller,
@@ -12,24 +11,33 @@ import {
 	Res,
 	UseInterceptors,
 } from '@nestjs/common';
-import { IAuthController } from './IAuthController';
-import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { PasswordHashingPipe } from '@pipes/passwordHashing.pipe';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IAuthService } from '@services/auth/IAuthService';
-import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/ActivateAccountRequest.dto';
+
 import { Response } from 'express';
-import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation/ActivateAccountResponse.dto';
-import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
-import { ResponseHelper } from '@helpers/response.helper';
-import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
-import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
-import { ResetPasswordConfirmationRequestDto } from '@dtos/auth/resetPasswordConfirmation/ResetPasswordConfirmationRequest.dto';
-import { LoginRequestDto } from '@dtos/auth/login/LoginRequest.dto';
-import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
-import { LoginDto } from '@dtos/auth/login/Login.dto';
-import { Cookie } from '@decorators/data/Cookie.decorator';
-import { CookiesNames } from '@enums/CookiesNames.enum';
+
+import { ResponseTransformInterceptor } from '@interceptors';
+
+import { IAuthController } from '@controllers';
+
+import { SignupRequestDto } from '@dtos/auth/signup';
+import {
+	ActivateAccountResponseDto,
+	ActivateAccountRequestDto,
+	ActivateAccountDto,
+} from '@dtos/auth/accountActivation';
+import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode';
+import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword';
+import { ResetPasswordConfirmationRequestDto } from '@dtos/auth/resetPasswordConfirmation';
+import { LoginRequestDto, LoginResponseDto, LoginDto } from '@dtos/auth/login';
+
+import { PasswordHashingPipe } from '@pipes';
+
+import { CustomProviders, CookiesNames } from '@enums';
+
+import { IAuthService } from '@services';
+
+import { ResponseHelper } from '@helpers';
+
+import { Cookie } from '@decorators/data';
 
 @Controller('auth')
 @UseInterceptors(ResponseTransformInterceptor)

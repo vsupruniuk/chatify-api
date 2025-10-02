@@ -12,26 +12,33 @@ import {
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common';
-import { ResponseTransformInterceptor } from '@interceptors/responseTransform.interceptor';
-import { IAppUserController } from '@controllers/appUser/IAppUserController';
-import { AuthInterceptor } from '@interceptors/auth.interceptor';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { AppUserPayload } from '@decorators/data/AppUserPayload.decorator';
-import { AppUserDto } from '@dtos/appUser/AppUser.dto';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
-import { DtoNotEmptyPipe } from '@pipes/dtoNotEmpty.pipe';
-import { IAppUserService } from '@services/appUser/IAppUserService';
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
-import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings/AccountSettings.dto';
-import { IAccountSettingsService } from '@services/accountSettings/IAccountSettingsService';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileFields } from '@enums/FileFields.enum';
-import { GlobalTypes } from '../../types/global';
+
 import { diskStorage } from 'multer';
-import { FileHelper } from '@helpers/file.helper';
-import { IUsersService } from '@services/users/IUsersService';
-import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar/UploadAvatarResponse.dto';
+
+import { ResponseTransformInterceptor, AuthInterceptor } from '@interceptors';
+
+import { IAppUserController } from '@controllers';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+import { AppUserDto, UpdateAppUserRequestDto } from '@dtos/appUser';
+import {
+	UpdateAccountSettingsRequestDto,
+	AccountSettingsDto,
+} from '@dtos/accountSettings/accountSettings';
+import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar';
+
+import { AppUserPayload } from '@decorators/data';
+
+import { CustomProviders, FileFields } from '@enums';
+
+import { DtoNotEmptyPipe } from '@pipes';
+
+import { IAppUserService, IAccountSettingsService, IUsersService } from '@services';
+
+import { GlobalTypes } from '@customTypes';
+
+import { FileHelper } from '@helpers';
 
 @Controller('app-user')
 @UseInterceptors(AuthInterceptor)

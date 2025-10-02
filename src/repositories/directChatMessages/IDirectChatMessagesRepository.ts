@@ -1,6 +1,6 @@
-import { DirectChat } from '@entities/DirectChat.entity';
-import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
-import { UserDto } from '@dtos/users/UserDto';
+import { DirectChat, DirectChatMessage } from '@entities';
+
+import { UserDto } from '@dtos/users';
 
 export interface IDirectChatMessagesRepository {
 	/**

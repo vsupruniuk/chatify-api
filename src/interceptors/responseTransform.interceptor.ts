@@ -1,7 +1,10 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+
 import { map, Observable } from 'rxjs';
-import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
+
+import { SuccessfulResponseResult } from '@responses/successfulResponses';
+
+import { ResponseStatus } from '@enums';
 
 @Injectable()
 export class ResponseTransformInterceptor<T = object> implements NestInterceptor {

@@ -1,6 +1,5 @@
-import { AppUserDto } from '@dtos/appUser/AppUser.dto';
-import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+import { AppUserDto, UpdateAppUserRequestDto } from '@dtos/appUser';
+import { JWTPayloadDto } from '@dtos/jwt';
 
 export interface IAppUserService {
 	/**

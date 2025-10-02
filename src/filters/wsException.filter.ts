@@ -1,13 +1,16 @@
 import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
 import { BaseWsExceptionFilter } from '@nestjs/websockets';
+
 import { Socket } from 'socket.io';
-import { WSEvents } from '@enums/WSEvents.enum';
-import { ErrorWSResponseResult } from '@responses/errorResponses/ErrorWSResponseResult';
-import { ErrorField } from '@responses/errors/ErrorField';
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
-import { GlobalTypes } from '../types/global';
-import { Environments } from '@enums/Environments.enum';
-import { DateHelper } from '@helpers/date.helper';
+
+import { WSEvents, ResponseStatus, Environments } from '@enums';
+
+import { ErrorWSResponseResult } from '@responses/errorResponses';
+import { ErrorField } from '@responses/errors';
+
+import { GlobalTypes } from '@customTypes';
+
+import { DateHelper } from '@helpers';
 
 /**
  * Exception filter for handling websockets exceptions and errors in app.

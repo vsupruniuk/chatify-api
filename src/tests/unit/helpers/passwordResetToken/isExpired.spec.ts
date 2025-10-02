@@ -1,9 +1,12 @@
 import { plainToInstance } from 'class-transformer';
-import { DateHelper } from '@helpers/date.helper';
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
-import { passwordResetTokens } from '@testMocks/PasswordResetToken/passwordResetTokens';
-import { PasswordResetTokenDto } from '@dtos/passwordResetToken/PasswordResetToken.dto';
-import { PasswordResetTokensHelper } from '@helpers/passwordResetTokens.helper';
+
+import { DateHelper, PasswordResetTokensHelper } from '@helpers';
+
+import { PasswordResetToken } from '@entities';
+
+import { passwordResetTokens } from '@testMocks';
+
+import { PasswordResetTokenDto } from '@dtos/passwordResetToken';
 
 describe('Password reset tokens helper', (): void => {
 	describe('Is expired', (): void => {

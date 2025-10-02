@@ -1,4 +1,4 @@
-import { PaginationHelper } from '@helpers/pagination.helper';
+import { PaginationHelper } from '@helpers';
 
 describe('Pagination helper', (): void => {
 	describe('To sql pagination', (): void => {

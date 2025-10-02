@@ -1,6 +1,7 @@
-import { DtoNotEmptyPipe } from '@pipes/dtoNotEmpty.pipe';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
+
+import { DtoNotEmptyPipe } from '@pipes';
 
 describe('Dto not empty pipe', (): void => {
 	let dtoNotEmptyPipe: DtoNotEmptyPipe;

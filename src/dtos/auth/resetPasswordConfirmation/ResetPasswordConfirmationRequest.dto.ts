@@ -1,5 +1,6 @@
 import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
-import { IsStringsSimilar } from '@decorators/validation/IsStringsSimilar.decorator';
+
+import { IsStringsSimilar } from '@decorators/validation';
 
 export class ResetPasswordConfirmationRequestDto {
 	@Matches(/^(?=.*[0-9])(?=.*[A-Z])/, {

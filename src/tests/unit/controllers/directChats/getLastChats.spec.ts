@@ -1,19 +1,27 @@
-import { DirectChatsController } from '@controllers/directChats/directChats.controller';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { DataSource } from 'typeorm';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
 import { JwtService } from '@nestjs/jwt';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
+
+import { DataSource } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { DirectChat } from '@entities/DirectChat.entity';
-import { directChats } from '@testMocks/DirectChat/directChats';
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
+
+import { DirectChatsController } from '@controllers';
+
+import { providers } from '@modules/providers';
+
+import { IDirectChatsService } from '@services';
+import {
+	DirectChatWithUsersAndMessagesStrategy,
+	DirectChatMessageWithChatAndUserStrategy,
+} from '@services/crypto/decryptionStrategy/strategies';
+
+import { CustomProviders } from '@enums';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
+
+import { User, DirectChat } from '@entities';
+
+import { users, directChats } from '@testMocks';
 
 describe('Direct chats controller', (): void => {
 	let directChatsController: DirectChatsController;

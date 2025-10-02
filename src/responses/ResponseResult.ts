@@ -1,4 +1,4 @@
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
+import { ResponseStatus } from '@enums';
 
 /**
  * Base class for successful end error response results

@@ -1,7 +1,8 @@
 import { Response } from 'express';
-import { ResponseHelper } from '@helpers/response.helper';
-import { CookiesNames } from '@enums/CookiesNames.enum';
-import { Environments } from '@enums/Environments.enum';
+
+import { ResponseHelper } from '@helpers';
+
+import { CookiesNames, Environments } from '@enums';
 
 describe('Response helper', (): void => {
 	const jwtRefreshTokenExpiresInMock: string = '1000';

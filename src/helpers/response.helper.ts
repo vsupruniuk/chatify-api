@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { CookiesNames } from '@enums/CookiesNames.enum';
-import { Environments } from '@enums/Environments.enum';
+
+import { CookiesNames, Environments } from '@enums';
 
 /**
  * Helper class for handling response object manipulation
