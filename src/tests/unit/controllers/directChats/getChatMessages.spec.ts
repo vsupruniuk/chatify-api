@@ -1,21 +1,27 @@
-import { DirectChatsController } from '@controllers/directChats/directChats.controller';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { DataSource } from 'typeorm';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
 import { JwtService } from '@nestjs/jwt';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
+
+import { DataSource } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { DirectChat } from '@entities/DirectChat.entity';
-import { directChats } from '@testMocks/DirectChat/directChats';
-import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
-import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
-import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
+
+import { DirectChatsController } from '@controllers';
+
+import { providers } from '@modules/providers';
+
+import { IDirectChatsService } from '@services';
+import {
+	DirectChatMessageWithChatAndUserStrategy,
+	DirectChatWithUsersAndMessagesStrategy,
+} from '@services/crypto/decryptionStrategy/strategies';
+
+import { CustomProviders } from '@enums';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
+
+import { User, DirectChat, DirectChatMessage } from '@entities';
+
+import { users, directChats, directChatsMessages } from '@testMocks';
 
 describe('Direct chats controller', (): void => {
 	let directChatsController: DirectChatsController;

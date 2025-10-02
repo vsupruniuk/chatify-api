@@ -1,9 +1,3 @@
-import { AccountSettings } from '@entities/AccountSettings.entity';
-import { DirectChat } from '@entities/DirectChat.entity';
-import { GroupChat } from '@entities/GroupChat.entity';
-import { JWTToken } from '@entities/JWTToken.entity';
-import { OTPCode } from '@entities/OTPCode.entity';
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
 import {
 	Column,
 	CreateDateColumn,
@@ -16,6 +10,15 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+
+import {
+	AccountSettings,
+	DirectChat,
+	GroupChat,
+	JWTToken,
+	OTPCode,
+	PasswordResetToken,
+} from '@entities';
 
 /**
  * Domain entity representing user

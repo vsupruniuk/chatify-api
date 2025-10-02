@@ -1,9 +1,10 @@
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { AppUserDto } from '@dtos/appUser/AppUser.dto';
-import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
-import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings/AccountSettings.dto';
-import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar/UploadAvatarResponse.dto';
+import { JWTPayloadDto } from '@dtos/jwt';
+import { AppUserDto, UpdateAppUserRequestDto } from '@dtos/appUser';
+import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar';
+import {
+	UpdateAccountSettingsRequestDto,
+	AccountSettingsDto,
+} from '@dtos/accountSettings/accountSettings';
 
 export interface IAppUserController {
 	/**

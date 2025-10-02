@@ -1,11 +1,14 @@
-import { GlobalExceptionFilter } from '@filters/globalException.filter';
-import { Environments } from '@enums/Environments.enum';
-import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { ArgumentsHost, BadRequestException, HttpStatus } from '@nestjs/common';
+import { HttpException } from '@nestjs/common/exceptions/http.exception';
+
 import { Response } from 'express';
-import { ErrorResponseResult } from '@responses/errorResponses/ErrorResponseResult';
-import { ErrorField } from '@responses/errors/ErrorField';
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
+
+import { GlobalExceptionFilter } from '@filters';
+
+import { Environments, ResponseStatus } from '@enums';
+
+import { ErrorResponseResult } from '@responses/errorResponses';
+import { ErrorField } from '@responses/errors';
 
 describe('Global exception filter', (): void => {
 	let globalExceptionFilter: GlobalExceptionFilter;

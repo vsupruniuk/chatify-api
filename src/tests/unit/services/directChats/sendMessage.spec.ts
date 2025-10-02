@@ -1,24 +1,29 @@
-import { DirectChatsService } from '@services/directChats/directChats.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { IUsersService } from '@services/users/IUsersService';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IDirectChatsRepository } from '@repositories/directChats/IDirectChatsRepository';
-import { DirectChat } from '@entities/DirectChat.entity';
-import { directChats } from '@testMocks/DirectChat/directChats';
-import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
-import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
-import { IDirectChatMessagesRepository } from '@repositories/directChatMessages/IDirectChatMessagesRepository';
-import { plainToInstance } from 'class-transformer';
-import { DateHelper } from '@helpers/date.helper';
-import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy/IDecryptionStrategyManager';
-import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
 import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { plainToInstance } from 'class-transformer';
+import { DataSource } from 'typeorm';
+
+import { DirectChatsService, IUsersService } from '@services';
+import {
+	DirectChatWithUsersAndMessagesStrategy,
+	DirectChatMessageWithChatAndUserStrategy,
+} from '@services/crypto/decryptionStrategy/strategies';
+import { IDecryptionStrategyManager } from '@services/crypto/decryptionStrategy';
+
+import { providers } from '@modules/providers';
+
+import { User, DirectChat, DirectChatMessage } from '@entities';
+
+import { users, directChats, directChatsMessages } from '@testMocks';
+
+import { CustomProviders } from '@enums';
+
+import { IDirectChatsRepository, IDirectChatMessagesRepository } from '@repositories';
+
+import { DateHelper } from '@helpers';
+
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
 
 describe('Direct chats service', (): void => {
 	let directChatsService: DirectChatsService;

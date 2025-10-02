@@ -1,9 +1,12 @@
 import 'dotenv/config';
-import { Environments } from '@enums/Environments.enum';
-import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+
 import { DataSource } from 'typeorm';
-import * as entities from '@db/entities';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import * as path from 'path';
+
+import { Environments } from '@enums';
+
+import * as entities from '@entities';
 
 /**
  * Database configuration

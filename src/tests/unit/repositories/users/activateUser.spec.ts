@@ -1,11 +1,12 @@
-import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
-import { UsersRepository } from '@repositories/users/users.repository';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { DataSource } from 'typeorm';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { otpCodes } from '@testMocks/OTPCode/otpCodes';
-import { OTPCode } from '@entities/OTPCode.entity';
+
+import { QueryBuilderMock, users, otpCodes } from '@testMocks';
+
+import { UsersRepository } from '@repositories';
+
+import { User, OTPCode } from '@entities';
 
 describe('Users service', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();

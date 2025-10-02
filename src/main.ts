@@ -4,9 +4,12 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import * as compression from 'compression';
 import helmet from 'helmet';
-import { AppModule } from '@modules/app.module';
-import { GlobalExceptionFilter } from '@filters/globalException.filter';
-import { corsConfig, helmetConfig, validationPipeConfig } from '@configs/index';
+
+import { AppModule } from '@modules';
+
+import { GlobalExceptionFilter } from '@filters';
+
+import { corsConfig, helmetConfig, validationPipeConfig } from '@configs';
 
 async function bootstrap(): Promise<void> {
 	const port: number = Number(process.env.PORT);

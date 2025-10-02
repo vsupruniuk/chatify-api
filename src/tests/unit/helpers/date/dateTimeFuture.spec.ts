@@ -1,4 +1,4 @@
-import { DateHelper } from '@helpers/date.helper';
+import { DateHelper } from '@helpers';
 
 describe('Date helper', (): void => {
 	describe('Date time future', (): void => {

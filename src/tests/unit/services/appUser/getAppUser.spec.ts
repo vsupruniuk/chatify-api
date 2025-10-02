@@ -1,13 +1,21 @@
-import { AppUserService } from '@services/appUser/appUser.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import providers from '@modules/providers/providers';
-import { AppUserDto } from '@dtos/appUser/AppUser.dto';
 import { NotFoundException } from '@nestjs/common';
-import { IUsersRepository } from '@repositories/users/IUsersRepository';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { DataSource } from 'typeorm';
+
+import { AppUserService } from '@services';
+
+import { CustomProviders } from '@enums';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { providers } from '@modules/providers';
+
+import { AppUserDto } from '@dtos/appUser';
+
+import { IUsersRepository } from '@repositories';
 
 describe('App user service', (): void => {
 	let appUserService: AppUserService;

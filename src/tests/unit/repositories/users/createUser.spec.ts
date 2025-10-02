@@ -1,13 +1,14 @@
-import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
-import { UsersRepository } from '@repositories/users/users.repository';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { DataSource, InsertResult } from 'typeorm';
-import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { AccountSettings } from '@entities/AccountSettings.entity';
-import { JWTToken } from '@entities/JWTToken.entity';
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
-import { OTPCode } from '@entities/OTPCode.entity';
-import { User } from '@entities/User.entity';
+
+import { QueryBuilderMock } from '@testMocks';
+
+import { UsersRepository } from '@repositories';
+
+import { SignupRequestDto } from '@dtos/auth/signup';
+
+import { AccountSettings, JWTToken, PasswordResetToken, OTPCode, User } from '@entities';
 
 describe('Users repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();

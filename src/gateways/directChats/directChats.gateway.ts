@@ -8,24 +8,32 @@ import {
 	SubscribeMessage,
 	WebSocketGateway,
 } from '@nestjs/websockets';
+
 import { Socket } from 'socket.io';
-import { IDirectChatsGateway } from '@gateways/directChats/IDirectChatsGateway';
-import { WsExceptionFilter } from '@filters/wsExceptionFilter';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
-import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
-import { WsAuthMiddleware } from '@middlewares/wsAuth.middleware';
-import { WSEvents } from '@enums/WSEvents.enum';
-import { CreateDirectChatRequestDto } from '@dtos/directChats/CreateDirectChatRequest.dto';
-import { AppUserPayload } from '@decorators/data/AppUserPayload.decorator';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { MessageEncryptionPipe } from '@pipes/messageEncryption.pipe';
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
-import { IWSClientsService } from '@services/wsClients/IWSClientsService';
-import { GlobalTypes } from '../../types/global';
-import { SendDirectChatMessageRequestDto } from '@dtos/directChatMessages/SendDirectChatMessageRequest.dto';
-import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages/DirectChatMessageWithChatAndUser.dto';
-import { UserDto } from '@dtos/users/UserDto';
+
+import { IDirectChatsGateway } from '@gateways';
+
+import { WsExceptionFilter } from '@filters';
+
+import { CustomProviders, WSEvents } from '@enums';
+
+import { IDirectChatsService, IJWTTokensService, IWSClientsService } from '@services';
+
+import { WsAuthMiddleware } from '@middlewares';
+
+import { CreateDirectChatRequestDto, DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
+import { JWTPayloadDto } from '@dtos/jwt';
+import {
+	SendDirectChatMessageRequestDto,
+	DirectChatMessageWithChatAndUserDto,
+} from '@dtos/directChatMessages';
+import { UserDto } from '@dtos/users';
+
+import { AppUserPayload } from '@decorators/data';
+
+import { MessageEncryptionPipe } from '@pipes';
+
+import { GlobalTypes } from '@customTypes';
 
 @UsePipes(
 	new ValidationPipe({

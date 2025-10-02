@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs';
 import {
 	CallHandler,
 	ExecutionContext,
@@ -8,11 +7,17 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
+
+import { Observable } from 'rxjs';
 import { Request } from 'express';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { GlobalTypes } from '../types/global';
+
+import { CustomProviders } from '@enums';
+
+import { IJWTTokensService } from '@services';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+
+import { GlobalTypes } from '@customTypes';
 
 @Injectable()
 export class AuthInterceptor implements NestInterceptor {

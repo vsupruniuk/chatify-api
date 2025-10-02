@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { IEmailService } from '@services/email/IEmailService';
+
 import { Transporter } from 'nodemailer';
 import * as nodemailer from 'nodemailer';
-import { accountActivationTemplate } from '@emailTemplates/accountActivationTemplate';
-import { EmailPriority } from '@enums/EmailPriority.enum';
-import { resetPasswordTemplate } from '@emailTemplates/resetPasswordTemplate';
-import { Environments } from '@enums/Environments.enum';
+
+import { IEmailService } from '@services';
+
+import { accountActivationTemplate, resetPasswordTemplate } from '@emailTemplates';
+
+import { EmailPriority, Environments } from '@enums';
 
 @Injectable()
 export class EmailService implements IEmailService {

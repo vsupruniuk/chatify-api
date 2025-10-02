@@ -1,12 +1,14 @@
-import { Environments } from '@enums/Environments.enum';
-import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { ArgumentsHost, BadRequestException } from '@nestjs/common';
-import { ErrorResponseResult } from '@responses/errorResponses/ErrorResponseResult';
-import { ErrorField } from '@responses/errors/ErrorField';
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
-import { WsExceptionFilter } from '@filters/wsExceptionFilter';
+import { HttpException } from '@nestjs/common/exceptions/http.exception';
+
 import { Socket } from 'socket.io';
-import { WSEvents } from '@enums/WSEvents.enum';
+
+import { Environments, WSEvents, ResponseStatus } from '@enums';
+
+import { ErrorResponseResult } from '@responses/errorResponses';
+import { ErrorField } from '@responses/errors';
+
+import { WsExceptionFilter } from '@filters';
 
 describe('WS exception filter', (): void => {
 	let wsExceptionFilter: WsExceptionFilter;

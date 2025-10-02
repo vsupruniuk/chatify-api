@@ -1,7 +1,8 @@
 import { Expose, Type } from 'class-transformer';
-import { OTPCodeDto } from '@dtos/otpCode/OTPCodeDto';
 
-export class UserWithOtpCodeDto {
+import { JWTTokenDto } from '@dtos/jwt';
+
+export class FullUserWithJwtTokenDto {
 	@Expose()
 	public id: string;
 
@@ -12,10 +13,16 @@ export class UserWithOtpCodeDto {
 	public avatarUrl: string | null;
 
 	@Expose()
+	public createdAt: string;
+
+	@Expose()
 	public email: string;
 
 	@Expose()
 	public firstName: string;
+
+	@Expose()
+	public isActivated: boolean;
 
 	@Expose()
 	public lastName: string | null;
@@ -24,6 +31,12 @@ export class UserWithOtpCodeDto {
 	public nickname: string;
 
 	@Expose()
-	@Type(() => OTPCodeDto)
-	public otpCode: OTPCodeDto;
+	public password: string;
+
+	@Expose()
+	public updatedAt: string;
+
+	@Expose()
+	@Type(() => JWTTokenDto)
+	public jwtToken: JWTTokenDto;
 }

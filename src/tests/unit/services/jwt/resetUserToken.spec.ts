@@ -1,13 +1,19 @@
-import { JwtTokensService } from '@services/jwt/jwtTokens.service';
-import { IJWTTokensRepository } from '@repositories/jwtTokens/IJWTTokensRepository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
-import providers from '@modules/providers/providers';
+
 import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { JWTToken } from '@entities/JWTToken.entity';
-import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
-import { users } from '@testMocks/User/users';
+
+import { JwtTokensService } from '@services';
+
+import { IJWTTokensRepository } from '@repositories';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { JWTToken } from '@entities';
+
+import { jwtTokens, users } from '@testMocks';
 
 describe('JWT tokens service', (): void => {
 	let jwtTokensService: JwtTokensService;

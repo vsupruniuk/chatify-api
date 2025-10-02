@@ -1,6 +1,8 @@
 import { BadRequestException, ExecutionContext, PipeTransform } from '@nestjs/common';
-import { MetadataHelper } from '@testHelpers/Metadata.helper';
-import { QueryRequired } from '@decorators/data/QueryRequired.decorator';
+
+import { MetadataHelper } from '@testHelpers';
+
+import { QueryRequired } from '@decorators/data';
 
 describe('Query required decorator', () => {
 	const query: Record<string, string> = {

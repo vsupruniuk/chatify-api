@@ -1,11 +1,19 @@
 import { Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { IAccountSettingsService } from '@services/accountSettings/IAccountSettingsService';
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
-import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings/AccountSettings.dto';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IAccountSettingsRepository } from '@repositories/accountSettings/IAccountSettingsRepository';
-import { AccountSettings } from '@entities/AccountSettings.entity';
-import { TransformHelper } from '@helpers/transform.helper';
+
+import { IAccountSettingsService } from '@services';
+
+import {
+	UpdateAccountSettingsRequestDto,
+	AccountSettingsDto,
+} from '@dtos/accountSettings/accountSettings';
+
+import { CustomProviders } from '@enums';
+
+import { IAccountSettingsRepository } from '@repositories';
+
+import { AccountSettings } from '@entities';
+
+import { TransformHelper } from '@helpers';
 
 @Injectable()
 export class AccountSettingsService implements IAccountSettingsService {

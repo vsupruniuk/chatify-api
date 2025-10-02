@@ -7,31 +7,35 @@ import {
 	UnauthorizedException,
 	UnprocessableEntityException,
 } from '@nestjs/common';
-import { IAuthService } from '@services/auth/IAuthService';
-import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { OTPCodesHelper } from '@helpers/OTPCodes.helper';
-import { DateHelper } from '@helpers/date.helper';
-import { IUsersService } from '@services/users/IUsersService';
-import { UserDto } from '@dtos/users/UserDto';
-import { IEmailService } from '@services/email/IEmailService';
-import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/ActivateAccountRequest.dto';
-import { UserWithOtpCodeDto } from '@dtos/users/UserWithOtpCodeDto';
-import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
-import { TransformHelper } from '@helpers/transform.helper';
-import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
-import { UserWithJwtTokenDto } from '@dtos/users/UserWithJwtTokenDto';
-import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
-import { otpCodeConfig } from '@configs/otpCode.config';
-import { IOTPCodesService } from '@services/otpCode/IOTPCodesService';
-import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
-import { UserWithPasswordResetTokenDto } from '@dtos/users/UserWithPasswordResetTokenDto';
-import { IPasswordResetTokensService } from '@services/passwordResetToken/IPasswordResetTokensService';
-import { LoginRequestDto } from '@dtos/auth/login/LoginRequest.dto';
-import { LoginDto } from '@dtos/auth/login/Login.dto';
-import { PasswordHelper } from '@helpers/password.helper';
-import { FullUserWithJwtTokenDto } from '@dtos/users/FullUserWithJwtTokenDto';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+
+import {
+	IAuthService,
+	IUsersService,
+	IEmailService,
+	IJWTTokensService,
+	IOTPCodesService,
+	IPasswordResetTokensService,
+} from '@services';
+
+import { SignupRequestDto } from '@dtos/auth/signup';
+import { ActivateAccountRequestDto, ActivateAccountDto } from '@dtos/auth/accountActivation';
+import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode';
+import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword';
+import { LoginRequestDto, LoginDto } from '@dtos/auth/login';
+import { JWTPayloadDto } from '@dtos/jwt';
+import {
+	FullUserWithJwtTokenDto,
+	UserDto,
+	UserWithJwtTokenDto,
+	UserWithOtpCodeDto,
+	UserWithPasswordResetTokenDto,
+} from '@dtos/users';
+
+import { CustomProviders } from '@enums';
+
+import { OTPCodesHelper, DateHelper, TransformHelper, PasswordHelper } from '@helpers';
+
+import { otpCodeConfig } from '@configs';
 
 @Injectable()
 export class AuthService implements IAuthService {

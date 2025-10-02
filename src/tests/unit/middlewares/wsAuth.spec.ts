@@ -1,17 +1,26 @@
-import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
+import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { WsAuthMiddleware } from '@middlewares/wsAuth.middleware';
 import { JwtService } from '@nestjs/jwt';
+
 import { DataSource } from 'typeorm';
 import { Event } from 'socket.io';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { plainToInstance } from 'class-transformer';
-import { UnauthorizedException } from '@nestjs/common';
-import { GlobalTypes } from '@customTypes/global';
+
+import { IJWTTokensService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { WsAuthMiddleware } from '@middlewares';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+
+import { GlobalTypes } from '@customTypes';
 
 describe('WS auth middleware', (): void => {
 	let jwtTokensService: IJWTTokensService;

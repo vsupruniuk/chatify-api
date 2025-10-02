@@ -1,18 +1,26 @@
-import { AppUserController } from '@controllers/appUser/appUser.controller';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IAccountSettingsService } from '@services/accountSettings/IAccountSettingsService';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+
 import { plainToInstance } from 'class-transformer';
-import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings/UpdateAccountSettingsRequest.dto';
-import { AccountSettings } from '@entities/AccountSettings.entity';
-import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
-import { AccountSettingsDto } from '@dtos/accountSettings/accountSettings/AccountSettings.dto';
+import { DataSource } from 'typeorm';
+
+import { AppUserController } from '@controllers';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { IAccountSettingsService } from '@services';
+
+import { User, AccountSettings } from '@entities';
+
+import { users, accountSettings } from '@testMocks';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+import {
+	UpdateAccountSettingsRequestDto,
+	AccountSettingsDto,
+} from '@dtos/accountSettings/accountSettings';
 
 describe('App user controller', (): void => {
 	let appUserController: AppUserController;

@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { IPasswordResetTokensRepository } from '@repositories/passwordResetToken/IPasswordResetTokensRepository';
+
 import { DataSource, UpdateResult } from 'typeorm';
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
+
+import { IPasswordResetTokensRepository } from '@repositories';
+
+import { PasswordResetToken } from '@entities';
 
 @Injectable()
 export class PasswordResetTokensRepository implements IPasswordResetTokensRepository {

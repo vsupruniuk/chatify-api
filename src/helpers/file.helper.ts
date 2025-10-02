@@ -1,7 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { DateHelper } from '@helpers/date.helper';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+
+import { DateHelper } from '@helpers';
 
 /**
  * Helper class for actions related to static files

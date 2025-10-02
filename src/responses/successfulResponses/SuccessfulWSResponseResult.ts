@@ -1,5 +1,6 @@
-import { WSResponseResult } from '../WSResponseResult';
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
+import { ResponseStatus } from '@enums';
+
+import { WSResponseResult } from '@responses';
 
 /**
  * Class representing successful web sockets response result

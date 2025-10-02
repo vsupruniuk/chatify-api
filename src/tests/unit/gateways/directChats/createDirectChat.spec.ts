@@ -1,22 +1,27 @@
-import { DirectChatsGateway } from '@gateways/directChats/directChats.gateway';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
 import { JwtService } from '@nestjs/jwt';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { IDirectChatsService } from '@services/directChats/IDirectChatsService';
-import { IWSClientsService } from '@services/wsClients/IWSClientsService';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+
+import { DataSource } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { CreateDirectChatRequestDto } from '@dtos/directChats/CreateDirectChatRequest.dto';
-import { DirectChat } from '@entities/DirectChat.entity';
-import { directChats } from '@testMocks/DirectChat/directChats';
-import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats/DirectChatWithUsersAndMessages.dto';
-import { WSEvents } from '@enums/WSEvents.enum';
+
+import { DirectChatsGateway } from '@gateways';
+
+import { providers } from '@modules/providers';
+
+import {
+	DirectChatWithUsersAndMessagesStrategy,
+	DirectChatMessageWithChatAndUserStrategy,
+} from '@services/crypto/decryptionStrategy/strategies';
+import { IDirectChatsService, IWSClientsService } from '@services';
+
+import { CustomProviders, WSEvents } from '@enums';
+
+import { User, DirectChat } from '@entities';
+
+import { users, directChats } from '@testMocks';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+import { CreateDirectChatRequestDto, DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
 
 describe('Direct chats gateway', (): void => {
 	let directChatsGateway: DirectChatsGateway;

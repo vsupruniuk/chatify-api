@@ -1,9 +1,12 @@
-import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
-import { OTPCodesRepository } from '@repositories/otpCodes/OTPCodes.repository';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { DataSource, UpdateResult } from 'typeorm';
-import { OTPCode } from '@entities/OTPCode.entity';
-import { otpCodes } from '@testMocks/OTPCode/otpCodes';
+
+import { QueryBuilderMock, otpCodes } from '@testMocks';
+
+import { OTPCodesRepository } from '@repositories';
+
+import { OTPCode } from '@entities';
 
 describe('OTP codes repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();

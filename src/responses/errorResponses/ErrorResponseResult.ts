@@ -1,6 +1,6 @@
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
+import { ResponseStatus } from '@enums';
 
-import { ResponseResult } from '../ResponseResult';
+import { ResponseResult } from '@responses';
 
 /**
  * Class representing error response result

@@ -1,11 +1,18 @@
-import { UsersService } from '@services/users/users.service';
-import { IUsersRepository } from '@repositories/users/IUsersRepository';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
+
 import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
+
+import { UsersService } from '@services';
+
+import { IUsersRepository } from '@repositories';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
 
 describe('Users service', (): void => {
 	let usersService: UsersService;

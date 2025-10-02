@@ -1,6 +1,7 @@
 import { Request } from 'express';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { Socket } from 'socket.io';
+
+import { JWTPayloadDto } from '@dtos/jwt';
 
 export declare namespace GlobalTypes {
 	type TAuthorizedRequest = Request & { user: JWTPayloadDto };

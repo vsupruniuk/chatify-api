@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppUserController } from '@controllers/appUser/appUser.controller';
-import providers from '@modules/providers/providers';
 import { JwtService } from '@nestjs/jwt';
+
+import { providers } from '@modules/providers';
+
+import { AppUserController } from '@controllers';
 
 @Module({
 	controllers: [AppUserController],

@@ -1,10 +1,16 @@
-import { DirectChatsGateway } from '@gateways/directChats/directChats.gateway';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import providers from '@modules/providers/providers';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
-import { DirectChatsController } from '@controllers/directChats/directChats.controller';
+
+import { DirectChatsGateway } from '@gateways';
+
+import { DirectChatsController } from '@controllers';
+
+import { providers } from '@modules/providers';
+
+import {
+	DirectChatWithUsersAndMessagesStrategy,
+	DirectChatMessageWithChatAndUserStrategy,
+} from '@services/crypto/decryptionStrategy/strategies';
 
 @Module({
 	controllers: [DirectChatsController],

@@ -1,6 +1,7 @@
-import { FileHelper } from '@helpers/file.helper';
 import * as fs from 'fs';
 import * as path from 'path';
+
+import { FileHelper } from '@helpers';
 
 describe('File helper', (): void => {
 	describe('delete file', (): void => {

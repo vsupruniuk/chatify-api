@@ -1,5 +1,6 @@
-import { OTPCodesHelper } from '@helpers/OTPCodes.helper';
 import * as crypto from 'crypto';
+
+import { OTPCodesHelper } from '@helpers';
 
 describe('OTP codes helper', (): void => {
 	describe('Generate OTP code', (): void => {

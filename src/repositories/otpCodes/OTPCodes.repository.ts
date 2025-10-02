@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { IOTPCodesRepository } from '@repositories/otpCodes/IOTPCodesRepository';
 import { DataSource, UpdateResult } from 'typeorm';
-import { OTPCode } from '@entities/OTPCode.entity';
+
+import { IOTPCodesRepository } from '@repositories';
+
+import { OTPCode } from '@entities';
 
 @Injectable()
 export class OTPCodesRepository implements IOTPCodesRepository {

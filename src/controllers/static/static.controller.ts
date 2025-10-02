@@ -6,10 +6,13 @@ import {
 	StreamableFile,
 	UseInterceptors,
 } from '@nestjs/common';
-import { AuthInterceptor } from '@interceptors/auth.interceptor';
-import { IStaticController } from '@controllers/static/IStaticController';
-import { resolve } from 'path';
+
 import { createReadStream, existsSync, ReadStream } from 'fs';
+import { resolve } from 'path';
+
+import { AuthInterceptor } from '@interceptors';
+
+import { IStaticController } from '@controllers';
 
 @Controller('static')
 @UseInterceptors(AuthInterceptor)

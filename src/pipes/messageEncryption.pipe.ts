@@ -1,6 +1,8 @@
 import { Inject, PipeTransform } from '@nestjs/common';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { ICryptoService } from '@services/crypto/ICryptoService';
+
+import { CustomProviders } from '@enums';
+
+import { ICryptoService } from '@services';
 
 interface IMessage {
 	messageText: string;

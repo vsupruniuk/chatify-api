@@ -1,6 +1,8 @@
 import { ExecutionContext } from '@nestjs/common';
-import { MetadataHelper } from '@testHelpers/Metadata.helper';
-import { Cookie } from '@decorators/data/Cookie.decorator';
+
+import { MetadataHelper } from '@testHelpers';
+
+import { Cookie } from '@decorators/data';
 
 describe('Cookie decorator', () => {
 	const cookies: Record<string, string> = {

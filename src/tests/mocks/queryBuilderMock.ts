@@ -16,7 +16,6 @@ export class QueryBuilderMock<T extends ObjectLiteral>
 
 	public select: jest.Mock = jest.fn().mockReturnThis();
 	public from: jest.Mock = jest.fn().mockReturnThis();
-	public setParameter: jest.Mock = jest.fn().mockReturnThis();
 	public setParameters: jest.Mock = jest.fn().mockReturnThis();
 	public orderBy: jest.Mock = jest.fn().mockReturnThis();
 	public limit: jest.Mock = jest.fn().mockReturnThis();
@@ -43,11 +42,12 @@ export class QueryBuilderMock<T extends ObjectLiteral>
 	public relation: jest.Mock = jest.fn().mockReturnThis();
 	public of: jest.Mock = jest.fn().mockReturnThis();
 	public add: jest.Mock = jest.fn().mockReturnThis();
-	public returning: jest.Mock = jest.fn().mockReturnThis();
 
 	public where: jest.Mock = jest.fn().mockReturnThis();
 	public orWhere: jest.Mock = jest.fn().mockReturnThis();
 	public andWhere: jest.Mock = jest.fn().mockReturnThis();
 	public whereExists: jest.Mock = jest.fn().mockReturnThis();
 	public andWhereExists: jest.Mock = jest.fn().mockReturnThis();
+
+	public returning: jest.Mock = jest.fn().mockReturnThis();
 }

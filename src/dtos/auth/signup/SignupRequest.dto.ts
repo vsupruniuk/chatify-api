@@ -1,5 +1,6 @@
 import { IsEmail, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
-import { IsStringsSimilar } from '@decorators/validation/IsStringsSimilar.decorator';
+
+import { IsStringsSimilar } from '@decorators/validation';
 
 export class SignupRequestDto {
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })

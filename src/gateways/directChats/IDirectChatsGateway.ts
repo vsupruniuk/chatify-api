@@ -1,6 +1,6 @@
-import { CreateDirectChatRequestDto } from '@dtos/directChats/CreateDirectChatRequest.dto';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
-import { SendDirectChatMessageRequestDto } from '@dtos/directChatMessages/SendDirectChatMessageRequest.dto';
+import { JWTPayloadDto } from '@dtos/jwt';
+import { CreateDirectChatRequestDto } from '@dtos/directChats';
+import { SendDirectChatMessageRequestDto } from '@dtos/directChatMessages';
 
 /**
  * Interface representing public methods of direct chats gateway

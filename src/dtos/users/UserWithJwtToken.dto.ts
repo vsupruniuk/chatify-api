@@ -1,5 +1,6 @@
 import { Expose, Type } from 'class-transformer';
-import { JWTTokenDto } from '@dtos/jwt/JWTToken.dto';
+
+import { JWTTokenDto } from '@dtos/jwt';
 
 export class UserWithJwtTokenDto {
 	@Expose()

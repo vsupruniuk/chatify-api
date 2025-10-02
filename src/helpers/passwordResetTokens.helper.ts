@@ -1,6 +1,8 @@
 import * as crypto from 'crypto';
-import { DateHelper } from '@helpers/date.helper';
-import { PasswordResetTokenDto } from '@dtos/passwordResetToken/PasswordResetToken.dto';
+
+import { DateHelper } from '@helpers';
+
+import { PasswordResetTokenDto } from '@dtos/passwordResetToken';
 
 /**
  * Helper class for password reset tokens

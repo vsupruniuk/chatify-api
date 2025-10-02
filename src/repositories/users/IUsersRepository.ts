@@ -1,6 +1,7 @@
-import { User } from '@entities/User.entity';
-import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
+import { User } from '@entities';
+
+import { SignupRequestDto } from '@dtos/auth/signup';
+import { UpdateAppUserRequestDto } from '@dtos/appUser';
 
 /**
  * Interface representing public methods of users repository

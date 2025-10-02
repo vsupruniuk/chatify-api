@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Brackets, DataSource, EntityManager, InsertResult, WhereExpressionBuilder } from 'typeorm';
-import { IUsersRepository } from '@repositories/users/IUsersRepository';
-import { User } from '@entities/User.entity';
-import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { AccountSettings } from '@entities/AccountSettings.entity';
-import { JWTToken } from '@entities/JWTToken.entity';
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
-import { OTPCode } from '@entities/OTPCode.entity';
-import { UpdateAppUserRequestDto } from '@dtos/appUser/UpdateAppUserRequest.dto';
+
 import * as dayjs from 'dayjs';
+import { Brackets, DataSource, EntityManager, InsertResult, WhereExpressionBuilder } from 'typeorm';
+
+import { IUsersRepository } from '@repositories';
+
+import { User, AccountSettings, JWTToken, PasswordResetToken, OTPCode } from '@entities';
+
+import { SignupRequestDto } from '@dtos/auth/signup';
+import { UpdateAppUserRequestDto } from '@dtos/appUser';
 
 @Injectable()
 export class UsersRepository implements IUsersRepository {

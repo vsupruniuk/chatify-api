@@ -1,7 +1,10 @@
-import { TransformHelper } from '@helpers/transform.helper';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+import { TransformHelper } from '@helpers';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { JWTPayloadDto } from '@dtos/jwt';
 
 describe('Transform helper', (): void => {
 	describe('To jwt token payload', (): void => {

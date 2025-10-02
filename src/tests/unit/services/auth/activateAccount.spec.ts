@@ -1,27 +1,28 @@
-import { AuthService } from '@services/auth/auth.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { users } from '@testMocks/User/users';
-import { User } from '@entities/User.entity';
-import { OTPCode } from '@entities/OTPCode.entity';
-import { otpCodes } from '@testMocks/OTPCode/otpCodes';
-import { IUsersService } from '@services/users/IUsersService';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { OTPCodeDto } from '@dtos/otpCode/OTPCodeDto';
-import { OTPCodesHelper } from '@helpers/OTPCodes.helper';
-import { JWTToken } from '@entities/JWTToken.entity';
-import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
-import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
-import { TransformHelper } from '@helpers/transform.helper';
-import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/ActivateAccountRequest.dto';
 import {
 	BadRequestException,
 	NotFoundException,
 	UnprocessableEntityException,
 } from '@nestjs/common';
-import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
+import { Test, TestingModule } from '@nestjs/testing';
+import { JwtService } from '@nestjs/jwt';
+
+import { DataSource } from 'typeorm';
+
+import { AuthService, IUsersService, IJWTTokensService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { users, otpCodes, jwtTokens } from '@testMocks';
+
+import { User, OTPCode, JWTToken } from '@entities';
+
+import { CustomProviders } from '@enums';
+
+import { OTPCodeDto } from '@dtos/otpCode';
+import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation';
+import { ActivateAccountDto } from '@dtos/auth/accountActivation';
+
+import { OTPCodesHelper, TransformHelper } from '@helpers';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;

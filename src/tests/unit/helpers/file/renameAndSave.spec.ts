@@ -1,9 +1,12 @@
-import { FileHelper } from '@helpers/file.helper';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
 import { plainToInstance } from 'class-transformer';
-import { DateHelper } from '@helpers/date.helper';
+
+import { FileHelper, DateHelper } from '@helpers';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { JWTPayloadDto } from '@dtos/jwt';
 
 describe('File helper', (): void => {
 	describe('Rename and save', (): void => {

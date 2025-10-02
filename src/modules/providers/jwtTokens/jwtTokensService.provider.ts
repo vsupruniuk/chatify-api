@@ -1,6 +1,8 @@
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { JwtTokensService } from '@services/jwt/jwtTokens.service';
 import { ClassProvider } from '@nestjs/common';
+
+import { CustomProviders } from '@enums';
+
+import { JwtTokensService } from '@services';
 
 export const jwtTokensServiceProvider: ClassProvider = {
 	provide: CustomProviders.CTF_JWT_TOKENS_SERVICE,

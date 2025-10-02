@@ -1,10 +1,14 @@
-import { QueryBuilderMock } from '@testMocks/queryBuilderMock';
-import { DirectChatMessagesRepository } from '@repositories/directChatMessages/directChatMessages.repository';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { DataSource } from 'typeorm';
-import { DirectChatMessage } from '@entities/DirectChatMessage.entity';
-import { directChatsMessages } from '@testMocks/DirectChatMessage/directChatsMessages';
-import { directChats } from '@testMocks/DirectChat/directChats';
+
+import { QueryBuilderMock } from '@testMocks';
+
+import { DirectChatMessagesRepository } from '@repositories';
+
+import { DirectChatMessage } from '@entities';
+
+import { directChatsMessages, directChats } from '@testMocks';
 
 describe('Direct chat messages repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();

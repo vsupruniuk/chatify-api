@@ -1,4 +1,4 @@
-import { UserDto } from '@dtos/users/UserDto';
+import { UserDto } from '@dtos/users';
 
 /**
  * Interface representing public methods of search controller

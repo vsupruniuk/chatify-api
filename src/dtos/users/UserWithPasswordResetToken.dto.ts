@@ -1,7 +1,8 @@
 import { Expose, Type } from 'class-transformer';
-import { JWTTokenDto } from '@dtos/jwt/JWTToken.dto';
 
-export class FullUserWithJwtTokenDto {
+import { PasswordResetTokenDto } from '@dtos/passwordResetToken';
+
+export class UserWithPasswordResetTokenDto {
 	@Expose()
 	public id: string;
 
@@ -12,16 +13,10 @@ export class FullUserWithJwtTokenDto {
 	public avatarUrl: string | null;
 
 	@Expose()
-	public createdAt: string;
-
-	@Expose()
 	public email: string;
 
 	@Expose()
 	public firstName: string;
-
-	@Expose()
-	public isActivated: boolean;
 
 	@Expose()
 	public lastName: string | null;
@@ -30,12 +25,6 @@ export class FullUserWithJwtTokenDto {
 	public nickname: string;
 
 	@Expose()
-	public password: string;
-
-	@Expose()
-	public updatedAt: string;
-
-	@Expose()
-	@Type(() => JWTTokenDto)
-	public jwtToken: JWTTokenDto;
+	@Type(() => PasswordResetTokenDto)
+	public passwordResetToken: PasswordResetTokenDto;
 }

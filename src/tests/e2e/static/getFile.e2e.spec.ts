@@ -1,23 +1,31 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { StartedTestContainer } from 'testcontainers';
 import { DataSource } from 'typeorm';
 import * as path from 'node:path';
-import { TestDatabaseHelper } from '@testHelpers/TestDatabase.helper';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@modules/app.module';
-import { validationPipeConfig } from '@configs/validationPipe.config';
-import { GlobalExceptionFilter } from '@filters/globalException.filter';
 import * as cookieParser from 'cookie-parser';
 import * as fs from 'node:fs';
-import { User } from '@db/entities';
-import { users } from '@testMocks/User/users';
 import * as supertest from 'supertest';
-import { Headers } from '@enums/Headers.enum';
-import { FileFields } from '@enums/FileFields.enum';
-import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
-import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
-import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar/UploadAvatarResponse.dto';
-import { ContentTypes } from '@enums/ContentTypes.enum';
+
+import { TestDatabaseHelper } from '@testHelpers';
+
+import { AppModule } from '@modules';
+
+import { validationPipeConfig } from '@configs';
+
+import { GlobalExceptionFilter } from '@filters';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { Headers, FileFields, ContentTypes } from '@enums';
+
+import { SuccessfulResponseResult } from '@responses/successfulResponses';
+
+import { LoginResponseDto } from '@dtos/auth/login';
+import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar';
 
 describe('Get file', (): void => {
 	let app: INestApplication;

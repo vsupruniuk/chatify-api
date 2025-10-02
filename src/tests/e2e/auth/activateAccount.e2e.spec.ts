@@ -1,22 +1,28 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { StartedTestContainer } from 'testcontainers';
 import { DataSource } from 'typeorm';
-import { TestDatabaseHelper } from '@testHelpers/TestDatabase.helper';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@modules/app.module';
-import { validationPipeConfig } from '@configs/validationPipe.config';
-import { GlobalExceptionFilter } from '@filters/globalException.filter';
-import { AccountSettings, JWTToken, OTPCode, User } from '@db/entities';
-import { users } from '@testMocks/User/users';
 import * as supertest from 'supertest';
-import { accountSettings } from '@testMocks/AccountSettings/accountSettings';
-import { otpCodes } from '@testMocks/OTPCode/otpCodes';
 import * as dayjs from 'dayjs';
-import { jwtTokens } from '@testMocks/JWTToken/jwtTokens';
-import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation/ActivateAccountResponse.dto';
-import { SuccessfulResponseResult } from '@responses/successfulResponses/SuccessfulResponseResult';
-import { Headers } from '@enums/Headers.enum';
-import { CookiesNames } from '@enums/CookiesNames.enum';
+
+import { TestDatabaseHelper } from '@testHelpers';
+
+import { AppModule } from '@modules';
+
+import { validationPipeConfig } from '@configs';
+
+import { GlobalExceptionFilter } from '@filters';
+
+import { AccountSettings, JWTToken, OTPCode, User } from '@entities';
+
+import { users, accountSettings, otpCodes, jwtTokens } from '@testMocks';
+
+import { ActivateAccountResponseDto } from '@dtos/auth/accountActivation';
+
+import { SuccessfulResponseResult } from '@responses/successfulResponses';
+
+import { Headers, CookiesNames } from '@enums';
 
 describe('Activate account', (): void => {
 	let app: INestApplication;

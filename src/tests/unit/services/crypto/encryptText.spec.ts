@@ -1,7 +1,9 @@
-import { CryptoService } from '@services/crypto/crypto.service';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import * as crypto from 'crypto';
 import * as util from 'node:util';
+
+import { CryptoService } from '@services';
 
 describe('Crypto service', (): void => {
 	let cryptoService: CryptoService;

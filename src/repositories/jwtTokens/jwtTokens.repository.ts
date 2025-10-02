@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { IJWTTokensRepository } from '@repositories/jwtTokens/IJWTTokensRepository';
+
 import { DataSource, UpdateResult } from 'typeorm';
-import { JWTToken } from '@entities/JWTToken.entity';
-import { User } from '@entities/User.entity';
+
+import { JWTToken, User } from '@entities';
+
+import { IJWTTokensRepository } from '@repositories';
 
 @Injectable()
 export class JwtTokensRepository implements IJWTTokensRepository {

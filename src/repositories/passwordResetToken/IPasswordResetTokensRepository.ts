@@ -1,4 +1,4 @@
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
+import { PasswordResetToken } from '@entities';
 
 export interface IPasswordResetTokensRepository {
 	/**

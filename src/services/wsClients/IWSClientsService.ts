@@ -1,5 +1,6 @@
 import { Socket } from 'socket.io';
-import { WSEvents } from '@enums/WSEvents.enum';
+
+import { WSEvents } from '@enums';
 
 export interface IWSClientsService {
 	/**

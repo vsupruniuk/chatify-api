@@ -1,6 +1,8 @@
-import { WsClientsService } from '@services/wsClients/wsClients.service';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { Socket } from 'socket.io';
+
+import { WsClientsService } from '@services';
 
 describe('Ws clients', (): void => {
 	let wsClientsService: WsClientsService;

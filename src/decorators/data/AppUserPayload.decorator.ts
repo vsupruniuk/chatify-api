@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { GlobalTypes } from '@customTypes/global';
+
+import { GlobalTypes } from '@customTypes';
 
 /**
  * Get authorized user properties and return as parameter in controller method

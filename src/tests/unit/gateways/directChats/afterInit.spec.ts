@@ -1,13 +1,19 @@
-import { DirectChatsGateway } from '@gateways/directChats/directChats.gateway';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { DataSource } from 'typeorm';
-import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatWithUsersAndMessagesStrategy';
-import { DirectChatMessageWithChatAndUserStrategy } from '@services/crypto/decryptionStrategy/strategies/DirectChatMessageWithChatAndUserStrategy';
 import { JwtService } from '@nestjs/jwt';
+
+import { DataSource } from 'typeorm';
 import { Socket } from 'socket.io';
+
+import { DirectChatsGateway } from '@gateways';
+
+import { providers } from '@modules/providers';
+
+import {
+	DirectChatWithUsersAndMessagesStrategy,
+	DirectChatMessageWithChatAndUserStrategy,
+} from '@services/crypto/decryptionStrategy/strategies';
+
 import * as wsAuthModule from '@middlewares/wsAuth.middleware';
-import Mock = jest.Mock;
 
 describe('Direct chats gateway', (): void => {
 	let directChatsGateway: DirectChatsGateway;
@@ -49,7 +55,7 @@ describe('Direct chats gateway', (): void => {
 	describe('After init', (): void => {
 		const client: Socket = { use: jest.fn() } as unknown as Socket;
 
-		const authMiddlewareMock: Mock = jest.fn();
+		const authMiddlewareMock: jest.Mock = jest.fn();
 
 		beforeEach((): void => {
 			jest.spyOn(wsAuthModule, 'WsAuthMiddleware').mockReturnValue(authMiddlewareMock);

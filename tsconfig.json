@@ -23,26 +23,62 @@
     ],
     "paths": {
       "@configs/*": ["src/configs/*"],
+      "@configs": ["src/configs/index"],
+
       "@controllers/*": ["src/controllers/*"],
+      "@controllers": ["src/controllers/index"],
+
       "@customTypes/*": ["src/types/*"],
-      "@db/*": ["src/db/*"],
+      "@customTypes": ["src/types/index"],
+
       "@decorators/*": ["src/decorators/*"],
+
       "@dtos/*": ["src/dtos/*"],
+
       "@emailTemplates/*": ["src/emailTemplates/*"],
+      "@emailTemplates": ["src/emailTemplates/index"],
+
       "@entities/*": ["src/db/entities/*"],
+      "@entities": ["src/db/entities/index"],
+
       "@enums/*": ["src/enums/*"],
+      "@enums": ["src/enums/index"],
+
       "@filters/*": ["src/filters/*"],
+      "@filters": ["src/filters/index"],
+
       "@gateways/*": ["src/gateways/*"],
+      "@gateways": ["src/gateways/index"],
+
       "@helpers/*": ["src/helpers/*"],
+      "@helpers": ["src/helpers/index"],
+
       "@interceptors/*": ["src/interceptors/*"],
+      "@interceptors": ["src/interceptors/index"],
+
       "@middlewares/*":  ["src/middlewares/*"],
+      "@middlewares":  ["src/middlewares/index"],
+
       "@modules/*": ["src/modules/*"],
+      "@modules": ["src/modules/index"],
+
       "@pipes/*": ["src/pipes/*"],
+      "@pipes": ["src/pipes/index"],
+
       "@repositories/*": ["src/repositories/*"],
+      "@repositories": ["src/repositories/index"],
+
       "@responses/*": ["src/responses/*"],
+      "@responses": ["src/responses/index"],
+
       "@services/*": ["src/services/*"],
+      "@services": ["src/services/index"],
+
       "@testHelpers/*": ["src/tests/helpers/*"],
+      "@testHelpers": ["src/tests/helpers/index"],
+
       "@testMocks/*": ["src/tests/mocks/*"],
+      "@testMocks": ["src/tests/mocks/index"]
     },
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false

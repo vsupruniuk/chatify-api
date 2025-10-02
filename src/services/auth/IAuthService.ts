@@ -1,10 +1,8 @@
-import { SignupRequestDto } from '@dtos/auth/signup/SignupRequest.dto';
-import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation/ActivateAccountRequest.dto';
-import { ActivateAccountDto } from '@dtos/auth/accountActivation/ActivateAccount.dto';
-import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode/ResendActivationCodeRequest.dto';
-import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword/ResetPasswordRequest.dto';
-import { LoginRequestDto } from '@dtos/auth/login/LoginRequest.dto';
-import { LoginDto } from '@dtos/auth/login/Login.dto';
+import { SignupRequestDto } from '@dtos/auth/signup';
+import { ActivateAccountRequestDto, ActivateAccountDto } from '@dtos/auth/accountActivation';
+import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode';
+import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword';
+import { LoginRequestDto, LoginDto } from '@dtos/auth/login';
 
 /**
  * Interface representing public methods of auth service

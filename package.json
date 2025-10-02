@@ -23,10 +23,10 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "cross-env NODE_ENV=test jest --config jest-e2e.config.ts --runInBand",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
-    "migration:run": "npm run typeorm migration:run -- -d dist/src/db/typeOrmConfig.js",
-    "migration:generate": "npm run typeorm -- -d dist/src/db/typeOrmConfig.js migration:generate src/db/migrations/$npm_config_name",
+    "migration:run": "npm run typeorm migration:run -- -d dist/src/configs/typeOrm.config.js",
+    "migration:generate": "npm run typeorm -- -d dist/src/configs/typeOrm.config.js migration:generate src/db/migrations/$npm_config_name",
     "migration:create": "npm run typeorm -- migration:create src/db/migrations/$npm_config_name",
-    "migration:revert": "npm run typeorm -- -d dist/src/db/typeOrmConfig.js migration:revert",
+    "migration:revert": "npm run typeorm -- -d dist/src/configs/typeOrm.config.js migration:revert",
     "prepare": "husky"
   },
   "dependencies": {

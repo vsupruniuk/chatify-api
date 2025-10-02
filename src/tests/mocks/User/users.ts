@@ -1,8 +1,4 @@
-import { AccountSettings } from '@entities/AccountSettings.entity';
-import { User } from '@entities/User.entity';
-import { JWTToken } from '@entities/JWTToken.entity';
-import { OTPCode } from '@entities/OTPCode.entity';
-import { PasswordResetToken } from '@entities/PasswordResetToken.entity';
+import { AccountSettings, User, JWTToken, OTPCode, PasswordResetToken } from '@entities';
 
 export const users: User[] = [
 	{

@@ -1,9 +1,12 @@
-import { OTPCodesHelper } from '@helpers/OTPCodes.helper';
-import { OTPCodeDto } from '@dtos/otpCode/OTPCodeDto';
-import { otpCodes } from '@testMocks/OTPCode/otpCodes';
-import { OTPCode } from '@entities/OTPCode.entity';
 import { plainToInstance } from 'class-transformer';
-import { DateHelper } from '@helpers/date.helper';
+
+import { OTPCodesHelper, DateHelper } from '@helpers';
+
+import { OTPCodeDto } from '@dtos/otpCode';
+
+import { otpCodes } from '@testMocks';
+
+import { OTPCode } from '@entities';
 
 describe('OTP codes helper', (): void => {
 	describe('Is expired', (): void => {

@@ -2,13 +2,16 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { AppUserModule } from '@modules/appUser.module';
-import { AuthModule } from '@modules/auth.module';
-import { SearchModule } from '@modules/search.module';
-import { DirectChatsModule } from '@modules/directChats.module';
-import { StaticModule } from '@modules/static.module';
-import { typeOrmConfig } from '@db/typeOrmConfig';
-import providers from '@modules/providers/providers';
+
+import { providers } from '@modules/providers';
+
+import { typeOrmConfig } from '@configs';
+
+import { AuthModule } from './auth.module';
+import { AppUserModule } from './appUser.module';
+import { SearchModule } from './search.module';
+import { DirectChatsModule } from './directChats.module';
+import { StaticModule } from './static.module';
 
 @Module({
 	imports: [

@@ -1,5 +1,4 @@
-import { AccountSettings } from '@entities/AccountSettings.entity';
-import { User } from '@entities/User.entity';
+import { AccountSettings, User } from '@entities';
 
 export const accountSettings: AccountSettings[] = [
 	{

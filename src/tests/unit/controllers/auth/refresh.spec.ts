@@ -1,14 +1,20 @@
-import { AuthController } from '@controllers/auth/auth.controller';
-import { IAuthService } from '@services/auth/IAuthService';
 import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
 import { JwtService } from '@nestjs/jwt';
+
 import { DataSource } from 'typeorm';
-import { CustomProviders } from '@enums/CustomProviders.enum';
 import { Response } from 'express';
-import { ResponseHelper } from '@helpers/response.helper';
-import { LoginDto } from '@dtos/auth/login/Login.dto';
-import { LoginResponseDto } from '@dtos/auth/login/LoginResponse.dto';
+
+import { AuthController } from '@controllers';
+
+import { IAuthService } from '@services';
+
+import { providers } from '@modules/providers';
+
+import { CustomProviders } from '@enums';
+
+import { ResponseHelper } from '@helpers';
+
+import { LoginDto, LoginResponseDto } from '@dtos/auth/login';
 
 describe('Auth controller', (): void => {
 	let authController: AuthController;

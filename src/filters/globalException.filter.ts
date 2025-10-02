@@ -1,14 +1,17 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
+import { HttpException } from '@nestjs/common/exceptions/http.exception';
 
 import { Response } from 'express';
-import { ErrorResponseResult } from '@responses/errorResponses/ErrorResponseResult';
-import { ErrorField } from '@responses/errors/ErrorField';
-import { ResponseStatus } from '@enums/ResponseStatus.enum';
-import { HttpException } from '@nestjs/common/exceptions/http.exception';
-import { Environments } from '@enums/Environments.enum';
-import { DateHelper } from '@helpers/date.helper';
-import { GlobalTypes } from '@customTypes/global';
+
+import { ErrorResponseResult } from '@responses/errorResponses';
+import { ErrorField } from '@responses/errors';
+
+import { ResponseStatus, Environments } from '@enums';
+
+import { DateHelper } from '@helpers';
+
+import { GlobalTypes } from '@customTypes';
 
 /**
  * Global exception filter for handling all exceptions and errors in app.

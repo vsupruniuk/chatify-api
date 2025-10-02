@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PasswordHashingPipe } from '@pipes/passwordHashing.pipe';
-import { PasswordHelper } from '@helpers/password.helper';
+
+import { PasswordHashingPipe } from '@pipes';
+
+import { PasswordHelper } from '@helpers';
 
 describe('Password hashing pipe', (): void => {
 	let passwordHashingPipe: PasswordHashingPipe;

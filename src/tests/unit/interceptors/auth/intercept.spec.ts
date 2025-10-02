@@ -1,16 +1,25 @@
-import { AuthInterceptor } from '@interceptors/auth.interceptor';
-import { Test, TestingModule } from '@nestjs/testing';
-import providers from '@modules/providers/providers';
-import { JwtService } from '@nestjs/jwt';
-import { DataSource } from 'typeorm';
 import { CallHandler, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { IJWTTokensService } from '@services/jwt/IJWTTokensService';
-import { CustomProviders } from '@enums/CustomProviders.enum';
-import { User } from '@entities/User.entity';
-import { users } from '@testMocks/User/users';
-import { JWTPayloadDto } from '@dtos/jwt/JWTPayload.dto';
+import { Test, TestingModule } from '@nestjs/testing';
+import { JwtService } from '@nestjs/jwt';
+
+import { DataSource } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { GlobalTypes } from '@customTypes/global';
+
+import { AuthInterceptor } from '@interceptors';
+
+import { providers } from '@modules/providers';
+
+import { IJWTTokensService } from '@services';
+
+import { CustomProviders } from '@enums';
+
+import { User } from '@entities';
+
+import { users } from '@testMocks';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+
+import { GlobalTypes } from '@customTypes';
 
 describe('Auth interceptor', (): void => {
 	let authInterceptor: AuthInterceptor;
