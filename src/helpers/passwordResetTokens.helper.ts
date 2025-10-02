@@ -1,7 +1,8 @@
-import { PasswordResetTokenDto } from '@DTO/passwordResetTokens/passwordResetToken.dto';
-import { PasswordResetTokenInfoDto } from '@DTO/passwordResetTokens/passwordResetTokenInfo.dto';
-import { DateHelper } from '@Helpers/date.helper';
-import * as crypto from 'node:crypto';
+import * as crypto from 'crypto';
+
+import { DateHelper } from '@helpers';
+
+import { PasswordResetTokenDto } from '@dtos/passwordResetToken';
 
 /**
  * Helper class for password reset tokens
@@ -11,14 +12,15 @@ export class PasswordResetTokensHelper {
 	 * Generate new password reset token
 	 * @returns PasswordResetTokenDto - token value and expiration date
 	 */
-	public static generateToken(): PasswordResetTokenInfoDto {
-		return {
-			token: crypto.randomUUID(),
-			expiresAt: DateHelper.dateTimeFuture(1000 * 60 * 60 * 24),
-		};
+	public static generateToken(): string {
+		return crypto.randomUUID();
 	}
 
 	public static isExpired(passwordResetToken: PasswordResetTokenDto): boolean {
+		if (!passwordResetToken.expiresAt) {
+			return true;
+		}
+
 		return DateHelper.isDateLessThanCurrent(passwordResetToken.expiresAt);
 	}
 }

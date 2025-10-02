@@ -1,43 +1,53 @@
-import { Environments } from '@Enums/Environments.enum';
-import { ResponseStatus } from '@Enums/ResponseStatus.enum';
-import { WSEvents } from '@Enums/WSEvents.enum';
-import { DateHelper } from '@Helpers/date.helper';
-import { IValidationError } from '@Interfaces/errors/IValidationError';
 import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
-import { BaseWsExceptionFilter, WsException } from '@nestjs/websockets';
-import { ErrorWSResponseResult } from '@Responses/errorResponses/ErrorWSResponseResult';
-import { ValidationErrorField } from '@Responses/errors/ValidationErrorField';
+import { BaseWsExceptionFilter } from '@nestjs/websockets';
+
 import { Socket } from 'socket.io';
+
+import { WSEvents, ResponseStatus, Environments } from '@enums';
+
+import { ErrorWSResponseResult } from '@responses/errorResponses';
+import { ErrorField } from '@responses/errors';
+
+import { GlobalTypes } from '@customTypes';
+
+import { DateHelper } from '@helpers';
 
 /**
  * Exception filter for handling websockets exceptions and errors in app.
  */
-@Catch(HttpException, WsException)
-export class wsExceptionFilter extends BaseWsExceptionFilter {
-	public catch(exception: WsException | HttpException, host: ArgumentsHost): void {
+@Catch()
+export class WsExceptionFilter extends BaseWsExceptionFilter {
+	private readonly MESSAGE_FIELD_SEPARATOR: string = '|';
+
+	public catch(exception: HttpException | Error, host: ArgumentsHost): void {
 		const client: Socket = host.switchToWs().getClient();
 
-		const responseResult: ErrorWSResponseResult<ValidationErrorField> =
-			new ErrorWSResponseResult<ValidationErrorField>(ResponseStatus.ERROR);
+		const responseResult: ErrorWSResponseResult<ErrorField[]> = new ErrorWSResponseResult<
+			ErrorField[]
+		>(ResponseStatus.ERROR);
 
-		responseResult.title = (exception as unknown as IValidationError).response?.error || '';
+		if (exception instanceof HttpException) {
+			responseResult.message =
+				exception.getStatus() < 500 && exception.getStatus() >= 400
+					? 'Client error'
+					: 'Internal server error';
 
-		responseResult.errors = Array.isArray(
-			(exception as unknown as IValidationError).response?.message || null,
-		)
-			? (exception as unknown as IValidationError).response?.message?.map((error: string) => {
-					const [message, field = null] = error.split('|');
+			const errorMessages: string[] | string = (
+				exception.getResponse() as GlobalTypes.IValidationErrorResponse
+			).message;
 
-					return { message, field };
-				}) || []
-			: ([
-					{
-						message: (exception as unknown as IValidationError).response?.message || '',
-						field: null,
-					},
-				] as unknown as ValidationErrorField[]);
+			const messages: string[] = Array.isArray(errorMessages) ? errorMessages : [errorMessages];
 
-		responseResult.errorsLength = responseResult.errors.length;
+			responseResult.errors = messages.map((msg: string) => {
+				const [message, field = null] = msg.split(this.MESSAGE_FIELD_SEPARATOR);
+
+				return { message, field };
+			});
+		} else {
+			responseResult.message = 'Internal server error';
+
+			responseResult.errors = [{ message: exception.message, field: null }];
+		}
 
 		if (process.env.NODE_ENV === Environments.DEV) {
 			responseResult.stack = exception.stack;

@@ -1,6 +1,8 @@
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { DirectChatsService } from '@Services/directChats.service';
 import { ClassProvider } from '@nestjs/common';
+
+import { CustomProviders } from '@enums';
+
+import { DirectChatsService } from '@services';
 
 export const directChatsServiceProvider: ClassProvider = {
 	provide: CustomProviders.CTF_DIRECT_CHATS_SERVICE,

@@ -1,53 +1,109 @@
-import { DirectChat } from '@Entities/DirectChat.entity';
-import { plainToInstance } from 'class-transformer';
-import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
+import { DirectChat } from '@entities';
 
 export const directChats: DirectChat[] = [
-	plainToInstance(DirectChat, <DirectChat>{
-		id: 'a9bdc525-1c35-48c0-a0c6-79601d842f43',
-		createdAt: '2024-05-24 17:00:00',
-		updatedAt: '2024-05-24 17:00:00',
-		messages: [
-			plainToInstance(DirectChatMessage, <DirectChatMessage>{
-				id: 'a25d0f16-8255-4cf4-a06a-167271bd7720',
-				createdAt: '2024-08-03 10:00:00',
-				dateTime: '2024-08-03 10:00:00',
-				messageText: 'Tony, what if we lose?',
-				updatedAt: '2024-08-03 10:00:00',
-			}),
-		],
+	{
+		id: '62cf18e1-9634-4c1e-a58e-5cc8329ff2bb',
+		createdAt: '2025-01-01 10:00:00',
+		updatedAt: '2025-01-01 10:00:00',
+		messages: [],
 		users: [],
-	}),
-
-	plainToInstance(DirectChat, <DirectChat>{
-		id: '3e253a0e-be8f-41f1-8568-70105319abf0',
-		createdAt: '2024-05-24 17:00:00',
-		updatedAt: '2024-05-24 17:00:00',
-		messages: [
-			plainToInstance(DirectChatMessage, <DirectChatMessage>{
-				id: 'a25d0f16-8255-4cf4-a06a-167271bd7720',
-				createdAt: '2024-08-03 10:00:00',
-				dateTime: '2024-08-03 10:00:00',
-				messageText: 'Tony, what if we lose?',
-				updatedAt: '2024-08-03 10:00:00',
-			}),
-		],
+	},
+	{
+		id: 'e19f85f3-5404-404f-a826-314119a37c62',
+		createdAt: '2025-01-03 14:20:00',
+		updatedAt: '2025-01-03 14:20:00',
+		messages: [],
 		users: [],
-	}),
-
-	plainToInstance(DirectChat, <DirectChat>{
-		id: 'ff41a4a5-7f18-4d63-b243-5087f4288583',
-		createdAt: '2024-05-24 17:00:00',
-		updatedAt: '2024-05-24 17:00:00',
-		messages: [
-			plainToInstance(DirectChatMessage, <DirectChatMessage>{
-				id: 'a25d0f16-8255-4cf4-a06a-167271bd7720',
-				createdAt: '2024-08-03 10:00:00',
-				dateTime: '2024-08-03 10:00:00',
-				messageText: 'Tony, what if we lose?',
-				updatedAt: '2024-08-03 10:00:00',
-			}),
-		],
+	},
+	{
+		id: 'ae2d1498-0193-4be6-b71c-d2fa473e8357',
+		createdAt: '2025-01-06 09:45:00',
+		updatedAt: '2025-01-06 09:45:00',
+		messages: [],
 		users: [],
-	}),
+	},
+	{
+		id: '04673e0b-8aad-403f-8db4-fa50a595e94b',
+		createdAt: '2025-01-09 18:30:00',
+		updatedAt: '2025-01-09 18:30:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: '8eb8c456-f258-4de6-91af-0769fde77137',
+		createdAt: '2025-01-12 13:10:00',
+		updatedAt: '2025-01-12 13:10:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'a79c94aa-4cdf-44f3-b081-f7c14138661f',
+		createdAt: '2025-01-14 08:50:00',
+		updatedAt: '2025-01-14 08:50:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: '190d21e1-4184-4d5f-b5f8-0840eab9bc68',
+		createdAt: '2025-01-16 21:15:00',
+		updatedAt: '2025-01-16 21:15:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: '7d1b0a31-6720-4bbc-9dfe-d5665e2a8b2d',
+		createdAt: '2025-01-19 17:40:00',
+		updatedAt: '2025-01-19 17:40:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: '8a6c8706-b8e4-45fe-818f-0b9cb166e5fe',
+		createdAt: '2025-01-22 12:10:00',
+		updatedAt: '2025-01-22 12:10:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'cfde544b-7a21-40d9-8467-3d359085d94a',
+		createdAt: '2025-01-25 06:45:00',
+		updatedAt: '2025-01-25 06:45:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: '2d048836-2196-4da8-ba2c-6954a5f7e76f',
+		createdAt: '2025-01-27 16:20:00',
+		updatedAt: '2025-01-27 16:20:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: '0b19c08c-b192-457d-be48-d5fb37ff2ec7',
+		createdAt: '2025-01-30 09:10:00',
+		updatedAt: '2025-01-30 09:10:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: '0d99f97c-a533-4929-a47b-0b129d85298a',
+		createdAt: '2025-02-02 19:30:00',
+		updatedAt: '2025-02-02 19:30:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: '12fe8d00-1eeb-4e4d-aa5f-bb28f5c33521',
+		createdAt: '2025-02-05 14:40:00',
+		updatedAt: '2025-02-05 14:40:00',
+		messages: [],
+		users: [],
+	},
+	{
+		id: 'b63e3d4d-04df-47e9-8e4f-736a67b77db2',
+		createdAt: '2025-02-08 08:15:00',
+		updatedAt: '2025-02-08 08:15:00',
+		messages: [],
+		users: [],
+	},
 ];

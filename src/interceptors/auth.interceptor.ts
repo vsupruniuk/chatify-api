@@ -1,6 +1,3 @@
-import { JWTPayloadDto } from '@DTO/JWTTokens/JWTPayload.dto';
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { IJWTTokensService } from '@Interfaces/jwt/IJWTTokensService';
 import {
 	CallHandler,
 	ExecutionContext,
@@ -9,9 +6,18 @@ import {
 	NestInterceptor,
 	UnauthorizedException,
 } from '@nestjs/common';
-import { TUserPayload } from '@Types/users/TUserPayload';
-import { Request } from 'express';
+import { HttpArgumentsHost } from '@nestjs/common/interfaces';
+
 import { Observable } from 'rxjs';
+import { Request } from 'express';
+
+import { CustomProviders } from '@enums';
+
+import { IJWTTokensService } from '@services';
+
+import { JWTPayloadDto } from '@dtos/jwt';
+
+import { GlobalTypes } from '@customTypes';
 
 @Injectable()
 export class AuthInterceptor implements NestInterceptor {
@@ -24,28 +30,28 @@ export class AuthInterceptor implements NestInterceptor {
 		context: ExecutionContext,
 		next: CallHandler,
 	): Promise<Observable<unknown>> {
-		const request: Request & TUserPayload = context.switchToHttp().getRequest();
+		const httpArgumentsHost: HttpArgumentsHost = context.switchToHttp();
+		const request: Request = httpArgumentsHost.getRequest<Request>();
 
-		const authHeader: string | undefined = request.headers.authorization;
+		const authHeader: string | undefined = request.headers['authorization'];
 
 		if (!authHeader) {
-			throw new UnauthorizedException(['Please, login to perform this action']);
+			throw new UnauthorizedException('Please, login to perform this action');
 		}
 
-		const [, accessToken]: string[] = authHeader.split(' ');
+		const [, accessToken] = authHeader.split(' ');
 
 		if (!accessToken) {
-			throw new UnauthorizedException(['Please, login to perform this action']);
+			throw new UnauthorizedException('Please, login to perform this action');
 		}
 
-		const userData: JWTPayloadDto | null =
-			await this._jwtTokensService.verifyAccessToken(accessToken);
+		const user: JWTPayloadDto | null = await this._jwtTokensService.verifyAccessToken(accessToken);
 
-		if (!userData) {
-			throw new UnauthorizedException(['Please, login to perform this action']);
+		if (!user) {
+			throw new UnauthorizedException('Please, login to perform this action');
 		}
 
-		request.user = userData;
+		(request as GlobalTypes.TAuthorizedRequest).user = user;
 
 		return next.handle();
 	}

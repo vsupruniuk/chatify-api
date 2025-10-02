@@ -14,29 +14,71 @@
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "strictBindCallApply": false,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "typeRoots": ["./node_modules/@types",
+      "./src/types"
+    ],
     "paths": {
-      "@Controllers/*": ["src/controllers/*"],
-      "@DB/*": ["src/db/*"],
-      "@Decorators/*": ["src/decorators/*"],
-      "@DTO/*": ["src/types/dto/*"],
-      "@EmailTemplates/*": ["src/emailTemplates/*"],
-      "@Entities/*": ["src/db/entities/*"],
-      "@Enums/*": ["src/types/enums/*"],
-      "@Filters/*": ["src/filters/*"],
-      "@Gateways/*": ["src/gateways/*"],
-      "@Helpers/*": ["src/helpers/*"],
-      "@Interceptors/*": ["src/interceptors/*"],
-      "@Interfaces/*": ["src/types/interfaces/*"],
-      "@Middlewares/*":  ["src/middlewares/*"],
-      "@Migrations/*":  ["src/db/migrations/*"],
-      "@Modules/*": ["src/modules/*"],
-      "@Repositories/*": ["src/repositories/*"],
-      "@Responses/*": ["src/types/responses/*"],
-      "@Services/*": ["src/services/*"],
-      "@TestMocks/*": ["src/tests/mocks/*"],
-      "@Types/*": ["src/types/types/*"]
+      "@configs/*": ["src/configs/*"],
+      "@configs": ["src/configs/index"],
+
+      "@controllers/*": ["src/controllers/*"],
+      "@controllers": ["src/controllers/index"],
+
+      "@customTypes/*": ["src/types/*"],
+      "@customTypes": ["src/types/index"],
+
+      "@decorators/*": ["src/decorators/*"],
+
+      "@dtos/*": ["src/dtos/*"],
+
+      "@emailTemplates/*": ["src/emailTemplates/*"],
+      "@emailTemplates": ["src/emailTemplates/index"],
+
+      "@entities/*": ["src/db/entities/*"],
+      "@entities": ["src/db/entities/index"],
+
+      "@enums/*": ["src/enums/*"],
+      "@enums": ["src/enums/index"],
+
+      "@filters/*": ["src/filters/*"],
+      "@filters": ["src/filters/index"],
+
+      "@gateways/*": ["src/gateways/*"],
+      "@gateways": ["src/gateways/index"],
+
+      "@helpers/*": ["src/helpers/*"],
+      "@helpers": ["src/helpers/index"],
+
+      "@interceptors/*": ["src/interceptors/*"],
+      "@interceptors": ["src/interceptors/index"],
+
+      "@middlewares/*":  ["src/middlewares/*"],
+      "@middlewares":  ["src/middlewares/index"],
+
+      "@modules/*": ["src/modules/*"],
+      "@modules": ["src/modules/index"],
+
+      "@pipes/*": ["src/pipes/*"],
+      "@pipes": ["src/pipes/index"],
+
+      "@repositories/*": ["src/repositories/*"],
+      "@repositories": ["src/repositories/index"],
+
+      "@responses/*": ["src/responses/*"],
+      "@responses": ["src/responses/index"],
+
+      "@services/*": ["src/services/*"],
+      "@services": ["src/services/index"],
+
+      "@testHelpers/*": ["src/tests/helpers/*"],
+      "@testHelpers": ["src/tests/helpers/index"],
+
+      "@testMocks/*": ["src/tests/mocks/*"],
+      "@testMocks": ["src/tests/mocks/index"]
     },
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false

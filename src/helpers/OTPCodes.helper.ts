@@ -1,12 +1,16 @@
-import { OTPCodeResponseDto } from '@DTO/OTPCodes/OTPCodeResponse.dto';
-import { DateHelper } from '@Helpers/date.helper';
 import * as crypto from 'crypto';
+
+import { DateHelper } from '@helpers';
+
+import { OTPCodeDto } from '@dtos/otpCode';
 
 /**
  * Helper clas for OTP codes
  */
 export class OTPCodesHelper {
-	private static OTP_CODE_LENGTH = 6;
+	private static OTP_CODE_LENGTH: number = 6;
+	private static MIN_CODE_DIGIT: number = 1;
+	private static MAX_CODE_DIGIT: number = 10;
 	/**
 	 * Generate random 6 digit OTP code
 	 * @return otpCode - generated OTP code
@@ -15,13 +19,7 @@ export class OTPCodesHelper {
 		let code: string = '';
 
 		while (code.length < this.OTP_CODE_LENGTH) {
-			const number: number = crypto.randomInt(0, 10);
-
-			if (!code.length && number === 0) {
-				continue;
-			}
-
-			code += number;
+			code += crypto.randomInt(this.MIN_CODE_DIGIT, this.MAX_CODE_DIGIT);
 		}
 
 		return Number(code);
@@ -29,12 +27,12 @@ export class OTPCodesHelper {
 
 	/**
 	 * Check if OTP code is expired
-	 * @param otpCode - code to check for expiration
+	 * @param otpCode - code for expiration checking
 	 * @returns true - if code is expired
 	 * @returns false - if code is not expired
 	 */
-	public static isExpired(otpCode: OTPCodeResponseDto): boolean {
-		if (otpCode.expiresAt === null) {
+	public static isExpired(otpCode: OTPCodeDto): boolean {
+		if (!otpCode.expiresAt) {
 			return true;
 		}
 

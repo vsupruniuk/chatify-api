@@ -1,7 +1,9 @@
-import { SearchController } from '@Controllers/search.controller';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import providers from '@Modules/providers/providers';
+
+import { SearchController } from '@controllers';
+
+import { providers } from '@modules/providers';
 
 @Module({
 	controllers: [SearchController],
@@ -13,12 +15,6 @@ import providers from '@Modules/providers/providers';
 
 		providers.CTF_USERS_SERVICE,
 		providers.CTF_USERS_REPOSITORY,
-
-		providers.CTF_ACCOUNT_SETTINGS_REPOSITORY,
-
-		providers.CTF_OTP_CODES_REPOSITORY,
-
-		providers.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 	],
 })
 export class SearchModule {}

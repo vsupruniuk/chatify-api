@@ -1,9 +1,3 @@
-import { AccountSettings } from '@Entities/AccountSettings.entity';
-import { DirectChat } from '@Entities/DirectChat.entity';
-import { GroupChat } from '@Entities/GroupChat.entity';
-import { JWTToken } from '@Entities/JWTToken.entity';
-import { OTPCode } from '@Entities/OTPCode.entity';
-import { PasswordResetToken } from '@Entities/PasswordResetToken.entity';
 import {
 	Column,
 	CreateDateColumn,
@@ -17,10 +11,19 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
+import {
+	AccountSettings,
+	DirectChat,
+	GroupChat,
+	JWTToken,
+	OTPCode,
+	PasswordResetToken,
+} from '@entities';
+
 /**
  * Domain entity representing user
  */
-@Entity('Users')
+@Entity('users')
 export class User {
 	@PrimaryGeneratedColumn('uuid')
 	public id: string;
@@ -33,6 +36,7 @@ export class User {
 	public about: string | null;
 
 	@Column({
+		name: 'avatar_url',
 		type: 'varchar',
 		length: 255,
 		nullable: true,
@@ -40,16 +44,9 @@ export class User {
 	public avatarUrl: string | null;
 
 	@CreateDateColumn({
+		name: 'created_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public createdAt: string;
 
@@ -63,16 +60,18 @@ export class User {
 	public email: string;
 
 	@Column({
+		name: 'first_name',
 		type: 'varchar',
 		length: 255,
 		nullable: false,
 	})
 	public firstName: string;
 
-	@Column({ type: 'boolean', default: false })
+	@Column({ name: 'is_activated', type: 'boolean', default: false })
 	public isActivated: boolean;
 
 	@Column({
+		name: 'last_name',
 		type: 'varchar',
 		length: 255,
 		nullable: true,
@@ -96,16 +95,9 @@ export class User {
 	public password: string;
 
 	@UpdateDateColumn({
+		name: 'updated_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public updatedAt: string;
 
@@ -113,29 +105,29 @@ export class User {
 		nullable: false,
 		onDelete: 'NO ACTION',
 	})
-	@JoinColumn({ name: 'accountSettingsId', referencedColumnName: 'id' })
+	@JoinColumn({ name: 'account_settings_id', referencedColumnName: 'id' })
 	public accountSettings: AccountSettings;
 
 	@OneToOne(() => JWTToken, (jwtToken: JWTToken) => jwtToken.user, {
 		nullable: true,
 		onDelete: 'SET NULL',
 	})
-	@JoinColumn({ name: 'jwtTokenId', referencedColumnName: 'id' })
-	public JWTToken: JWTToken | null;
+	@JoinColumn({ name: 'jwt_token_id', referencedColumnName: 'id' })
+	public jwtToken: JWTToken | null;
 
 	@OneToOne(() => OTPCode, (otpCode: OTPCode) => otpCode.user, {
 		nullable: true,
 		onDelete: 'SET NULL',
 	})
-	@JoinColumn({ name: 'otpCodeId', referencedColumnName: 'id' })
-	public OTPCode: OTPCode | null;
+	@JoinColumn({ name: 'otp_code_id', referencedColumnName: 'id' })
+	public otpCode: OTPCode | null;
 
 	@OneToOne(
 		() => PasswordResetToken,
 		(passwordResetToken: PasswordResetToken) => passwordResetToken.user,
 		{ nullable: true, onDelete: 'SET NULL' },
 	)
-	@JoinColumn({ name: 'passwordResetTokenId', referencedColumnName: 'id' })
+	@JoinColumn({ name: 'password_reset_token_id', referencedColumnName: 'id' })
 	public passwordResetToken: PasswordResetToken | null;
 
 	@ManyToMany(() => DirectChat, (directChat: DirectChat) => directChat.users, {
@@ -148,13 +140,13 @@ export class User {
 
 	@ManyToMany(() => User, (user: User) => user.blockedUsers, { onDelete: 'NO ACTION' })
 	@JoinTable({
-		name: 'UserBlockedUsers',
+		name: 'user_blocked_users',
 		joinColumn: {
-			name: 'userId',
+			name: 'user_id',
 			referencedColumnName: 'id',
 		},
 		inverseJoinColumn: {
-			name: 'blockedUserId',
+			name: 'blocked_user_id',
 			referencedColumnName: 'id',
 		},
 	})

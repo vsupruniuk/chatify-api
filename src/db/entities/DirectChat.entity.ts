@@ -1,5 +1,3 @@
-import { DirectChatMessage } from '@Entities/DirectChatMessage.entity';
-import { User } from '@Entities/User.entity';
 import {
 	CreateDateColumn,
 	Entity,
@@ -10,39 +8,27 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
+import { DirectChatMessage, User } from '@entities';
+
 /**
  * Domain entity representing direct chat between 2 users
  */
-@Entity('DirectChats')
+@Entity('direct_chats')
 export class DirectChat {
 	@PrimaryGeneratedColumn('uuid')
 	public id: string;
 
 	@CreateDateColumn({
+		name: 'created_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public createdAt: string;
 
 	@UpdateDateColumn({
+		name: 'updated_at',
 		type: 'timestamp',
 		nullable: false,
-		transformer: {
-			from(date: string): string {
-				return new Date(date).toISOString();
-			},
-			to(date: string): string {
-				return date;
-			},
-		},
 	})
 	public updatedAt: string;
 
@@ -58,13 +44,13 @@ export class DirectChat {
 		onDelete: 'NO ACTION',
 	})
 	@JoinTable({
-		name: 'DirectChatUsers',
+		name: 'direct_chats_users',
 		joinColumn: {
-			name: 'directChatId',
+			name: 'direct_chat_id',
 			referencedColumnName: 'id',
 		},
 		inverseJoinColumn: {
-			name: 'userId',
+			name: 'user_id',
 			referencedColumnName: 'id',
 		},
 	})

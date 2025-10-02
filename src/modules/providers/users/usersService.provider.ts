@@ -1,6 +1,8 @@
-import { CustomProviders } from '@Enums/CustomProviders.enum';
-import { UsersService } from '@Services/users.service';
 import { ClassProvider } from '@nestjs/common';
+
+import { CustomProviders } from '@enums';
+
+import { UsersService } from '@services';
 
 export const usersServiceProvider: ClassProvider = {
 	provide: CustomProviders.CTF_USERS_SERVICE,

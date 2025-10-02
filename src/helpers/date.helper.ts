@@ -37,6 +37,14 @@ export class DateHelper {
 		return targetDate.isBefore(currentDate);
 	}
 
+	/**
+	 * Generate and return current timestamp
+	 * @returns - current timestamp
+	 */
+	public static timestampNow(): number {
+		return dayjs().unix();
+	}
+
 	private static _formatDate(date: Dayjs): string {
 		return date.toISOString();
 	}
