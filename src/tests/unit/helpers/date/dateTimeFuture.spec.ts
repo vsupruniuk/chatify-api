@@ -25,5 +25,11 @@ describe('Date helper', (): void => {
 
 			expect(DateHelper.dateTimeFuture(0)).toBe(dateMock.toISOString());
 		});
+
+		it('should return current date and time if milliseconds negative number', (): void => {
+			jest.setSystemTime(dateMock);
+
+			expect(DateHelper.dateTimeFuture(-1000)).toBe(dateMock.toISOString());
+		});
 	});
 });
