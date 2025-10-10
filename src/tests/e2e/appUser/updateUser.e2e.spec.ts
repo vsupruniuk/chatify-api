@@ -495,5 +495,35 @@ describe('Update user', (): void => {
 			expect(userData.lastName).toBe(lastNameMock);
 			expect(userData.nickname).toBe(nicknameMock);
 		});
+
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const loginResponse: supertest.Response = await agent
+				.post('/auth/login')
+				.send({ email: createdUser.email, password: passwordMock });
+
+			const updateAppUserResponse: supertest.Response = await agent
+				.patch('/app-user')
+				.send({
+					about: `   ${aboutMock}   `,
+					firstName: `   ${firstNameMock}   `,
+					lastName: `   ${lastNameMock}   `,
+					nickname: `   ${nicknameMock}   `,
+				})
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				);
+
+			const userData: AppUserDto = (
+				updateAppUserResponse.body as SuccessfulResponseResult<AppUserDto>
+			).data;
+
+			expect(userData.about).toBe(aboutMock);
+			expect(userData.firstName).toBe(firstNameMock);
+			expect(userData.lastName).toBe(lastNameMock);
+			expect(userData.nickname).toBe(nicknameMock);
+		});
 	});
 });

@@ -130,6 +130,15 @@ describe('Resend activation code', (): void => {
 			expect(response.status).toBe(HttpStatus.OK);
 		});
 
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+			const response: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.patch('/auth/resend-activation-code')
+				.send({ email: `   ${createdUser.email}   ` });
+
+			expect(response.status).toBe(HttpStatus.OK);
+		});
+
 		it('should return null in response data if new activation code was generated and sent', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())

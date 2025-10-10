@@ -20,12 +20,16 @@ import { users, directChats, directChatsMessages } from '@testMocks';
 
 import { Headers, WSEvents, ResponseStatus } from '@enums';
 
-import { SuccessfulResponseResult } from '@responses/successfulResponses';
+import {
+	SuccessfulResponseResult,
+	SuccessfulWSResponseResult,
+} from '@responses/successfulResponses';
 import { ErrorWSResponseResult } from '@responses/errorResponses';
 import { WSResponseResult } from '@responses';
 import { ErrorField } from '@responses/errors';
 
 import { LoginResponseDto } from '@dtos/auth/login';
+import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
 
 describe('Send message', (): void => {
 	let app: INestApplication;
@@ -385,6 +389,41 @@ describe('Send message', (): void => {
 					expect((data as WSResponseResult).status).toBe(ResponseStatus.SUCCESS);
 					resolve();
 				});
+
+				senderSocket.on(WSEvents.ON_ERROR, () => {
+					reject('Message was not created for valid event');
+				});
+			});
+		});
+
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+			const loginResponse: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.post('/auth/login')
+				.send({ email: senderUser.email, password: passwordMock });
+
+			senderSocket = io(await app.getUrl(), {
+				transports: ['websocket'],
+				extraHeaders: {
+					[Headers.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				},
+			});
+
+			senderSocket.connect();
+
+			senderSocket.emit(WSEvents.SEND_MESSAGE, {
+				directChatId: `   ${directChat.id}   `,
+				messageText: `   ${chatMessage.messageText}   `,
+			});
+
+			await new Promise<void>((resolve, reject) => {
+				senderSocket.on(
+					WSEvents.ON_RECEIVE_MESSAGE,
+					(data: SuccessfulWSResponseResult<DirectChatMessageWithChatAndUserDto>) => {
+						expect(data.data.messageText).toBe(chatMessage.messageText);
+						resolve();
+					},
+				);
 
 				senderSocket.on(WSEvents.ON_ERROR, () => {
 					reject('Message was not created for valid event');

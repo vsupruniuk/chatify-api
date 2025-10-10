@@ -26,6 +26,7 @@ import { ErrorField } from '@responses/errors';
 import { WSResponseResult } from '@responses/WSResponseResult';
 
 import { LoginResponseDto } from '@dtos/auth/login';
+import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
 
 describe('Create direct chat', (): void => {
 	let app: INestApplication;
@@ -427,6 +428,45 @@ describe('Create direct chat', (): void => {
 					expect((data as WSResponseResult).status).toBe(ResponseStatus.SUCCESS);
 					resolve();
 				});
+
+				senderSocket.on(WSEvents.ON_ERROR, () => {
+					reject('Chat was not created for valid event');
+				});
+			});
+		});
+
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+			const loginResponse: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.post('/auth/login')
+				.send({ email: senderUser.email, password: passwordMock });
+
+			const receiver: User | null = await dataSource
+				.getRepository(User)
+				.findOne({ where: { email: receiverUser.email } });
+
+			senderSocket = io(await app.getUrl(), {
+				transports: ['websocket'],
+				extraHeaders: {
+					[Headers.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				},
+			});
+
+			senderSocket.connect();
+
+			senderSocket.emit(WSEvents.CREATE_CHAT, {
+				receiverId: `   ${receiver?.id}   `,
+				messageText: `   ${initialMessage.messageText}   `,
+			});
+
+			await new Promise<void>((resolve, reject) => {
+				senderSocket.on(
+					WSEvents.ON_CREATE_CHAT,
+					(data: SuccessfulResponseResult<DirectChatWithUsersAndMessagesDto>) => {
+						expect(data.data.messages[0].messageText).toBe(initialMessage.messageText);
+						resolve();
+					},
+				);
 
 				senderSocket.on(WSEvents.ON_ERROR, () => {
 					reject('Chat was not created for valid event');
