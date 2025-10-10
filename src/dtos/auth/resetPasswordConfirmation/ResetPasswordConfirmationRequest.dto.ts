@@ -1,8 +1,10 @@
 import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 import { IsStringsSimilar } from '@decorators/validation';
+import { Trim } from '@decorators/sanitizing';
 
 export class ResetPasswordConfirmationRequestDto {
+	@Trim()
 	@Matches(/^(?=.*[0-9])(?=.*[A-Z])/, {
 		message: '$property must contains at least 1 number and 1 uppercase character|$property',
 	})
@@ -11,6 +13,7 @@ export class ResetPasswordConfirmationRequestDto {
 	@IsString({ message: '$property must be a string|$property' })
 	public password: string;
 
+	@Trim()
 	@IsString({ message: '$property must be a string|$property' })
 	@Matches(/^(?=.*[0-9])(?=.*[A-Z])/, {
 		message: '$property must contains at least 1 number and 1 uppercase character|$property',

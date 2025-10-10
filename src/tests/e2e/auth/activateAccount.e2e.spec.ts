@@ -200,6 +200,19 @@ describe('Activate account', (): void => {
 			expect(response.status).toBe(HttpStatus.OK);
 		});
 
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+			jest.setSystemTime(dayjs(createdOtpCode.expiresAt).subtract(10, 'minutes').toDate());
+
+			const response: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.patch('/auth/activate-account')
+				.send({ email: `   ${createdUser.email}   `, code: <number>createdOtpCode.code });
+
+			console.log(response.body);
+
+			expect(response.status).toBe(HttpStatus.OK);
+		});
+
 		it('should return generated access token if user was activated', async (): Promise<void> => {
 			jest.setSystemTime(dayjs(createdOtpCode.expiresAt).subtract(10, 'minutes').toDate());
 

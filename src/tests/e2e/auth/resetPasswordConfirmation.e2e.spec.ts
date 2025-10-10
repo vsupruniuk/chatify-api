@@ -242,6 +242,19 @@ describe('Reset password confirmation', (): void => {
 			expect(response.status).toBe(HttpStatus.OK);
 		});
 
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+			jest.setSystemTime(
+				dayjs(createdPasswordResetToken.expiresAt).subtract(10, 'minutes').toDate(),
+			);
+
+			const response: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.patch(`/auth/reset-password/${createdPasswordResetToken.token}`)
+				.send({ password: '   Qwerty12345!   ', passwordConfirmation: '   Qwerty12345!   ' });
+
+			expect(response.status).toBe(HttpStatus.OK);
+		});
+
 		it('should return null in response body data if password was changed', async (): Promise<void> => {
 			jest.setSystemTime(
 				dayjs(createdPasswordResetToken.expiresAt).subtract(10, 'minutes').toDate(),

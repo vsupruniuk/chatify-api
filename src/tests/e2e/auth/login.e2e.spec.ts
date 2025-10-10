@@ -207,6 +207,24 @@ describe('Login', (): void => {
 			expect(response.status).toBe(HttpStatus.OK);
 		});
 
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+			await supertest.agent(app.getHttpServer()).post('/auth/signup').send({
+				email: createdUser.email,
+				firstName: createdUser.firstName,
+				lastName: createdUser.lastName,
+				nickname: createdUser.nickname,
+				password: passwordMock,
+				passwordConfirmation: passwordMock,
+			});
+
+			const response: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.post('/auth/login')
+				.send({ email: `   ${createdUser.email}   `, password: `   ${passwordMock}   ` });
+
+			expect(response.status).toBe(HttpStatus.OK);
+		});
+
 		it('should return generated access token in response body data', async (): Promise<void> => {
 			await supertest.agent(app.getHttpServer()).post('/auth/signup').send({
 				email: createdUser.email,

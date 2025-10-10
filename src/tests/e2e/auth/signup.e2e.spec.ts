@@ -562,6 +562,22 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.CREATED);
 		});
 
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+			const response: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.post('/auth/signup')
+				.send({
+					email: `   ${notExistingUser.email}   `,
+					nickname: `   ${notExistingUser.nickname}   `,
+					firstName: `   ${notExistingUser.firstName}   `,
+					lastName: `   ${notExistingUser.lastName}   `,
+					password: '   Qwerty12345!   ',
+					passwordConfirmation: '   Qwerty12345!   ',
+				});
+
+			expect(response.status).toBe(HttpStatus.CREATED);
+		});
+
 		it('should create user and return 201 Created status if last name is not provided', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
