@@ -77,8 +77,8 @@ export class UsersService implements IUsersService {
 
 	public async getActivatedUsersByNickname(
 		nickname: string,
-		page?: number,
-		take?: number,
+		page: number,
+		take: number,
 	): Promise<UserDto[]> {
 		const { skip: skipRecords, take: takeRecords } = PaginationHelper.toSQLPagination(page, take);
 

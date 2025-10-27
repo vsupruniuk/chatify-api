@@ -40,8 +40,8 @@ export class DirectChatsService implements IDirectChatsService {
 
 	public async getUserLastChats(
 		userId: string,
-		page?: number,
-		take?: number,
+		page: number,
+		take: number,
 	): Promise<DirectChatWithUsersAndMessagesDto[]> {
 		const { skip: skipRecords, take: takeRecords } = PaginationHelper.toSQLPagination(page, take);
 
@@ -63,8 +63,8 @@ export class DirectChatsService implements IDirectChatsService {
 	public async getChatMessages(
 		userId: string,
 		directChatId: string,
-		page?: number,
-		take?: number,
+		page: number,
+		take: number,
 	): Promise<DirectChatMessageWithChatAndUserDto[]> {
 		const { skip: skipRecords, take: takeRecords } = PaginationHelper.toSQLPagination(page, take);
 

@@ -81,6 +81,6 @@
       "@testMocks": ["src/tests/mocks/index"]
     },
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": true
   }
 }

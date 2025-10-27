@@ -18,6 +18,5 @@
     "no-console": "off",
     "object-shorthand": "off",
     "eqeqeq": "error"
-  },
-  "ignorePatterns": ["src/testsOld/"]
+  }
 }

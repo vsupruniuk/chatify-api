@@ -74,20 +74,8 @@ describe('Users service', () => {
 			);
 		});
 
-		it('should call find activated users by nickname from users repository if page and take parameters not provided', async (): Promise<void> => {
-			await usersService.getActivatedUsersByNickname(nickname);
-
-			expect(usersRepository.findActivatedUsersByNickname).toHaveBeenCalledTimes(1);
-			expect(usersRepository.findActivatedUsersByNickname).toHaveBeenNthCalledWith(
-				1,
-				nickname,
-				page,
-				take,
-			);
-		});
-
 		it('should return all found users', async (): Promise<void> => {
-			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname);
+			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname, page, take);
 
 			expect(users.sort()).toEqual(
 				usersMock
@@ -97,7 +85,7 @@ describe('Users service', () => {
 		});
 
 		it('should return users as array of UserDto', async (): Promise<void> => {
-			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname);
+			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname, page, take);
 
 			expect(users).toBeInstanceOf(Array);
 
@@ -109,7 +97,7 @@ describe('Users service', () => {
 		it('should return empty array if no users found', async (): Promise<void> => {
 			jest.spyOn(usersRepository, 'findActivatedUsersByNickname').mockResolvedValue([]);
 
-			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname);
+			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname, page, take);
 
 			expect(users).toHaveLength(0);
 		});

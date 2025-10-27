@@ -4,10 +4,7 @@ export class PaginationHelper {
 	 * @param page
 	 * @param take
 	 */
-	public static toSQLPagination(
-		page: number = 1,
-		take: number = 10,
-	): { skip: number; take: number } {
+	public static toSQLPagination(page: number, take: number): { skip: number; take: number } {
 		return {
 			skip: page * take - take,
 			take,
