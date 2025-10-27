@@ -21,4 +21,11 @@ export declare namespace GlobalTypes {
 			data: T;
 		};
 	}
+
+	interface IPagination {
+		page: number;
+		take: number;
+	}
+
+	interface IPaginationQueries extends Partial<Record<keyof IPagination, string>> {}
 }

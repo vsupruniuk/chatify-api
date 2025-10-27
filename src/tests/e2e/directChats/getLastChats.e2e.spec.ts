@@ -141,6 +141,42 @@ describe('Get last chats', (): void => {
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
 
+		it('should 400 Bad Request error if page query parameter is less than 1', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const loginResponse: supertest.Response = await agent
+				.post('/auth/login')
+				.send({ email: createdUser.email, password: passwordMock });
+
+			const chatsResponse: supertest.Response = await agent
+				.get('/direct-chats')
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				)
+				.query({ page: 0, take: 10 });
+
+			expect(chatsResponse.status).toBe(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should 400 Bad Request error if take query parameter is less than 1', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const loginResponse: supertest.Response = await agent
+				.post('/auth/login')
+				.send({ email: createdUser.email, password: passwordMock });
+
+			const chatsResponse: supertest.Response = await agent
+				.get('/direct-chats')
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				)
+				.query({ page: 1, take: 0 });
+
+			expect(chatsResponse.status).toBe(HttpStatus.BAD_REQUEST);
+		});
+
 		it('should 200 OK status if chats were found', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
@@ -155,6 +191,23 @@ describe('Get last chats', (): void => {
 					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
 				)
 				.query({ page: 1, take: 10 });
+
+			expect(chatsResponse.status).toBe(HttpStatus.OK);
+		});
+
+		it('should 200 OK status if pagination query parameters were not provided', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const loginResponse: supertest.Response = await agent
+				.post('/auth/login')
+				.send({ email: createdUser.email, password: passwordMock });
+
+			const chatsResponse: supertest.Response = await agent
+				.get('/direct-chats')
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				);
 
 			expect(chatsResponse.status).toBe(HttpStatus.OK);
 		});

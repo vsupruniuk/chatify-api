@@ -161,6 +161,60 @@ describe('Find users', (): void => {
 			expect(usersResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
+		it('should return 400 Bad Request error if page query parameter is less than 1', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const loginResponse: supertest.Response = await agent
+				.post('/auth/login')
+				.send({ email: createdUser.email, password: passwordMock });
+
+			const usersResponse: supertest.Response = await agent
+				.get('/search/find-users')
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				)
+				.query({ nickname: nicknamePattern, page: 0, take: 10 });
+
+			expect(usersResponse.status).toBe(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 Bad Request error if take query parameter is less than 1', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const loginResponse: supertest.Response = await agent
+				.post('/auth/login')
+				.send({ email: createdUser.email, password: passwordMock });
+
+			const usersResponse: supertest.Response = await agent
+				.get('/search/find-users')
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				)
+				.query({ nickname: nicknamePattern, page: 1, take: -1 });
+
+			expect(usersResponse.status).toBe(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 200 OK status if request is valid and query parameters are not provided', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const loginResponse: supertest.Response = await agent
+				.post('/auth/login')
+				.send({ email: createdUser.email, password: passwordMock });
+
+			const usersResponse: supertest.Response = await agent
+				.get('/search/find-users')
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				)
+				.query({ nickname: nicknamePattern });
+
+			expect(usersResponse.status).toBe(HttpStatus.OK);
+		});
+
 		it('should return 200 OK status if request is valid', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 

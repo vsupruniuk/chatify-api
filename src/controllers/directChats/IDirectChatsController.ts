@@ -1,6 +1,7 @@
 import { JWTPayloadDto } from '@dtos/jwt';
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
 import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
+import { GlobalTypes } from '@customTypes';
 
 export interface IDirectChatsController {
 	/**
@@ -12,8 +13,7 @@ export interface IDirectChatsController {
 	 */
 	getLastChats(
 		appUserPayload: JWTPayloadDto,
-		page?: number,
-		take?: number,
+		pagination: GlobalTypes.IPagination,
 	): Promise<DirectChatWithUsersAndMessagesDto[]>;
 
 	/**
@@ -27,7 +27,6 @@ export interface IDirectChatsController {
 	getChatMessages(
 		appUserPayload: JWTPayloadDto,
 		chatId: string,
-		page?: number,
-		take?: number,
+		pagination: GlobalTypes.IPagination,
 	): Promise<DirectChatMessageWithChatAndUserDto[]>;
 }

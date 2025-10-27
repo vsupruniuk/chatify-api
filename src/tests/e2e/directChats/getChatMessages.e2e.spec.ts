@@ -229,6 +229,42 @@ describe('Get chat messages', (): void => {
 			expect(chatMessagesResponse.status).toBe(HttpStatus.NOT_FOUND);
 		});
 
+		it('should return 400 Bad Request status if page query parameter is less than 1', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const loginResponse: supertest.Response = await agent
+				.post('/auth/login')
+				.send({ email: createdUser.email, password: passwordMock });
+
+			const chatMessagesResponse: supertest.Response = await agent
+				.get('/direct-chats/chat-messages')
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				)
+				.query({ chatId: userDirectChat.id, page: -1, take: 10 });
+
+			expect(chatMessagesResponse.status).toBe(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 Bad Request status if take query parameter is less than 1', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const loginResponse: supertest.Response = await agent
+				.post('/auth/login')
+				.send({ email: createdUser.email, password: passwordMock });
+
+			const chatMessagesResponse: supertest.Response = await agent
+				.get('/direct-chats/chat-messages')
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				)
+				.query({ chatId: userDirectChat.id, page: 1, take: -1 });
+
+			expect(chatMessagesResponse.status).toBe(HttpStatus.BAD_REQUEST);
+		});
+
 		it('should return 200 OK status if messages were found', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
@@ -243,6 +279,24 @@ describe('Get chat messages', (): void => {
 					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
 				)
 				.query({ chatId: userDirectChat.id, page: 1, take: 10 });
+
+			expect(chatMessagesResponse.status).toBe(HttpStatus.OK);
+		});
+
+		it('should return 200 OK status if request valid and query parameters were not provided', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const loginResponse: supertest.Response = await agent
+				.post('/auth/login')
+				.send({ email: createdUser.email, password: passwordMock });
+
+			const chatMessagesResponse: supertest.Response = await agent
+				.get('/direct-chats/chat-messages')
+				.set(
+					Headers.AUTHORIZATION,
+					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				)
+				.query({ chatId: userDirectChat.id });
 
 			expect(chatMessagesResponse.status).toBe(HttpStatus.OK);
 		});

@@ -7,11 +7,5 @@ describe('Pagination helper', (): void => {
 
 			expect(pagination).toEqual({ skip: 0, take: 5 });
 		});
-
-		it('should use default values for page and take', (): void => {
-			const pagination = PaginationHelper.toSQLPagination();
-
-			expect(pagination).toEqual({ skip: 0, take: 10 });
-		});
 	});
 });

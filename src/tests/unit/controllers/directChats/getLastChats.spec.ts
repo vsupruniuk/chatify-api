@@ -84,7 +84,7 @@ describe('Direct chats controller', (): void => {
 		});
 
 		it('should call get user last chats from direct chats service to obtain last chats', async (): Promise<void> => {
-			await directChatsController.getLastChats(appUserPayload, page, take);
+			await directChatsController.getLastChats(appUserPayload, { page, take });
 
 			expect(directChatsService.getUserLastChats).toHaveBeenCalledTimes(1);
 			expect(directChatsService.getUserLastChats).toHaveBeenNthCalledWith(
@@ -92,18 +92,6 @@ describe('Direct chats controller', (): void => {
 				appUserPayload.id,
 				page,
 				take,
-			);
-		});
-
-		it('should call get user last chats method without pagination parameters if they were not provided', async (): Promise<void> => {
-			await directChatsController.getLastChats(appUserPayload);
-
-			expect(directChatsService.getUserLastChats).toHaveBeenCalledTimes(1);
-			expect(directChatsService.getUserLastChats).toHaveBeenNthCalledWith(
-				1,
-				appUserPayload.id,
-				undefined,
-				undefined,
 			);
 		});
 
@@ -112,8 +100,7 @@ describe('Direct chats controller', (): void => {
 
 			const chats: DirectChatWithUsersAndMessagesDto[] = await directChatsController.getLastChats(
 				appUserPayload,
-				page,
-				take,
+				{ page, take },
 			);
 
 			expect(chats).toHaveLength(0);
@@ -122,8 +109,7 @@ describe('Direct chats controller', (): void => {
 		it('should return all founded chats', async (): Promise<void> => {
 			const chats: DirectChatWithUsersAndMessagesDto[] = await directChatsController.getLastChats(
 				appUserPayload,
-				page,
-				take,
+				{ page, take },
 			);
 
 			expect(chats.sort()).toEqual(
@@ -140,8 +126,7 @@ describe('Direct chats controller', (): void => {
 		it('should return all founded chats as array of DirectChatWithUsersAndMessagesDto', async (): Promise<void> => {
 			const chats: DirectChatWithUsersAndMessagesDto[] = await directChatsController.getLastChats(
 				appUserPayload,
-				page,
-				take,
+				{ page, take },
 			);
 
 			expect(chats).toBeInstanceOf(Array);

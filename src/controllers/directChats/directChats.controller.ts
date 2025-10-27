@@ -1,12 +1,4 @@
-import {
-	Controller,
-	Get,
-	Inject,
-	ParseIntPipe,
-	ParseUUIDPipe,
-	Query,
-	UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Inject, ParseUUIDPipe, UseInterceptors } from '@nestjs/common';
 
 import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
@@ -14,13 +6,14 @@ import { JWTPayloadDto } from '@dtos/jwt';
 
 import { AuthInterceptor, ResponseTransformInterceptor } from '@interceptors';
 
-import { AppUserPayload, QueryRequired } from '@decorators/data';
+import { AppUserPayload, Pagination, QueryRequired } from '@decorators/data';
 
 import { CustomProviders } from '@enums';
 
 import { IDirectChatsController } from '@controllers';
 
 import { IDirectChatsService } from '@services';
+import { GlobalTypes } from '@customTypes';
 
 @Controller('direct-chats')
 @UseInterceptors(AuthInterceptor)
@@ -35,11 +28,13 @@ export class DirectChatsController implements IDirectChatsController {
 	public async getLastChats(
 		@AppUserPayload() appUserPayload: JWTPayloadDto,
 
-		@Query('page', new ParseIntPipe({ optional: true })) page?: number,
-
-		@Query('take', new ParseIntPipe({ optional: true })) take?: number,
+		@Pagination() pagination: GlobalTypes.IPagination,
 	): Promise<DirectChatWithUsersAndMessagesDto[]> {
-		return await this._directChatsService.getUserLastChats(appUserPayload.id, page, take);
+		return await this._directChatsService.getUserLastChats(
+			appUserPayload.id,
+			pagination.page,
+			pagination.take,
+		);
 	}
 
 	@Get('chat-messages')
@@ -48,10 +43,13 @@ export class DirectChatsController implements IDirectChatsController {
 
 		@QueryRequired('chatId', ParseUUIDPipe) chatId: string,
 
-		@Query('page', new ParseIntPipe({ optional: true })) page?: number,
-
-		@Query('take', new ParseIntPipe({ optional: true })) take?: number,
+		@Pagination() pagination: GlobalTypes.IPagination,
 	): Promise<DirectChatMessageWithChatAndUserDto[]> {
-		return await this._directChatsService.getChatMessages(appUserPayload.id, chatId, page, take);
+		return await this._directChatsService.getChatMessages(
+			appUserPayload.id,
+			chatId,
+			pagination.page,
+			pagination.take,
+		);
 	}
 }

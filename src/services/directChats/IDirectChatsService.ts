@@ -11,8 +11,8 @@ export interface IDirectChatsService {
 	 */
 	getUserLastChats(
 		userId: string,
-		page?: number,
-		take?: number,
+		page: number,
+		take: number,
 	): Promise<DirectChatWithUsersAndMessagesDto[]>;
 
 	/**
@@ -44,8 +44,8 @@ export interface IDirectChatsService {
 	getChatMessages(
 		userId: string,
 		directChatId: string,
-		page?: number,
-		take?: number,
+		page: number,
+		take: number,
 	): Promise<DirectChatMessageWithChatAndUserDto[]>;
 
 	/**

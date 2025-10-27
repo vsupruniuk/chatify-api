@@ -86,7 +86,7 @@ describe('Direct chats controller', (): void => {
 		});
 
 		it('should call get chat messages method from direct chats service to get chat messages', async (): Promise<void> => {
-			await directChatsController.getChatMessages(appUserPayload, chatId, page, take);
+			await directChatsController.getChatMessages(appUserPayload, chatId, { page, take });
 
 			expect(directChatsService.getChatMessages).toHaveBeenCalledTimes(1);
 			expect(directChatsService.getChatMessages).toHaveBeenNthCalledWith(
@@ -98,31 +98,18 @@ describe('Direct chats controller', (): void => {
 			);
 		});
 
-		it('should call get chat messages method without pagination parameters if they were not provided', async (): Promise<void> => {
-			await directChatsController.getChatMessages(appUserPayload, chatId);
-
-			expect(directChatsService.getChatMessages).toHaveBeenCalledTimes(1);
-			expect(directChatsService.getChatMessages).toHaveBeenNthCalledWith(
-				1,
-				appUserPayload.id,
-				chatId,
-				undefined,
-				undefined,
-			);
-		});
-
 		it('should return empty array if no messages were found', async (): Promise<void> => {
 			jest.spyOn(directChatsService, 'getChatMessages').mockResolvedValue([]);
 
 			const messages: DirectChatMessageWithChatAndUserDto[] =
-				await directChatsController.getChatMessages(appUserPayload, chatId, page, take);
+				await directChatsController.getChatMessages(appUserPayload, chatId, { page, take });
 
 			expect(messages).toHaveLength(0);
 		});
 
 		it('should return all founded messages', async (): Promise<void> => {
 			const messages: DirectChatMessageWithChatAndUserDto[] =
-				await directChatsController.getChatMessages(appUserPayload, chatId, page, take);
+				await directChatsController.getChatMessages(appUserPayload, chatId, { page, take });
 
 			expect(messages.sort()).toEqual(
 				directChatMessagesMock
@@ -137,7 +124,7 @@ describe('Direct chats controller', (): void => {
 
 		it('should return all founded messages as array of DirectChatMessageWithChatAndUserDto', async (): Promise<void> => {
 			const messages: DirectChatMessageWithChatAndUserDto[] =
-				await directChatsController.getChatMessages(appUserPayload, chatId, page, take);
+				await directChatsController.getChatMessages(appUserPayload, chatId, { page, take });
 
 			expect(messages).toBeInstanceOf(Array);
 
