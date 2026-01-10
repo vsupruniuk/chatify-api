@@ -1,6 +1,7 @@
 import { UnprocessableEntityException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { plainToInstance } from 'class-transformer';
 import { DataSource } from 'typeorm';
 
 import { AccountSettingsService } from '@services';
@@ -11,7 +12,7 @@ import { AccountSettings } from '@entities';
 
 import { accountSettings, users } from '@testMocks';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import {
 	UpdateAccountSettingsRequestDto,
@@ -30,21 +31,19 @@ describe('Account settings service', (): void => {
 				AccountSettingsService,
 
 				providers.CTF_ACCOUNT_SETTINGS_REPOSITORY,
-				providers.CTF_USERS_SERVICE,
-				providers.CTF_USERS_REPOSITORY,
 
 				{ provide: DataSource, useValue: {} },
 			],
 		}).compile();
 
 		accountSettingsService = moduleFixture.get(AccountSettingsService);
-		accountSettingsRepository = moduleFixture.get(CustomProviders.CTF_ACCOUNT_SETTINGS_REPOSITORY);
+		accountSettingsRepository = moduleFixture.get(CustomProvider.CTF_ACCOUNT_SETTINGS_REPOSITORY);
 	});
 
 	describe('Update account settings', (): void => {
 		const accountSettingsMock: AccountSettings = accountSettings[1];
-
 		const userIdMock: string = users[0].id;
+
 		const updateAccountSettingsRequestDtoMock: UpdateAccountSettingsRequestDto = {
 			notification: accountSettingsMock.notification,
 			enterIsSending: accountSettingsMock.enterIsSending,
@@ -93,7 +92,9 @@ describe('Account settings service', (): void => {
 					updateAccountSettingsRequestDtoMock,
 				);
 
-			expect(accountSettings.id).toBe(accountSettingsMock.id);
+			expect(accountSettings).toEqual(
+				plainToInstance(AccountSettingsDto, accountSettingsMock, { excludeExtraneousValues: true }),
+			);
 		});
 
 		it('should return response as instance of AccountSettingsDto', async (): Promise<void> => {

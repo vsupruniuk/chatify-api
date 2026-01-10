@@ -1,6 +1,10 @@
 import { BadRequestException, ExecutionContext } from '@nestjs/common';
+
 import { MetadataHelper } from '@testHelpers';
+
 import { Pagination } from '@decorators/data';
+
+import { paginationConfig } from '@configs';
 
 describe('Pagination decorator', (): void => {
 	it('should return pagination queries as number values', async (): Promise<void> => {
@@ -19,7 +23,7 @@ describe('Pagination decorator', (): void => {
 		expect(result).toEqual({ page: 2, take: 15 });
 	});
 
-	it('should use default values for page and take parameters if some of the queries are not provided', async (): Promise<void> => {
+	it('should use default values for page and take parameters if they are not provided', async (): Promise<void> => {
 		const factory: CallableFunction = MetadataHelper.getParamDecoratorFactory(Pagination);
 
 		const executionContext: ExecutionContext = {
@@ -32,7 +36,10 @@ describe('Pagination decorator', (): void => {
 
 		const result = await factory('', executionContext);
 
-		expect(result).toEqual({ page: 1, take: 10 });
+		expect(result).toEqual({
+			page: Number(paginationConfig.pageQueryDefaultValue),
+			take: Number(paginationConfig.takeQueryDefaultValue),
+		});
 	});
 
 	it('should throw bad request exception if page query is less than 1', async (): Promise<void> => {

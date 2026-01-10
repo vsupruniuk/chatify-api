@@ -7,9 +7,9 @@ import { JwtTokensService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { IJWTTokensRepository } from '@repositories';
+import { IJwtTokensRepository } from '@repositories';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { JWTToken } from '@entities';
 
@@ -17,7 +17,7 @@ import { jwtTokens } from '@testMocks';
 
 describe('JWT tokens service', (): void => {
 	let jwtTokensService: JwtTokensService;
-	let jwtTokensRepository: IJWTTokensRepository;
+	let jwtTokensRepository: IJwtTokensRepository;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -32,7 +32,7 @@ describe('JWT tokens service', (): void => {
 		}).compile();
 
 		jwtTokensService = moduleFixture.get(JwtTokensService);
-		jwtTokensRepository = moduleFixture.get(CustomProviders.CTF_JWT_TOKENS_REPOSITORY);
+		jwtTokensRepository = moduleFixture.get(CustomProvider.CTF_JWT_TOKENS_REPOSITORY);
 	});
 
 	describe('Save refresh token', (): void => {

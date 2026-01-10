@@ -7,7 +7,7 @@ import { AuthController } from '@controllers';
 
 import { IAuthService } from '@services';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { providers } from '@modules/providers';
 
@@ -44,7 +44,7 @@ describe('Auth controller', (): void => {
 		}).compile();
 
 		authController = moduleFixture.get(AuthController);
-		authService = moduleFixture.get(CustomProviders.CTF_AUTH_SERVICE);
+		authService = moduleFixture.get(CustomProvider.CTF_AUTH_SERVICE);
 	});
 
 	describe('Reset password confirmation', (): void => {

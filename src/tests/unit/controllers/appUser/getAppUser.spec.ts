@@ -12,12 +12,12 @@ import { User } from '@entities';
 
 import { users } from '@testMocks';
 
-import { JWTPayloadDto } from '@dtos/jwt';
-import { AppUserDto } from '@dtos/appUser';
+import { JwtPayloadDto } from '@dtos/jwt';
+import { UserWithAccountSettingsDto } from '@dtos/users';
 
 import { IAppUserService } from '@services';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 describe('App user controller', (): void => {
 	let appUserController: AppUserController;
@@ -45,19 +45,19 @@ describe('App user controller', (): void => {
 		}).compile();
 
 		appUserController = moduleFixture.get(AppUserController);
-		appUserService = moduleFixture.get(CustomProviders.CTF_APP_USER_SERVICE);
+		appUserService = moduleFixture.get(CustomProvider.CTF_APP_USER_SERVICE);
 	});
 
 	describe('Get app user', (): void => {
 		const userMock: User = users[5];
 
-		const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, userMock, {
+		const appUserPayload: JwtPayloadDto = plainToInstance(JwtPayloadDto, userMock, {
 			excludeExtraneousValues: true,
 		});
 
 		beforeEach((): void => {
 			jest.spyOn(appUserService, 'getAppUser').mockResolvedValue(
-				plainToInstance(AppUserDto, userMock, {
+				plainToInstance(UserWithAccountSettingsDto, userMock, {
 					excludeExtraneousValues: true,
 				}),
 			);
@@ -75,17 +75,17 @@ describe('App user controller', (): void => {
 		});
 
 		it('should return founded user', async (): Promise<void> => {
-			const user: AppUserDto = await appUserController.getAppUser(appUserPayload);
+			const user: UserWithAccountSettingsDto = await appUserController.getAppUser(appUserPayload);
 
 			expect(user).toEqual(
-				plainToInstance(AppUserDto, userMock, { excludeExtraneousValues: true }),
+				plainToInstance(UserWithAccountSettingsDto, userMock, { excludeExtraneousValues: true }),
 			);
 		});
 
 		it('should return a user as instance of AppUserDto', async (): Promise<void> => {
-			const user: AppUserDto = await appUserController.getAppUser(appUserPayload);
+			const user: UserWithAccountSettingsDto = await appUserController.getAppUser(appUserPayload);
 
-			expect(user).toBeInstanceOf(AppUserDto);
+			expect(user).toBeInstanceOf(UserWithAccountSettingsDto);
 		});
 	});
 });

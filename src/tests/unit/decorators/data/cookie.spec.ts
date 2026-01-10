@@ -4,7 +4,7 @@ import { MetadataHelper } from '@testHelpers';
 
 import { Cookie } from '@decorators/data';
 
-describe('Cookie decorator', () => {
+describe('Cookie decorator', (): void => {
 	const cookies: Record<string, string> = {
 		refreshToken: 'refreshTokenValue',
 		accessToken: 'accessTokenValue',
@@ -18,19 +18,11 @@ describe('Cookie decorator', () => {
 		}),
 	} as ExecutionContext;
 
-	it('should return a cookie value by the name, if name is provided', (): void => {
+	it('should return a cookie value by the name', (): void => {
 		const factory: CallableFunction = MetadataHelper.getParamDecoratorFactory(Cookie);
 
 		const cookie: string = factory('refreshToken', executionContext);
 
 		expect(cookie).toBe(cookies.refreshToken);
-	});
-
-	it('should return all cookies, if name is not provided', (): void => {
-		const factory: CallableFunction = MetadataHelper.getParamDecoratorFactory(Cookie);
-
-		const cookie: string = factory('', executionContext);
-
-		expect(cookie).toEqual(cookies);
 	});
 });

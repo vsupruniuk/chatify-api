@@ -1,6 +1,8 @@
+import * as dayjs from 'dayjs';
+
 export const accountActivationTemplate = (OTPCode: number): string => {
-	const logoUrl: string | undefined = process.env.APP_LOGO_URL;
-	const currentYear: number = new Date().getFullYear();
+	const logoUrl: string | undefined = String(process.env.APP_LOGO_URL);
+	const currentYear: number = dayjs().year();
 
 	return `<!DOCTYPE html>
 <html lang="en">

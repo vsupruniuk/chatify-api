@@ -2,26 +2,28 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { plainToInstance } from 'class-transformer';
 import { DataSource } from 'typeorm';
 
-import { AuthService, IUsersService, IJWTTokensService } from '@services';
+import { AuthService, IUsersService, IJwtTokensService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User, JWTToken } from '@entities';
 
 import { users, jwtTokens } from '@testMocks';
 
 import { LoginRequestDto, LoginDto } from '@dtos/auth/login';
+import { FullUserWithJwtTokenDto } from '@dtos/users';
 
 import { PasswordHelper, TransformHelper } from '@helpers';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;
 	let usersService: IUsersService;
-	let jwtTokensService: IJWTTokensService;
+	let jwtTokensService: IJwtTokensService;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -31,14 +33,17 @@ describe('Auth service', (): void => {
 				JwtService,
 
 				providers.CTF_USERS_SERVICE,
-				providers.CTF_EMAIL_SERVICE,
-				providers.CTF_JWT_TOKENS_SERVICE,
-				providers.CTF_OTP_CODES_SERVICE,
-				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
-
 				providers.CTF_USERS_REPOSITORY,
+
+				providers.CTF_EMAIL_SERVICE,
+
+				providers.CTF_JWT_TOKENS_SERVICE,
 				providers.CTF_JWT_TOKENS_REPOSITORY,
+
+				providers.CTF_OTP_CODES_SERVICE,
 				providers.CTF_OTP_CODES_REPOSITORY,
+
+				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
 				providers.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 
 				{ provide: DataSource, useValue: {} },
@@ -46,21 +51,28 @@ describe('Auth service', (): void => {
 		}).compile();
 
 		authService = moduleFixture.get(AuthService);
-		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
-		jwtTokensService = moduleFixture.get(CustomProviders.CTF_JWT_TOKENS_SERVICE);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
+		jwtTokensService = moduleFixture.get(CustomProvider.CTF_JWT_TOKENS_SERVICE);
 	});
 
 	describe('Login', (): void => {
 		const userMock: User = users[2];
 		const accessTokenMock: JWTToken = jwtTokens[2];
-		const refreshTokenMock: JWTToken = jwtTokens[2];
+		const refreshTokenMock: JWTToken = jwtTokens[3];
 
 		const loginRequestDto: LoginRequestDto = { email: userMock.email, password: userMock.password };
 
 		beforeEach((): void => {
 			jest
 				.spyOn(usersService, 'getFullUserWithJwtTokenByEmail')
-				.mockResolvedValue({ ...userMock, jwtToken: { ...refreshTokenMock } });
+				.mockResolvedValue(
+					plainToInstance(
+						FullUserWithJwtTokenDto,
+						{ ...userMock, jwtToken: { ...refreshTokenMock } },
+						{ excludeExtraneousValues: true },
+					),
+				);
+
 			jest
 				.spyOn(jwtTokensService, 'generateAccessToken')
 				.mockResolvedValue(accessTokenMock.token as string);
@@ -68,6 +80,7 @@ describe('Auth service', (): void => {
 				.spyOn(jwtTokensService, 'generateRefreshToken')
 				.mockResolvedValue(refreshTokenMock.token as string);
 			jest.spyOn(jwtTokensService, 'saveRefreshToken').mockImplementation(jest.fn());
+
 			jest.spyOn(PasswordHelper, 'validatePassword').mockResolvedValue(true);
 			jest.spyOn(TransformHelper, 'toJwtTokenPayload').mockReturnValue(userMock);
 		});
@@ -113,20 +126,28 @@ describe('Auth service', (): void => {
 			await authService.login(loginRequestDto);
 
 			expect(TransformHelper.toJwtTokenPayload).toHaveBeenCalledTimes(2);
-			expect(TransformHelper.toJwtTokenPayload).toHaveBeenNthCalledWith(1, {
-				...userMock,
-				jwtToken: refreshTokenMock,
-			});
+			expect(TransformHelper.toJwtTokenPayload).toHaveBeenNthCalledWith(
+				1,
+				plainToInstance(
+					FullUserWithJwtTokenDto,
+					{ ...userMock, jwtToken: { ...refreshTokenMock } },
+					{ excludeExtraneousValues: true },
+				),
+			);
 		});
 
 		it('should call to jwt token payload method from transform helper to transform user data for generating refresh token', async (): Promise<void> => {
 			await authService.login(loginRequestDto);
 
 			expect(TransformHelper.toJwtTokenPayload).toHaveBeenCalledTimes(2);
-			expect(TransformHelper.toJwtTokenPayload).toHaveBeenNthCalledWith(2, {
-				...userMock,
-				jwtToken: refreshTokenMock,
-			});
+			expect(TransformHelper.toJwtTokenPayload).toHaveBeenNthCalledWith(
+				2,
+				plainToInstance(
+					FullUserWithJwtTokenDto,
+					{ ...userMock, jwtToken: { ...refreshTokenMock } },
+					{ excludeExtraneousValues: true },
+				),
+			);
 		});
 
 		it('should call generate access token method from jwt tokens service to generate user access token', async (): Promise<void> => {

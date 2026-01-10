@@ -8,7 +8,7 @@ interface IPasswordFields {
 }
 
 export class PasswordHashingPipe implements PipeTransform {
-	public async transform<T extends IPasswordFields>(value: T): Promise<T> {
+	public async transform<V extends IPasswordFields>(value: V): Promise<V> {
 		if (value.password) {
 			value.password = await PasswordHelper.hashPassword(value.password);
 		}

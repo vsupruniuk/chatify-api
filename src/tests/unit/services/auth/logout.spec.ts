@@ -4,11 +4,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { DataSource } from 'typeorm';
 
-import { AuthService, IJWTTokensService } from '@services';
+import { AuthService, IJwtTokensService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User } from '@entities';
 
@@ -16,7 +16,7 @@ import { users, jwtTokens } from '@testMocks';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;
-	let jwtTokensService: IJWTTokensService;
+	let jwtTokensService: IJwtTokensService;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -26,14 +26,17 @@ describe('Auth service', (): void => {
 				JwtService,
 
 				providers.CTF_USERS_SERVICE,
-				providers.CTF_EMAIL_SERVICE,
-				providers.CTF_JWT_TOKENS_SERVICE,
-				providers.CTF_OTP_CODES_SERVICE,
-				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
-
 				providers.CTF_USERS_REPOSITORY,
+
+				providers.CTF_EMAIL_SERVICE,
+
+				providers.CTF_JWT_TOKENS_SERVICE,
 				providers.CTF_JWT_TOKENS_REPOSITORY,
+
+				providers.CTF_OTP_CODES_SERVICE,
 				providers.CTF_OTP_CODES_REPOSITORY,
+
+				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
 				providers.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 
 				{ provide: DataSource, useValue: {} },
@@ -41,7 +44,7 @@ describe('Auth service', (): void => {
 		}).compile();
 
 		authService = moduleFixture.get(AuthService);
-		jwtTokensService = moduleFixture.get(CustomProviders.CTF_JWT_TOKENS_SERVICE);
+		jwtTokensService = moduleFixture.get(CustomProvider.CTF_JWT_TOKENS_SERVICE);
 	});
 
 	describe('Logout', (): void => {

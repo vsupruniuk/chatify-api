@@ -75,5 +75,5 @@ export interface IAuthController {
 	 * @param refreshToken - user refresh token from cookies
 	 * @returns LoginResponseDto - access token from login
 	 */
-	refresh(response: Response, refreshToken: string | undefined): Promise<LoginResponseDto>;
+	refresh(response: Response, refreshToken?: string): Promise<LoginResponseDto>;
 }

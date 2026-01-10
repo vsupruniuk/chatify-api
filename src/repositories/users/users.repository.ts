@@ -110,7 +110,7 @@ export class UsersRepository implements IUsersRepository {
 			.getOne();
 	}
 
-	public async findActivatedUsersByNickname(
+	public async findUsersByNicknameAndActive(
 		nickname: string,
 		skip: number,
 		take: number,

@@ -8,15 +8,15 @@ import { EmailService } from '@services';
 
 import * as templates from '@emailTemplates/resetPasswordTemplate';
 
-import { EmailPriority, Environments } from '@enums';
+import { EmailPriority, EmailSubject, Environment } from '@enums';
 
 describe('Email service', (): void => {
 	let emailService: EmailService;
 
-	const appNameMock: string = 'Chatify';
-	const smtpUserMock: string = 'smtpUserMock';
-	const clientUrlMock: string = 'very-secret-web-app';
-	const environmentMock: string = Environments.PROD;
+	const appNameMock: string = String(process.env.APP_NAME);
+	const smtpUserMock: string = String(process.env.SMTP_USER);
+	const clientUrlMock: string = String(process.env.CLIENT_URL);
+	const environmentMock: Environment = Environment.PROD;
 
 	const transporterMock: Transporter = {
 		verify: jest.fn(),
@@ -24,9 +24,6 @@ describe('Email service', (): void => {
 	} as unknown as Transporter;
 
 	beforeAll(async (): Promise<void> => {
-		process.env.APP_NAME = appNameMock;
-		process.env.SMTP_USER = smtpUserMock;
-		process.env.CLIENT_URL = clientUrlMock;
 		process.env.NODE_ENV = environmentMock;
 
 		jest.spyOn(nodemailer, 'createTransport').mockReturnValue(transporterMock);
@@ -39,9 +36,6 @@ describe('Email service', (): void => {
 	});
 
 	afterAll((): void => {
-		delete process.env.APP_NAME;
-		delete process.env.SMTP_USER;
-		delete process.env.CLIENT_URL;
 		delete process.env.NODE_ENV;
 
 		jest.restoreAllMocks();
@@ -82,7 +76,7 @@ describe('Email service', (): void => {
 				from: { name: appNameMock, address: smtpUserMock },
 				sender: { name: appNameMock, address: smtpUserMock },
 				to: receiverEmail,
-				subject: 'Password reset',
+				subject: EmailSubject.PASSWORD_RESET,
 				text: resetPasswordTemplateMock,
 				html: resetPasswordTemplateMock,
 				priority: EmailPriority.HIGH,
@@ -93,7 +87,7 @@ describe('Email service', (): void => {
 		});
 
 		it('should not call send mail method from nodemailer transporter if current environment is not in list of supported', async (): Promise<void> => {
-			process.env.NODE_ENV = Environments.DEV;
+			process.env.NODE_ENV = Environment.DEV;
 
 			await emailService.sendResetPasswordEmail(receiverEmail, userName, token);
 

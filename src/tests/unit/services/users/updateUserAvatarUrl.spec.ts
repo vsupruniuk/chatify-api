@@ -8,7 +8,7 @@ import { IUsersRepository } from '@repositories';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User } from '@entities';
 
@@ -30,7 +30,7 @@ describe('Users service', (): void => {
 		}).compile();
 
 		usersService = moduleFixture.get(UsersService);
-		usersRepository = moduleFixture.get(CustomProviders.CTF_USERS_REPOSITORY);
+		usersRepository = moduleFixture.get(CustomProvider.CTF_USERS_REPOSITORY);
 	});
 
 	describe('Update user avatar url', (): void => {
@@ -47,14 +47,14 @@ describe('Users service', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should call update user avatar url method from users repository with avatar url', async (): Promise<void> => {
+		it('should call update user avatar url method from users repository with avatar url if it was provided', async (): Promise<void> => {
 			await usersService.updateUserAvatarUrl(userId, avatarUrl);
 
 			expect(usersRepository.updateUserAvatarUrl).toHaveBeenCalledTimes(1);
 			expect(usersRepository.updateUserAvatarUrl).toHaveBeenNthCalledWith(1, userId, avatarUrl);
 		});
 
-		it('should call update user avatar url method from users repository with null', async (): Promise<void> => {
+		it('should call update user avatar url method from users repository with null if null was provided', async (): Promise<void> => {
 			await usersService.updateUserAvatarUrl(userId, null);
 
 			expect(usersRepository.updateUserAvatarUrl).toHaveBeenCalledTimes(1);

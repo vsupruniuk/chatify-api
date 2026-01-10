@@ -3,11 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { PasswordHelper } from '@helpers';
 
 describe('Password helper', (): void => {
-	const passwordSaltHashRoundsMock: string = '7';
-
-	beforeAll((): void => {
-		process.env.PASSWORD_SALT_HASH_ROUNDS = passwordSaltHashRoundsMock;
-	});
+	const passwordSaltHashRoundsMock: number = Number(process.env.PASSWORD_SALT_HASH_ROUNDS);
 
 	afterAll((): void => {
 		delete process.env.PASSWORD_SALT_HASH_ROUNDS;
@@ -29,11 +25,7 @@ describe('Password helper', (): void => {
 			await PasswordHelper.hashPassword(rawPassword);
 
 			expect(bcrypt.hash).toHaveBeenCalledTimes(1);
-			expect(bcrypt.hash).toHaveBeenNthCalledWith(
-				1,
-				rawPassword,
-				Number(passwordSaltHashRoundsMock),
-			);
+			expect(bcrypt.hash).toHaveBeenNthCalledWith(1, rawPassword, passwordSaltHashRoundsMock);
 		});
 
 		it('should return hashed password', async (): Promise<void> => {

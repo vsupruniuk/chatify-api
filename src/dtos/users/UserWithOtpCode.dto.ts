@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer';
 
-import { OTPCodeDto } from '@dtos/otpCode';
+import { OtpCodeDto } from '@dtos/otpCode';
 
 export class UserWithOtpCodeDto {
 	@Expose()
@@ -25,6 +25,6 @@ export class UserWithOtpCodeDto {
 	public nickname: string;
 
 	@Expose()
-	@Type(() => OTPCodeDto)
-	public otpCode: OTPCodeDto;
+	@Type(() => OtpCodeDto)
+	public otpCode: OtpCodeDto;
 }

@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import { WSEvents } from '@enums';
+import { WSEvent } from '@enums';
 
 export interface IWSClientsService {
 	/**
@@ -22,5 +22,5 @@ export interface IWSClientsService {
 	 * @param event - name of the event
 	 * @param data - data for notification
 	 */
-	notifyAllClients<T extends object>(usersIds: string[], event: WSEvents, data: T): void;
+	notifyAllClients<T extends object>(usersIds: string[], event: WSEvent, data: T): void;
 }

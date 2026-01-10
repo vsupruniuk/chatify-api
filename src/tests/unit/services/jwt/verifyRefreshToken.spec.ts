@@ -7,7 +7,7 @@ import { JwtTokensService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 
 import { User } from '@entities';
 
@@ -17,11 +17,9 @@ describe('JWT tokens service', (): void => {
 	let jwtTokensService: JwtTokensService;
 	let jwtService: JwtService;
 
-	const refreshTokenSecretMock: string = 'refreshTokenSecretMock';
+	const refreshTokenSecretMock: string = String(process.env.JWT_REFRESH_TOKEN_SECRET);
 
 	beforeAll(async (): Promise<void> => {
-		process.env.JWT_REFRESH_TOKEN_SECRET = refreshTokenSecretMock;
-
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			providers: [
 				JwtService,
@@ -37,21 +35,16 @@ describe('JWT tokens service', (): void => {
 		jwtService = moduleFixture.get(JwtService);
 	});
 
-	afterAll((): void => {
-		delete process.env.JWT_REFRESH_TOKEN_SECRET;
-	});
-
 	describe('Verify refresh token', (): void => {
+		const refreshToken: string = jwtTokens[2].token as string;
 		const userMock: User = users[5];
-		const payloadMock: JWTPayloadDto = {
+		const payloadMock: JwtPayloadDto = {
 			id: userMock.id,
 			email: userMock.email,
 			firstName: userMock.firstName,
 			lastName: userMock.lastName,
 			nickname: userMock.nickname,
 		};
-
-		const refreshToken: string = jwtTokens[2].token as string;
 
 		beforeEach((): void => {
 			jest.spyOn(jwtService, 'verifyAsync').mockResolvedValue(payloadMock);
@@ -71,7 +64,7 @@ describe('JWT tokens service', (): void => {
 		});
 
 		it('should return user payload if refresh token valid', async (): Promise<void> => {
-			const payload: JWTPayloadDto | null = await jwtTokensService.verifyRefreshToken(refreshToken);
+			const payload: JwtPayloadDto | null = await jwtTokensService.verifyRefreshToken(refreshToken);
 
 			expect(payload).toEqual(payloadMock);
 		});
@@ -79,7 +72,7 @@ describe('JWT tokens service', (): void => {
 		it('should return null if refresh token is not valid', async (): Promise<void> => {
 			jest.spyOn(jwtService, 'verifyAsync').mockRejectedValue(new Error());
 
-			const payload: JWTPayloadDto | null = await jwtTokensService.verifyRefreshToken(refreshToken);
+			const payload: JwtPayloadDto | null = await jwtTokensService.verifyRefreshToken(refreshToken);
 
 			expect(payload).toBeNull();
 		});

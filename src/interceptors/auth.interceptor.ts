@@ -11,19 +11,19 @@ import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
-import { IJWTTokensService } from '@services';
+import { IJwtTokensService } from '@services';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 
-import { GlobalTypes } from '@customTypes';
+import { AuthTypes } from '@customTypes';
 
 @Injectable()
 export class AuthInterceptor implements NestInterceptor {
 	constructor(
-		@Inject(CustomProviders.CTF_JWT_TOKENS_SERVICE)
-		private readonly _jwtTokensService: IJWTTokensService,
+		@Inject(CustomProvider.CTF_JWT_TOKENS_SERVICE)
+		private readonly _jwtTokensService: IJwtTokensService,
 	) {}
 
 	public async intercept(
@@ -33,7 +33,7 @@ export class AuthInterceptor implements NestInterceptor {
 		const httpArgumentsHost: HttpArgumentsHost = context.switchToHttp();
 		const request: Request = httpArgumentsHost.getRequest<Request>();
 
-		const authHeader: string | undefined = request.headers['authorization'];
+		const authHeader: string | undefined = request.headers.authorization;
 
 		if (!authHeader) {
 			throw new UnauthorizedException('Please, login to perform this action');
@@ -45,13 +45,13 @@ export class AuthInterceptor implements NestInterceptor {
 			throw new UnauthorizedException('Please, login to perform this action');
 		}
 
-		const user: JWTPayloadDto | null = await this._jwtTokensService.verifyAccessToken(accessToken);
+		const user: JwtPayloadDto | null = await this._jwtTokensService.verifyAccessToken(accessToken);
 
 		if (!user) {
 			throw new UnauthorizedException('Please, login to perform this action');
 		}
 
-		(request as GlobalTypes.TAuthorizedRequest).user = user;
+		(request as AuthTypes.TAuthorizedRequest).user = user;
 
 		return next.handle();
 	}

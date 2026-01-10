@@ -1,51 +1,54 @@
 import { Injectable } from '@nestjs/common';
 
-import * as crypto from 'crypto';
-import { promisify } from 'util';
+import * as crypto from 'node:crypto';
+import { promisify } from 'node:util';
 
 import { ICryptoService } from '@services';
 
+import { cryptoConfig } from '@configs';
+
 @Injectable()
 export class CryptoService implements ICryptoService {
-	private readonly _ivLength: number = Number(process.env.CRYPTO_IV_LENGTH);
-	private readonly _saltLength: number = Number(process.env.CRYPTO_SALT_LENGTH);
-	private readonly _keyLength: number = Number(process.env.CRYPTO_KEY_LENGTH);
-	private readonly _password: string = String(process.env.CRYPTO_PASSWORD);
-	private readonly _algorithm: string = String(process.env.CRYPTO_CIPHER_ALGORITHM);
-	private readonly _encryptionEncoding: string = String(process.env.CRYPTO_ENCRYPTION_ENCODING);
-
 	public async encryptText(text: string): Promise<string> {
-		const iv: Buffer = crypto.randomBytes(this._ivLength);
-		const salt: Buffer = crypto.randomBytes(this._saltLength);
-		const key = (await promisify(crypto.scrypt)(this._password, salt, this._keyLength)) as Buffer;
+		const iv: Buffer = crypto.randomBytes(cryptoConfig.ivLength);
+		const salt: Buffer = crypto.randomBytes(cryptoConfig.saltLength);
+		const key = (await promisify(crypto.scrypt)(
+			cryptoConfig.password,
+			salt,
+			cryptoConfig.keyLength,
+		)) as Buffer;
 
-		const cipher: crypto.Cipher = crypto.createCipheriv(this._algorithm, key, iv);
+		const cipher: crypto.Cipher = crypto.createCipheriv(cryptoConfig.algorithm, key, iv);
 		const encryptedText: Buffer = Buffer.concat([cipher.update(text, 'utf-8'), cipher.final()]);
 
 		return Buffer.concat([salt, iv, encryptedText]).toString(
-			this._encryptionEncoding as BufferEncoding,
+			cryptoConfig.encryptionEncoding as BufferEncoding,
 		);
 	}
 
 	public async decryptText(encryptedText: string): Promise<string> {
 		const encryptedBuffer: Buffer = Buffer.from(
 			encryptedText,
-			this._encryptionEncoding as BufferEncoding,
+			cryptoConfig.encryptionEncoding as BufferEncoding,
 		);
 
-		const salt: Buffer = encryptedBuffer.subarray(0, this._saltLength);
+		const salt: Buffer = encryptedBuffer.subarray(0, cryptoConfig.saltLength);
 		const iv: Buffer = encryptedBuffer.subarray(
-			this._saltLength,
-			this._saltLength + this._ivLength,
+			cryptoConfig.saltLength,
+			cryptoConfig.saltLength + cryptoConfig.ivLength,
 		);
 
 		const encryptedTextContent: Buffer = encryptedBuffer.subarray(
-			this._saltLength + this._ivLength,
+			cryptoConfig.saltLength + cryptoConfig.ivLength,
 		);
 
-		const key = (await promisify(crypto.scrypt)(this._password, salt, this._keyLength)) as Buffer;
+		const key = (await promisify(crypto.scrypt)(
+			cryptoConfig.password,
+			salt,
+			cryptoConfig.keyLength,
+		)) as Buffer;
 
-		const decipher: crypto.Decipher = crypto.createDecipheriv(this._algorithm, key, iv);
+		const decipher: crypto.Decipher = crypto.createDecipheriv(cryptoConfig.algorithm, key, iv);
 
 		const decryptedText: Buffer = Buffer.concat([
 			decipher.update(encryptedTextContent),

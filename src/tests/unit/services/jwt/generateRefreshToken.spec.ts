@@ -7,7 +7,7 @@ import { JwtTokensService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 
 import { User } from '@entities';
 
@@ -17,13 +17,10 @@ describe('JWT tokens service', (): void => {
 	let jwtTokensService: JwtTokensService;
 	let jwtService: JwtService;
 
-	const refreshTokenSecretMock: string = 'refreshTokenSecretMock';
-	const refreshTokenExpiresInMock: string = '50000';
+	const refreshTokenSecretMock: string = String(process.env.JWT_REFRESH_TOKEN_SECRET);
+	const refreshTokenExpiresInMock: string = String(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN);
 
 	beforeAll(async (): Promise<void> => {
-		process.env.JWT_REFRESH_TOKEN_SECRET = refreshTokenSecretMock;
-		process.env.JWT_REFRESH_TOKEN_EXPIRES_IN = refreshTokenExpiresInMock;
-
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			providers: [
 				JwtService,
@@ -39,16 +36,11 @@ describe('JWT tokens service', (): void => {
 		jwtService = moduleFixture.get(JwtService);
 	});
 
-	afterAll((): void => {
-		delete process.env.JWT_REFRESH_TOKEN_SECRET;
-		delete process.env.JWT_REFRESH_TOKEN_EXPIRES_IN;
-	});
-
 	describe('Generate refresh token', (): void => {
 		const refreshTokenMock: string = jwtTokens[2].token as string;
 		const userMock: User = users[5];
 
-		const payload: JWTPayloadDto = {
+		const payload: JwtPayloadDto = {
 			id: userMock.id,
 			email: userMock.email,
 			firstName: userMock.firstName,

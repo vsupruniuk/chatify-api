@@ -42,7 +42,7 @@ describe('Users repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should use query builder and create a query for updating user public information', async (): Promise<void> => {
+		it('should use query builder and update user public information', async (): Promise<void> => {
 			await usersRepository.updateAppUser(userIdMock, updateAppUserDto);
 
 			expect(queryBuilderMock.createQueryBuilder).toHaveBeenCalledTimes(2);

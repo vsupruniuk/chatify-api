@@ -10,48 +10,49 @@ import {
 
 import { IAppUserService, IUsersService } from '@services';
 
-import { AppUserDto, UpdateAppUserRequestDto } from '@dtos/appUser';
-import { JWTPayloadDto } from '@dtos/jwt';
-import { UserDto } from '@dtos/users';
+import { UpdateAppUserRequestDto } from '@dtos/appUser';
+import { JwtPayloadDto } from '@dtos/jwt';
+import { UserDto, UserWithAccountSettingsDto } from '@dtos/users';
 
 import { User } from '@entities';
 
 import { TransformHelper, FileHelper } from '@helpers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { IUsersRepository } from '@repositories';
 
 @Injectable()
 export class AppUserService implements IAppUserService {
 	constructor(
-		@Inject(CustomProviders.CTF_USERS_REPOSITORY)
+		@Inject(CustomProvider.CTF_USERS_REPOSITORY)
 		private readonly _usersRepository: IUsersRepository,
 
-		@Inject(CustomProviders.CTF_USERS_SERVICE)
+		@Inject(CustomProvider.CTF_USERS_SERVICE)
 		private readonly _usersService: IUsersService,
 	) {}
 
-	public async getAppUser(id: string): Promise<AppUserDto> {
-		const user: User | null = await this._usersRepository.findByIdWithAccountSettings(id);
+	public async getAppUser(id: string): Promise<UserWithAccountSettingsDto> {
+		const user: UserWithAccountSettingsDto | null =
+			await this._usersService.getByIdWithAccountSettings(id);
 
 		if (!user) {
 			throw new NotFoundException('This user does not exist');
 		}
 
-		return TransformHelper.toTargetDto(AppUserDto, user);
+		return user;
 	}
 
 	public async updateAppUser(
-		appUserPayload: JWTPayloadDto,
+		appUserPayload: JwtPayloadDto,
 		updateAppUserDto: UpdateAppUserRequestDto,
-	): Promise<AppUserDto> {
+	): Promise<UserWithAccountSettingsDto> {
 		const isNewNickname: boolean = Boolean(
 			updateAppUserDto.nickname && updateAppUserDto.nickname !== appUserPayload.nickname,
 		);
 
 		if (isNewNickname && updateAppUserDto.nickname) {
-			const existingUser: User | null = await this._usersRepository.findByNickname(
+			const existingUser: UserDto | null = await this._usersService.getByNickname(
 				updateAppUserDto.nickname,
 			);
 
@@ -69,7 +70,7 @@ export class AppUserService implements IAppUserService {
 			throw new UnprocessableEntityException('Failed to update user information, please try again');
 		}
 
-		return TransformHelper.toTargetDto(AppUserDto, updatedUser);
+		return TransformHelper.toTargetDto(UserWithAccountSettingsDto, updatedUser);
 	}
 
 	public async deleteUserAvatar(userId: string): Promise<void> {

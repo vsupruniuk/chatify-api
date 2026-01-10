@@ -13,7 +13,7 @@ import {
 	DirectChatMessageWithChatAndUserStrategy,
 } from '@services/crypto/decryptionStrategy/strategies';
 
-import * as wsAuthModule from '@middlewares/wsAuth.middleware';
+import * as wsAuthModule from '@middlewares/wsAuthMiddleware';
 
 describe('Direct chats gateway', (): void => {
 	let directChatsGateway: DirectChatsGateway;
@@ -30,8 +30,6 @@ describe('Direct chats gateway', (): void => {
 
 				providers.CTF_DIRECT_CHATS_SERVICE,
 				providers.CTF_DIRECT_CHATS_REPOSITORY,
-
-				providers.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY,
 
 				providers.CTF_USERS_SERVICE,
 				providers.CTF_USERS_REPOSITORY,
@@ -58,7 +56,7 @@ describe('Direct chats gateway', (): void => {
 		const authMiddlewareMock: jest.Mock = jest.fn();
 
 		beforeEach((): void => {
-			jest.spyOn(wsAuthModule, 'WsAuthMiddleware').mockReturnValue(authMiddlewareMock);
+			jest.spyOn(wsAuthModule, 'wsAuthMiddleware').mockReturnValue(authMiddlewareMock);
 		});
 
 		afterEach((): void => {

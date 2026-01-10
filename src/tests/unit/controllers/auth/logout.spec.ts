@@ -8,7 +8,7 @@ import { AuthController } from '@controllers';
 
 import { IAuthService } from '@services';
 
-import { CustomProviders, CookiesNames } from '@enums';
+import { CustomProvider, CookiesName } from '@enums';
 
 import { providers } from '@modules/providers';
 
@@ -43,7 +43,7 @@ describe('Auth controller', (): void => {
 		}).compile();
 
 		authController = moduleFixture.get(AuthController);
-		authService = moduleFixture.get(CustomProviders.CTF_AUTH_SERVICE);
+		authService = moduleFixture.get(CustomProvider.CTF_AUTH_SERVICE);
 	});
 
 	describe('Logout', (): void => {
@@ -69,7 +69,7 @@ describe('Auth controller', (): void => {
 			await authController.logout(response, refreshToken);
 
 			expect(response.clearCookie).toHaveBeenCalledTimes(1);
-			expect(response.clearCookie).toHaveBeenNthCalledWith(1, CookiesNames.REFRESH_TOKEN);
+			expect(response.clearCookie).toHaveBeenNthCalledWith(1, CookiesName.REFRESH_TOKEN);
 		});
 
 		it('should return nothing', async (): Promise<void> => {

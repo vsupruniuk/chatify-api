@@ -1,60 +1,62 @@
 import { Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { IJWTTokensService } from '@services';
+import { IJwtTokensService } from '@services';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
-import { IJWTTokensRepository } from '@repositories';
+import { IJwtTokensRepository } from '@repositories';
 
 import { JWTToken } from '@entities';
 
-export class JwtTokensService implements IJWTTokensService {
+import { jwtConfig } from '@configs';
+
+export class JwtTokensService implements IJwtTokensService {
 	constructor(
 		private readonly _jwtService: JwtService,
 
-		@Inject(CustomProviders.CTF_JWT_TOKENS_REPOSITORY)
-		private readonly _jwtTokensRepository: IJWTTokensRepository,
+		@Inject(CustomProvider.CTF_JWT_TOKENS_REPOSITORY)
+		private readonly _jwtTokensRepository: IJwtTokensRepository,
 	) {}
 
-	public async generateAccessToken(payload: JWTPayloadDto): Promise<string> {
+	public async generateAccessToken(payload: JwtPayloadDto): Promise<string> {
 		return await this._jwtService.signAsync(payload, {
-			secret: process.env.JWT_ACCESS_TOKEN_SECRET,
-			expiresIn: Number(process.env.JWT_ACCESS_TOKEN_EXPIRES_IN),
+			secret: jwtConfig.accessTokenSecret,
+			expiresIn: jwtConfig.accessTokenExpiresIn,
 		});
 	}
 
-	public async generateRefreshToken(payload: JWTPayloadDto): Promise<string> {
+	public async generateRefreshToken(payload: JwtPayloadDto): Promise<string> {
 		return await this._jwtService.signAsync(payload, {
-			secret: process.env.JWT_REFRESH_TOKEN_SECRET,
-			expiresIn: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN),
+			secret: jwtConfig.refreshTokenSecret,
+			expiresIn: jwtConfig.refreshTokenExpiresIn,
 		});
+	}
+
+	public async verifyAccessToken(token: string): Promise<JwtPayloadDto | null> {
+		try {
+			return await this._jwtService.verifyAsync<JwtPayloadDto>(token, {
+				secret: jwtConfig.accessTokenSecret,
+			});
+		} catch (err) {
+			return null;
+		}
+	}
+
+	public async verifyRefreshToken(token: string): Promise<JwtPayloadDto | null> {
+		try {
+			return await this._jwtService.verifyAsync<JwtPayloadDto>(token, {
+				secret: jwtConfig.refreshTokenSecret,
+			});
+		} catch (err) {
+			return null;
+		}
 	}
 
 	public async saveRefreshToken(id: string, token: string): Promise<void> {
 		await this._jwtTokensRepository.updateToken(id, token);
-	}
-
-	public async verifyAccessToken(token: string): Promise<JWTPayloadDto | null> {
-		try {
-			return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
-				secret: process.env.JWT_ACCESS_TOKEN_SECRET,
-			});
-		} catch (err) {
-			return null;
-		}
-	}
-
-	public async verifyRefreshToken(token: string): Promise<JWTPayloadDto | null> {
-		try {
-			return await this._jwtService.verifyAsync<JWTPayloadDto>(token, {
-				secret: process.env.JWT_REFRESH_TOKEN_SECRET,
-			});
-		} catch (err) {
-			return null;
-		}
 	}
 
 	public async resetUserToken(userId: string): Promise<boolean> {

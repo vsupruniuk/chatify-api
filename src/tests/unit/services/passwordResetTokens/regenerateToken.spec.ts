@@ -8,7 +8,7 @@ import { IPasswordResetTokensRepository } from '@repositories';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { PasswordResetToken } from '@entities';
 
@@ -35,7 +35,7 @@ describe('Password reset tokens service', (): void => {
 
 		passwordResetTokensService = moduleFixture.get(PasswordResetTokensService);
 		passwordResetTokensRepository = moduleFixture.get(
-			CustomProviders.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
+			CustomProvider.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 		);
 	});
 

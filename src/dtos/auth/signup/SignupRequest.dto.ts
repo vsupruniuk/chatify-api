@@ -3,6 +3,8 @@ import { IsEmail, IsOptional, IsString, Matches, MaxLength, MinLength } from 'cl
 import { IsStringsSimilar } from '@decorators/validation';
 import { Trim } from '@decorators/sanitizing';
 
+import { passwordConfig } from '@configs';
+
 export class SignupRequestDto {
 	@Trim()
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
@@ -31,7 +33,7 @@ export class SignupRequestDto {
 	public nickname: string;
 
 	@Trim()
-	@Matches(/^(?=.*[0-9])(?=.*[A-Z])/, {
+	@Matches(passwordConfig.validationRegExp, {
 		message: '$property must contains at least 1 number and 1 uppercase character|$property',
 	})
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
@@ -43,7 +45,7 @@ export class SignupRequestDto {
 	@IsStringsSimilar('password', {
 		message: 'Password and password confirmation must match|$property',
 	})
-	@Matches(/^(?=.*[0-9])(?=.*[A-Z])/, {
+	@Matches(passwordConfig.validationRegExp, {
 		message: '$property must contains at least 1 number and 1 uppercase character|$property',
 	})
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })

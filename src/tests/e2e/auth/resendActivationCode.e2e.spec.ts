@@ -19,10 +19,14 @@ import { users, accountSettings, otpCodes } from '@testMocks';
 
 import { SuccessfulResponseResult } from '@responses/successfulResponses';
 
+import { Route } from '@enums';
+
 describe('Resend activation code', (): void => {
 	let app: INestApplication;
 	let postgresContainer: StartedTestContainer;
 	let dataSource: DataSource;
+
+	const route: string = `/${Route.AUTH}/${Route.RESEND_ACTIVATION_CODE}`;
 
 	beforeAll(async (): Promise<void> => {
 		postgresContainer = await TestDatabaseHelper.initDbContainer();
@@ -40,7 +44,7 @@ describe('Resend activation code', (): void => {
 		app.useGlobalPipes(new ValidationPipe(validationPipeConfig));
 		app.useGlobalFilters(new GlobalExceptionFilter());
 
-		await app.listen(Number(process.env.TESTS_PORT));
+		await app.listen(Number(process.env.PORT));
 	});
 
 	afterAll(async (): Promise<void> => {
@@ -49,7 +53,7 @@ describe('Resend activation code', (): void => {
 		await app.close();
 	});
 
-	describe('PATCH /auth/resend-activation-code', (): void => {
+	describe(`PATCH ${route}`, (): void => {
 		const createdUser: User = users[3];
 		const createdAccountSettings: AccountSettings = accountSettings[3];
 		const createdOtpCode: OTPCode = otpCodes[3];
@@ -79,7 +83,7 @@ describe('Resend activation code', (): void => {
 		it('should return 400 Bad Request error if email is missed', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch(route)
 				.send({});
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -88,7 +92,7 @@ describe('Resend activation code', (): void => {
 		it('should return 400 Bad Request error if email is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch(route)
 				.send({ email: 123456 });
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -97,7 +101,7 @@ describe('Resend activation code', (): void => {
 		it('should return 400 Bad Request error if email is not valid', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch(route)
 				.send({ email: 't.odinson' });
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -106,7 +110,7 @@ describe('Resend activation code', (): void => {
 		it('should return 400 Bad Request error if email is more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch(route)
 				.send({ email: createdUser.email.padStart(256, 't') });
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -115,26 +119,26 @@ describe('Resend activation code', (): void => {
 		it('should return 404 Not Found error if user with this email was not found', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch(route)
 				.send({ email: notCreatedUser.email });
 
 			expect(response.status).toBe(HttpStatus.NOT_FOUND);
 		});
 
-		it('should return 200 OK status if new activation code was generated and sent', async (): Promise<void> => {
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
-				.send({ email: createdUser.email });
+				.patch(route)
+				.send({ email: `   ${createdUser.email}   ` });
 
 			expect(response.status).toBe(HttpStatus.OK);
 		});
 
-		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+		it('should return 200 OK status if new activation code was generated and sent', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
-				.send({ email: `   ${createdUser.email}   ` });
+				.patch(route)
+				.send({ email: createdUser.email });
 
 			expect(response.status).toBe(HttpStatus.OK);
 		});
@@ -142,7 +146,7 @@ describe('Resend activation code', (): void => {
 		it('should return null in response data if new activation code was generated and sent', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/resend-activation-code')
+				.patch(route)
 				.send({ email: createdUser.email });
 
 			expect((response.body as SuccessfulResponseResult).data).toBeNull();

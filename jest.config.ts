@@ -85,6 +85,7 @@ const config: Config = {
 		'!src/modules/**',
 		'!src/responses/**',
 		'!src/tests/**',
+		'!src/types/**',
 	],
 	testMatch: ['<rootDir>/src/tests/unit/**/*.spec.ts'],
 };

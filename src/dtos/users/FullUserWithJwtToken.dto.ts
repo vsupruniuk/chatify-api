@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer';
 
-import { JWTTokenDto } from '@dtos/jwt';
+import { JwtTokenDto } from '@dtos/jwt';
 
 export class FullUserWithJwtTokenDto {
 	@Expose()
@@ -37,6 +37,6 @@ export class FullUserWithJwtTokenDto {
 	public updatedAt: string;
 
 	@Expose()
-	@Type(() => JWTTokenDto)
-	public jwtToken: JWTTokenDto;
+	@Type(() => JwtTokenDto)
+	public jwtToken: JwtTokenDto;
 }

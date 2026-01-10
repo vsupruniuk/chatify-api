@@ -12,11 +12,11 @@ import { User } from '@entities';
 
 import { users } from '@testMocks';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 
 import { IAppUserService } from '@services';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 describe('App user controller', (): void => {
 	let appUserController: AppUserController;
@@ -44,13 +44,13 @@ describe('App user controller', (): void => {
 		}).compile();
 
 		appUserController = moduleFixture.get(AppUserController);
-		appUserService = moduleFixture.get(CustomProviders.CTF_APP_USER_SERVICE);
+		appUserService = moduleFixture.get(CustomProvider.CTF_APP_USER_SERVICE);
 	});
 
 	describe('Delete avatar', (): void => {
 		const userMock: User = users[1];
 
-		const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, userMock, {
+		const appUserPayload: JwtPayloadDto = plainToInstance(JwtPayloadDto, userMock, {
 			excludeExtraneousValues: true,
 		});
 

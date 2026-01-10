@@ -1,2 +1,2 @@
-export * from './JWTPayload.dto';
-export * from './JWTToken.dto';
+export * from './JwtPayload.dto';
+export * from './JwtToken.dto';

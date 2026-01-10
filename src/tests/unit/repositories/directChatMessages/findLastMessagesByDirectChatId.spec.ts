@@ -2,13 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { DataSource } from 'typeorm';
 
-import { QueryBuilderMock } from '@testMocks';
-
 import { DirectChatMessagesRepository } from '@repositories';
 
 import { DirectChatMessage } from '@entities';
 
-import { directChatsMessages, directChats } from '@testMocks';
+import { directChatsMessages, directChats, QueryBuilderMock } from '@testMocks';
 
 describe('Direct chat messages repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();
@@ -31,6 +29,10 @@ describe('Direct chat messages repository', (): void => {
 		const directChatId: string = directChats[0].id;
 		const skip: number = 5;
 		const take: number = 10;
+
+		beforeEach((): void => {
+			queryBuilderMock.getMany.mockReturnValue(expectedMessages);
+		});
 
 		afterEach((): void => {
 			jest.clearAllMocks();
@@ -101,8 +103,6 @@ describe('Direct chat messages repository', (): void => {
 		});
 
 		it('should return array of relevant messages', async (): Promise<void> => {
-			queryBuilderMock.getMany.mockReturnValue(expectedMessages);
-
 			const messages: DirectChatMessage[] =
 				await directChatMessagesRepository.findLastMessagesByDirectChatId(directChatId, skip, take);
 

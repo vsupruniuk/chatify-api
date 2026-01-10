@@ -6,7 +6,7 @@ import { providers } from '@modules/providers';
 
 import { directChats, users, directChatsMessages } from '@testMocks';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { ICryptoService } from '@services';
 import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decryptionStrategy/strategies';
@@ -14,7 +14,7 @@ import { DirectChatWithUsersAndMessagesStrategy } from '@services/crypto/decrypt
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
 import { DirectChatMessageWithUserDto } from '@dtos/directChatMessages';
 
-describe('Direct chat message with chat and user strategy', (): void => {
+describe('Direct chat with users and messages strategy', (): void => {
 	let directChatWithUsersAndMessagesStrategy: DirectChatWithUsersAndMessagesStrategy;
 	let cryptoService: ICryptoService;
 
@@ -26,7 +26,7 @@ describe('Direct chat message with chat and user strategy', (): void => {
 		directChatWithUsersAndMessagesStrategy = moduleFixture.get(
 			DirectChatWithUsersAndMessagesStrategy,
 		);
-		cryptoService = moduleFixture.get(CustomProviders.CTF_CRYPTO_SERVICE);
+		cryptoService = moduleFixture.get(CustomProvider.CTF_CRYPTO_SERVICE);
 	});
 
 	describe('Decrypt', (): void => {
@@ -44,7 +44,6 @@ describe('Direct chat message with chat and user strategy', (): void => {
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-			jest.clearAllMocks();
 		});
 
 		it('should call decrypt text method from crypto service to decrypt message text', async (): Promise<void> => {

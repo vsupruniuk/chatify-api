@@ -9,21 +9,21 @@ import { AuthInterceptor } from '@interceptors';
 
 import { providers } from '@modules/providers';
 
-import { IJWTTokensService } from '@services';
+import { IJwtTokensService } from '@services';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User } from '@entities';
 
 import { users } from '@testMocks';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 
-import { GlobalTypes } from '@customTypes';
+import { AuthTypes } from '@customTypes';
 
 describe('Auth interceptor', (): void => {
 	let authInterceptor: AuthInterceptor;
-	let jwtTokensService: IJWTTokensService;
+	let jwtTokensService: IJwtTokensService;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -40,21 +40,21 @@ describe('Auth interceptor', (): void => {
 		}).compile();
 
 		authInterceptor = moduleFixture.get(AuthInterceptor);
-		jwtTokensService = moduleFixture.get(CustomProviders.CTF_JWT_TOKENS_SERVICE);
+		jwtTokensService = moduleFixture.get(CustomProvider.CTF_JWT_TOKENS_SERVICE);
 	});
 
 	describe('Intercept', (): void => {
+		const accessTokenMock: string = 'accessTokenMock';
 		const userMock: User = users[3];
-		const userPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, userMock, {
+		const userPayload: JwtPayloadDto = plainToInstance(JwtPayloadDto, userMock, {
 			excludeExtraneousValues: true,
 		});
 
-		const accessTokenMock: string = 'accessTokenMock';
-		const requestMock: GlobalTypes.TAuthorizedRequest = {
+		const requestMock: AuthTypes.TAuthorizedRequest = {
 			headers: {
 				authorization: `Bearer ${accessTokenMock}`,
 			},
-		} as GlobalTypes.TAuthorizedRequest;
+		} as AuthTypes.TAuthorizedRequest;
 
 		const executionContext: ExecutionContext = {
 			switchToHttp: () => ({

@@ -21,4 +21,4 @@ export const helmetConfig: HelmetOptions = {
 			upgradeInsecureRequests: [],
 		},
 	},
-};
+} as const;

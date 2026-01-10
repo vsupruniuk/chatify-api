@@ -5,7 +5,7 @@ import { WSResponseResult } from '@responses';
 /**
  * Class representing error web sockets response result
  */
-export class ErrorWSResponseResult<T> extends WSResponseResult {
+export class ErrorWSResponseResult<T = object> extends WSResponseResult {
 	public message: string;
 
 	public errors: T;

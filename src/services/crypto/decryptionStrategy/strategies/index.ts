@@ -1,3 +1,3 @@
-export * from './DirectChatMessageWithChatAndUserStrategy';
-export * from './DirectChatWithUsersAndMessagesStrategy';
+export * from './DirectChatMessageWithChatAndUser.strategy';
+export * from './DirectChatWithUsersAndMessages.strategy';
 export * from './IDecryptionStrategy';

@@ -8,7 +8,7 @@ import { IUsersRepository } from '@repositories';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { OTPCode, User } from '@entities';
 
@@ -32,7 +32,7 @@ describe('Users service', (): void => {
 		}).compile();
 
 		usersService = moduleFixture.get(UsersService);
-		usersRepository = moduleFixture.get(CustomProviders.CTF_USERS_REPOSITORY);
+		usersRepository = moduleFixture.get(CustomProvider.CTF_USERS_REPOSITORY);
 	});
 
 	describe('Create user', (): void => {

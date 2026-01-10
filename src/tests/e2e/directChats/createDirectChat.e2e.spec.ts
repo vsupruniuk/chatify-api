@@ -16,7 +16,7 @@ import { GlobalExceptionFilter } from '@filters';
 
 import { DirectChat, DirectChatMessage, User } from '@entities';
 
-import { Headers, WSEvents, ResponseStatus } from '@enums';
+import { Header, WSEvent, ResponseStatus, Route } from '@enums';
 
 import { users, directChatsMessages, directChats } from '@testMocks';
 
@@ -49,7 +49,7 @@ describe('Create direct chat', (): void => {
 		app.useGlobalPipes(new ValidationPipe(validationPipeConfig));
 		app.useGlobalFilters(new GlobalExceptionFilter());
 
-		await app.listen(Number(process.env.TESTS_PORT));
+		await app.listen(Number(process.env.PORT));
 	});
 
 	afterAll(async (): Promise<void> => {
@@ -67,24 +67,34 @@ describe('Create direct chat', (): void => {
 		const receiverUser: User = users[1];
 		const initialMessage: DirectChatMessage = directChatsMessages[1];
 
-		beforeEach(async (): Promise<void> => {
-			await supertest.agent(app.getHttpServer()).post('/auth/signup').send({
-				email: senderUser.email,
-				firstName: senderUser.firstName,
-				lastName: senderUser.lastName,
-				nickname: senderUser.nickname,
+		const signup = async (user: User): Promise<void> => {
+			await supertest.agent(app.getHttpServer()).post(`/${Route.AUTH}/${Route.SIGNUP}`).send({
+				email: user.email,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				nickname: user.nickname,
 				password: passwordMock,
 				passwordConfirmation: passwordMock,
 			});
+		};
 
-			await supertest.agent(app.getHttpServer()).post('/auth/signup').send({
-				email: receiverUser.email,
-				firstName: receiverUser.firstName,
-				lastName: receiverUser.lastName,
-				nickname: receiverUser.nickname,
-				password: passwordMock,
-				passwordConfirmation: passwordMock,
+		const createSocket = async (user: User): Promise<Socket> => {
+			const loginResponse: supertest.Response = await supertest
+				.agent(app.getHttpServer()) //
+				.post(`/${Route.AUTH}/${Route.LOGIN}`)
+				.send({ email: user.email, password: passwordMock });
+
+			return io(await app.getUrl(), {
+				transports: ['websocket'],
+				extraHeaders: {
+					[Header.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
+				},
 			});
+		};
+
+		beforeEach(async (): Promise<void> => {
+			await signup(senderUser);
+			await signup(receiverUser);
 		});
 
 		afterEach(async (): Promise<void> => {
@@ -119,7 +129,7 @@ describe('Create direct chat', (): void => {
 		it('should reject connection if user provided empty authorization header', async (): Promise<void> => {
 			senderSocket = io(await app.getUrl(), {
 				transports: ['websocket'],
-				extraHeaders: { [Headers.AUTHORIZATION]: '' },
+				extraHeaders: { [Header.AUTHORIZATION]: '' },
 			});
 
 			senderSocket.connect();
@@ -139,7 +149,7 @@ describe('Create direct chat', (): void => {
 		it('should reject connection if user provided authorization header without access token', async (): Promise<void> => {
 			senderSocket = io(await app.getUrl(), {
 				transports: ['websocket'],
-				extraHeaders: { [Headers.AUTHORIZATION]: 'Bearer ' },
+				extraHeaders: { [Header.AUTHORIZATION]: 'Bearer ' },
 			});
 
 			senderSocket.connect();
@@ -159,7 +169,7 @@ describe('Create direct chat', (): void => {
 		it('should reject connection if user provided authorization header with invalid access token', async (): Promise<void> => {
 			senderSocket = io(await app.getUrl(), {
 				transports: ['websocket'],
-				extraHeaders: { [Headers.AUTHORIZATION]: 'Bearer accessToken' },
+				extraHeaders: { [Header.AUTHORIZATION]: 'Bearer invalidAccessToken' },
 			});
 
 			senderSocket.connect();
@@ -177,31 +187,21 @@ describe('Create direct chat', (): void => {
 		});
 
 		it('should emit error event if receiver id is not valid uuid', async (): Promise<void> => {
-			const loginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/auth/login')
-				.send({ email: senderUser.email, password: passwordMock });
-
-			senderSocket = io(await app.getUrl(), {
-				transports: ['websocket'],
-				extraHeaders: {
-					[Headers.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				},
-			});
+			senderSocket = await createSocket(senderUser);
 
 			senderSocket.connect();
 
-			senderSocket.emit(WSEvents.CREATE_CHAT, {
+			senderSocket.emit(WSEvent.CREATE_CHAT, {
 				receiverId: '123',
 				messageText: initialMessage.messageText,
 			});
 
 			await new Promise<void>((resolve, reject) => {
-				senderSocket.on(WSEvents.ON_CREATE_CHAT, () => {
+				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
 					reject('Chat with invalid receiver id was created');
 				});
 
-				senderSocket.on(WSEvents.ON_ERROR, (error) => {
+				senderSocket.on(WSEvent.ON_ERROR, (error) => {
 					expect((error as ErrorWSResponseResult<ErrorField[]>).errors[0].message).toBe(
 						'Wrong receiverId format. UUID is expected',
 					);
@@ -211,31 +211,21 @@ describe('Create direct chat', (): void => {
 		});
 
 		it('should emit error event if message text is not a string', async (): Promise<void> => {
-			const loginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/auth/login')
-				.send({ email: senderUser.email, password: passwordMock });
-
-			senderSocket = io(await app.getUrl(), {
-				transports: ['websocket'],
-				extraHeaders: {
-					[Headers.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				},
-			});
+			senderSocket = await createSocket(senderUser);
 
 			senderSocket.connect();
 
-			senderSocket.emit(WSEvents.CREATE_CHAT, {
+			senderSocket.emit(WSEvent.CREATE_CHAT, {
 				receiverId: receiverUser.id,
 				messageText: 555,
 			});
 
 			await new Promise<void>((resolve, reject) => {
-				senderSocket.on(WSEvents.ON_CREATE_CHAT, () => {
+				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
 					reject('Chat with non string message was created');
 				});
 
-				senderSocket.on(WSEvents.ON_ERROR, (error) => {
+				senderSocket.on(WSEvent.ON_ERROR, (error) => {
 					expect((error as ErrorWSResponseResult<ErrorField[]>).errors[0].message).toBe(
 						'messageText must be a string',
 					);
@@ -245,31 +235,21 @@ describe('Create direct chat', (): void => {
 		});
 
 		it('should emit error event if message text is empty string', async (): Promise<void> => {
-			const loginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/auth/login')
-				.send({ email: senderUser.email, password: passwordMock });
-
-			senderSocket = io(await app.getUrl(), {
-				transports: ['websocket'],
-				extraHeaders: {
-					[Headers.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				},
-			});
+			senderSocket = await createSocket(senderUser);
 
 			senderSocket.connect();
 
-			senderSocket.emit(WSEvents.CREATE_CHAT, {
+			senderSocket.emit(WSEvent.CREATE_CHAT, {
 				receiverId: receiverUser.id,
 				messageText: '',
 			});
 
 			await new Promise<void>((resolve, reject) => {
-				senderSocket.on(WSEvents.ON_CREATE_CHAT, () => {
+				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
 					reject('Chat with empty message was created');
 				});
 
-				senderSocket.on(WSEvents.ON_ERROR, (error) => {
+				senderSocket.on(WSEvent.ON_ERROR, (error) => {
 					expect((error as ErrorWSResponseResult<ErrorField[]>).errors[0].message).toBe(
 						'messageText must be at least 1 characters long',
 					);
@@ -279,31 +259,21 @@ describe('Create direct chat', (): void => {
 		});
 
 		it('should emit error event if message text is more than 500 characters long', async (): Promise<void> => {
-			const loginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/auth/login')
-				.send({ email: senderUser.email, password: passwordMock });
-
-			senderSocket = io(await app.getUrl(), {
-				transports: ['websocket'],
-				extraHeaders: {
-					[Headers.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				},
-			});
+			senderSocket = await createSocket(senderUser);
 
 			senderSocket.connect();
 
-			senderSocket.emit(WSEvents.CREATE_CHAT, {
+			senderSocket.emit(WSEvent.CREATE_CHAT, {
 				receiverId: receiverUser.id,
 				messageText: 'Hello'.padEnd(501, 'o'),
 			});
 
 			await new Promise<void>((resolve, reject) => {
-				senderSocket.on(WSEvents.ON_CREATE_CHAT, () => {
+				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
 					reject('Chat with too long message was created');
 				});
 
-				senderSocket.on(WSEvents.ON_ERROR, (error) => {
+				senderSocket.on(WSEvent.ON_ERROR, (error) => {
 					expect((error as ErrorWSResponseResult<ErrorField[]>).errors[0].message).toBe(
 						'messageText can be 500 characters long maximum',
 					);
@@ -313,31 +283,21 @@ describe('Create direct chat', (): void => {
 		});
 
 		it('should emit error event if receiver user does not exist', async (): Promise<void> => {
-			const loginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/auth/login')
-				.send({ email: senderUser.email, password: passwordMock });
-
-			senderSocket = io(await app.getUrl(), {
-				transports: ['websocket'],
-				extraHeaders: {
-					[Headers.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				},
-			});
+			senderSocket = await createSocket(senderUser);
 
 			senderSocket.connect();
 
-			senderSocket.emit(WSEvents.CREATE_CHAT, {
+			senderSocket.emit(WSEvent.CREATE_CHAT, {
 				receiverId: 'eb6e754b-4607-4b56-a3ae-64c6124eb4b0',
 				messageText: initialMessage.messageText,
 			});
 
 			await new Promise<void>((resolve, reject) => {
-				senderSocket.on(WSEvents.ON_CREATE_CHAT, () => {
+				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
 					reject('Chat with not existing receiver was created');
 				});
 
-				senderSocket.on(WSEvents.ON_ERROR, (error) => {
+				senderSocket.on(WSEvent.ON_ERROR, (error) => {
 					expect((error as ErrorWSResponseResult<ErrorField[]>).errors[0].message).toBe(
 						'One of the chat members does not exist',
 					);
@@ -366,31 +326,21 @@ describe('Create direct chat', (): void => {
 			await dataSource.getRepository(DirectChat).save([existingChat]);
 			await dataSource.getRepository(DirectChatMessage).save([existingChatMessage]);
 
-			const loginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/auth/login')
-				.send({ email: senderUser.email, password: passwordMock });
-
-			senderSocket = io(await app.getUrl(), {
-				transports: ['websocket'],
-				extraHeaders: {
-					[Headers.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				},
-			});
+			senderSocket = await createSocket(senderUser);
 
 			senderSocket.connect();
 
-			senderSocket.emit(WSEvents.CREATE_CHAT, {
+			senderSocket.emit(WSEvent.CREATE_CHAT, {
 				receiverId: receiver?.id,
 				messageText: initialMessage.messageText,
 			});
 
 			await new Promise<void>((resolve, reject) => {
-				senderSocket.on(WSEvents.ON_CREATE_CHAT, () => {
+				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
 					reject('Chat between users that have a direct chat was created');
 				});
 
-				senderSocket.on(WSEvents.ON_ERROR, (error) => {
+				senderSocket.on(WSEvent.ON_ERROR, (error) => {
 					expect((error as ErrorWSResponseResult<ErrorField[]>).errors[0].message).toBe(
 						'Direct chat between these users already exists',
 					);
@@ -399,76 +349,56 @@ describe('Create direct chat', (): void => {
 			});
 		});
 
-		it('should emit onCreateChat event for sender if chat was created', async (): Promise<void> => {
-			const loginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/auth/login')
-				.send({ email: senderUser.email, password: passwordMock });
-
-			const receiver: User | null = await dataSource
-				.getRepository(User)
-				.findOne({ where: { email: receiverUser.email } });
-
-			senderSocket = io(await app.getUrl(), {
-				transports: ['websocket'],
-				extraHeaders: {
-					[Headers.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				},
-			});
-
-			senderSocket.connect();
-
-			senderSocket.emit(WSEvents.CREATE_CHAT, {
-				receiverId: receiver?.id,
-				messageText: initialMessage.messageText,
-			});
-
-			await new Promise<void>((resolve, reject) => {
-				senderSocket.on(WSEvents.ON_CREATE_CHAT, (data) => {
-					expect((data as WSResponseResult).status).toBe(ResponseStatus.SUCCESS);
-					resolve();
-				});
-
-				senderSocket.on(WSEvents.ON_ERROR, () => {
-					reject('Chat was not created for valid event');
-				});
-			});
-		});
-
 		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
-			const loginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/auth/login')
-				.send({ email: senderUser.email, password: passwordMock });
-
 			const receiver: User | null = await dataSource
 				.getRepository(User)
 				.findOne({ where: { email: receiverUser.email } });
 
-			senderSocket = io(await app.getUrl(), {
-				transports: ['websocket'],
-				extraHeaders: {
-					[Headers.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				},
-			});
+			senderSocket = await createSocket(senderUser);
 
 			senderSocket.connect();
 
-			senderSocket.emit(WSEvents.CREATE_CHAT, {
+			senderSocket.emit(WSEvent.CREATE_CHAT, {
 				receiverId: `   ${receiver?.id}   `,
 				messageText: `   ${initialMessage.messageText}   `,
 			});
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(
-					WSEvents.ON_CREATE_CHAT,
+					WSEvent.ON_CREATE_CHAT,
 					(data: SuccessfulResponseResult<DirectChatWithUsersAndMessagesDto>) => {
 						expect(data.data.messages[0].messageText).toBe(initialMessage.messageText);
 						resolve();
 					},
 				);
 
-				senderSocket.on(WSEvents.ON_ERROR, () => {
+				senderSocket.on(WSEvent.ON_ERROR, () => {
+					reject('Chat was not created for valid event');
+				});
+			});
+		});
+
+		it('should emit onCreateChat event for sender if chat was created', async (): Promise<void> => {
+			const receiver: User = (await dataSource
+				.getRepository(User)
+				.findOne({ where: { email: receiverUser.email } })) as User;
+
+			senderSocket = await createSocket(senderUser);
+
+			senderSocket.connect();
+
+			senderSocket.emit(WSEvent.CREATE_CHAT, {
+				receiverId: receiver?.id,
+				messageText: initialMessage.messageText,
+			});
+
+			await new Promise<void>((resolve, reject) => {
+				senderSocket.on(WSEvent.ON_CREATE_CHAT, (data) => {
+					expect((data as WSResponseResult).status).toBe(ResponseStatus.SUCCESS);
+					resolve();
+				});
+
+				senderSocket.on(WSEvent.ON_ERROR, () => {
 					reject('Chat was not created for valid event');
 				});
 			});
@@ -479,45 +409,24 @@ describe('Create direct chat', (): void => {
 				.getRepository(User)
 				.findOne({ where: { email: receiverUser.email } });
 
-			const senderLoginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/auth/login')
-				.send({ email: senderUser.email, password: passwordMock });
-
-			const receiverLoginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/auth/login')
-				.send({ email: receiverUser.email, password: passwordMock });
-
-			senderSocket = io(await app.getUrl(), {
-				transports: ['websocket'],
-				extraHeaders: {
-					[Headers.AUTHORIZATION]: `Bearer ${(senderLoginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				},
-			});
-
-			receiverSocket = io(await app.getUrl(), {
-				transports: ['websocket'],
-				extraHeaders: {
-					[Headers.AUTHORIZATION]: `Bearer ${(receiverLoginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				},
-			});
+			senderSocket = await createSocket(senderUser);
+			receiverSocket = await createSocket(senderUser);
 
 			senderSocket.connect();
 			receiverSocket.connect();
 
-			senderSocket.emit(WSEvents.CREATE_CHAT, {
+			senderSocket.emit(WSEvent.CREATE_CHAT, {
 				receiverId: receiver?.id,
 				messageText: initialMessage.messageText,
 			});
 
 			await new Promise<void>((resolve, reject) => {
-				receiverSocket.on(WSEvents.ON_CREATE_CHAT, (data) => {
+				receiverSocket.on(WSEvent.ON_CREATE_CHAT, (data) => {
 					expect((data as WSResponseResult).status).toBe(ResponseStatus.SUCCESS);
 					resolve();
 				});
 
-				senderSocket.on(WSEvents.ON_ERROR, () => {
+				senderSocket.on(WSEvent.ON_ERROR, () => {
 					reject('Chat was not created for valid event');
 				});
 			});

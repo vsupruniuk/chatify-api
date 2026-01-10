@@ -6,7 +6,7 @@ import { providers } from '@modules/providers';
 
 import { ICryptoService } from '@services';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { DirectChatMessage } from '@entities';
 
@@ -22,7 +22,7 @@ describe('Message encryption pipe', (): void => {
 		}).compile();
 
 		messageEncryptionPipe = moduleFixture.get(MessageEncryptionPipe);
-		cryptoService = moduleFixture.get(CustomProviders.CTF_CRYPTO_SERVICE);
+		cryptoService = moduleFixture.get(CustomProvider.CTF_CRYPTO_SERVICE);
 	});
 
 	describe('Transform', (): void => {
@@ -37,7 +37,7 @@ describe('Message encryption pipe', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should call encrypt text method from crypto service', async (): Promise<void> => {
+		it('should call encrypt text method from crypto service to encrypt message', async (): Promise<void> => {
 			await messageEncryptionPipe.transform(directChatMessageMock);
 
 			expect(cryptoService.encryptText).toHaveBeenCalledTimes(1);

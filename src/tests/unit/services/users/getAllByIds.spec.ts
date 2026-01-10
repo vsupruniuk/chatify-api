@@ -9,7 +9,7 @@ import { IUsersRepository } from '@repositories';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User } from '@entities';
 
@@ -33,7 +33,7 @@ describe('Users service', (): void => {
 		}).compile();
 
 		usersService = moduleFixture.get(UsersService);
-		usersRepository = moduleFixture.get(CustomProviders.CTF_USERS_REPOSITORY);
+		usersRepository = moduleFixture.get(CustomProvider.CTF_USERS_REPOSITORY);
 	});
 
 	describe('Get all by ids', (): void => {
@@ -47,15 +47,6 @@ describe('Users service', (): void => {
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-			jest.clearAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(usersService.getAllByIds).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersService.getAllByIds).toBeInstanceOf(Function);
 		});
 
 		it('should call find all by ids method form users repository to get all users', async (): Promise<void> => {
@@ -65,9 +56,10 @@ describe('Users service', (): void => {
 			expect(usersRepository.findAllByIds).toHaveBeenNthCalledWith(1, ids);
 		});
 
-		it('should return all founded users', async (): Promise<void> => {
+		it('should return all found users', async (): Promise<void> => {
 			const users: UserDto[] = await usersService.getAllByIds(ids);
 
+			expect(users).toHaveLength(usersMock.length);
 			expect(users).toEqual(
 				usersMock.map((user: User) =>
 					plainToInstance(UserDto, user, { excludeExtraneousValues: true }),
@@ -75,7 +67,7 @@ describe('Users service', (): void => {
 			);
 		});
 
-		it('should return all user as array of UserDto', async (): Promise<void> => {
+		it('should return users as array of UserDto', async (): Promise<void> => {
 			const users: UserDto[] = await usersService.getAllByIds(ids);
 
 			expect(users).toBeInstanceOf(Array);

@@ -22,7 +22,7 @@ import { PaginationHelper } from '@helpers';
 
 import { IDirectChatsRepository } from '@repositories';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 describe('Direct chats service', (): void => {
 	let directChatsService: DirectChatsService;
@@ -38,7 +38,6 @@ describe('Direct chats service', (): void => {
 				DirectChatMessageWithChatAndUserStrategy,
 
 				providers.CTF_DIRECT_CHATS_REPOSITORY,
-				providers.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY,
 
 				providers.CTF_DECRYPTION_STRATEGY_MANAGER,
 				providers.CTF_CRYPTO_SERVICE,
@@ -51,8 +50,8 @@ describe('Direct chats service', (): void => {
 		}).compile();
 
 		directChatsService = moduleFixture.get(DirectChatsService);
-		directChatsRepository = moduleFixture.get(CustomProviders.CTF_DIRECT_CHATS_REPOSITORY);
-		decryptionStrategyManager = moduleFixture.get(CustomProviders.CTF_DECRYPTION_STRATEGY_MANAGER);
+		directChatsRepository = moduleFixture.get(CustomProvider.CTF_DIRECT_CHATS_REPOSITORY);
+		decryptionStrategyManager = moduleFixture.get(CustomProvider.CTF_DECRYPTION_STRATEGY_MANAGER);
 	});
 
 	describe('Get user last chats', (): void => {
@@ -69,7 +68,7 @@ describe('Direct chats service', (): void => {
 		];
 
 		beforeEach((): void => {
-			jest.spyOn(PaginationHelper, 'toSQLPagination').mockReturnValue({ skip: page, take });
+			jest.spyOn(PaginationHelper, 'toSqlPagination').mockReturnValue({ skip: page, take });
 			jest.spyOn(directChatsRepository, 'findLastChatsByUserId').mockResolvedValue(lastChatsMock);
 			jest.spyOn(decryptionStrategyManager, 'decrypt').mockImplementation(async (data: object) => {
 				return plainToInstance(DirectChatWithUsersAndMessagesDto, data, {
@@ -80,14 +79,13 @@ describe('Direct chats service', (): void => {
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-			jest.clearAllMocks();
 		});
 
 		it('should call to sql pagination method from pagination helper to create pagination parameters for repository method', async (): Promise<void> => {
 			await directChatsService.getUserLastChats(userId, page, take);
 
-			expect(PaginationHelper.toSQLPagination).toHaveBeenCalledTimes(1);
-			expect(PaginationHelper.toSQLPagination).toHaveBeenNthCalledWith(1, page, take);
+			expect(PaginationHelper.toSqlPagination).toHaveBeenCalledTimes(1);
+			expect(PaginationHelper.toSqlPagination).toHaveBeenNthCalledWith(1, page, take);
 		});
 
 		it('should call find last chats by user id to get user last chats', async (): Promise<void> => {
@@ -128,6 +126,24 @@ describe('Direct chats service', (): void => {
 			chats.forEach((chat: DirectChatWithUsersAndMessagesDto) => {
 				expect(chat).toBeInstanceOf(DirectChatWithUsersAndMessagesDto);
 			});
+		});
+
+		it('should return all found chats', async (): Promise<void> => {
+			const chats: DirectChatWithUsersAndMessagesDto[] = await directChatsService.getUserLastChats(
+				userId,
+				page,
+				take,
+			);
+
+			expect(chats.sort()).toEqual(
+				lastChatsMock
+					.map((chat: DirectChat) =>
+						plainToInstance(DirectChatWithUsersAndMessagesDto, chat, {
+							excludeExtraneousValues: true,
+						}),
+					)
+					.sort(),
+			);
 		});
 	});
 });

@@ -11,13 +11,14 @@ import { providers } from '@modules/providers';
 import { User } from '@entities';
 
 import { users } from '@testMocks';
-import { AppUserDto, UpdateAppUserRequestDto } from '@dtos/appUser';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { UpdateAppUserRequestDto } from '@dtos/appUser';
+import { UserWithAccountSettingsDto } from '@dtos/users';
+import { JwtPayloadDto } from '@dtos/jwt';
 
 import { IAppUserService } from '@services';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 describe('App user controller', (): void => {
 	let appUserController: AppUserController;
@@ -45,13 +46,13 @@ describe('App user controller', (): void => {
 		}).compile();
 
 		appUserController = moduleFixture.get(AppUserController);
-		appUserService = moduleFixture.get(CustomProviders.CTF_APP_USER_SERVICE);
+		appUserService = moduleFixture.get(CustomProvider.CTF_APP_USER_SERVICE);
 	});
 
 	describe('Update user', (): void => {
 		const userMock: User = users[4];
 
-		const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, userMock, {
+		const appUserPayload: JwtPayloadDto = plainToInstance(JwtPayloadDto, userMock, {
 			excludeExtraneousValues: true,
 		});
 		const updateAppUserDto: UpdateAppUserRequestDto = {
@@ -61,16 +62,14 @@ describe('App user controller', (): void => {
 			about: "I'm always angry",
 		};
 
+		const updatedUserMock: UserWithAccountSettingsDto = plainToInstance(
+			UserWithAccountSettingsDto,
+			{ ...userMock, ...updateAppUserDto },
+			{ excludeExtraneousValues: true },
+		);
+
 		beforeEach((): void => {
-			jest.spyOn(appUserService, 'updateAppUser').mockResolvedValue(
-				plainToInstance(
-					AppUserDto,
-					{ ...userMock, ...updateAppUserDto },
-					{
-						excludeExtraneousValues: true,
-					},
-				),
-			);
+			jest.spyOn(appUserService, 'updateAppUser').mockResolvedValue(updatedUserMock);
 		});
 
 		afterEach((): void => {
@@ -89,21 +88,21 @@ describe('App user controller', (): void => {
 		});
 
 		it('should return updated user', async (): Promise<void> => {
-			const user: AppUserDto = await appUserController.updateUser(appUserPayload, updateAppUserDto);
-
-			expect(user).toEqual(
-				plainToInstance(
-					AppUserDto,
-					{ ...userMock, ...updateAppUserDto },
-					{ excludeExtraneousValues: true },
-				),
+			const user: UserWithAccountSettingsDto = await appUserController.updateUser(
+				appUserPayload,
+				updateAppUserDto,
 			);
+
+			expect(user).toEqual(updatedUserMock);
 		});
 
 		it('should return a user as instance of AppUserDto', async (): Promise<void> => {
-			const user: AppUserDto = await appUserController.updateUser(appUserPayload, updateAppUserDto);
+			const user: UserWithAccountSettingsDto = await appUserController.updateUser(
+				appUserPayload,
+				updateAppUserDto,
+			);
 
-			expect(user).toBeInstanceOf(AppUserDto);
+			expect(user).toBeInstanceOf(UserWithAccountSettingsDto);
 		});
 	});
 });

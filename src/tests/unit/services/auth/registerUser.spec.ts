@@ -14,9 +14,9 @@ import { users } from '@testMocks';
 
 import { otpCodeConfig } from '@configs';
 
-import { OTPCodesHelper, DateHelper } from '@helpers';
+import { OtpCodesHelper, DateHelper } from '@helpers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { SignupRequestDto } from '@dtos/auth/signup';
 
@@ -33,14 +33,17 @@ describe('Auth service', (): void => {
 				JwtService,
 
 				providers.CTF_USERS_SERVICE,
-				providers.CTF_EMAIL_SERVICE,
-				providers.CTF_JWT_TOKENS_SERVICE,
-				providers.CTF_OTP_CODES_SERVICE,
-				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
-
 				providers.CTF_USERS_REPOSITORY,
+
+				providers.CTF_EMAIL_SERVICE,
+
+				providers.CTF_JWT_TOKENS_SERVICE,
 				providers.CTF_JWT_TOKENS_REPOSITORY,
+
+				providers.CTF_OTP_CODES_SERVICE,
 				providers.CTF_OTP_CODES_REPOSITORY,
+
+				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
 				providers.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 
 				{ provide: DataSource, useValue: {} },
@@ -48,8 +51,8 @@ describe('Auth service', (): void => {
 		}).compile();
 
 		authService = moduleFixture.get(AuthService);
-		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
-		emailService = moduleFixture.get(CustomProviders.CTF_EMAIL_SERVICE);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
+		emailService = moduleFixture.get(CustomProvider.CTF_EMAIL_SERVICE);
 	});
 
 	describe('Register user', (): void => {
@@ -70,7 +73,7 @@ describe('Auth service', (): void => {
 			jest.spyOn(usersService, 'getByEmailOrNickname').mockResolvedValue(null);
 			jest.spyOn(usersService, 'createUser').mockImplementation(jest.fn());
 
-			jest.spyOn(OTPCodesHelper, 'generateOTPCode').mockReturnValue(otpCodeMock);
+			jest.spyOn(OtpCodesHelper, 'generateOTPCode').mockReturnValue(otpCodeMock);
 			jest.spyOn(DateHelper, 'dateTimeFuture').mockReturnValue(otpCodeExpirationDateMock);
 
 			jest.spyOn(emailService, 'sendActivationEmail').mockImplementation(jest.fn());
@@ -81,7 +84,7 @@ describe('Auth service', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should call find by nickname or email method from users service to check if user tich provided email or nickname already exist', async (): Promise<void> => {
+		it('should call find by nickname or email method from users service to check if user with provided email or nickname already exist', async (): Promise<void> => {
 			await authService.registerUser(signupRequestDto);
 
 			expect(usersService.getByEmailOrNickname).toHaveBeenCalledTimes(1);
@@ -92,18 +95,15 @@ describe('Auth service', (): void => {
 			);
 		});
 
-		it('should throw conflict exception if user with provided email or nickname already exist', async (): Promise<void> => {
-			jest.spyOn(usersService, 'getByEmailOrNickname').mockResolvedValue(userMock);
-
-			await expect(authService.registerUser(signupRequestDto)).rejects.toThrow(ConflictException);
-		});
-
 		it('should throw error with messages that contains "email" if user with provided email exist', async (): Promise<void> => {
 			jest
 				.spyOn(usersService, 'getByEmailOrNickname')
 				.mockResolvedValue({ ...userMock, nickname: 'test.nickname' });
 
-			await expect(authService.registerUser(signupRequestDto)).rejects.toThrow(/email/);
+			const promise = authService.registerUser(signupRequestDto);
+
+			await expect(promise).rejects.toThrow(ConflictException);
+			await expect(promise).rejects.toThrow(/email/);
 		});
 
 		it('should throw error with messages that contains "nickname" if user with provided nickname exist', async (): Promise<void> => {
@@ -111,13 +111,16 @@ describe('Auth service', (): void => {
 				.spyOn(usersService, 'getByEmailOrNickname')
 				.mockResolvedValue({ ...userMock, email: 'test@email.com' });
 
-			await expect(authService.registerUser(signupRequestDto)).rejects.toThrow(/nickname/);
+			const promise = authService.registerUser(signupRequestDto);
+
+			await expect(promise).rejects.toThrow(ConflictException);
+			await expect(promise).rejects.toThrow(/nickname/);
 		});
 
 		it('should use generate otp code method from otp code helper to generate an otp code for user', async (): Promise<void> => {
 			await authService.registerUser(signupRequestDto);
 
-			expect(OTPCodesHelper.generateOTPCode).toHaveBeenCalledTimes(1);
+			expect(OtpCodesHelper.generateOTPCode).toHaveBeenCalledTimes(1);
 		});
 
 		it('should use date time future from date helper to get otp code expiration date', async (): Promise<void> => {

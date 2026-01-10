@@ -8,7 +8,7 @@ import { SearchController } from '@controllers';
 
 import { IUsersService } from '@services';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { providers } from '@modules/providers';
 
@@ -39,7 +39,7 @@ describe('Search controller', (): void => {
 		}).compile();
 
 		searchController = moduleFixture.get(SearchController);
-		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
 	});
 
 	describe('Find users', (): void => {
@@ -81,7 +81,7 @@ describe('Search controller', (): void => {
 			expect(users).toHaveLength(0);
 		});
 
-		it('should return all founded users', async (): Promise<void> => {
+		it('should return all found users', async (): Promise<void> => {
 			const users: UserDto[] = await searchController.findUsers(nickname, { page, take });
 
 			expect(users.sort()).toEqual(
@@ -95,7 +95,7 @@ describe('Search controller', (): void => {
 			);
 		});
 
-		it('should return all founded users as array of UserDto', async (): Promise<void> => {
+		it('should return all found users as array of UserDto', async (): Promise<void> => {
 			const users: UserDto[] = await searchController.findUsers(nickname, { page, take });
 
 			expect(users).toBeInstanceOf(Array);

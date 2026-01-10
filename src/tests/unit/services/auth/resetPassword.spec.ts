@@ -2,20 +2,21 @@ import { NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 
+import { plainToInstance } from 'class-transformer';
 import { DataSource } from 'typeorm';
 
 import { AuthService, IUsersService, IEmailService, IPasswordResetTokensService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User, PasswordResetToken } from '@entities';
 
 import { users, passwordResetTokens } from '@testMocks';
 
-import { PasswordResetTokenDto } from '@dtos/passwordResetToken';
 import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword';
+import { UserWithPasswordResetTokenDto } from '@dtos/users';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;
@@ -31,14 +32,17 @@ describe('Auth service', (): void => {
 				JwtService,
 
 				providers.CTF_USERS_SERVICE,
-				providers.CTF_EMAIL_SERVICE,
-				providers.CTF_JWT_TOKENS_SERVICE,
-				providers.CTF_OTP_CODES_SERVICE,
-				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
-
 				providers.CTF_USERS_REPOSITORY,
+
+				providers.CTF_EMAIL_SERVICE,
+
+				providers.CTF_JWT_TOKENS_SERVICE,
 				providers.CTF_JWT_TOKENS_REPOSITORY,
+
+				providers.CTF_OTP_CODES_SERVICE,
 				providers.CTF_OTP_CODES_REPOSITORY,
+
+				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
 				providers.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 
 				{ provide: DataSource, useValue: {} },
@@ -46,11 +50,11 @@ describe('Auth service', (): void => {
 		}).compile();
 
 		authService = moduleFixture.get(AuthService);
-		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
 		passwordResetTokensService = moduleFixture.get(
-			CustomProviders.CTF_PASSWORD_RESET_TOKENS_SERVICE,
+			CustomProvider.CTF_PASSWORD_RESET_TOKENS_SERVICE,
 		);
-		emailService = moduleFixture.get(CustomProviders.CTF_EMAIL_SERVICE);
+		emailService = moduleFixture.get(CustomProvider.CTF_EMAIL_SERVICE);
 	});
 
 	describe('Reset password', (): void => {
@@ -60,13 +64,21 @@ describe('Auth service', (): void => {
 		const resetPasswordRequestDto: ResetPasswordRequestDto = { email: userMock.email };
 
 		beforeEach((): void => {
-			jest.spyOn(usersService, 'getByEmailWithPasswordResetToken').mockResolvedValue({
-				...userMock,
-				passwordResetToken: { ...passwordResetTokenMock } as PasswordResetTokenDto,
-			});
+			jest.spyOn(usersService, 'getByEmailWithPasswordResetToken').mockResolvedValue(
+				plainToInstance(
+					UserWithPasswordResetTokenDto,
+					{
+						...userMock,
+						passwordResetToken: { ...passwordResetTokenMock },
+					},
+					{ excludeExtraneousValues: true },
+				),
+			);
+
 			jest
 				.spyOn(passwordResetTokensService, 'regenerateToken')
 				.mockResolvedValue(passwordResetTokenMock.token);
+
 			jest.spyOn(emailService, 'sendResetPasswordEmail').mockImplementation(jest.fn());
 		});
 

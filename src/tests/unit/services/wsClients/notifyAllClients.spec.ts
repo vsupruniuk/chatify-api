@@ -4,7 +4,7 @@ import { Socket } from 'socket.io';
 
 import { WsClientsService } from '@services';
 
-import { WSEvents, ResponseStatus } from '@enums';
+import { WSEvent, ResponseStatus } from '@enums';
 
 describe('Ws clients', (): void => {
 	let wsClientsService: WsClientsService;
@@ -41,16 +41,16 @@ describe('Ws clients', (): void => {
 
 			const eventData = { data: 'Chat was created' };
 
-			wsClientsService.notifyAllClients([userOneId, userTwoId], WSEvents.ON_CREATE_CHAT, eventData);
+			wsClientsService.notifyAllClients([userOneId, userTwoId], WSEvent.ON_CREATE_CHAT, eventData);
 
 			expect(clientOneMock.emit).toHaveBeenCalledTimes(1);
-			expect(clientOneMock.emit).toHaveBeenNthCalledWith(1, WSEvents.ON_CREATE_CHAT, {
+			expect(clientOneMock.emit).toHaveBeenNthCalledWith(1, WSEvent.ON_CREATE_CHAT, {
 				status: ResponseStatus.SUCCESS,
 				data: eventData,
 			});
 
 			expect(clientTwoMock.emit).toHaveBeenCalledTimes(1);
-			expect(clientTwoMock.emit).toHaveBeenNthCalledWith(1, WSEvents.ON_CREATE_CHAT, {
+			expect(clientTwoMock.emit).toHaveBeenNthCalledWith(1, WSEvent.ON_CREATE_CHAT, {
 				status: ResponseStatus.SUCCESS,
 				data: eventData,
 			});
@@ -61,10 +61,10 @@ describe('Ws clients', (): void => {
 
 			const eventData = { data: 'Chat was created' };
 
-			wsClientsService.notifyAllClients([userOneId, userTwoId], WSEvents.ON_CREATE_CHAT, eventData);
+			wsClientsService.notifyAllClients([userOneId, userTwoId], WSEvent.ON_CREATE_CHAT, eventData);
 
 			expect(clientOneMock.emit).toHaveBeenCalledTimes(1);
-			expect(clientOneMock.emit).toHaveBeenNthCalledWith(1, WSEvents.ON_CREATE_CHAT, {
+			expect(clientOneMock.emit).toHaveBeenNthCalledWith(1, WSEvent.ON_CREATE_CHAT, {
 				status: ResponseStatus.SUCCESS,
 				data: eventData,
 			});

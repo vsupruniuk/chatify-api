@@ -18,12 +18,14 @@ import { User } from '@entities';
 
 import { users } from '@testMocks';
 
-import { Headers, CookiesNames } from '@enums';
+import { Header, CookiesName, Route } from '@enums';
 
 describe('Logout', (): void => {
 	let app: INestApplication;
 	let postgresContainer: StartedTestContainer;
 	let dataSource: DataSource;
+
+	const route: string = `/${Route.AUTH}/${Route.LOGOUT}`;
 
 	beforeAll(async (): Promise<void> => {
 		postgresContainer = await TestDatabaseHelper.initDbContainer();
@@ -42,7 +44,7 @@ describe('Logout', (): void => {
 		app.useGlobalFilters(new GlobalExceptionFilter());
 		app.use(cookieParser(process.env.COOKIE_SECRET));
 
-		await app.listen(Number(process.env.TESTS_PORT));
+		await app.listen(Number(process.env.PORT));
 	});
 
 	afterAll(async (): Promise<void> => {
@@ -51,18 +53,31 @@ describe('Logout', (): void => {
 		await app.close();
 	});
 
-	describe('PATCH /auth/logout', (): void => {
+	describe(`PATCH ${route}`, (): void => {
 		const passwordMock: string = 'Qwerty12345!';
 		const createdUser: User = users[5];
+
+		const signupAndLogin = async (agent: ReturnType<typeof supertest.agent>): Promise<void> => {
+			await agent.post(`/${Route.AUTH}/${Route.SIGNUP}`).send({
+				email: createdUser.email,
+				firstName: createdUser.firstName,
+				lastName: createdUser.lastName,
+				nickname: createdUser.nickname,
+				password: passwordMock,
+				passwordConfirmation: passwordMock,
+			});
+
+			await agent
+				.post(`/${Route.AUTH}/${Route.LOGIN}`)
+				.send({ email: createdUser.email, password: passwordMock });
+		};
 
 		afterEach(async (): Promise<void> => {
 			await dataSource.synchronize(true);
 		});
 
 		it('should return 204 No Content status if user is not logged in', async (): Promise<void> => {
-			const response: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.patch('/auth/logout');
+			const response: supertest.Response = await supertest.agent(app.getHttpServer()).patch(route);
 
 			expect(response.status).toBe(HttpStatus.NO_CONTENT);
 		});
@@ -70,18 +85,9 @@ describe('Logout', (): void => {
 		it('should return 204 No Content status if user logged in', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			await agent.post('/auth/signup').send({
-				email: createdUser.email,
-				firstName: createdUser.firstName,
-				lastName: createdUser.lastName,
-				nickname: createdUser.nickname,
-				password: passwordMock,
-				passwordConfirmation: passwordMock,
-			});
+			await signupAndLogin(agent);
 
-			await agent.post('/auth/login').send({ email: createdUser.email, password: passwordMock });
-
-			const response: supertest.Response = await agent.patch('/auth/logout');
+			const response: supertest.Response = await agent.patch(route);
 
 			expect(response.status).toBe(HttpStatus.NO_CONTENT);
 		});
@@ -89,21 +95,12 @@ describe('Logout', (): void => {
 		it('should remove refresh token from user cookies', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			await agent.post('/auth/signup').send({
-				email: createdUser.email,
-				firstName: createdUser.firstName,
-				lastName: createdUser.lastName,
-				nickname: createdUser.nickname,
-				password: passwordMock,
-				passwordConfirmation: passwordMock,
-			});
+			await signupAndLogin(agent);
 
-			await agent.post('/auth/login').send({ email: createdUser.email, password: passwordMock });
+			const response: supertest.Response = await agent.patch(route);
 
-			const response: supertest.Response = await agent.patch('/auth/logout');
-
-			const refreshTokenCookie: string | undefined = (response.get(Headers.SET_COOKIE) || []).find(
-				(cookie: string) => cookie.startsWith(`${CookiesNames.REFRESH_TOKEN}=`),
+			const refreshTokenCookie: string | undefined = (response.get(Header.SET_COOKIE) || []).find(
+				(cookie: string) => cookie.startsWith(`${CookiesName.REFRESH_TOKEN}=`),
 			);
 
 			expect(refreshTokenCookie).toMatch(/Expires=\s*Thu,\s*01 Jan 1970 00:00:00 GMT/i);
