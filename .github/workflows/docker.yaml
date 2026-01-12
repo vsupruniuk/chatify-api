@@ -1,65 +1,73 @@
 name: Docker image build and deploy
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
-      - release/*
+      - CTF-148-review-sonarcloud-analysis # TODO change to release/*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-push:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
-      id-token: write
+
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKERHUB_REPO_NAME: ${{ secrets.DOCKERHUB_REPO_NAME }}
 
     steps:
-      - name: Extract branch name
-        shell: bash
-        id: extract_branch
-        run: |
-          if [[ "${GITHUB_REF}" == refs/pull/* ]]; then
-            target_branch="${GITHUB_BASE_REF}"
-          else
-            target_branch="${GITHUB_REF#refs/heads/}"
-          fi
-          docker_image_branch="${target_branch#release/}"
-          echo "docker_image_branch=$docker_image_branch" >> $GITHUB_OUTPUT
-
-        env:
-          REGISTRY: docker.io
-
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 0
 
-      - name: Set Docker image name
-        run: echo "DOCKER_IMAGE=vsupruniuk/chatify-api:${{ steps.extract_branch.outputs.docker_image_branch }}" >> $GITHUB_ENV
+      - name: Extract release branch name
+        id: release_version
+        shell: bash
+#        run: |
+#          release_version="${GITHUB_REF#refs/heads/}"
+#          echo "release_version=${release_version}" >> $GITHUB_OUTPUT
+#
+#          image="${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPO_NAME }}"
+#          echo "image=${image}" >> $GITHUB_OUTPUT
+        run: |
+          release_version="release/release-v-1.3.1"
+          echo "release_version=${release_version}" >> $GITHUB_OUTPUT
+          
+          image="${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPO_NAME }}"
+          echo "image=${image}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.7.1
+        uses: docker/setup-buildx-action@v3.12.0
 
       - name: Log into Docker Hub
-        uses: docker/login-action@v3.3.0
+        uses: docker/login-action@v3.6.0
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: docker.io
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
 
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v5.5.1
+        uses: docker/metadata-action@5.10.0
         with:
-          images: ${{ env.REGISTRY }}/${{ steps.extract_branch.outputs.docker_image_branch }}
+          images: ${{ steps.release_version.outputs.image }}
+          tags: |
+            type=ref,event=push
+            type=semver,pattern=${{ steps.release_version.outputs.release_tag }}
+            type=sha
 
       - name: Build and push Docker image
-        id: build-and-push
-        uses: docker/build-push-action@v6.9.0
+        uses: docker/build-push-action@v6.18.0
         with:
           context: .
           push: true
-          tags: ${{ env.DOCKER_IMAGE }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
