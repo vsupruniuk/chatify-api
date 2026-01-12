@@ -57,10 +57,6 @@ jobs:
         uses: docker/metadata-action@v5.10.0
         with:
           images: ${{ steps.release_version.outputs.image }}
-          tags: |
-            type=ref,event=push
-            type=semver,pattern=${{ steps.release_version.outputs.release_tag }}
-            type=sha
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6.18.0
