@@ -19,6 +19,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       DOCKERHUB_REPO_NAME: ${{ secrets.DOCKERHUB_REPO_NAME }}
+      DOCKER_SCOUT_ENV: ${{ secrets.DOCKER_SCOUT_ENV }}
 
     steps:
       - name: Checkout repository
@@ -67,3 +68,14 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Docker Scout
+        id: docker_scout
+        uses: docker/scout-action@v1.18.2
+        with:
+          command: compare
+          image: ${{ steps.release_version.outputs.image }}
+          to-env: ${{ env.DOCKER_SCOUT_ENV }}
+          ignore-unchanged: false
+          only-severities: critical,high,medium,low
+          github-token: ${{ secrets.GITHUB_TOKEN }}
