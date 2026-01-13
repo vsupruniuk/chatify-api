@@ -58,6 +58,12 @@ jobs:
         with:
           images: ${{ steps.release_version.outputs.image }}
 
+      - name: DEBUG - show resolved values
+        run: |
+          echo ">>> image from extract step: ${{ steps.release_version.outputs.image }}"
+          echo ">>> release_version: ${{ steps.release_version.outputs.image }}"
+          echo ">>> meta.labels: ${{ steps.meta.outputs.labels }}"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6.18.0
         with:
