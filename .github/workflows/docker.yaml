@@ -20,6 +20,7 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       DOCKERHUB_REPO_NAME: ${{ secrets.DOCKERHUB_REPO_NAME }}
       DOCKER_SCOUT_ENV: ${{ secrets.DOCKER_SCOUT_ENV }}
+      DOCKER_SCOUT_ORGANIZATION: ${{ secrets.DOCKER_SCOUT_ORGANIZATION }}
 
     steps:
       - name: Checkout repository
@@ -74,6 +75,7 @@ jobs:
         uses: docker/scout-action@v1.18.2
         with:
           command: compare
+          organization: ${{ env.DOCKER_SCOUT_ORGANIZATION }}
           image: ${{ steps.release_version.outputs.image }}
           to-env: ${{ env.DOCKER_SCOUT_ENV }}
           ignore-unchanged: false
