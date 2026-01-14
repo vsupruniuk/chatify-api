@@ -17,6 +17,8 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
     "lint": "eslint \"src/**/*.ts\" --fix",
+    "lint:ci": "eslint \"src/**/*.ts\"",
+    "type-check": "tsc",
     "test": "npm run test:unit && npm run test:e2e",
     "test:cov": "cross-env NODE_ENV=test jest --coverage --runInBand",
     "test:unit": "cross-env NODE_ENV=test jest --runInBand",
