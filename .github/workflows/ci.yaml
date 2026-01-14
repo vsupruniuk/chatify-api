@@ -54,6 +54,16 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Create .env
+        shell: bash
+        run: |
+          printf '%s\n' "${{ secrets.ENV }}" > .env
+
+      - name: Load env variables
+        shell: bash
+        run: |
+          sed -E '/^\s*($|#)/d' .env >> $GITHUB_ENV
+
       - name: Install dependencies
         run: npm ci
 
