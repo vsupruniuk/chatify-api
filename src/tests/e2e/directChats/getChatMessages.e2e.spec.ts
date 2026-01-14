@@ -14,7 +14,7 @@ import { validationPipeConfig } from '@configs';
 
 import { GlobalExceptionFilter } from '@filters';
 
-import { AccountSettings, DirectChat, DirectChatMessage, User } from '@entities';
+import { AccountSettings, DirectChat, User } from '@entities';
 
 import { users, accountSettings, directChats, directChatsMessages } from '@testMocks';
 
@@ -95,9 +95,6 @@ describe('Get chat messages', (): void => {
 				},
 			}).connect();
 
-			socket.on('connect_error', (err) => console.log(err));
-			socket.on('connect', () => console.log('success'));
-
 			const userTwoAccountSettings: AccountSettings = dataSource
 				.getRepository(AccountSettings)
 				.create(accountSettings[0]);
@@ -127,8 +124,6 @@ describe('Get chat messages', (): void => {
 				.save([userTwoAccountSettings, userThreeAccountSettings]);
 			await dataSource.getRepository(User).save([userTwo, userThree]);
 			await dataSource.getRepository(DirectChat).save([directChatOne, directChatTwo]);
-
-			socket.on(WSEvent.ON_ERROR, (data) => console.log(data));
 
 			socket.emit(WSEvent.CREATE_MESSAGE, {
 				directChatId: userDirectChat.id,
@@ -311,10 +306,6 @@ describe('Get chat messages', (): void => {
 			const messages: DirectChatMessageWithChatAndUserDto[] = (
 				chatMessagesResponse.body as SuccessfulResponseResult<DirectChatMessageWithChatAndUserDto[]>
 			).data;
-
-			console.log(await dataSource.getRepository(DirectChatMessage).find());
-
-			console.log(messages);
 
 			expect(messages).toHaveLength(takeParameter);
 		});

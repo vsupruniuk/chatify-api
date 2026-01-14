@@ -96,7 +96,6 @@ describe('Global exception filter', (): void => {
 
 			const response: ErrorResponseResult<ErrorField[]> = (responseMock.json as jest.Mock).mock
 				.calls[0][0];
-			console.log(response);
 
 			expect(response.errors).toEqual([
 				{ message: errorMessage, field: errorField },
