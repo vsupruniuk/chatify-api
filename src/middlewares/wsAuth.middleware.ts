@@ -35,8 +35,8 @@ export const wsAuthMiddleware = (jwtTokensService: IJwtTokensService): WSMiddlew
 			(event as unknown as AuthTypes.TAuthorizedSocket).user = userData;
 
 			next();
-		} catch (error) {
-			next(error as Error);
+		} catch (error: unknown) {
+			next(error as UnauthorizedException);
 		}
 	};
 };

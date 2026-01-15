@@ -13,7 +13,7 @@ import {
 	DirectChatMessageWithChatAndUserStrategy,
 } from '@services/crypto/decryptionStrategy/strategies';
 
-import * as wsAuthModule from '@middlewares/wsAuthMiddleware';
+import * as wsAuthModule from '@middlewares/wsAuth.middleware';
 
 describe('Direct chat messages gateway', (): void => {
 	let directChatMessagesGateway: DirectChatMessagesGateway;

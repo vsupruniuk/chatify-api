@@ -90,6 +90,7 @@ describe('Get chat messages', (): void => {
 
 			socket = io(await app.getUrl(), {
 				transports: ['websocket'],
+				autoConnect: false,
 				extraHeaders: {
 					[Header.AUTHORIZATION]: `Bearer ${accessToken}`,
 				},

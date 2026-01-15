@@ -1,1 +1,1 @@
-export * from './wsAuthMiddleware';
+export * from './wsAuth.middleware';

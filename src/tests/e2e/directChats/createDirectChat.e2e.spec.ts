@@ -86,6 +86,7 @@ describe('Create direct chat', (): void => {
 
 			return io(await app.getUrl(), {
 				transports: ['websocket'],
+				autoConnect: false,
 				extraHeaders: {
 					[Header.AUTHORIZATION]: `Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
 				},
@@ -110,7 +111,7 @@ describe('Create direct chat', (): void => {
 		});
 
 		it('should reject connection if user does not provided authorization header', async (): Promise<void> => {
-			senderSocket = io(await app.getUrl(), { transports: ['websocket'] });
+			senderSocket = io(await app.getUrl(), { transports: ['websocket'], autoConnect: false });
 
 			senderSocket.connect();
 
@@ -120,7 +121,7 @@ describe('Create direct chat', (): void => {
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
-					expect(error.message).toBe('Unauthorized Exception');
+					expect(error.message).toBe('Please, login to perform this action');
 					resolve();
 				});
 			});
@@ -129,6 +130,7 @@ describe('Create direct chat', (): void => {
 		it('should reject connection if user provided empty authorization header', async (): Promise<void> => {
 			senderSocket = io(await app.getUrl(), {
 				transports: ['websocket'],
+				autoConnect: false,
 				extraHeaders: { [Header.AUTHORIZATION]: '' },
 			});
 
@@ -140,7 +142,7 @@ describe('Create direct chat', (): void => {
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
-					expect(error.message).toBe('Unauthorized Exception');
+					expect(error.message).toBe('Please, login to perform this action');
 					resolve();
 				});
 			});
@@ -149,6 +151,7 @@ describe('Create direct chat', (): void => {
 		it('should reject connection if user provided authorization header without access token', async (): Promise<void> => {
 			senderSocket = io(await app.getUrl(), {
 				transports: ['websocket'],
+				autoConnect: false,
 				extraHeaders: { [Header.AUTHORIZATION]: 'Bearer ' },
 			});
 
@@ -160,7 +163,7 @@ describe('Create direct chat', (): void => {
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
-					expect(error.message).toBe('Unauthorized Exception');
+					expect(error.message).toBe('Please, login to perform this action');
 					resolve();
 				});
 			});
@@ -169,6 +172,7 @@ describe('Create direct chat', (): void => {
 		it('should reject connection if user provided authorization header with invalid access token', async (): Promise<void> => {
 			senderSocket = io(await app.getUrl(), {
 				transports: ['websocket'],
+				autoConnect: false,
 				extraHeaders: { [Header.AUTHORIZATION]: 'Bearer invalidAccessToken' },
 			});
 
@@ -180,7 +184,7 @@ describe('Create direct chat', (): void => {
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
-					expect(error.message).toBe('Unauthorized Exception');
+					expect(error.message).toBe('Please, login to perform this action');
 					resolve();
 				});
 			});
