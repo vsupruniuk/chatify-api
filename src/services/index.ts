@@ -13,14 +13,17 @@ export * from './crypto/ICryptoService';
 export * from './directChats/directChats.service';
 export * from './directChats/IDirectChatsService';
 
+export * from './directChatMessages/IDirectChatMessagesService';
+export * from './directChatMessages/directChatMessages.service';
+
 export * from './email/email.service';
 export * from './email/IEmailService';
 
 export * from './jwt/jwtTokens.service';
-export * from './jwt/IJWTTokensService';
+export * from './jwt/IJwtTokensService';
 
-export * from './otpCode/OTPCodes.service';
-export * from './otpCode/IOTPCodesService';
+export * from './otpCode/otpCodes.service';
+export * from './otpCode/IOtpCodesService';
 
 export * from './passwordResetToken/passwordResetTokens.service';
 export * from './passwordResetToken/IPasswordResetTokensService';

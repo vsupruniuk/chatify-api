@@ -31,7 +31,7 @@ import { LoginRequestDto, LoginResponseDto, LoginDto } from '@dtos/auth/login';
 
 import { PasswordHashingPipe } from '@pipes';
 
-import { CustomProviders, CookiesNames } from '@enums';
+import { CustomProvider, CookiesName, Route, PathParam } from '@enums';
 
 import { IAuthService } from '@services';
 
@@ -39,22 +39,22 @@ import { ResponseHelper } from '@helpers';
 
 import { Cookie } from '@decorators/data';
 
-@Controller('auth')
+@Controller(Route.AUTH)
 @UseInterceptors(ResponseTransformInterceptor)
 export class AuthController implements IAuthController {
 	constructor(
-		@Inject(CustomProviders.CTF_AUTH_SERVICE)
+		@Inject(CustomProvider.CTF_AUTH_SERVICE)
 		private readonly _authService: IAuthService,
 	) {}
 
-	@Post('signup')
+	@Post(Route.SIGNUP)
 	public async signup(
 		@Body(PasswordHashingPipe) signupRequestDto: SignupRequestDto,
 	): Promise<void> {
 		await this._authService.registerUser(signupRequestDto);
 	}
 
-	@Patch('activate-account')
+	@Patch(Route.ACTIVATE_ACCOUNT)
 	public async activateAccount(
 		@Res({ passthrough: true }) response: Response,
 		@Body() activateAccountRequestDto: ActivateAccountRequestDto,
@@ -67,26 +67,26 @@ export class AuthController implements IAuthController {
 		return { accessToken: activateAccountDto.accessToken };
 	}
 
-	@Patch('resend-activation-code')
+	@Patch(Route.RESEND_ACTIVATION_CODE)
 	public async resendActivationCode(
 		@Body() resendActivationCodeRequestDto: ResendActivationCodeRequestDto,
 	): Promise<void> {
 		await this._authService.resendActivationCode(resendActivationCodeRequestDto);
 	}
 
-	@Patch('reset-password')
+	@Patch(Route.RESET_PASSWORD)
 	public async resetPassword(
 		@Body() resetPasswordRequestDto: ResetPasswordRequestDto,
 	): Promise<void> {
 		await this._authService.resetPassword(resetPasswordRequestDto);
 	}
 
-	@Patch('reset-password/:passwordResetToken')
+	@Patch(`${Route.RESET_PASSWORD}/:${PathParam.PASSWORD_RESET_TOKEN}`)
 	public async resetPasswordConfirmation(
 		@Body(PasswordHashingPipe)
 		resetPasswordConfirmationRequestDto: ResetPasswordConfirmationRequestDto,
 
-		@Param('passwordResetToken', ParseUUIDPipe) passwordResetToken: string,
+		@Param(PathParam.PASSWORD_RESET_TOKEN, ParseUUIDPipe) passwordResetToken: string,
 	): Promise<void> {
 		await this._authService.confirmResetPassword(
 			resetPasswordConfirmationRequestDto.password,
@@ -94,7 +94,7 @@ export class AuthController implements IAuthController {
 		);
 	}
 
-	@Post('login')
+	@Post(Route.LOGIN)
 	@HttpCode(HttpStatus.OK)
 	public async login(
 		@Res({ passthrough: true }) response: Response,
@@ -107,23 +107,21 @@ export class AuthController implements IAuthController {
 		return { accessToken: loginDto.accessToken };
 	}
 
-	@Patch('logout')
+	@Patch(Route.LOGOUT)
 	@HttpCode(HttpStatus.NO_CONTENT)
 	public async logout(
 		@Res({ passthrough: true }) response: Response,
-
-		@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
+		@Cookie(CookiesName.REFRESH_TOKEN) refreshToken: string,
 	): Promise<void> {
 		await this._authService.logout(refreshToken);
 
-		response.clearCookie(CookiesNames.REFRESH_TOKEN);
+		response.clearCookie(CookiesName.REFRESH_TOKEN);
 	}
 
-	@Patch('refresh')
+	@Patch(Route.REFRESH)
 	public async refresh(
 		@Res({ passthrough: true }) response: Response,
-
-		@Cookie(CookiesNames.REFRESH_TOKEN) refreshToken: string,
+		@Cookie(CookiesName.REFRESH_TOKEN) refreshToken: string,
 	): Promise<LoginResponseDto> {
 		const loginDto: LoginDto = await this._authService.refresh(refreshToken);
 

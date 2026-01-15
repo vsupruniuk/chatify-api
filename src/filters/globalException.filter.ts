@@ -7,7 +7,7 @@ import { Response } from 'express';
 import { ErrorResponseResult } from '@responses/errorResponses';
 import { ErrorField } from '@responses/errors';
 
-import { ResponseStatus, Environments } from '@enums';
+import { ResponseStatus, Environment } from '@enums';
 
 import { DateHelper } from '@helpers';
 
@@ -54,7 +54,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 			responseResult.errors = [{ message: exception.message, field: null }];
 		}
 
-		if (process.env.NODE_ENV === Environments.DEV) {
+		if (process.env.NODE_ENV === Environment.DEV) {
 			responseResult.stack = exception.stack;
 			responseResult.dateTime = DateHelper.dateTimeNow();
 		}

@@ -3,7 +3,7 @@ import { BaseWsExceptionFilter } from '@nestjs/websockets';
 
 import { Socket } from 'socket.io';
 
-import { WSEvents, ResponseStatus, Environments } from '@enums';
+import { WSEvent, ResponseStatus, Environment } from '@enums';
 
 import { ErrorWSResponseResult } from '@responses/errorResponses';
 import { ErrorField } from '@responses/errors';
@@ -49,11 +49,11 @@ export class WsExceptionFilter extends BaseWsExceptionFilter {
 			responseResult.errors = [{ message: exception.message, field: null }];
 		}
 
-		if (process.env.NODE_ENV === Environments.DEV) {
+		if (process.env.NODE_ENV === Environment.DEV) {
 			responseResult.stack = exception.stack;
 			responseResult.dateTime = DateHelper.dateTimeNow();
 		}
 
-		client.emit(WSEvents.ON_ERROR, responseResult);
+		client.emit(WSEvent.ON_ERROR, responseResult);
 	}
 }

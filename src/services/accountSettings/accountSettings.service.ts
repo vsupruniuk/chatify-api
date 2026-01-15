@@ -7,7 +7,7 @@ import {
 	AccountSettingsDto,
 } from '@dtos/accountSettings/accountSettings';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { IAccountSettingsRepository } from '@repositories';
 
@@ -18,7 +18,7 @@ import { TransformHelper } from '@helpers';
 @Injectable()
 export class AccountSettingsService implements IAccountSettingsService {
 	constructor(
-		@Inject(CustomProviders.CTF_ACCOUNT_SETTINGS_REPOSITORY)
+		@Inject(CustomProvider.CTF_ACCOUNT_SETTINGS_REPOSITORY)
 		private readonly _accountSettingsRepository: IAccountSettingsRepository,
 	) {}
 

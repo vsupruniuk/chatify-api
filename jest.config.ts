@@ -69,7 +69,7 @@ const config: Config = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	moduleDirectories: ['node_modules', 'src', 'dist'],
-	setupFiles: ['dotenv/config', 'reflect-metadata'],
+	setupFiles: ['dotenv/config', 'reflect-metadata', '<rootDir>/jest.setup.ts'],
 	collectCoverage: true,
 	collectCoverageFrom: [
 		'src/**/*.{ts,tsx}',
@@ -85,6 +85,7 @@ const config: Config = {
 		'!src/modules/**',
 		'!src/responses/**',
 		'!src/tests/**',
+		'!src/types/**',
 	],
 	testMatch: ['<rootDir>/src/tests/unit/**/*.spec.ts'],
 };

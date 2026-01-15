@@ -9,7 +9,7 @@ import { ResponseStatus } from '@enums';
 @Injectable()
 export class ResponseTransformInterceptor<T = object> implements NestInterceptor {
 	public intercept(
-		context: ExecutionContext,
+		_context: ExecutionContext,
 		next: CallHandler<T>,
 	): Observable<SuccessfulResponseResult<T | null>> {
 		return next.handle().pipe(

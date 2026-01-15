@@ -4,21 +4,21 @@ import { DataSource, UpdateResult } from 'typeorm';
 
 import { QueryBuilderMock, otpCodes } from '@testMocks';
 
-import { OTPCodesRepository } from '@repositories';
+import { OtpCodesRepository } from '@repositories';
 
 import { OTPCode } from '@entities';
 
 describe('OTP codes repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();
 
-	let otpCodesRepository: OTPCodesRepository;
+	let otpCodesRepository: OtpCodesRepository;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
-			providers: [{ provide: DataSource, useValue: queryBuilderMock }, OTPCodesRepository],
+			providers: [{ provide: DataSource, useValue: queryBuilderMock }, OtpCodesRepository],
 		}).compile();
 
-		otpCodesRepository = moduleFixture.get(OTPCodesRepository);
+		otpCodesRepository = moduleFixture.get(OtpCodesRepository);
 	});
 
 	describe('Update', (): void => {
@@ -38,7 +38,7 @@ describe('OTP codes repository', (): void => {
 		});
 
 		it('should use query builder and create a query for updating OPT code', async (): Promise<void> => {
-			await otpCodesRepository.update(idMock, codeMock, expiresAtMock);
+			await otpCodesRepository.updateOtpCode(idMock, codeMock, expiresAtMock);
 
 			expect(queryBuilderMock.createQueryBuilder).toHaveBeenCalledTimes(1);
 
@@ -61,7 +61,11 @@ describe('OTP codes repository', (): void => {
 		});
 
 		it('should return updated token', async (): Promise<void> => {
-			const updatedCode: OTPCode = await otpCodesRepository.update(idMock, codeMock, expiresAtMock);
+			const updatedCode: OTPCode = await otpCodesRepository.updateOtpCode(
+				idMock,
+				codeMock,
+				expiresAtMock,
+			);
 
 			expect(updatedCode).toEqual(expectedOtpCode);
 		});

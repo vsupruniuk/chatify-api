@@ -20,7 +20,7 @@ import { User } from '@entities';
 
 import { users } from '@testMocks';
 
-import { Headers, FileFields, ContentTypes } from '@enums';
+import { Header, FileField, ContentType, Route, PathParam } from '@enums';
 
 import { SuccessfulResponseResult } from '@responses/successfulResponses';
 
@@ -33,6 +33,7 @@ describe('Get file', (): void => {
 	let dataSource: DataSource;
 
 	const publicDir: string = path.join(process.cwd(), 'public');
+	const route: string = `/${Route.STATIC}`;
 
 	beforeAll(async (): Promise<void> => {
 		postgresContainer = await TestDatabaseHelper.initDbContainer();
@@ -51,7 +52,7 @@ describe('Get file', (): void => {
 		app.useGlobalFilters(new GlobalExceptionFilter());
 		app.use(cookieParser(process.env.COOKIE_SECRET));
 
-		await app.listen(Number(process.env.TESTS_PORT));
+		await app.listen(Number(process.env.PORT));
 
 		fs.mkdirSync(publicDir, { recursive: true });
 	});
@@ -64,14 +65,35 @@ describe('Get file', (): void => {
 		fs.rmSync(publicDir, { recursive: true });
 	});
 
-	describe('GET /static/file-name', (): void => {
+	describe(`GET ${route}/:${PathParam.FILE_NAME}`, (): void => {
 		const passwordMock: string = 'Qwerty12345!';
 		const createdUser: User = users[4];
 
 		const imagePath: string = path.join(__dirname, '..', '..', 'files', 'user.png');
 
+		const login = async (agent: ReturnType<typeof supertest.agent>): Promise<string> => {
+			const loginResponse: supertest.Response = await agent
+				.post(`/${Route.AUTH}/${Route.LOGIN}`)
+				.send({ email: createdUser.email, password: passwordMock });
+
+			return (loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken;
+		};
+
+		const createFile = async (
+			agent: ReturnType<typeof supertest.agent>,
+			accessToken: string,
+		): Promise<string> => {
+			const uploadAvatarResponse: supertest.Response = await agent
+				.post(`/${Route.APP_USER}/${Route.USER_AVATAR}`)
+				.attach(FileField.USER_AVATAR, imagePath)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
+
+			return (uploadAvatarResponse.body as SuccessfulResponseResult<UploadAvatarResponseDto>).data
+				.avatarUrl;
+		};
+
 		beforeEach(async (): Promise<void> => {
-			await supertest.agent(app.getHttpServer()).post('/auth/signup').send({
+			await supertest.agent(app.getHttpServer()).post(`/${Route.AUTH}/${Route.SIGNUP}`).send({
 				email: createdUser.email,
 				firstName: createdUser.firstName,
 				lastName: createdUser.lastName,
@@ -88,7 +110,7 @@ describe('Get file', (): void => {
 		it('should return 401 Unauthorized error if user does not provided authorization header', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.get('/static/user.png');
+				.get(`${route}/user.png`);
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -96,8 +118,8 @@ describe('Get file', (): void => {
 		it('should return 401 Unauthorized error if user provided empty authorization header', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.get('/static/user.png')
-				.set(Headers.AUTHORIZATION, '');
+				.get(`${route}/user.png`)
+				.set(Header.AUTHORIZATION, '');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -105,8 +127,8 @@ describe('Get file', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header without access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.get('/static/user.png')
-				.set(Headers.AUTHORIZATION, 'Bearer');
+				.get(`${route}/user.png`)
+				.set(Header.AUTHORIZATION, 'Bearer');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -114,8 +136,8 @@ describe('Get file', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header with invalid access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.get('/static/user.png')
-				.set(Headers.AUTHORIZATION, 'Bearer accessToken');
+				.get(`${route}/user.png`)
+				.set(Header.AUTHORIZATION, 'Bearer accessToken');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -123,16 +145,11 @@ describe('Get file', (): void => {
 		it('should return 404 Not Found error if file not exist', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const imageResponse = await agent
-				.get('/static/not-exist.png')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.get(`${route}/not-exist.png`)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(imageResponse.status).toBe(HttpStatus.NOT_FOUND);
 		});
@@ -140,16 +157,11 @@ describe('Get file', (): void => {
 		it('should return 404 Not Found error on path traversal', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const imageResponse = await agent
-				.get('/static/../../not-exist.png')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.get(`${route}/../../not-exist.png`)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(imageResponse.status).toBe(HttpStatus.NOT_FOUND);
 		});
@@ -157,29 +169,12 @@ describe('Get file', (): void => {
 		it('should return 200 OK status if file exist', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
-
-			const uploadAvatarResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/app-user/user-avatar')
-				.attach(FileFields.USER_AVATAR, imagePath)
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
-
-			const imageUrl: string = (
-				uploadAvatarResponse.body as SuccessfulResponseResult<UploadAvatarResponseDto>
-			).data.avatarUrl;
+			const accessToken: string = await login(agent);
+			const imageUrl: string = await createFile(agent, accessToken);
 
 			const imageResponse = await agent
-				.get(`/static/${imageUrl}`)
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.get(`${route}/${imageUrl}`)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(imageResponse.status).toBe(HttpStatus.OK);
 		});
@@ -187,31 +182,14 @@ describe('Get file', (): void => {
 		it('should return response as streamable file of type image', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
-
-			const uploadAvatarResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.post('/app-user/user-avatar')
-				.attach(FileFields.USER_AVATAR, imagePath)
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
-
-			const imageUrl: string = (
-				uploadAvatarResponse.body as SuccessfulResponseResult<UploadAvatarResponseDto>
-			).data.avatarUrl;
+			const accessToken: string = await login(agent);
+			const imageUrl: string = await createFile(agent, accessToken);
 
 			const imageResponse = await agent
-				.get(`/static/${imageUrl}`)
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.get(`${route}/${imageUrl}`)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
-			expect(imageResponse.headers[Headers.CONTENT_TYPE]).toBe(ContentTypes.IMAGE_JPEG);
+			expect(imageResponse.headers[Header.CONTENT_TYPE]).toBe(ContentType.IMAGE_JPEG);
 		});
 	});
 });

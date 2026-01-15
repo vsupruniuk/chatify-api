@@ -4,7 +4,7 @@ import { MetadataHelper } from '@testHelpers';
 
 import { QueryRequired } from '@decorators/data';
 
-describe('Query required decorator', () => {
+describe('Query required decorator', (): void => {
 	const query: Record<string, string> = {
 		username: 't.stark',
 		chatId: '',

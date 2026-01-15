@@ -12,8 +12,8 @@ describe('Is strings similar', (): void => {
 	describe('validate', (): void => {
 		const value: string = 'value';
 		const relatedValue: string = 'relatedValue';
-
 		const relatedPropertyName: string = 'relatedPropertyName';
+
 		const validationArguments: ValidationArguments = {
 			constraints: [relatedPropertyName],
 			object: { relatedPropertyName: relatedValue },

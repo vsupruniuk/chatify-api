@@ -6,9 +6,10 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 
+import { plainToInstance } from 'class-transformer';
 import { DataSource } from 'typeorm';
 
-import { AuthService, IUsersService, IJWTTokensService } from '@services';
+import { AuthService, IUsersService, IJwtTokensService } from '@services';
 
 import { providers } from '@modules/providers';
 
@@ -16,18 +17,19 @@ import { users, otpCodes, jwtTokens } from '@testMocks';
 
 import { User, OTPCode, JWTToken } from '@entities';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
-import { OTPCodeDto } from '@dtos/otpCode';
+import { OtpCodeDto } from '@dtos/otpCode';
 import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation';
 import { ActivateAccountDto } from '@dtos/auth/accountActivation';
+import { UserWithJwtTokenDto, UserWithOtpCodeDto } from '@dtos/users';
 
-import { OTPCodesHelper, TransformHelper } from '@helpers';
+import { OtpCodesHelper, TransformHelper } from '@helpers';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;
 	let usersService: IUsersService;
-	let jwtTokensService: IJWTTokensService;
+	let jwtTokensService: IJwtTokensService;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -37,14 +39,17 @@ describe('Auth service', (): void => {
 				JwtService,
 
 				providers.CTF_USERS_SERVICE,
-				providers.CTF_EMAIL_SERVICE,
-				providers.CTF_JWT_TOKENS_SERVICE,
-				providers.CTF_OTP_CODES_SERVICE,
-				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
-
 				providers.CTF_USERS_REPOSITORY,
+
+				providers.CTF_EMAIL_SERVICE,
+
+				providers.CTF_JWT_TOKENS_SERVICE,
 				providers.CTF_JWT_TOKENS_REPOSITORY,
+
+				providers.CTF_OTP_CODES_SERVICE,
 				providers.CTF_OTP_CODES_REPOSITORY,
+
+				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
 				providers.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 
 				{ provide: DataSource, useValue: {} },
@@ -52,8 +57,8 @@ describe('Auth service', (): void => {
 		}).compile();
 
 		authService = moduleFixture.get(AuthService);
-		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
-		jwtTokensService = moduleFixture.get(CustomProviders.CTF_JWT_TOKENS_SERVICE);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
+		jwtTokensService = moduleFixture.get(CustomProvider.CTF_JWT_TOKENS_SERVICE);
 	});
 
 	describe('Activate account', (): void => {
@@ -70,10 +75,23 @@ describe('Auth service', (): void => {
 		beforeEach((): void => {
 			jest
 				.spyOn(usersService, 'getByEmailAndNotActiveWithOtpCode')
-				.mockResolvedValue({ ...userMock, otpCode: { ...otpCodeMock } as OTPCodeDto });
+				.mockResolvedValue(
+					plainToInstance(
+						UserWithOtpCodeDto,
+						{ ...userMock, otpCode: { ...otpCodeMock } as OtpCodeDto },
+						{ excludeExtraneousValues: true },
+					),
+				);
 			jest
 				.spyOn(usersService, 'activateUser')
-				.mockResolvedValue({ ...userMock, jwtToken: refreshTokenMock });
+				.mockResolvedValue(
+					plainToInstance(
+						UserWithJwtTokenDto,
+						{ ...userMock, jwtToken: refreshTokenMock },
+						{ excludeExtraneousValues: true },
+					),
+				);
+
 			jest
 				.spyOn(jwtTokensService, 'generateAccessToken')
 				.mockResolvedValue(accessTokenMock.token as string);
@@ -82,7 +100,7 @@ describe('Auth service', (): void => {
 				.mockResolvedValue(refreshTokenMock.token as string);
 			jest.spyOn(jwtTokensService, 'saveRefreshToken').mockImplementation(jest.fn());
 
-			jest.spyOn(OTPCodesHelper, 'isExpired').mockReturnValue(false);
+			jest.spyOn(OtpCodesHelper, 'isExpired').mockReturnValue(false);
 			jest.spyOn(TransformHelper, 'toJwtTokenPayload').mockReturnValue(userMock);
 		});
 
@@ -111,7 +129,7 @@ describe('Auth service', (): void => {
 		it('should throw bad request exception if provided otp code is incorrect', async (): Promise<void> => {
 			jest.spyOn(usersService, 'getByEmailAndNotActiveWithOtpCode').mockResolvedValue({
 				...userMock,
-				otpCode: { ...otpCodeMock, code: 112233 } as OTPCodeDto,
+				otpCode: { ...otpCodeMock, code: 112233 } as OtpCodeDto,
 			});
 
 			await expect(authService.activateAccount(activateAccountRequestDto)).rejects.toThrow(
@@ -120,7 +138,7 @@ describe('Auth service', (): void => {
 		});
 
 		it('should throw bad request exception if provided otp code is expired', async (): Promise<void> => {
-			jest.spyOn(OTPCodesHelper, 'isExpired').mockReturnValue(true);
+			jest.spyOn(OtpCodesHelper, 'isExpired').mockReturnValue(true);
 
 			await expect(authService.activateAccount(activateAccountRequestDto)).rejects.toThrow(
 				BadRequestException,
@@ -146,20 +164,28 @@ describe('Auth service', (): void => {
 			await authService.activateAccount(activateAccountRequestDto);
 
 			expect(TransformHelper.toJwtTokenPayload).toHaveBeenCalledTimes(2);
-			expect(TransformHelper.toJwtTokenPayload).toHaveBeenNthCalledWith(1, {
-				...userMock,
-				jwtToken: refreshTokenMock,
-			});
+			expect(TransformHelper.toJwtTokenPayload).toHaveBeenNthCalledWith(
+				1,
+				plainToInstance(
+					UserWithJwtTokenDto,
+					{ ...userMock, jwtToken: refreshTokenMock },
+					{ excludeExtraneousValues: true },
+				),
+			);
 		});
 
 		it('should call to jwt token payload method from transform helper to transform activated user object to valid jwt payload for refresh token', async (): Promise<void> => {
 			await authService.activateAccount(activateAccountRequestDto);
 
 			expect(TransformHelper.toJwtTokenPayload).toHaveBeenCalledTimes(2);
-			expect(TransformHelper.toJwtTokenPayload).toHaveBeenNthCalledWith(2, {
-				...userMock,
-				jwtToken: refreshTokenMock,
-			});
+			expect(TransformHelper.toJwtTokenPayload).toHaveBeenNthCalledWith(
+				2,
+				plainToInstance(
+					UserWithJwtTokenDto,
+					{ ...userMock, jwtToken: refreshTokenMock },
+					{ excludeExtraneousValues: true },
+				),
+			);
 		});
 
 		it('should call generate access token from jwt tokens service to generate access token for user', async (): Promise<void> => {

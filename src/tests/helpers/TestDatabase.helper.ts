@@ -2,16 +2,14 @@ import { StartedTestContainer } from 'testcontainers';
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import { DataSource } from 'typeorm';
 
-import { typeOrmConfig } from '@configs';
+import { testsConfig, typeOrmConfig } from '@configs';
 
 export class TestDatabaseHelper {
-	private static readonly _postgresImage: string = 'postgres:14';
-
 	public static async initDbContainer(): Promise<StartedTestContainer> {
-		return await new PostgreSqlContainer(this._postgresImage)
-			.withDatabase(String(process.env.DATABASE_NAME))
-			.withUsername(String(process.env.DATABASE_USERNAME))
-			.withPassword(String(process.env.DATABASE_PASSWORD))
+		return await new PostgreSqlContainer(testsConfig.postgresImage)
+			.withDatabase(String(typeOrmConfig.database))
+			.withUsername(String(typeOrmConfig.username))
+			.withPassword(String(typeOrmConfig.password))
 			.start();
 	}
 
@@ -19,7 +17,7 @@ export class TestDatabaseHelper {
 		return await new DataSource({
 			...typeOrmConfig,
 			host: postgresContainer.getHost(),
-			port: postgresContainer.getMappedPort(Number(process.env.DATABASE_PORT)),
+			port: postgresContainer.getMappedPort(Number(typeOrmConfig.port)),
 			synchronize: true,
 		}).initialize();
 	}

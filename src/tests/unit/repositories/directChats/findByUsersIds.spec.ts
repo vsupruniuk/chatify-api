@@ -32,7 +32,7 @@ describe('Direct chats repository', (): void => {
 			queryBuilderMock.getOne.mockReturnValue(expectedDirectChat);
 
 			queryBuilderMock.andWhere.mockImplementation(
-				(condition: string, parameters: { userId: string }): string => {
+				(_condition: string, parameters: { userId: string }): string => {
 					return parameters.userId === firstUserIdMock
 						? chatWithFirstUserMock
 						: chatWithSecondUserMock;
@@ -44,7 +44,7 @@ describe('Direct chats repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should use query builder and create a query condition for existing chats for a first user', async (): Promise<void> => {
+		it('should use query builder and create a query for searching if chat with first user exist', async (): Promise<void> => {
 			await directChatsRepository.findByUsersIds(firstUserIdMock, secondUserIdMock);
 
 			expect(queryBuilderMock.createQueryBuilder).toHaveBeenCalledTimes(3);
@@ -73,7 +73,7 @@ describe('Direct chats repository', (): void => {
 			);
 		});
 
-		it('should use query builder and create a query condition for existing chats for a second user', async (): Promise<void> => {
+		it('should use query builder and create a query for searching if chat with second user exist', async (): Promise<void> => {
 			await directChatsRepository.findByUsersIds(firstUserIdMock, secondUserIdMock);
 
 			expect(queryBuilderMock.createQueryBuilder).toHaveBeenCalledTimes(3);

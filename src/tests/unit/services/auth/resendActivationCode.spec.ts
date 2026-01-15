@@ -2,25 +2,27 @@ import { NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 
+import { plainToInstance } from 'class-transformer';
 import { DataSource } from 'typeorm';
 
-import { AuthService, IEmailService, IUsersService, IOTPCodesService } from '@services';
+import { AuthService, IEmailService, IUsersService, IOtpCodesService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User, OTPCode } from '@entities';
 
 import { users, otpCodes } from '@testMocks';
 
-import { OTPCodeDto } from '@dtos/otpCode';
+import { OtpCodeDto } from '@dtos/otpCode';
 import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode';
+import { UserWithOtpCodeDto } from '@dtos/users';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;
 	let usersService: IUsersService;
-	let otpCodesService: IOTPCodesService;
+	let otpCodesService: IOtpCodesService;
 	let emailService: IEmailService;
 
 	beforeAll(async (): Promise<void> => {
@@ -31,14 +33,17 @@ describe('Auth service', (): void => {
 				JwtService,
 
 				providers.CTF_USERS_SERVICE,
-				providers.CTF_EMAIL_SERVICE,
-				providers.CTF_JWT_TOKENS_SERVICE,
-				providers.CTF_OTP_CODES_SERVICE,
-				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
-
 				providers.CTF_USERS_REPOSITORY,
+
+				providers.CTF_EMAIL_SERVICE,
+
+				providers.CTF_JWT_TOKENS_SERVICE,
 				providers.CTF_JWT_TOKENS_REPOSITORY,
+
+				providers.CTF_OTP_CODES_SERVICE,
 				providers.CTF_OTP_CODES_REPOSITORY,
+
+				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
 				providers.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 
 				{ provide: DataSource, useValue: {} },
@@ -46,9 +51,9 @@ describe('Auth service', (): void => {
 		}).compile();
 
 		authService = moduleFixture.get(AuthService);
-		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
-		otpCodesService = moduleFixture.get(CustomProviders.CTF_OTP_CODES_SERVICE);
-		emailService = moduleFixture.get(CustomProviders.CTF_EMAIL_SERVICE);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
+		otpCodesService = moduleFixture.get(CustomProvider.CTF_OTP_CODES_SERVICE);
+		emailService = moduleFixture.get(CustomProvider.CTF_EMAIL_SERVICE);
 	});
 
 	describe('Resend activation code', (): void => {
@@ -62,7 +67,13 @@ describe('Auth service', (): void => {
 		beforeEach((): void => {
 			jest
 				.spyOn(usersService, 'getByEmailAndNotActiveWithOtpCode')
-				.mockResolvedValue({ ...userMock, otpCode: { ...otpCodeMock } as OTPCodeDto });
+				.mockResolvedValue(
+					plainToInstance(
+						UserWithOtpCodeDto,
+						{ ...userMock, otpCode: { ...otpCodeMock } as OtpCodeDto },
+						{ excludeExtraneousValues: true },
+					),
+				);
 
 			jest.spyOn(otpCodesService, 'regenerateCode').mockResolvedValue(otpCodeMock.code);
 			jest.spyOn(emailService, 'sendActivationEmail').mockImplementation(jest.fn());

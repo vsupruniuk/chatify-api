@@ -17,7 +17,7 @@ import { AccountSettings, DirectChat, User } from '@entities';
 
 import { users, directChats, accountSettings } from '@testMocks';
 
-import { Headers } from '@enums';
+import { Header, Route } from '@enums';
 
 import { SuccessfulResponseResult } from '@responses/successfulResponses';
 
@@ -29,6 +29,8 @@ describe('Get last chats', (): void => {
 	let app: INestApplication;
 	let postgresContainer: StartedTestContainer;
 	let dataSource: DataSource;
+
+	const route: string = `/${Route.DIRECT_CHATS}`;
 
 	beforeAll(async (): Promise<void> => {
 		postgresContainer = await TestDatabaseHelper.initDbContainer();
@@ -46,7 +48,7 @@ describe('Get last chats', (): void => {
 		app.useGlobalPipes(new ValidationPipe(validationPipeConfig));
 		app.useGlobalFilters(new GlobalExceptionFilter());
 
-		await app.listen(Number(process.env.TESTS_PORT));
+		await app.listen(Number(process.env.PORT));
 	});
 
 	afterAll(async (): Promise<void> => {
@@ -55,13 +57,20 @@ describe('Get last chats', (): void => {
 		await app.close();
 	});
 
-	describe('GET /direct-chats', (): void => {
+	describe(`GET ${route}`, (): void => {
 		const passwordMock: string = 'Qwerty12345!';
 		const createdUser: User = users[2];
-		const chatUser: User = users[3];
+
+		const login = async (agent: ReturnType<typeof supertest.agent>): Promise<string> => {
+			const loginResponse: supertest.Response = await agent
+				.post(`/${Route.AUTH}/${Route.LOGIN}`)
+				.send({ email: createdUser.email, password: passwordMock });
+
+			return (loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken;
+		};
 
 		beforeEach(async (): Promise<void> => {
-			await supertest.agent(app.getHttpServer()).post('/auth/signup').send({
+			await supertest.agent(app.getHttpServer()).post(`/${Route.AUTH}/${Route.SIGNUP}`).send({
 				email: createdUser.email,
 				firstName: createdUser.firstName,
 				lastName: createdUser.lastName,
@@ -70,33 +79,60 @@ describe('Get last chats', (): void => {
 				passwordConfirmation: passwordMock,
 			});
 
-			const userOne = await dataSource
+			const userCreated: User = (await dataSource
 				.getRepository(User)
-				.findOne({ where: { email: createdUser.email } });
+				.findOne({ where: { email: createdUser.email } })) as User;
+
+			const userOneAccountSettings: AccountSettings = dataSource
+				.getRepository(AccountSettings)
+				.create(accountSettings[2]);
+			const userOne: User = dataSource
+				.getRepository(User)
+				.create({ ...users[3], accountSettings: userOneAccountSettings });
 
 			const userTwoAccountSettings: AccountSettings = dataSource
 				.getRepository(AccountSettings)
-				.create(accountSettings[2]);
-
+				.create(accountSettings[3]);
 			const userTwo: User = dataSource
 				.getRepository(User)
-				.create({ ...chatUser, accountSettings: userTwoAccountSettings });
+				.create({ ...users[4], accountSettings: userTwoAccountSettings });
+
+			const userThreeAccountSettings: AccountSettings = dataSource
+				.getRepository(AccountSettings)
+				.create(accountSettings[4]);
+			const userThree: User = dataSource
+				.getRepository(User)
+				.create({ ...users[5], accountSettings: userThreeAccountSettings });
+
+			const userFourAccountSettings: AccountSettings = dataSource
+				.getRepository(AccountSettings)
+				.create(accountSettings[5]);
+			const userFour: User = dataSource
+				.getRepository(User)
+				.create({ ...users[6], accountSettings: userFourAccountSettings });
 
 			const directChatOne: DirectChat = dataSource
 				.getRepository(DirectChat)
-				.create({ ...directChats[0], users: [{ id: userOne?.id }, { id: userTwo.id }] });
+				.create({ ...directChats[0], users: [{ id: userCreated.id }, { id: userOne.id }] });
 			const directChatTwo: DirectChat = dataSource
 				.getRepository(DirectChat)
-				.create({ ...directChats[1], users: [{ id: userOne?.id }, { id: userTwo.id }] });
+				.create({ ...directChats[1], users: [{ id: userCreated.id }, { id: userTwo.id }] });
 			const directChatThree: DirectChat = dataSource
 				.getRepository(DirectChat)
-				.create({ ...directChats[2], users: [{ id: userOne?.id }, { id: userTwo.id }] });
+				.create({ ...directChats[2], users: [{ id: userCreated.id }, { id: userThree.id }] });
 			const directChatFour: DirectChat = dataSource
 				.getRepository(DirectChat)
-				.create({ ...directChats[3], users: [{ id: userOne?.id }, { id: userTwo.id }] });
+				.create({ ...directChats[3], users: [{ id: userCreated.id }, { id: userFour.id }] });
 
-			await dataSource.getRepository(AccountSettings).save([userTwoAccountSettings]);
-			await dataSource.getRepository(User).save([userTwo]);
+			await dataSource
+				.getRepository(AccountSettings)
+				.save([
+					userOneAccountSettings,
+					userTwoAccountSettings,
+					userThreeAccountSettings,
+					userFourAccountSettings,
+				]);
+			await dataSource.getRepository(User).save([userOne, userTwo, userThree, userFour]);
 			await dataSource
 				.getRepository(DirectChat)
 				.save([directChatOne, directChatTwo, directChatThree, directChatFour]);
@@ -107,9 +143,7 @@ describe('Get last chats', (): void => {
 		});
 
 		it('should return 401 Unauthorized error if user does not provided authorization header', async (): Promise<void> => {
-			const response: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.get('/direct-chats');
+			const response: supertest.Response = await supertest.agent(app.getHttpServer()).get(route);
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -117,8 +151,8 @@ describe('Get last chats', (): void => {
 		it('should return 401 Unauthorized error if user provided empty authorization header', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.get('/direct-chats')
-				.set(Headers.AUTHORIZATION, '');
+				.get(route)
+				.set(Header.AUTHORIZATION, '');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -126,8 +160,8 @@ describe('Get last chats', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header without access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.get('/direct-chats')
-				.set(Headers.AUTHORIZATION, 'Bearer');
+				.get(route)
+				.set(Header.AUTHORIZATION, 'Bearer');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -135,8 +169,8 @@ describe('Get last chats', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header with invalid access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.get('/direct-chats')
-				.set(Headers.AUTHORIZATION, 'Bearer accessToken');
+				.get(route)
+				.set(Header.AUTHORIZATION, 'Bearer invalidAccessToken');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -144,16 +178,11 @@ describe('Get last chats', (): void => {
 		it('should 400 Bad Request error if page query parameter is less than 1', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const chatsResponse: supertest.Response = await agent
-				.get('/direct-chats')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ page: 0, take: 10 });
 
 			expect(chatsResponse.status).toBe(HttpStatus.BAD_REQUEST);
@@ -162,16 +191,11 @@ describe('Get last chats', (): void => {
 		it('should 400 Bad Request error if take query parameter is less than 1', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const chatsResponse: supertest.Response = await agent
-				.get('/direct-chats')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ page: 1, take: 0 });
 
 			expect(chatsResponse.status).toBe(HttpStatus.BAD_REQUEST);
@@ -180,16 +204,11 @@ describe('Get last chats', (): void => {
 		it('should 200 OK status if chats were found', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const chatsResponse: supertest.Response = await agent
-				.get('/direct-chats')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ page: 1, take: 10 });
 
 			expect(chatsResponse.status).toBe(HttpStatus.OK);
@@ -198,16 +217,11 @@ describe('Get last chats', (): void => {
 		it('should 200 OK status if pagination query parameters were not provided', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const chatsResponse: supertest.Response = await agent
-				.get('/direct-chats')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(chatsResponse.status).toBe(HttpStatus.OK);
 		});
@@ -219,16 +233,11 @@ describe('Get last chats', (): void => {
 
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const chatsResponse: supertest.Response = await agent
-				.get('/direct-chats')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ page: 1, take: 10 });
 
 			expect(chatsResponse.status).toBe(HttpStatus.OK);
@@ -237,16 +246,11 @@ describe('Get last chats', (): void => {
 		it('should return only chats with current logged in user', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const chatsResponse: supertest.Response = await agent
-				.get('/direct-chats')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ page: 1, take: 10 });
 
 			const directChats: DirectChatWithUsersAndMessagesDto[] = (
@@ -261,48 +265,35 @@ describe('Get last chats', (): void => {
 		it('should limit number of chats to take query parameter', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const takeParameter: number = 2;
 
 			const chatsResponse: supertest.Response = await agent
-				.get('/direct-chats')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ page: 1, take: takeParameter });
 
 			const directChats: DirectChatWithUsersAndMessagesDto[] = (
 				chatsResponse.body as SuccessfulResponseResult<DirectChatWithUsersAndMessagesDto[]>
 			).data;
 
-			expect(directChats.length).toBe(takeParameter);
+			expect(directChats).toHaveLength(takeParameter);
 		});
 
 		it('should return different chats for different page query parameter', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const chatsResponseOne: supertest.Response = await agent
-				.get('/direct-chats')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ page: 1, take: 2 });
 
 			const chatsResponseTwo: supertest.Response = await agent
-				.get('/direct-chats')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ page: 2, take: 2 });
 
 			const directChatsOne: string[] = (

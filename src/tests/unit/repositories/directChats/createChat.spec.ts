@@ -33,8 +33,10 @@ describe('Direct chats repository', (): void => {
 			raw: [],
 			identifiers: [],
 		};
+
 		const senderMock: UserDto = TransformHelper.toTargetDto(UserDto, users[4]);
 		const receiverMock: UserDto = TransformHelper.toTargetDto(UserDto, users[5]);
+
 		const messageTextMock: string = "I'm an Iron Man";
 		const messageDateTimeMock: string = '2025-04-08 23:38:10';
 		const subQueryMock: string = 'subQueryMock';
@@ -96,7 +98,7 @@ describe('Direct chats repository', (): void => {
 			expect(queryBuilderMock.add).toHaveBeenNthCalledWith(2, receiverMock);
 		});
 
-		it('should use query builder and create a query for inserting an initial message into created chat', async (): Promise<void> => {
+		it('should use query builder and insert initial message into created chat', async (): Promise<void> => {
 			await directChatsRepository.createChat(
 				senderMock,
 				receiverMock,

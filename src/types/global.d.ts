@@ -1,13 +1,4 @@
-import { Request } from 'express';
-import { Socket } from 'socket.io';
-
-import { JWTPayloadDto } from '@dtos/jwt';
-
 export declare namespace GlobalTypes {
-	type TAuthorizedRequest = Request & { user: JWTPayloadDto };
-
-	type TAuthorizedSocket = Socket & { user: JWTPayloadDto };
-
 	interface IValidationErrorResponse {
 		message: string[];
 		error: string;
@@ -21,11 +12,4 @@ export declare namespace GlobalTypes {
 			data: T;
 		};
 	}
-
-	interface IPagination {
-		page: number;
-		take: number;
-	}
-
-	interface IPaginationQueries extends Partial<Record<keyof IPagination, string>> {}
 }

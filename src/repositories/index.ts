@@ -8,10 +8,10 @@ export * from './directChats/directChats.repository';
 export * from './directChats/IDirectChatsRepository';
 
 export * from './jwtTokens/jwtTokens.repository';
-export * from './jwtTokens/IJWTTokensRepository';
+export * from './jwtTokens/IJwtTokensRepository';
 
-export * from './otpCodes/OTPCodes.repository';
-export * from './otpCodes/IOTPCodesRepository';
+export * from './otpCodes/otpCodes.repository';
+export * from './otpCodes/IOtpCodesRepository';
 
 export * from './passwordResetToken/passwordResetTokens.repository';
 export * from './passwordResetToken/IPasswordResetTokensRepository';

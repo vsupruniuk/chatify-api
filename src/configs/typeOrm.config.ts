@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import * as path from 'path';
 
-import { Environments } from '@enums';
+import { Environment } from '@enums';
 
 import * as entities from '@entities';
 
@@ -21,8 +21,8 @@ export const typeOrmConfig: PostgresConnectionOptions = {
 	entities: Object.values(entities),
 	migrations: [path.resolve(__dirname, String(process.env.DATABASE_MIGRATIONS_PATH))],
 	migrationsTableName: 'migrations',
-	ssl: process.env.NODE_ENV !== Environments.PROD ? false : { rejectUnauthorized: true },
-	logging: process.env.NODE_ENV === Environments.DEV ? ['query', 'error', 'warn'] : false,
-};
+	ssl: process.env.NODE_ENV !== Environment.PROD ? false : { rejectUnauthorized: true },
+	logging: process.env.NODE_ENV === Environment.DEV ? ['query', 'error', 'warn'] : false,
+} as const;
 
 export default new DataSource(typeOrmConfig);

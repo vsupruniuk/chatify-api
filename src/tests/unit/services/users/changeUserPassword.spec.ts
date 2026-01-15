@@ -8,7 +8,7 @@ import { IUsersRepository } from '@repositories';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User, PasswordResetToken } from '@entities';
 
@@ -30,7 +30,7 @@ describe('Users service', (): void => {
 		}).compile();
 
 		usersService = moduleFixture.get(UsersService);
-		usersRepository = moduleFixture.get(CustomProviders.CTF_USERS_REPOSITORY);
+		usersRepository = moduleFixture.get(CustomProvider.CTF_USERS_REPOSITORY);
 	});
 
 	describe('Change user password', (): void => {
@@ -63,6 +63,14 @@ describe('Users service', (): void => {
 		});
 
 		it('should return false if password was not changed', async (): Promise<void> => {
+			jest.spyOn(usersRepository, 'updatePassword').mockResolvedValue(userMock);
+
+			const isUpdated: boolean = await usersService.changeUserPassword(userId, tokenId, password);
+
+			expect(isUpdated).toBe(false);
+		});
+
+		it('should return false if repository method did not return a user with changed password', async (): Promise<void> => {
 			jest.spyOn(usersRepository, 'updatePassword').mockResolvedValue(null);
 
 			const isUpdated: boolean = await usersService.changeUserPassword(userId, tokenId, password);

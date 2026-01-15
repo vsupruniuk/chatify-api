@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 
 import { IPasswordResetTokensService } from '@services';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { IPasswordResetTokensRepository } from '@repositories';
 
@@ -14,7 +14,7 @@ import { PasswordResetToken } from '@entities';
 
 export class PasswordResetTokensService implements IPasswordResetTokensService {
 	constructor(
-		@Inject(CustomProviders.CTF_PASSWORD_RESET_TOKENS_REPOSITORY)
+		@Inject(CustomProvider.CTF_PASSWORD_RESET_TOKENS_REPOSITORY)
 		private readonly _passwordResetTokensRepository: IPasswordResetTokensRepository,
 	) {}
 

@@ -2,19 +2,21 @@ import { NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 
+import { plainToInstance } from 'class-transformer';
 import { DataSource } from 'typeorm';
 
 import { AuthService, IUsersService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User, PasswordResetToken } from '@entities';
 
 import { users, passwordResetTokens } from '@testMocks';
 
 import { PasswordResetTokenDto } from '@dtos/passwordResetToken';
+import { UserWithPasswordResetTokenDto } from '@dtos/users';
 
 describe('Auth service', (): void => {
 	let authService: AuthService;
@@ -28,14 +30,17 @@ describe('Auth service', (): void => {
 				JwtService,
 
 				providers.CTF_USERS_SERVICE,
-				providers.CTF_EMAIL_SERVICE,
-				providers.CTF_JWT_TOKENS_SERVICE,
-				providers.CTF_OTP_CODES_SERVICE,
-				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
-
 				providers.CTF_USERS_REPOSITORY,
+
+				providers.CTF_EMAIL_SERVICE,
+
+				providers.CTF_JWT_TOKENS_SERVICE,
 				providers.CTF_JWT_TOKENS_REPOSITORY,
+
+				providers.CTF_OTP_CODES_SERVICE,
 				providers.CTF_OTP_CODES_REPOSITORY,
+
+				providers.CTF_PASSWORD_RESET_TOKENS_SERVICE,
 				providers.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 
 				{ provide: DataSource, useValue: {} },
@@ -43,7 +48,7 @@ describe('Auth service', (): void => {
 		}).compile();
 
 		authService = moduleFixture.get(AuthService);
-		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
 	});
 
 	describe('Confirm reset password', (): void => {
@@ -52,10 +57,16 @@ describe('Auth service', (): void => {
 		const password: string = 'Qwerty12345!';
 
 		beforeEach((): void => {
-			jest.spyOn(usersService, 'getByNotExpiredPasswordResetToken').mockResolvedValue({
-				...userMock,
-				passwordResetToken: { ...passwordResetTokenMock } as PasswordResetTokenDto,
-			});
+			jest.spyOn(usersService, 'getByNotExpiredPasswordResetToken').mockResolvedValue(
+				plainToInstance(
+					UserWithPasswordResetTokenDto,
+					{
+						...userMock,
+						passwordResetToken: { ...passwordResetTokenMock } as PasswordResetTokenDto,
+					},
+					{ excludeExtraneousValues: true },
+				),
+			);
 
 			jest.spyOn(usersService, 'changeUserPassword').mockResolvedValue(true);
 		});
@@ -100,6 +111,15 @@ describe('Auth service', (): void => {
 			await expect(
 				authService.confirmResetPassword(password, passwordResetTokenMock.token as string),
 			).rejects.toThrow(UnprocessableEntityException);
+		});
+
+		it('should return nothing', async () => {
+			const result: void = await authService.confirmResetPassword(
+				password,
+				passwordResetTokenMock.token as string,
+			);
+
+			expect(result).toBeUndefined();
 		});
 	});
 });

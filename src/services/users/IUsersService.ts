@@ -1,4 +1,4 @@
-import { UserDto } from '@dtos/users';
+import { UserDto, UserWithAccountSettingsDto } from '@dtos/users';
 import { UserWithOtpCodeDto } from '@dtos/users';
 import { UserWithJwtTokenDto } from '@dtos/users';
 import { UserWithPasswordResetTokenDto } from '@dtos/users';
@@ -16,6 +16,8 @@ export interface IUsersService {
 	 * @returns null - if user wasn't found
 	 */
 	getById(id: string): Promise<UserDto | null>;
+
+	getByNickname(nickname: string): Promise<UserDto | null>;
 
 	/**
 	 * Method for searching all users by ids
@@ -64,6 +66,8 @@ export interface IUsersService {
 	 * @returns null - if user wasn't found
 	 */
 	getFullUserWithJwtTokenByEmail(email: string): Promise<FullUserWithJwtTokenDto | null>;
+
+	getByIdWithAccountSettings(id: string): Promise<UserWithAccountSettingsDto | null>;
 
 	getActivatedUsersByNickname(nickname: string, page: number, take: number): Promise<UserDto[]>;
 

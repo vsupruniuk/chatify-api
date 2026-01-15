@@ -2,14 +2,13 @@ import { Response } from 'express';
 
 import { ResponseHelper } from '@helpers';
 
-import { CookiesNames, Environments } from '@enums';
+import { CookiesName, Environment } from '@enums';
 
 describe('Response helper', (): void => {
-	const jwtRefreshTokenExpiresInMock: string = '1000';
-	const nodeEnvMock: string = Environments.DEV;
+	const jwtRefreshTokenExpiresInMock: number = Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN);
+	const nodeEnvMock: Environment = Environment.PROD;
 
 	beforeAll((): void => {
-		process.env.JWT_REFRESH_TOKEN_EXPIRES_IN = jwtRefreshTokenExpiresInMock;
 		process.env.NODE_ENV = nodeEnvMock;
 	});
 
@@ -28,8 +27,8 @@ describe('Response helper', (): void => {
 			ResponseHelper.setRefreshTokenCookie(response, refreshToken);
 
 			expect(response.cookie).toHaveBeenCalledTimes(1);
-			expect(response.cookie).toHaveBeenNthCalledWith(1, CookiesNames.REFRESH_TOKEN, refreshToken, {
-				maxAge: Number(jwtRefreshTokenExpiresInMock) * 1000,
+			expect(response.cookie).toHaveBeenNthCalledWith(1, CookiesName.REFRESH_TOKEN, refreshToken, {
+				maxAge: jwtRefreshTokenExpiresInMock * 1000,
 				secure: true,
 				sameSite: 'strict',
 				httpOnly: true,

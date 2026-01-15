@@ -18,7 +18,7 @@ import { User } from '@entities';
 
 import { users } from '@testMocks';
 
-import { Headers } from '@enums';
+import { Header, Route } from '@enums';
 
 import { SuccessfulResponseResult } from '@responses/successfulResponses';
 
@@ -29,6 +29,8 @@ describe('Update account settings', (): void => {
 	let app: INestApplication;
 	let postgresContainer: StartedTestContainer;
 	let dataSource: DataSource;
+
+	const route: string = `/${Route.APP_USER}/${Route.ACCOUNT_SETTINGS}`;
 
 	beforeAll(async (): Promise<void> => {
 		postgresContainer = await TestDatabaseHelper.initDbContainer();
@@ -47,7 +49,7 @@ describe('Update account settings', (): void => {
 		app.useGlobalFilters(new GlobalExceptionFilter());
 		app.use(cookieParser(process.env.COOKIE_SECRET));
 
-		await app.listen(Number(process.env.TESTS_PORT));
+		await app.listen(Number(process.env.PORT));
 	});
 
 	afterAll(async (): Promise<void> => {
@@ -56,7 +58,7 @@ describe('Update account settings', (): void => {
 		await app.close();
 	});
 
-	describe('PATCH /app-user/account-settings', (): void => {
+	describe(`PATCH ${route}`, (): void => {
 		const passwordMock: string = 'Qwerty12345!';
 		const createdUser: User = users[0];
 
@@ -64,8 +66,16 @@ describe('Update account settings', (): void => {
 		const notificationMock: boolean = true;
 		const twoStepVerificationMock: boolean = true;
 
+		const login = async (agent: ReturnType<typeof supertest.agent>): Promise<string> => {
+			const loginResponse: supertest.Response = await agent
+				.post(`/${Route.AUTH}/${Route.LOGIN}`)
+				.send({ email: createdUser.email, password: passwordMock });
+
+			return (loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken;
+		};
+
 		beforeEach(async (): Promise<void> => {
-			await supertest.agent(app.getHttpServer()).post('/auth/signup').send({
+			await supertest.agent(app.getHttpServer()).post(`/${Route.AUTH}/${Route.SIGNUP}`).send({
 				email: createdUser.email,
 				firstName: createdUser.firstName,
 				lastName: createdUser.lastName,
@@ -82,7 +92,7 @@ describe('Update account settings', (): void => {
 		it('should return 401 Unauthorized error if user does not provided authorization header', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/app-user/account-settings')
+				.patch(route)
 				.send({
 					enterIsSending: enterIsSendingMock,
 					notification: notificationMock,
@@ -95,13 +105,13 @@ describe('Update account settings', (): void => {
 		it('should return 401 Unauthorized error if user provided empty authorization header', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/app-user/account-settings')
+				.patch(route)
 				.send({
 					enterIsSending: enterIsSendingMock,
 					notification: notificationMock,
 					twoStepVerification: twoStepVerificationMock,
 				})
-				.set(Headers.AUTHORIZATION, '');
+				.set(Header.AUTHORIZATION, '');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -109,13 +119,13 @@ describe('Update account settings', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header without access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/app-user/account-settings')
+				.patch(route)
 				.send({
 					enterIsSending: enterIsSendingMock,
 					notification: notificationMock,
 					twoStepVerification: twoStepVerificationMock,
 				})
-				.set(Headers.AUTHORIZATION, 'Bearer');
+				.set(Header.AUTHORIZATION, 'Bearer');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -123,13 +133,13 @@ describe('Update account settings', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header with invalid access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/app-user/account-settings')
+				.patch(route)
 				.send({
 					enterIsSending: enterIsSendingMock,
 					notification: notificationMock,
 					twoStepVerification: twoStepVerificationMock,
 				})
-				.set(Headers.AUTHORIZATION, 'Bearer accessToken');
+				.set(Header.AUTHORIZATION, 'Bearer invalidAccessToken');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -137,17 +147,12 @@ describe('Update account settings', (): void => {
 		it('should return 400 Bad Request error if empty body was sent', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user/account-settings')
+				.patch(route)
 				.send({})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -155,21 +160,16 @@ describe('Update account settings', (): void => {
 		it('should return 400 Bad Request error if enter is sending is present but it is not a boolean', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user/account-settings')
+				.patch(route)
 				.send({
 					enterIsSending: 'true',
 					notification: notificationMock,
 					twoStepVerification: twoStepVerificationMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -177,21 +177,16 @@ describe('Update account settings', (): void => {
 		it('should return 400 Bad Request error if notification is present but it is not a boolean', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user/account-settings')
+				.patch(route)
 				.send({
 					enterIsSending: enterIsSendingMock,
 					notification: 'true',
 					twoStepVerification: twoStepVerificationMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -199,21 +194,16 @@ describe('Update account settings', (): void => {
 		it('should return 400 Bad Request error if two step verification is present but it is not a boolean', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user/account-settings')
+				.patch(route)
 				.send({
 					enterIsSending: enterIsSendingMock,
 					notification: notificationMock,
 					twoStepVerification: 'true',
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -221,21 +211,16 @@ describe('Update account settings', (): void => {
 		it('should return 200 OK status if account settings were successfully updated', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user/account-settings')
+				.patch(route)
 				.send({
 					enterIsSending: enterIsSendingMock,
 					notification: notificationMock,
 					twoStepVerification: twoStepVerificationMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.OK);
 		});
@@ -243,21 +228,16 @@ describe('Update account settings', (): void => {
 		it('should return updated account settings in response body data', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user/account-settings')
+				.patch(route)
 				.send({
 					enterIsSending: enterIsSendingMock,
 					notification: notificationMock,
 					twoStepVerification: twoStepVerificationMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			const updatedSettings: AccountSettingsDto = (
 				updateAppUserResponse.body as SuccessfulResponseResult<AccountSettingsDto>

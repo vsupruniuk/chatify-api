@@ -9,15 +9,12 @@ services:
     ports:
       - $PORT:$PORT
     volumes:
-      - ./src:/app/src
-      - public_files:/app/public
+      - public_files:/usr/src/app
     depends_on:
       - chatify-api-database
-    command: >
-      sh -c "npm run build && npm run migration:run && npm run start:$NODE_ENV"
 
   chatify-api-database:
-    image: postgres:16.3-alpine
+    image: postgres:17.7-alpine
     container_name: chatify-api-database
     environment:
       POSTGRES_DB: $DATABASE_NAME

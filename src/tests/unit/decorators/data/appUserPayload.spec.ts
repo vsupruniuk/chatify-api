@@ -8,13 +8,13 @@ import { User } from '@entities';
 
 import { users } from '@testMocks';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 
 import { MetadataHelper } from '@testHelpers';
 
-describe('App user payload decorator', () => {
+describe('App user payload decorator', (): void => {
 	const userMock: User = users[2];
-	const userPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, userMock, {
+	const userPayload: JwtPayloadDto = plainToInstance(JwtPayloadDto, userMock, {
 		excludeExtraneousValues: true,
 	});
 
@@ -26,10 +26,10 @@ describe('App user payload decorator', () => {
 		}),
 	} as ExecutionContext;
 
-	it('should return authorized user data from the request object', () => {
+	it('should return authorized user data from the request object', (): void => {
 		const factory: CallableFunction = MetadataHelper.getParamDecoratorFactory(AppUserPayload);
 
-		const result: JWTPayloadDto = factory(null, executionContext);
+		const result: JwtPayloadDto = factory(null, executionContext);
 
 		expect(result).toEqual(userPayload);
 	});

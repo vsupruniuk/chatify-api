@@ -9,7 +9,7 @@ import { AppUserController } from '@controllers';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User } from '@entities';
 
@@ -17,7 +17,7 @@ import { users } from '@testMocks';
 
 import { IUsersService } from '@services';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar';
 
 describe('App user controller', (): void => {
@@ -46,13 +46,13 @@ describe('App user controller', (): void => {
 		}).compile();
 
 		appUserController = moduleFixture.get(AppUserController);
-		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
 	});
 
 	describe('Upload avatar', (): void => {
 		const userMock: User = users[3];
 
-		const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, userMock, {
+		const appUserPayload: JwtPayloadDto = plainToInstance(JwtPayloadDto, userMock, {
 			excludeExtraneousValues: true,
 		});
 		const file: Express.Multer.File = { filename: 'avatar.png' } as Express.Multer.File;

@@ -7,7 +7,7 @@ import { JwtTokensService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 
 import { User } from '@entities';
 
@@ -17,11 +17,9 @@ describe('JWT tokens service', (): void => {
 	let jwtTokensService: JwtTokensService;
 	let jwtService: JwtService;
 
-	const accessTokenSecretMock: string = 'accessTokenSecretMock';
+	const accessTokenSecretMock: string = String(process.env.JWT_ACCESS_TOKEN_SECRET);
 
 	beforeAll(async (): Promise<void> => {
-		process.env.JWT_ACCESS_TOKEN_SECRET = accessTokenSecretMock;
-
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			providers: [
 				JwtService,
@@ -37,13 +35,9 @@ describe('JWT tokens service', (): void => {
 		jwtService = moduleFixture.get(JwtService);
 	});
 
-	afterAll((): void => {
-		delete process.env.JWT_ACCESS_TOKEN_SECRET;
-	});
-
 	describe('Verify access token', (): void => {
 		const userMock: User = users[5];
-		const payloadMock: JWTPayloadDto = {
+		const payloadMock: JwtPayloadDto = {
 			id: userMock.id,
 			email: userMock.email,
 			firstName: userMock.firstName,
@@ -71,7 +65,7 @@ describe('JWT tokens service', (): void => {
 		});
 
 		it('should return user payload if access token valid', async (): Promise<void> => {
-			const payload: JWTPayloadDto | null = await jwtTokensService.verifyAccessToken(accessToken);
+			const payload: JwtPayloadDto | null = await jwtTokensService.verifyAccessToken(accessToken);
 
 			expect(payload).toEqual(payloadMock);
 		});
@@ -79,7 +73,7 @@ describe('JWT tokens service', (): void => {
 		it('should return null if access token is not valid', async (): Promise<void> => {
 			jest.spyOn(jwtService, 'verifyAsync').mockRejectedValue(new Error());
 
-			const payload: JWTPayloadDto | null = await jwtTokensService.verifyAccessToken(accessToken);
+			const payload: JwtPayloadDto | null = await jwtTokensService.verifyAccessToken(accessToken);
 
 			expect(payload).toBeNull();
 		});

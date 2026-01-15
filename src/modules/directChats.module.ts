@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { DirectChatsGateway } from '@gateways';
+import { DirectChatMessagesGateway, DirectChatsGateway } from '@gateways';
 
 import { DirectChatsController } from '@controllers';
 
@@ -16,6 +16,8 @@ import {
 	controllers: [DirectChatsController],
 	providers: [
 		DirectChatsGateway,
+		DirectChatMessagesGateway,
+
 		JwtService,
 
 		DirectChatWithUsersAndMessagesStrategy,
@@ -24,6 +26,7 @@ import {
 		providers.CTF_DIRECT_CHATS_SERVICE,
 		providers.CTF_DIRECT_CHATS_REPOSITORY,
 
+		providers.CTF_DIRECT_CHAT_MESSAGES_SERVICE,
 		providers.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY,
 
 		providers.CTF_CRYPTO_SERVICE,

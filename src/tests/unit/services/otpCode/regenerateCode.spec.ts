@@ -2,30 +2,30 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { DataSource } from 'typeorm';
 
-import { OTPCodesService } from '@services';
+import { OtpCodesService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { IOTPCodesRepository } from '@repositories';
+import { IOtpCodesRepository } from '@repositories';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { OTPCode } from '@entities';
 
 import { otpCodes } from '@testMocks';
 
-import { OTPCodesHelper, DateHelper } from '@helpers';
+import { OtpCodesHelper, DateHelper } from '@helpers';
 
 import { otpCodeConfig } from '@configs';
 
 describe('OTP codes service', (): void => {
-	let otpCodesService: OTPCodesService;
-	let otpCodesRepository: IOTPCodesRepository;
+	let otpCodesService: OtpCodesService;
+	let otpCodesRepository: IOtpCodesRepository;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			providers: [
-				OTPCodesService,
+				OtpCodesService,
 
 				providers.CTF_OTP_CODES_REPOSITORY,
 
@@ -33,8 +33,8 @@ describe('OTP codes service', (): void => {
 			],
 		}).compile();
 
-		otpCodesService = moduleFixture.get(OTPCodesService);
-		otpCodesRepository = moduleFixture.get(CustomProviders.CTF_OTP_CODES_REPOSITORY);
+		otpCodesService = moduleFixture.get(OtpCodesService);
+		otpCodesRepository = moduleFixture.get(CustomProvider.CTF_OTP_CODES_REPOSITORY);
 	});
 
 	describe('Regenerate code', (): void => {
@@ -45,10 +45,10 @@ describe('OTP codes service', (): void => {
 		const id: string = otpCodeMock.id;
 
 		beforeEach((): void => {
-			jest.spyOn(OTPCodesHelper, 'generateOTPCode').mockReturnValue(otpCode);
+			jest.spyOn(OtpCodesHelper, 'generateOTPCode').mockReturnValue(otpCode);
 			jest.spyOn(DateHelper, 'dateTimeFuture').mockReturnValue(otpCodeExpirationDate);
 
-			jest.spyOn(otpCodesRepository, 'update').mockResolvedValue(otpCodeMock);
+			jest.spyOn(otpCodesRepository, 'updateOtpCode').mockResolvedValue(otpCodeMock);
 		});
 
 		afterEach((): void => {
@@ -58,7 +58,7 @@ describe('OTP codes service', (): void => {
 		it('should call generate otp code method from otp codes helper to generate new code', async (): Promise<void> => {
 			await otpCodesService.regenerateCode(id);
 
-			expect(OTPCodesHelper.generateOTPCode).toHaveBeenCalledTimes(1);
+			expect(OtpCodesHelper.generateOTPCode).toHaveBeenCalledTimes(1);
 		});
 
 		it('should call date time future method from date helper to generate new expiration date for otp code', async (): Promise<void> => {
@@ -71,8 +71,8 @@ describe('OTP codes service', (): void => {
 		it('should call update method from otp codes repository to update user otp code', async (): Promise<void> => {
 			await otpCodesService.regenerateCode(id);
 
-			expect(otpCodesRepository.update).toHaveBeenCalledTimes(1);
-			expect(otpCodesRepository.update).toHaveBeenNthCalledWith(
+			expect(otpCodesRepository.updateOtpCode).toHaveBeenCalledTimes(1);
+			expect(otpCodesRepository.updateOtpCode).toHaveBeenNthCalledWith(
 				1,
 				id,
 				otpCode,
@@ -87,7 +87,9 @@ describe('OTP codes service', (): void => {
 		});
 
 		it('should return null if otp code was not updated', async (): Promise<void> => {
-			jest.spyOn(otpCodesRepository, 'update').mockResolvedValue({ ...otpCodeMock, code: null });
+			jest
+				.spyOn(otpCodesRepository, 'updateOtpCode')
+				.mockResolvedValue({ ...otpCodeMock, code: null });
 
 			const updatedOtpCode: number | null = await otpCodesService.regenerateCode(id);
 

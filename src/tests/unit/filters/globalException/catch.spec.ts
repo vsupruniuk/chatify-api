@@ -5,7 +5,7 @@ import { Response } from 'express';
 
 import { GlobalExceptionFilter } from '@filters';
 
-import { Environments, ResponseStatus } from '@enums';
+import { Environment, ResponseStatus } from '@enums';
 
 import { ErrorResponseResult } from '@responses/errorResponses';
 import { ErrorField } from '@responses/errors';
@@ -16,7 +16,7 @@ describe('Global exception filter', (): void => {
 	beforeAll((): void => {
 		globalExceptionFilter = new GlobalExceptionFilter();
 
-		process.env.NODE_ENV = Environments.PROD;
+		process.env.NODE_ENV = Environment.PROD;
 	});
 
 	afterAll((): void => {
@@ -88,8 +88,23 @@ describe('Global exception filter', (): void => {
 			expect(response.errors).toEqual([{ message: errorMessage, field: null }]);
 		});
 
+		it('should create a valid errors fields if exception contains and array of errors', (): void => {
+			globalExceptionFilter.catch(
+				new BadRequestException([`${errorMessage}|${errorField}`, `${errorMessage}|${errorField}`]),
+				host,
+			);
+
+			const response: ErrorResponseResult<ErrorField[]> = (responseMock.json as jest.Mock).mock
+				.calls[0][0];
+
+			expect(response.errors).toEqual([
+				{ message: errorMessage, field: errorField },
+				{ message: errorMessage, field: errorField },
+			]);
+		});
+
 		it('should specify stack trace and date time in dev environment', (): void => {
-			process.env.NODE_ENV = Environments.DEV;
+			process.env.NODE_ENV = Environment.DEV;
 
 			globalExceptionFilter.catch(exception, host);
 

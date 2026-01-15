@@ -1,25 +1,28 @@
 import { ConflictException, UnprocessableEntityException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { plainToInstance } from 'class-transformer';
 import { DataSource } from 'typeorm';
 
-import { AppUserService } from '@services';
+import { AppUserService, IUsersService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
-import { User } from '@entities';
+import { AccountSettings, User } from '@entities';
 
-import { users } from '@testMocks';
+import { accountSettings, users } from '@testMocks';
 
 import { IUsersRepository } from '@repositories';
 
-import { JWTPayloadDto } from '@dtos/jwt';
-import { UpdateAppUserRequestDto, AppUserDto } from '@dtos/appUser';
+import { JwtPayloadDto } from '@dtos/jwt';
+import { UpdateAppUserRequestDto } from '@dtos/appUser';
+import { UserDto, UserWithAccountSettingsDto } from '@dtos/users';
 
 describe('App user service', (): void => {
 	let appUserService: AppUserService;
+	let usersService: IUsersService;
 	let usersRepository: IUsersRepository;
 
 	beforeAll(async (): Promise<void> => {
@@ -35,13 +38,15 @@ describe('App user service', (): void => {
 		}).compile();
 
 		appUserService = moduleFixture.get(AppUserService);
-		usersRepository = moduleFixture.get(CustomProviders.CTF_USERS_REPOSITORY);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
+		usersRepository = moduleFixture.get(CustomProvider.CTF_USERS_REPOSITORY);
 	});
 
 	describe('Update app user', (): void => {
 		const userMock: User = users[3];
+		const accountSettingsMock: AccountSettings = accountSettings[3];
 
-		const appUserPayload: JWTPayloadDto = {
+		const appUserPayload: JwtPayloadDto = {
 			id: userMock.id,
 			email: userMock.email,
 			firstName: userMock.firstName,
@@ -56,16 +61,20 @@ describe('App user service', (): void => {
 		};
 
 		beforeEach((): void => {
-			jest.spyOn(usersRepository, 'findByNickname').mockResolvedValue(userMock);
-			jest.spyOn(usersRepository, 'updateAppUser').mockResolvedValue(userMock);
+			jest
+				.spyOn(usersService, 'getByNickname')
+				.mockResolvedValue(plainToInstance(UserDto, userMock, { excludeExtraneousValues: true }));
+			jest
+				.spyOn(usersRepository, 'updateAppUser')
+				.mockResolvedValue({ ...userMock, accountSettings: { ...accountSettingsMock } });
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should call find by nickname method from users repository if nickname is present in dto and its a new', async (): Promise<void> => {
-			jest.spyOn(usersRepository, 'findByNickname').mockResolvedValue(null);
+		it('should call get by nickname method from users service if nickname is present in dto and its a new', async (): Promise<void> => {
+			jest.spyOn(usersService, 'getByNickname').mockResolvedValue(null);
 
 			const nickname: string = 't.stark';
 
@@ -74,8 +83,8 @@ describe('App user service', (): void => {
 				nickname,
 			});
 
-			expect(usersRepository.findByNickname).toHaveBeenCalledTimes(1);
-			expect(usersRepository.findByNickname).toHaveBeenNthCalledWith(1, nickname);
+			expect(usersService.getByNickname).toHaveBeenCalledTimes(1);
+			expect(usersService.getByNickname).toHaveBeenNthCalledWith(1, nickname);
 		});
 
 		it('should throw conflict exception if new nickname is present in dto but user with this nickname already exist', async (): Promise<void> => {
@@ -88,7 +97,7 @@ describe('App user service', (): void => {
 		});
 
 		it('should not throw conflict exception if new nickname is present in dto and user with this nickname does not exist', async (): Promise<void> => {
-			jest.spyOn(usersRepository, 'findByNickname').mockResolvedValue(null);
+			jest.spyOn(usersService, 'getByNickname').mockResolvedValue(null);
 
 			await expect(
 				appUserService.updateAppUser(appUserPayload, {
@@ -98,19 +107,19 @@ describe('App user service', (): void => {
 			).resolves.not.toThrow(ConflictException);
 		});
 
-		it('should not call find by nickname method from users repository if nickname is present in dto but the same as current', async (): Promise<void> => {
+		it('should not call get by nickname method from users service if nickname is present in dto but the same as current', async (): Promise<void> => {
 			await appUserService.updateAppUser(appUserPayload, {
 				...updateAppUserRequestDto,
 				nickname: appUserPayload.nickname,
 			});
 
-			expect(usersRepository.findByNickname).not.toHaveBeenCalled();
+			expect(usersService.getByNickname).not.toHaveBeenCalled();
 		});
 
-		it('should not call find by nickname method from users repository if nickname is not present in dto', async (): Promise<void> => {
+		it('should not call get by nickname method from users service if nickname is not present in dto', async (): Promise<void> => {
 			await appUserService.updateAppUser(appUserPayload, updateAppUserRequestDto);
 
-			expect(usersRepository.findByNickname).not.toHaveBeenCalled();
+			expect(usersService.getByNickname).not.toHaveBeenCalled();
 		});
 
 		it('should call update app user method from users repository to update a user', async (): Promise<void> => {
@@ -132,13 +141,28 @@ describe('App user service', (): void => {
 			).rejects.toThrow(UnprocessableEntityException);
 		});
 
-		it('should return response as instance of AppUserDto', async (): Promise<void> => {
-			const user: AppUserDto = await appUserService.updateAppUser(
+		it('should return updated user with account settings', async (): Promise<void> => {
+			const user: UserWithAccountSettingsDto = await appUserService.updateAppUser(
 				appUserPayload,
 				updateAppUserRequestDto,
 			);
 
-			expect(user).toBeInstanceOf(AppUserDto);
+			expect(user).toEqual(
+				plainToInstance(
+					UserWithAccountSettingsDto,
+					{ ...userMock, accountSettings: { ...accountSettingsMock } },
+					{ excludeExtraneousValues: true },
+				),
+			);
+		});
+
+		it('should return response as instance of UserWithAccountSettingsDto', async (): Promise<void> => {
+			const user: UserWithAccountSettingsDto = await appUserService.updateAppUser(
+				appUserPayload,
+				updateAppUserRequestDto,
+			);
+
+			expect(user).toBeInstanceOf(UserWithAccountSettingsDto);
 		});
 	});
 });

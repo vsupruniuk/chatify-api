@@ -9,7 +9,7 @@ import { IUsersRepository } from '@repositories';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User, OTPCode, JWTToken } from '@entities';
 
@@ -33,7 +33,7 @@ describe('Users service', (): void => {
 		}).compile();
 
 		usersService = moduleFixture.get(UsersService);
-		usersRepository = moduleFixture.get(CustomProviders.CTF_USERS_REPOSITORY);
+		usersRepository = moduleFixture.get(CustomProvider.CTF_USERS_REPOSITORY);
 	});
 
 	describe('Activate user', (): void => {
@@ -51,7 +51,6 @@ describe('Users service', (): void => {
 		});
 
 		afterEach((): void => {
-			jest.clearAllMocks();
 			jest.restoreAllMocks();
 		});
 
@@ -62,7 +61,7 @@ describe('Users service', (): void => {
 			expect(usersRepository.activateUser).toHaveBeenNthCalledWith(1, userId, otpCodeId);
 		});
 
-		it('should return null if user was not found', async (): Promise<void> => {
+		it('should return null if repository method did not return activated user', async (): Promise<void> => {
 			jest.spyOn(usersRepository, 'activateUser').mockResolvedValue(null);
 
 			const user: UserWithJwtTokenDto | null = await usersService.activateUser(userId, otpCodeId);
@@ -70,7 +69,7 @@ describe('Users service', (): void => {
 			expect(user).toBeNull();
 		});
 
-		it('should return founded user', async (): Promise<void> => {
+		it('should return activated user', async (): Promise<void> => {
 			const user: UserWithJwtTokenDto | null = await usersService.activateUser(userId, otpCodeId);
 
 			expect(user).toEqual(

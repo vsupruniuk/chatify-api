@@ -12,8 +12,8 @@ import {
 	IAuthService,
 	IUsersService,
 	IEmailService,
-	IJWTTokensService,
-	IOTPCodesService,
+	IJwtTokensService,
+	IOtpCodesService,
 	IPasswordResetTokensService,
 } from '@services';
 
@@ -22,7 +22,7 @@ import { ActivateAccountRequestDto, ActivateAccountDto } from '@dtos/auth/accoun
 import { ResendActivationCodeRequestDto } from '@dtos/auth/resendActivationCode';
 import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword';
 import { LoginRequestDto, LoginDto } from '@dtos/auth/login';
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 import {
 	FullUserWithJwtTokenDto,
 	UserDto,
@@ -31,28 +31,28 @@ import {
 	UserWithPasswordResetTokenDto,
 } from '@dtos/users';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
-import { OTPCodesHelper, DateHelper, TransformHelper, PasswordHelper } from '@helpers';
+import { OtpCodesHelper, DateHelper, TransformHelper, PasswordHelper } from '@helpers';
 
 import { otpCodeConfig } from '@configs';
 
 @Injectable()
 export class AuthService implements IAuthService {
 	constructor(
-		@Inject(CustomProviders.CTF_USERS_SERVICE)
+		@Inject(CustomProvider.CTF_USERS_SERVICE)
 		private readonly _usersService: IUsersService,
 
-		@Inject(CustomProviders.CTF_EMAIL_SERVICE)
+		@Inject(CustomProvider.CTF_EMAIL_SERVICE)
 		private readonly _emailService: IEmailService,
 
-		@Inject(CustomProviders.CTF_JWT_TOKENS_SERVICE)
-		private readonly _jwtTokensService: IJWTTokensService,
+		@Inject(CustomProvider.CTF_JWT_TOKENS_SERVICE)
+		private readonly _jwtTokensService: IJwtTokensService,
 
-		@Inject(CustomProviders.CTF_OTP_CODES_SERVICE)
-		private readonly _otpCodeService: IOTPCodesService,
+		@Inject(CustomProvider.CTF_OTP_CODES_SERVICE)
+		private readonly _otpCodeService: IOtpCodesService,
 
-		@Inject(CustomProviders.CTF_PASSWORD_RESET_TOKENS_SERVICE)
+		@Inject(CustomProvider.CTF_PASSWORD_RESET_TOKENS_SERVICE)
 		private readonly _passwordResetTokensService: IPasswordResetTokensService,
 	) {}
 
@@ -71,7 +71,7 @@ export class AuthService implements IAuthService {
 			throw new ConflictException(errorMessage);
 		}
 
-		const otpCode: number = OTPCodesHelper.generateOTPCode();
+		const otpCode: number = OtpCodesHelper.generateOTPCode();
 		const otpCodeExpirationDate: string = DateHelper.dateTimeFuture(otpCodeConfig.ttl);
 
 		await this._usersService.createUser(otpCode, otpCodeExpirationDate, signupRequestDto);
@@ -93,7 +93,7 @@ export class AuthService implements IAuthService {
 			throw new BadRequestException('OTP code is incorrect|code');
 		}
 
-		if (OTPCodesHelper.isExpired(user.otpCode)) {
+		if (OtpCodesHelper.isExpired(user.otpCode)) {
 			throw new BadRequestException('OTP code is expired|code');
 		}
 
@@ -202,7 +202,7 @@ export class AuthService implements IAuthService {
 	}
 
 	public async logout(refreshToken: string): Promise<void> {
-		const userPayload: JWTPayloadDto | null =
+		const userPayload: JwtPayloadDto | null =
 			await this._jwtTokensService.verifyRefreshToken(refreshToken);
 
 		if (userPayload) {
@@ -215,7 +215,7 @@ export class AuthService implements IAuthService {
 	}
 
 	public async refresh(userRefreshToken: string): Promise<LoginDto> {
-		const userPayload: JWTPayloadDto | null =
+		const userPayload: JwtPayloadDto | null =
 			await this._jwtTokensService.verifyRefreshToken(userRefreshToken);
 
 		if (!userPayload) {

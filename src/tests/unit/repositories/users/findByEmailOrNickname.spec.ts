@@ -68,7 +68,7 @@ describe('Users repository', (): void => {
 			expect(user).toEqual(expectedUser);
 		});
 
-		it('should return return null if user was not found', async (): Promise<void> => {
+		it('should return null if user was not found', async (): Promise<void> => {
 			queryBuilderMock.getOne.mockReturnValue(null);
 
 			const user: User | null = await usersRepository.findByEmailOrNickname(

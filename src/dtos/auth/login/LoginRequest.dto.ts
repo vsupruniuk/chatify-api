@@ -2,6 +2,8 @@ import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validato
 
 import { Trim } from '@decorators/sanitizing';
 
+import { passwordConfig } from '@configs';
+
 export class LoginRequestDto {
 	@Trim()
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })
@@ -9,7 +11,7 @@ export class LoginRequestDto {
 	public email: string;
 
 	@Trim()
-	@Matches(/^(?=.*[0-9])(?=.*[A-Z])/, {
+	@Matches(passwordConfig.validationRegExp, {
 		message: '$property must contains at least 1 number and 1 uppercase character|$property',
 	})
 	@MaxLength(255, { message: '$property can be $constraint1 characters long maximum|$property' })

@@ -7,14 +7,16 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 
-import { createReadStream, existsSync, ReadStream } from 'fs';
-import { resolve } from 'path';
+import { createReadStream, existsSync, ReadStream } from 'node:fs';
+import { resolve } from 'node:path';
 
 import { AuthInterceptor } from '@interceptors';
 
 import { IStaticController } from '@controllers';
 
-@Controller('static')
+import { ContentType, PathParam, Route } from '@enums';
+
+@Controller(Route.STATIC)
 @UseInterceptors(AuthInterceptor)
 export class StaticController implements IStaticController {
 	private readonly _publicFolderPath: string = resolve(
@@ -22,8 +24,8 @@ export class StaticController implements IStaticController {
 		String(process.env.PUBLIC_FILES_FOLDER),
 	);
 
-	@Get(':fileName')
-	public getFile(@Param('fileName') fileName: string): StreamableFile {
+	@Get(`:${PathParam.FILE_NAME}`)
+	public getFile(@Param(PathParam.FILE_NAME) fileName: string): StreamableFile {
 		const filePath: string = resolve(this._publicFolderPath, fileName);
 
 		if (!filePath.startsWith(this._publicFolderPath) || !existsSync(filePath)) {
@@ -32,6 +34,6 @@ export class StaticController implements IStaticController {
 
 		const fileStream: ReadStream = createReadStream(filePath);
 
-		return new StreamableFile(fileStream, { type: 'image/jpeg' });
+		return new StreamableFile(fileStream, { type: ContentType.IMAGE_JPEG });
 	}
 }

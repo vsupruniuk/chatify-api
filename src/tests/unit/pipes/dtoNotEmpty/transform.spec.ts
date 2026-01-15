@@ -15,7 +15,7 @@ describe('Dto not empty pipe', (): void => {
 	});
 
 	describe('Transform', (): void => {
-		it('should throw bar request exception if passed object does not contains any keys', (): void => {
+		it('should throw bad request exception if passed object does not contains any keys', (): void => {
 			expect(() => dtoNotEmptyPipe.transform({})).toThrow(BadRequestException);
 		});
 
