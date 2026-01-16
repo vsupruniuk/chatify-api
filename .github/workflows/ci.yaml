@@ -23,6 +23,16 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Create .env
+        shell: bash
+        run: |
+          printf '%s\n' "${{ secrets.ENV }}" > .env
+
+      - name: Load env variables
+        shell: bash
+        run: |
+          sed -E '/^\s*($|#)/d' .env >> $GITHUB_ENV
+
       - name: Install dependencies
         run: npm ci
 
@@ -35,8 +45,16 @@ jobs:
       - name: Build
         run: npm run build
 
-  tests:
-    name: tests
+      - name: Coverage tests
+        run: npm run test:cov
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v7.0.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  e2e-tests:
+    name: e2e-tests
     runs-on: ubuntu-latest
 
     strategy:
@@ -66,9 +84,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Unit tests
-        run: npm run test:unit
 
       - name: E2E test
         run: npm run test:e2e
