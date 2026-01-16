@@ -18,11 +18,14 @@ import { AccountSettings, PasswordResetToken, User } from '@entities';
 import { users, accountSettings, passwordResetTokens } from '@testMocks';
 
 import { SuccessfulResponseResult } from '@responses/successfulResponses';
+import { Route } from '@enums';
 
 describe('Reset password', (): void => {
 	let app: INestApplication;
 	let postgresContainer: StartedTestContainer;
 	let dataSource: DataSource;
+
+	const route: string = `/${Route.AUTH}/${Route.RESET_PASSWORD}`;
 
 	beforeAll(async (): Promise<void> => {
 		postgresContainer = await TestDatabaseHelper.initDbContainer();
@@ -40,7 +43,7 @@ describe('Reset password', (): void => {
 		app.useGlobalPipes(new ValidationPipe(validationPipeConfig));
 		app.useGlobalFilters(new GlobalExceptionFilter());
 
-		await app.listen(Number(process.env.TESTS_PORT));
+		await app.listen(Number(process.env.PORT));
 	});
 
 	afterAll(async (): Promise<void> => {
@@ -49,7 +52,7 @@ describe('Reset password', (): void => {
 		await app.close();
 	});
 
-	describe('PATCH /auth/reset-password', (): void => {
+	describe(`PATCH ${route}`, (): void => {
 		const createdUser: User = users[4];
 		const createdAccountSettings: AccountSettings = accountSettings[4];
 		const createdPasswordResetToken: PasswordResetToken = passwordResetTokens[4];
@@ -81,7 +84,7 @@ describe('Reset password', (): void => {
 		it('should return 400 Bad Request error if email is missed', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/reset-password')
+				.patch(route)
 				.send({});
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -90,7 +93,7 @@ describe('Reset password', (): void => {
 		it('should return 400 Bad Request error if email is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/reset-password')
+				.patch(route)
 				.send({ email: 123456 });
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -99,7 +102,7 @@ describe('Reset password', (): void => {
 		it('should return 400 Bad Request error if email is not valid', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/reset-password')
+				.patch(route)
 				.send({ email: 't.odinson' });
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -108,7 +111,7 @@ describe('Reset password', (): void => {
 		it('should return 400 Bad Request error if email is more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/reset-password')
+				.patch(route)
 				.send({ email: createdUser.email.padStart(256, 't') });
 
 			expect(response.status).toBe(HttpStatus.BAD_REQUEST);
@@ -117,16 +120,25 @@ describe('Reset password', (): void => {
 		it('should return 404 Not Found error if user with this email was not found', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/reset-password')
+				.patch(route)
 				.send({ email: notCreatedUser.email });
 
 			expect(response.status).toBe(HttpStatus.NOT_FOUND);
 		});
 
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+			const response: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.patch(route)
+				.send({ email: `   ${createdUser.email}   ` });
+
+			expect(response.status).toBe(HttpStatus.OK);
+		});
+
 		it('should return 200 OK status if password reset token was generated and sent', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/reset-password')
+				.patch(route)
 				.send({ email: createdUser.email });
 
 			expect(response.status).toBe(HttpStatus.OK);
@@ -135,7 +147,7 @@ describe('Reset password', (): void => {
 		it('should return null body data if password reset token was generated and sent', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/reset-password')
+				.patch(route)
 				.send({ email: createdUser.email });
 
 			expect((response.body as SuccessfulResponseResult).data).toBeNull();

@@ -10,7 +10,7 @@ import { IAuthService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { ResponseHelper } from '@helpers';
 
@@ -47,7 +47,7 @@ describe('Auth controller', (): void => {
 		}).compile();
 
 		authController = moduleFixture.get(AuthController);
-		authService = moduleFixture.get(CustomProviders.CTF_AUTH_SERVICE);
+		authService = moduleFixture.get(CustomProvider.CTF_AUTH_SERVICE);
 	});
 
 	describe('Refresh', (): void => {

@@ -19,10 +19,14 @@ import { users, accountSettings } from '@testMocks';
 
 import { SuccessfulResponseResult } from '@responses/successfulResponses';
 
+import { Route } from '@enums';
+
 describe('Signup', (): void => {
 	let app: INestApplication;
 	let postgresContainer: StartedTestContainer;
 	let dataSource: DataSource;
+
+	const route: string = `/${Route.AUTH}/${Route.SIGNUP}`;
 
 	beforeAll(async (): Promise<void> => {
 		postgresContainer = await TestDatabaseHelper.initDbContainer();
@@ -40,7 +44,7 @@ describe('Signup', (): void => {
 		app.useGlobalPipes(new ValidationPipe(validationPipeConfig));
 		app.useGlobalFilters(new GlobalExceptionFilter());
 
-		await app.listen(Number(process.env.TESTS_PORT));
+		await app.listen(Number(process.env.PORT));
 	});
 
 	afterAll(async (): Promise<void> => {
@@ -49,7 +53,7 @@ describe('Signup', (): void => {
 		await app.close();
 	});
 
-	describe('POST /auth/signup', (): void => {
+	describe(`POST ${route}`, (): void => {
 		const existingUser: User = users[2];
 		const existingAccountSettings: AccountSettings = accountSettings[0];
 
@@ -74,7 +78,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if email is missed', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					nickname: notExistingUser.nickname,
 					firstName: notExistingUser.firstName,
@@ -89,7 +93,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if email is not valid', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: 'wrong.email',
 					nickname: notExistingUser.nickname,
@@ -105,7 +109,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if email more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email.padStart(256, 't'),
 					nickname: notExistingUser.nickname,
@@ -121,7 +125,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if email is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: 1234,
 					nickname: notExistingUser.nickname,
@@ -137,7 +141,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if nickname is missed', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					firstName: notExistingUser.firstName,
@@ -152,7 +156,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if nickname is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: 1234,
@@ -168,7 +172,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if nickname is less than 3 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: 'st',
@@ -184,7 +188,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if nickname is more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname.padEnd(256, 'k'),
@@ -200,7 +204,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if first name is missed', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -215,7 +219,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if first name is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -231,7 +235,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if first name is less than 3 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -247,7 +251,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if first name is more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -263,7 +267,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if last name present but it is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -279,7 +283,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if last name present but less than 3 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -295,7 +299,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if last name present but more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -311,7 +315,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password is missed', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -326,7 +330,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -342,7 +346,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password is less than 6 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -358,7 +362,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password is more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -374,7 +378,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password does not include at least 1 number', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -390,7 +394,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password does not include at least 1 upper case letter', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -406,7 +410,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password confirmation is missed', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -421,7 +425,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password confirmation is not a string', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -437,7 +441,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password confirmation is less than 6 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -453,7 +457,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password confirmation is more than 255 characters long', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -469,7 +473,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password confirmation does not include at least 1 number', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -485,7 +489,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password confirmation does not include at least 1 uppercase letter', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -501,7 +505,7 @@ describe('Signup', (): void => {
 		it('should return 400 Bad Request error if password and password confirmation valid but does not match', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -517,7 +521,7 @@ describe('Signup', (): void => {
 		it('should return 409 Conflict error if user with the same email already exist', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: existingUser.email,
 					nickname: notExistingUser.nickname,
@@ -533,7 +537,7 @@ describe('Signup', (): void => {
 		it('should return 409 Conflict error if user with the same nickname already exist', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: existingUser.nickname,
@@ -546,10 +550,26 @@ describe('Signup', (): void => {
 			expect(response.status).toBe(HttpStatus.CONFLICT);
 		});
 
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+			const response: supertest.Response = await supertest
+				.agent(app.getHttpServer())
+				.post(route)
+				.send({
+					email: `   ${notExistingUser.email}   `,
+					nickname: `   ${notExistingUser.nickname}   `,
+					firstName: `   ${notExistingUser.firstName}   `,
+					lastName: `   ${notExistingUser.lastName}   `,
+					password: '   Qwerty12345!   ',
+					passwordConfirmation: '   Qwerty12345!   ',
+				});
+
+			expect(response.status).toBe(HttpStatus.CREATED);
+		});
+
 		it('should create user and return 201 Created status if request body is valid and no conflicts in data', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -565,7 +585,7 @@ describe('Signup', (): void => {
 		it('should create user and return 201 Created status if last name is not provided', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,
@@ -580,7 +600,7 @@ describe('Signup', (): void => {
 		it('should return null in response body data', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.post('/auth/signup')
+				.post(route)
 				.send({
 					email: notExistingUser.email,
 					nickname: notExistingUser.nickname,

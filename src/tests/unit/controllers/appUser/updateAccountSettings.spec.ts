@@ -8,7 +8,7 @@ import { AppUserController } from '@controllers';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { IAccountSettingsService } from '@services';
 
@@ -16,7 +16,7 @@ import { User, AccountSettings } from '@entities';
 
 import { users, accountSettings } from '@testMocks';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 import {
 	UpdateAccountSettingsRequestDto,
 	AccountSettingsDto,
@@ -48,14 +48,14 @@ describe('App user controller', (): void => {
 		}).compile();
 
 		appUserController = moduleFixture.get(AppUserController);
-		accountSettingsService = moduleFixture.get(CustomProviders.CTF_ACCOUNT_SETTINGS_SERVICE);
+		accountSettingsService = moduleFixture.get(CustomProvider.CTF_ACCOUNT_SETTINGS_SERVICE);
 	});
 
 	describe('Update account settings', (): void => {
 		const userMock: User = users[4];
 		const accountSettingsMock: AccountSettings = accountSettings[1];
 
-		const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, userMock, {
+		const appUserPayload: JwtPayloadDto = plainToInstance(JwtPayloadDto, userMock, {
 			excludeExtraneousValues: true,
 		});
 		const updateAccountSettingsRequestDto: UpdateAccountSettingsRequestDto = {

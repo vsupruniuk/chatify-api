@@ -2,14 +2,17 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { IUsersService } from '@services';
 
-import { UserDto } from '@dtos/users';
+import {
+	UserDto,
+	UserWithAccountSettingsDto,
+	UserWithJwtTokenDto,
+	UserWithOtpCodeDto,
+	FullUserWithJwtTokenDto,
+	UserWithPasswordResetTokenDto,
+} from '@dtos/users';
 import { SignupRequestDto } from '@dtos/auth/signup';
-import { UserWithOtpCodeDto } from '@dtos/users';
-import { UserWithJwtTokenDto } from '@dtos/users';
-import { UserWithPasswordResetTokenDto } from '@dtos/users';
-import { FullUserWithJwtTokenDto } from '@dtos/users';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { IUsersRepository } from '@repositories';
 
@@ -20,14 +23,19 @@ import { User } from '@entities';
 @Injectable()
 export class UsersService implements IUsersService {
 	constructor(
-		@Inject(CustomProviders.CTF_USERS_REPOSITORY)
+		@Inject(CustomProvider.CTF_USERS_REPOSITORY)
 		private readonly _usersRepository: IUsersRepository,
 	) {}
 
 	public async getById(id: string): Promise<UserDto | null> {
-		const user: User | null = await this._usersRepository.findById(id);
+		return TransformHelper.toTargetDto(UserDto, await this._usersRepository.findById(id));
+	}
 
-		return TransformHelper.toTargetDto(UserDto, user);
+	public async getByNickname(nickname: string): Promise<UserDto | null> {
+		return TransformHelper.toTargetDto(
+			UserDto,
+			await this._usersRepository.findByNickname(nickname),
+		);
 	}
 
 	public async getAllByIds(ids: string[]): Promise<UserDto[]> {
@@ -46,43 +54,54 @@ export class UsersService implements IUsersService {
 	public async getByNotExpiredPasswordResetToken(
 		token: string,
 	): Promise<UserWithPasswordResetTokenDto | null> {
-		const user: User | null = await this._usersRepository.findByNotExpiredPasswordResetToken(token);
-
-		return TransformHelper.toTargetDto(UserWithPasswordResetTokenDto, user);
+		return TransformHelper.toTargetDto(
+			UserWithPasswordResetTokenDto,
+			await this._usersRepository.findByNotExpiredPasswordResetToken(token),
+		);
 	}
 
 	public async getByEmailAndNotActiveWithOtpCode(
 		email: string,
 	): Promise<UserWithOtpCodeDto | null> {
-		const user: User | null = await this._usersRepository.findByEmailAndNotActiveWithOtpCode(email);
-
-		return TransformHelper.toTargetDto(UserWithOtpCodeDto, user);
+		return TransformHelper.toTargetDto(
+			UserWithOtpCodeDto,
+			await this._usersRepository.findByEmailAndNotActiveWithOtpCode(email),
+		);
 	}
 
 	public async getByEmailWithPasswordResetToken(
 		email: string,
 	): Promise<UserWithPasswordResetTokenDto | null> {
-		const user: User | null = await this._usersRepository.findByEmailWithPasswordResetToken(email);
-
-		return TransformHelper.toTargetDto(UserWithPasswordResetTokenDto, user);
+		return TransformHelper.toTargetDto(
+			UserWithPasswordResetTokenDto,
+			await this._usersRepository.findByEmailWithPasswordResetToken(email),
+		);
 	}
 
 	public async getFullUserWithJwtTokenByEmail(
 		email: string,
 	): Promise<FullUserWithJwtTokenDto | null> {
-		const user: User | null = await this._usersRepository.findFullUserWithJwtTokenByEmail(email);
+		return TransformHelper.toTargetDto(
+			FullUserWithJwtTokenDto,
+			await this._usersRepository.findFullUserWithJwtTokenByEmail(email),
+		);
+	}
 
-		return TransformHelper.toTargetDto(FullUserWithJwtTokenDto, user);
+	public async getByIdWithAccountSettings(id: string): Promise<UserWithAccountSettingsDto | null> {
+		return TransformHelper.toTargetDto(
+			UserWithAccountSettingsDto,
+			await this._usersRepository.findByIdWithAccountSettings(id),
+		);
 	}
 
 	public async getActivatedUsersByNickname(
 		nickname: string,
-		page?: number,
-		take?: number,
+		page: number,
+		take: number,
 	): Promise<UserDto[]> {
-		const { skip: skipRecords, take: takeRecords } = PaginationHelper.toSQLPagination(page, take);
+		const { skip: skipRecords, take: takeRecords } = PaginationHelper.toSqlPagination(page, take);
 
-		const users: User[] = await this._usersRepository.findActivatedUsersByNickname(
+		const users: User[] = await this._usersRepository.findUsersByNicknameAndActive(
 			nickname,
 			skipRecords,
 			takeRecords,
@@ -103,9 +122,10 @@ export class UsersService implements IUsersService {
 		userId: string,
 		otpCodeId: string,
 	): Promise<UserWithJwtTokenDto | null> {
-		const activatedUser: User | null = await this._usersRepository.activateUser(userId, otpCodeId);
-
-		return TransformHelper.toTargetDto(UserWithJwtTokenDto, activatedUser);
+		return TransformHelper.toTargetDto(
+			UserWithJwtTokenDto,
+			await this._usersRepository.activateUser(userId, otpCodeId),
+		);
 	}
 
 	public async changeUserPassword(

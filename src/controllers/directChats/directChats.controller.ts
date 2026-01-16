@@ -1,57 +1,55 @@
-import {
-	Controller,
-	Get,
-	Inject,
-	ParseIntPipe,
-	ParseUUIDPipe,
-	Query,
-	UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Inject, ParseUUIDPipe, UseInterceptors } from '@nestjs/common';
 
 import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 
 import { AuthInterceptor, ResponseTransformInterceptor } from '@interceptors';
 
-import { AppUserPayload, QueryRequired } from '@decorators/data';
+import { AppUserPayload, Pagination, QueryRequired } from '@decorators/data';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider, QueryParam, Route } from '@enums';
 
 import { IDirectChatsController } from '@controllers';
 
-import { IDirectChatsService } from '@services';
+import { IDirectChatMessagesService, IDirectChatsService } from '@services';
 
-@Controller('direct-chats')
-@UseInterceptors(AuthInterceptor)
-@UseInterceptors(ResponseTransformInterceptor)
+import { PaginationTypes } from '@customTypes';
+
+@Controller(Route.DIRECT_CHATS)
+@UseInterceptors(AuthInterceptor, ResponseTransformInterceptor)
 export class DirectChatsController implements IDirectChatsController {
 	constructor(
-		@Inject(CustomProviders.CTF_DIRECT_CHATS_SERVICE)
+		@Inject(CustomProvider.CTF_DIRECT_CHATS_SERVICE)
 		private readonly _directChatsService: IDirectChatsService,
+
+		@Inject(CustomProvider.CTF_DIRECT_CHAT_MESSAGES_SERVICE)
+		private readonly _directChatMessagesService: IDirectChatMessagesService,
 	) {}
 
 	@Get()
 	public async getLastChats(
-		@AppUserPayload() appUserPayload: JWTPayloadDto,
-
-		@Query('page', new ParseIntPipe({ optional: true })) page?: number,
-
-		@Query('take', new ParseIntPipe({ optional: true })) take?: number,
+		@AppUserPayload() appUserPayload: JwtPayloadDto,
+		@Pagination() pagination: PaginationTypes.IPagination,
 	): Promise<DirectChatWithUsersAndMessagesDto[]> {
-		return await this._directChatsService.getUserLastChats(appUserPayload.id, page, take);
+		return await this._directChatsService.getUserLastChats(
+			appUserPayload.id,
+			pagination.page,
+			pagination.take,
+		);
 	}
 
-	@Get('chat-messages')
+	@Get(Route.CHAT_MESSAGES)
 	public async getChatMessages(
-		@AppUserPayload() appUserPayload: JWTPayloadDto,
-
-		@QueryRequired('chatId', ParseUUIDPipe) chatId: string,
-
-		@Query('page', new ParseIntPipe({ optional: true })) page?: number,
-
-		@Query('take', new ParseIntPipe({ optional: true })) take?: number,
+		@AppUserPayload() appUserPayload: JwtPayloadDto,
+		@QueryRequired(QueryParam.CHAT_ID, ParseUUIDPipe) chatId: string,
+		@Pagination() pagination: PaginationTypes.IPagination,
 	): Promise<DirectChatMessageWithChatAndUserDto[]> {
-		return await this._directChatsService.getChatMessages(appUserPayload.id, chatId, page, take);
+		return await this._directChatMessagesService.getChatMessages(
+			appUserPayload.id,
+			chatId,
+			pagination.page,
+			pagination.take,
+		);
 	}
 }

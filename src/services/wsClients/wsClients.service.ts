@@ -4,7 +4,7 @@ import { Socket } from 'socket.io';
 
 import { IWSClientsService } from '@services';
 
-import { WSEvents, ResponseStatus } from '@enums';
+import { WSEvent, ResponseStatus } from '@enums';
 
 import { SuccessfulWSResponseResult } from '@responses/successfulResponses';
 
@@ -20,7 +20,7 @@ export class WsClientsService implements IWSClientsService {
 		this._clients.delete(userId);
 	}
 
-	public notifyAllClients<T extends object>(usersIds: string[], event: WSEvents, data: T): void {
+	public notifyAllClients<T extends object>(usersIds: string[], event: WSEvent, data: T): void {
 		const responseResult: SuccessfulWSResponseResult<T> = new SuccessfulWSResponseResult<T>(
 			ResponseStatus.SUCCESS,
 		);

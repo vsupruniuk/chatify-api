@@ -21,7 +21,7 @@ import { User, DirectChat } from '@entities';
 
 import { users, directChats } from '@testMocks';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { IDirectChatsRepository } from '@repositories';
 
@@ -44,7 +44,6 @@ describe('Direct chat service', (): void => {
 				DirectChatMessageWithChatAndUserStrategy,
 
 				providers.CTF_DIRECT_CHATS_REPOSITORY,
-				providers.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY,
 
 				providers.CTF_DECRYPTION_STRATEGY_MANAGER,
 				providers.CTF_CRYPTO_SERVICE,
@@ -57,9 +56,9 @@ describe('Direct chat service', (): void => {
 		}).compile();
 
 		directChatsService = moduleFixture.get(DirectChatsService);
-		directChatsRepository = moduleFixture.get(CustomProviders.CTF_DIRECT_CHATS_REPOSITORY);
-		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
-		decryptionStrategyManager = moduleFixture.get(CustomProviders.CTF_DECRYPTION_STRATEGY_MANAGER);
+		directChatsRepository = moduleFixture.get(CustomProvider.CTF_DIRECT_CHATS_REPOSITORY);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
+		decryptionStrategyManager = moduleFixture.get(CustomProvider.CTF_DECRYPTION_STRATEGY_MANAGER);
 	});
 
 	describe('Create chat', (): void => {
@@ -89,7 +88,6 @@ describe('Direct chat service', (): void => {
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-			jest.clearAllMocks();
 		});
 
 		it('should call get all by ids to find both chat users', async (): Promise<void> => {
@@ -176,6 +174,20 @@ describe('Direct chat service', (): void => {
 			);
 
 			expect(chat).toBeInstanceOf(DirectChatWithUsersAndMessagesDto);
+		});
+
+		it('should return created chat', async (): Promise<void> => {
+			const chat: DirectChatWithUsersAndMessagesDto = await directChatsService.createChat(
+				senderId,
+				receiverId,
+				messageText,
+			);
+
+			expect(chat).toEqual(
+				plainToInstance(DirectChatWithUsersAndMessagesDto, directChatMock, {
+					excludeExtraneousValues: true,
+				}),
+			);
 		});
 	});
 });

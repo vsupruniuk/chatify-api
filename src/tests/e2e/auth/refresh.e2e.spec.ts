@@ -18,7 +18,7 @@ import { User } from '@entities';
 
 import { users } from '@testMocks';
 
-import { CookiesNames, Headers } from '@enums';
+import { CookiesName, Header, Route } from '@enums';
 
 import { SuccessfulResponseResult } from '@responses/successfulResponses';
 
@@ -28,6 +28,8 @@ describe('Refresh', (): void => {
 	let app: INestApplication;
 	let postgresContainer: StartedTestContainer;
 	let dataSource: DataSource;
+
+	const route: string = `/${Route.AUTH}/${Route.REFRESH}`;
 
 	beforeAll(async (): Promise<void> => {
 		postgresContainer = await TestDatabaseHelper.initDbContainer();
@@ -46,7 +48,7 @@ describe('Refresh', (): void => {
 		app.useGlobalFilters(new GlobalExceptionFilter());
 		app.use(cookieParser(process.env.COOKIE_SECRET));
 
-		await app.listen(Number(process.env.TESTS_PORT));
+		await app.listen(Number(process.env.PORT));
 	});
 
 	afterAll(async (): Promise<void> => {
@@ -55,27 +57,40 @@ describe('Refresh', (): void => {
 		await app.close();
 	});
 
-	describe('PATCH /auth/refresh', (): void => {
+	describe(`PATCH ${route}`, (): void => {
 		const passwordMock: string = 'Qwerty12345!';
 		const createdUser: User = users[7];
+
+		const signupAndLogin = async (agent: ReturnType<typeof supertest.agent>): Promise<void> => {
+			await agent.post(`/${Route.AUTH}/${Route.SIGNUP}`).send({
+				email: createdUser.email,
+				firstName: createdUser.firstName,
+				lastName: createdUser.lastName,
+				nickname: createdUser.nickname,
+				password: passwordMock,
+				passwordConfirmation: passwordMock,
+			});
+
+			await agent
+				.post(`/${Route.AUTH}/${Route.LOGIN}`)
+				.send({ email: createdUser.email, password: passwordMock });
+		};
 
 		afterEach(async (): Promise<void> => {
 			await dataSource.synchronize(true);
 		});
 
 		it('should return 401 Unauthorized error if user does not have refresh token cookie', async (): Promise<void> => {
-			const response: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.patch('/auth/refresh');
+			const response: supertest.Response = await supertest.agent(app.getHttpServer()).patch(route);
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
 
-		it('should return 401 Unauthorized error if user have refresh token cookie but without access token', async (): Promise<void> => {
+		it('should return 401 Unauthorized error if user have refresh token cookie but without refresh token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/refresh')
-				.set('Cookie', [`${CookiesNames.REFRESH_TOKEN}=`]);
+				.patch(route)
+				.set('Cookie', [`${CookiesName.REFRESH_TOKEN}=`]);
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -83,8 +98,8 @@ describe('Refresh', (): void => {
 		it('should return 401 Unauthorized error if user have refresh token cookie with invalid refresh token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/auth/refresh')
-				.set('Cookie', [`${CookiesNames.REFRESH_TOKEN}=refreshToken`]);
+				.patch(route)
+				.set('Cookie', [`${CookiesName.REFRESH_TOKEN}=refreshToken`]);
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -92,18 +107,9 @@ describe('Refresh', (): void => {
 		it('should return 200 OK status if refresh and access token were changed', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			await agent.post('/auth/signup').send({
-				email: createdUser.email,
-				firstName: createdUser.firstName,
-				lastName: createdUser.lastName,
-				nickname: createdUser.nickname,
-				password: passwordMock,
-				passwordConfirmation: passwordMock,
-			});
+			await signupAndLogin(agent);
 
-			await agent.post('/auth/login').send({ email: createdUser.email, password: passwordMock });
-
-			const response: supertest.Response = await agent.patch('/auth/refresh');
+			const response: supertest.Response = await agent.patch(route);
 
 			expect(response.status).toBe(HttpStatus.OK);
 		});
@@ -111,18 +117,9 @@ describe('Refresh', (): void => {
 		it('should return new access token in response body data', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			await agent.post('/auth/signup').send({
-				email: createdUser.email,
-				firstName: createdUser.firstName,
-				lastName: createdUser.lastName,
-				nickname: createdUser.nickname,
-				password: passwordMock,
-				passwordConfirmation: passwordMock,
-			});
+			await signupAndLogin(agent);
 
-			await agent.post('/auth/login').send({ email: createdUser.email, password: passwordMock });
-
-			const response: supertest.Response = await agent.patch('/auth/refresh');
+			const response: supertest.Response = await agent.patch(route);
 
 			expect(
 				(response.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken,
@@ -132,23 +129,14 @@ describe('Refresh', (): void => {
 		it('should save new refresh token in user cookies', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			await agent.post('/auth/signup').send({
-				email: createdUser.email,
-				firstName: createdUser.firstName,
-				lastName: createdUser.lastName,
-				nickname: createdUser.nickname,
-				password: passwordMock,
-				passwordConfirmation: passwordMock,
-			});
+			await signupAndLogin(agent);
 
-			await agent.post('/auth/login').send({ email: createdUser.email, password: passwordMock });
+			const response: supertest.Response = await agent.patch(route);
 
-			const response: supertest.Response = await agent.patch('/auth/refresh');
-
-			const cookies: string[] = response.get(Headers.SET_COOKIE) || [];
+			const cookies: string[] = response.get(Header.SET_COOKIE) || [];
 
 			expect(
-				cookies.some((cookie: string) => cookie.startsWith(`${CookiesNames.REFRESH_TOKEN}=`)),
+				cookies.some((cookie: string) => cookie.startsWith(`${CookiesName.REFRESH_TOKEN}=`)),
 			).toBe(true);
 		});
 	});

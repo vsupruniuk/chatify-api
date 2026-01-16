@@ -86,7 +86,7 @@ export interface IUsersRepository {
 	 * @param take - number of records to take
 	 * @returns User - array of founded users
 	 */
-	findActivatedUsersByNickname(nickname: string, skip: number, take: number): Promise<User[]>;
+	findUsersByNicknameAndActive(nickname: string, skip: number, take: number): Promise<User[]>;
 
 	/**
 	 * Method for creating a new user with OTP code record, JWT token record, password reset token record and default account settings

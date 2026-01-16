@@ -9,7 +9,7 @@ import { IUsersRepository } from '@repositories';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User } from '@entities';
 
@@ -35,7 +35,7 @@ describe('Users service', () => {
 		}).compile();
 
 		usersService = moduleFixture.get(UsersService);
-		usersRepository = moduleFixture.get(CustomProviders.CTF_USERS_REPOSITORY);
+		usersRepository = moduleFixture.get(CustomProvider.CTF_USERS_REPOSITORY);
 	});
 
 	describe('Get activated users by nickname', (): void => {
@@ -46,39 +46,26 @@ describe('Users service', () => {
 		const take: number = 10;
 
 		beforeEach((): void => {
-			jest.spyOn(usersRepository, 'findActivatedUsersByNickname').mockResolvedValue(usersMock);
-			jest.spyOn(PaginationHelper, 'toSQLPagination').mockReturnValue({ skip: page, take: take });
+			jest.spyOn(usersRepository, 'findUsersByNicknameAndActive').mockResolvedValue(usersMock);
+			jest.spyOn(PaginationHelper, 'toSqlPagination').mockReturnValue({ skip: page, take: take });
 		});
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-			jest.clearAllMocks();
 		});
 
 		it('should call to sql pagination method from pagination helper to transform page and take to correct sql pagination', async (): Promise<void> => {
 			await usersService.getActivatedUsersByNickname(nickname, page, take);
 
-			expect(PaginationHelper.toSQLPagination).toHaveBeenCalledTimes(1);
-			expect(PaginationHelper.toSQLPagination).toHaveBeenNthCalledWith(1, page, take);
+			expect(PaginationHelper.toSqlPagination).toHaveBeenCalledTimes(1);
+			expect(PaginationHelper.toSqlPagination).toHaveBeenNthCalledWith(1, page, take);
 		});
 
 		it('should call find activated users by nickname from users repository if page and take parameters provided', async (): Promise<void> => {
 			await usersService.getActivatedUsersByNickname(nickname, page, take);
 
-			expect(usersRepository.findActivatedUsersByNickname).toHaveBeenCalledTimes(1);
-			expect(usersRepository.findActivatedUsersByNickname).toHaveBeenNthCalledWith(
-				1,
-				nickname,
-				page,
-				take,
-			);
-		});
-
-		it('should call find activated users by nickname from users repository if page and take parameters not provided', async (): Promise<void> => {
-			await usersService.getActivatedUsersByNickname(nickname);
-
-			expect(usersRepository.findActivatedUsersByNickname).toHaveBeenCalledTimes(1);
-			expect(usersRepository.findActivatedUsersByNickname).toHaveBeenNthCalledWith(
+			expect(usersRepository.findUsersByNicknameAndActive).toHaveBeenCalledTimes(1);
+			expect(usersRepository.findUsersByNicknameAndActive).toHaveBeenNthCalledWith(
 				1,
 				nickname,
 				page,
@@ -87,8 +74,9 @@ describe('Users service', () => {
 		});
 
 		it('should return all found users', async (): Promise<void> => {
-			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname);
+			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname, page, take);
 
+			expect(users).toHaveLength(usersMock.length);
 			expect(users.sort()).toEqual(
 				usersMock
 					.map((user: User) => plainToInstance(UserDto, user, { excludeExtraneousValues: true }))
@@ -97,7 +85,7 @@ describe('Users service', () => {
 		});
 
 		it('should return users as array of UserDto', async (): Promise<void> => {
-			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname);
+			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname, page, take);
 
 			expect(users).toBeInstanceOf(Array);
 
@@ -107,9 +95,9 @@ describe('Users service', () => {
 		});
 
 		it('should return empty array if no users found', async (): Promise<void> => {
-			jest.spyOn(usersRepository, 'findActivatedUsersByNickname').mockResolvedValue([]);
+			jest.spyOn(usersRepository, 'findUsersByNicknameAndActive').mockResolvedValue([]);
 
-			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname);
+			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname, page, take);
 
 			expect(users).toHaveLength(0);
 		});

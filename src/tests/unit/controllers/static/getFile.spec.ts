@@ -3,10 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 
 import { DataSource } from 'typeorm';
-import * as path from 'path';
-import * as fs from 'fs';
-import { Readable } from 'stream';
-import { ReadStream } from 'fs';
+import * as path from 'node:path';
+import * as fs from 'node:fs';
+import { Readable } from 'node:stream';
+import { ReadStream } from 'node:fs';
 
 import { StaticController } from '@controllers';
 

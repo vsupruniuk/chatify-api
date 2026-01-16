@@ -4,14 +4,14 @@ import { User } from '@entities';
 
 import { users } from '@testMocks';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 
 describe('Transform helper', (): void => {
 	describe('To jwt token payload', (): void => {
 		const userMock: User = users[4];
 
 		it('should return only properties from the JWTPayloadDto', (): void => {
-			const payload: JWTPayloadDto = TransformHelper.toJwtTokenPayload(userMock);
+			const payload: JwtPayloadDto = TransformHelper.toJwtTokenPayload(userMock);
 
 			expect(payload.id).toBe(userMock.id);
 			expect(payload.email).toBe(userMock.email);

@@ -7,7 +7,7 @@ import { UsersService } from '@services';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { IUsersRepository } from '@repositories';
 
@@ -33,7 +33,7 @@ describe('Users service', (): void => {
 		}).compile();
 
 		usersService = moduleFixture.get(UsersService);
-		usersRepository = moduleFixture.get(CustomProviders.CTF_USERS_REPOSITORY);
+		usersRepository = moduleFixture.get(CustomProvider.CTF_USERS_REPOSITORY);
 	});
 
 	describe('Get by email or nickname', (): void => {
@@ -48,7 +48,6 @@ describe('Users service', (): void => {
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-			jest.clearAllMocks();
 		});
 
 		it('should call find by email or nickname from users repository to find a user', async (): Promise<void> => {

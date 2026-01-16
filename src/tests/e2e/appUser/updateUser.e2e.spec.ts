@@ -18,17 +18,19 @@ import { User } from '@entities';
 
 import { users } from '@testMocks';
 
-import { Headers } from '@enums';
+import { Header, Route } from '@enums';
 
 import { SuccessfulResponseResult } from '@responses/successfulResponses';
 
 import { LoginResponseDto } from '@dtos/auth/login';
-import { AppUserDto } from '@dtos/appUser';
+import { UserWithAccountSettingsDto } from '@dtos/users';
 
 describe('Update user', (): void => {
 	let app: INestApplication;
 	let postgresContainer: StartedTestContainer;
 	let dataSource: DataSource;
+
+	const route: string = `/${Route.APP_USER}`;
 
 	beforeAll(async (): Promise<void> => {
 		postgresContainer = await TestDatabaseHelper.initDbContainer();
@@ -47,7 +49,7 @@ describe('Update user', (): void => {
 		app.useGlobalFilters(new GlobalExceptionFilter());
 		app.use(cookieParser(process.env.COOKIE_SECRET));
 
-		await app.listen(Number(process.env.TESTS_PORT));
+		await app.listen(Number(process.env.PORT));
 	});
 
 	afterAll(async (): Promise<void> => {
@@ -66,8 +68,16 @@ describe('Update user', (): void => {
 		const lastNameMock: string = 'Odinson';
 		const nicknameMock: string = 't.odinson';
 
+		const login = async (agent: ReturnType<typeof supertest.agent>): Promise<string> => {
+			const loginResponse: supertest.Response = await agent
+				.post(`/${Route.AUTH}/${Route.LOGIN}`)
+				.send({ email: createdUser.email, password: passwordMock });
+
+			return (loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken;
+		};
+
 		beforeEach(async (): Promise<void> => {
-			await supertest.agent(app.getHttpServer()).post('/auth/signup').send({
+			await supertest.agent(app.getHttpServer()).post(`/${Route.AUTH}/${Route.SIGNUP}`).send({
 				email: createdUser.email,
 				firstName: createdUser.firstName,
 				lastName: createdUser.lastName,
@@ -84,7 +94,7 @@ describe('Update user', (): void => {
 		it('should return 401 Unauthorized error if user does not provided authorization header', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
@@ -98,14 +108,14 @@ describe('Update user', (): void => {
 		it('should return 401 Unauthorized error if user provided empty authorization header', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: lastNameMock,
 					nickname: nicknameMock,
 				})
-				.set(Headers.AUTHORIZATION, '');
+				.set(Header.AUTHORIZATION, '');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -113,14 +123,14 @@ describe('Update user', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header without access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: lastNameMock,
 					nickname: nicknameMock,
 				})
-				.set(Headers.AUTHORIZATION, 'Bearer');
+				.set(Header.AUTHORIZATION, 'Bearer');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -128,14 +138,14 @@ describe('Update user', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header with invalid access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: lastNameMock,
 					nickname: nicknameMock,
 				})
-				.set(Headers.AUTHORIZATION, 'Bearer accessToken');
+				.set(Header.AUTHORIZATION, 'Bearer invalidAccessToken');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -143,17 +153,12 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if empty body was sent', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -161,22 +166,17 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if about present in body but it is not a string', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: 72,
 					firstName: firstNameMock,
 					lastName: lastNameMock,
 					nickname: nicknameMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -184,22 +184,17 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if about present in body but it is more than 255 characters long', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: 'Iron man'.padEnd(256, 'n'),
 					firstName: firstNameMock,
 					lastName: lastNameMock,
 					nickname: nicknameMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -207,22 +202,17 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if first name present in body but it is not a string', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: 123,
 					lastName: lastNameMock,
 					nickname: nicknameMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -230,22 +220,17 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if first name present in body but it is less than 3 characters long', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: 'Th',
 					lastName: lastNameMock,
 					nickname: nicknameMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -253,22 +238,17 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if first name present in body but it is more than 255 characters long', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock.padEnd(256, 'r'),
 					lastName: lastNameMock,
 					nickname: nicknameMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -276,22 +256,17 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if last name present in body but it is not a string', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: 12345,
 					nickname: nicknameMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -299,22 +274,17 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if last name present in body but it is less than 3 characters long', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: 'Od',
 					nickname: nicknameMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -322,22 +292,17 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if last name present in body but it is more than 255 characters long', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: lastNameMock.padEnd(256, 'n'),
 					nickname: nicknameMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -345,22 +310,17 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if nickname present in body but it is not a string', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: lastNameMock,
 					nickname: 12345,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -368,22 +328,17 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if nickname present in body but it is less than 3 characters long', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: lastNameMock,
 					nickname: 'th',
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -391,22 +346,17 @@ describe('Update user', (): void => {
 		it('should return 400 Bad Request error if nickname present in body but it is more than 255 characters long', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: lastNameMock,
 					nickname: nicknameMock.padEnd(256, 'n'),
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
@@ -414,7 +364,7 @@ describe('Update user', (): void => {
 		it('should return 409 Conflict error if user trying to change nickname to already taken', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			await agent.post('/auth/signup').send({
+			await agent.post(`/${Route.AUTH}/${Route.SIGNUP}`).send({
 				email: existingUser.email,
 				firstName: existingUser.firstName,
 				lastName: existingUser.lastName,
@@ -423,45 +373,60 @@ describe('Update user', (): void => {
 				passwordConfirmation: passwordMock,
 			});
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: lastNameMock,
 					nickname: existingUser.nickname,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.CONFLICT);
+		});
+
+		it('should trim all whitespaces in payload string values', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const accessToken: string = await login(agent);
+
+			const updateAppUserResponse: supertest.Response = await agent
+				.patch(route)
+				.send({
+					about: `   ${aboutMock}   `,
+					firstName: `   ${firstNameMock}   `,
+					lastName: `   ${lastNameMock}   `,
+					nickname: `   ${nicknameMock}   `,
+				})
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
+
+			const userData: UserWithAccountSettingsDto = (
+				updateAppUserResponse.body as SuccessfulResponseResult<UserWithAccountSettingsDto>
+			).data;
+
+			expect(userData.about).toBe(aboutMock);
+			expect(userData.firstName).toBe(firstNameMock);
+			expect(userData.lastName).toBe(lastNameMock);
+			expect(userData.nickname).toBe(nicknameMock);
 		});
 
 		it('should return 200 OK status if user data were successfully updated', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: lastNameMock,
 					nickname: nicknameMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
 			expect(updateAppUserResponse.status).toBe(HttpStatus.OK);
 		});
@@ -469,25 +434,20 @@ describe('Update user', (): void => {
 		it('should return updated user data in response body data', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const updateAppUserResponse: supertest.Response = await agent
-				.patch('/app-user')
+				.patch(route)
 				.send({
 					about: aboutMock,
 					firstName: firstNameMock,
 					lastName: lastNameMock,
 					nickname: nicknameMock,
 				})
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				);
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`);
 
-			const userData: AppUserDto = (
-				updateAppUserResponse.body as SuccessfulResponseResult<AppUserDto>
+			const userData: UserWithAccountSettingsDto = (
+				updateAppUserResponse.body as SuccessfulResponseResult<UserWithAccountSettingsDto>
 			).data;
 
 			expect(userData.about).toBe(aboutMock);

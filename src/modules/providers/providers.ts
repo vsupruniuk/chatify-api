@@ -1,6 +1,6 @@
 import { Provider } from '@nestjs/common';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import {
 	accountSettingsRepositoryProvider,
@@ -12,7 +12,10 @@ import {
 	directChatsRepositoryProvider,
 	directChatsServiceProvider,
 } from '@modules/providers/directChats';
-import { directChatMessagesProvider } from '@modules/providers/directChatMessages';
+import {
+	directChatMessagesRepositoryProvider,
+	directChatMessagesServiceProvider,
+} from '@modules/providers/directChatMessages';
 import { emailServiceProvider } from '@modules/providers/email';
 import { throttlerGuardProvider } from '@modules/providers/guards';
 import {
@@ -29,37 +32,38 @@ import { usersRepositoryProvider, usersServiceProvider } from '@modules/provider
 import { wsClientsServiceProvider } from '@modules/providers/wsClients';
 import { decryptionStrategyManagerProvider } from '@modules/providers/decryptionStrategy';
 
-export const providers: Record<CustomProviders, Provider> = {
-	[CustomProviders.CTF_ACCOUNT_SETTINGS_SERVICE]: accountSettingsServiceProvider,
-	[CustomProviders.CTF_ACCOUNT_SETTINGS_REPOSITORY]: accountSettingsRepositoryProvider,
+export const providers: Record<CustomProvider, Provider> = {
+	[CustomProvider.CTF_ACCOUNT_SETTINGS_SERVICE]: accountSettingsServiceProvider,
+	[CustomProvider.CTF_ACCOUNT_SETTINGS_REPOSITORY]: accountSettingsRepositoryProvider,
 
-	[CustomProviders.CTF_AUTH_SERVICE]: authServiceProvider,
+	[CustomProvider.CTF_AUTH_SERVICE]: authServiceProvider,
 
-	[CustomProviders.CTF_CRYPTO_SERVICE]: cryptoServiceProvider,
+	[CustomProvider.CTF_CRYPTO_SERVICE]: cryptoServiceProvider,
+	[CustomProvider.CTF_DECRYPTION_STRATEGY_MANAGER]: decryptionStrategyManagerProvider,
 
-	[CustomProviders.CTF_DIRECT_CHATS_SERVICE]: directChatsServiceProvider,
-	[CustomProviders.CTF_DIRECT_CHATS_REPOSITORY]: directChatsRepositoryProvider,
+	[CustomProvider.CTF_DIRECT_CHATS_SERVICE]: directChatsServiceProvider,
+	[CustomProvider.CTF_DIRECT_CHATS_REPOSITORY]: directChatsRepositoryProvider,
 
-	[CustomProviders.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY]: directChatMessagesProvider,
+	[CustomProvider.CTF_DIRECT_CHAT_MESSAGES_SERVICE]: directChatMessagesServiceProvider,
+	[CustomProvider.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY]: directChatMessagesRepositoryProvider,
 
-	[CustomProviders.CTF_EMAIL_SERVICE]: emailServiceProvider,
+	[CustomProvider.CTF_EMAIL_SERVICE]: emailServiceProvider,
 
-	[CustomProviders.CTF_THROTTLER_GUARD]: throttlerGuardProvider,
+	[CustomProvider.CTF_THROTTLER_GUARD]: throttlerGuardProvider,
 
-	[CustomProviders.CTF_JWT_TOKENS_SERVICE]: jwtTokensServiceProvider,
-	[CustomProviders.CTF_JWT_TOKENS_REPOSITORY]: jwtTokensRepositoryProvider,
+	[CustomProvider.CTF_JWT_TOKENS_SERVICE]: jwtTokensServiceProvider,
+	[CustomProvider.CTF_JWT_TOKENS_REPOSITORY]: jwtTokensRepositoryProvider,
 
-	[CustomProviders.CTF_OTP_CODES_SERVICE]: otpCodesServiceProvider,
-	[CustomProviders.CTF_OTP_CODES_REPOSITORY]: otpCodesRepositoryProvider,
+	[CustomProvider.CTF_OTP_CODES_SERVICE]: otpCodesServiceProvider,
+	[CustomProvider.CTF_OTP_CODES_REPOSITORY]: otpCodesRepositoryProvider,
 
-	[CustomProviders.CTF_PASSWORD_RESET_TOKENS_SERVICE]: passwordResetTokensServiceProvider,
-	[CustomProviders.CTF_PASSWORD_RESET_TOKENS_REPOSITORY]: passwordResetTokensRepositoryProvider,
+	[CustomProvider.CTF_PASSWORD_RESET_TOKENS_SERVICE]: passwordResetTokensServiceProvider,
+	[CustomProvider.CTF_PASSWORD_RESET_TOKENS_REPOSITORY]: passwordResetTokensRepositoryProvider,
 
-	[CustomProviders.CTF_APP_USER_SERVICE]: appUserServiceProvider,
-	[CustomProviders.CTF_USERS_SERVICE]: usersServiceProvider,
-	[CustomProviders.CTF_USERS_REPOSITORY]: usersRepositoryProvider,
+	[CustomProvider.CTF_APP_USER_SERVICE]: appUserServiceProvider,
 
-	[CustomProviders.CTF_WS_CLIENTS_SERVICE]: wsClientsServiceProvider,
+	[CustomProvider.CTF_USERS_SERVICE]: usersServiceProvider,
+	[CustomProvider.CTF_USERS_REPOSITORY]: usersRepositoryProvider,
 
-	[CustomProviders.CTF_DECRYPTION_STRATEGY_MANAGER]: decryptionStrategyManagerProvider,
+	[CustomProvider.CTF_WS_CLIENTS_SERVICE]: wsClientsServiceProvider,
 };

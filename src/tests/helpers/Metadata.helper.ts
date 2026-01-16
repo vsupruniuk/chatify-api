@@ -5,7 +5,7 @@ import { GlobalTypes } from '@customTypes';
 export class MetadataHelper {
 	public static getParamDecoratorFactory(decorator: CallableFunction): CallableFunction {
 		class MetadataWrapper {
-			public metadataWrapper(@decorator() metadataValue: unknown): void {}
+			public metadataWrapper(@decorator() _metadataValue: unknown): void {}
 		}
 
 		const args: GlobalTypes.IMetadataArguments = Reflect.getMetadata(

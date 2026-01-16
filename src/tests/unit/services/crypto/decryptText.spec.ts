@@ -8,35 +8,19 @@ import { CryptoService } from '@services';
 describe('Crypto service', (): void => {
 	let cryptoService: CryptoService;
 
-	const ivLengthMock: string = '2';
-	const saltLengthMock: string = '4';
-	const keyLengthMock: string = '20';
-	const passwordMock: string = 'Qwerty12345!';
-	const cipherAlgorithmMock: string = 'super-secret-algorithm';
-	const encryptionEncodingMock: string = 'utf-8';
+	const ivLengthMock: string = String(process.env.CRYPTO_IV_LENGTH);
+	const saltLengthMock: string = String(process.env.CRYPTO_SALT_LENGTH);
+	const keyLengthMock: string = String(process.env.CRYPTO_KEY_LENGTH);
+	const passwordMock: string = String(process.env.CRYPTO_PASSWORD);
+	const cipherAlgorithmMock: string = String(process.env.CRYPTO_CIPHER_ALGORITHM);
+	const encryptionEncodingMock: string = String(process.env.CRYPTO_ENCRYPTION_ENCODING);
 
 	beforeAll(async (): Promise<void> => {
-		process.env.CRYPTO_IV_LENGTH = ivLengthMock;
-		process.env.CRYPTO_SALT_LENGTH = saltLengthMock;
-		process.env.CRYPTO_KEY_LENGTH = keyLengthMock;
-		process.env.CRYPTO_PASSWORD = passwordMock;
-		process.env.CRYPTO_CIPHER_ALGORITHM = cipherAlgorithmMock;
-		process.env.CRYPTO_ENCRYPTION_ENCODING = encryptionEncodingMock;
-
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			providers: [CryptoService],
 		}).compile();
 
 		cryptoService = moduleFixture.get(CryptoService);
-	});
-
-	afterAll((): void => {
-		delete process.env.CRYPTO_IV_LENGTH;
-		delete process.env.CRYPTO_SALT_LENGTH;
-		delete process.env.CRYPTO_KEY_LENGTH;
-		delete process.env.CRYPTO_PASSWORD;
-		delete process.env.CRYPTO_CIPHER_ALGORITHM;
-		delete process.env.CRYPTO_ENCRYPTION_ENCODING;
 	});
 
 	describe('Decrypt text', (): void => {

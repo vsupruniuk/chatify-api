@@ -1,29 +1,30 @@
-import { JWTPayloadDto } from '@dtos/jwt';
-import { AppUserDto, UpdateAppUserRequestDto } from '@dtos/appUser';
+import { JwtPayloadDto } from '@dtos/jwt';
+import { UpdateAppUserRequestDto } from '@dtos/appUser';
 import { UploadAvatarResponseDto } from '@dtos/accountSettings/userAvatar';
 import {
 	UpdateAccountSettingsRequestDto,
 	AccountSettingsDto,
 } from '@dtos/accountSettings/accountSettings';
+import { UserWithAccountSettingsDto } from '@dtos/users';
 
 export interface IAppUserController {
 	/**
 	 * Returns information about current logged-in user
 	 * @param appUserPayload - user payload from JWT token
-	 * @returns AppUserDto - information about current logged in user
+	 * @returns UserWithAccountSettingsDto - information about current logged in user
 	 */
-	getAppUser(appUserPayload: JWTPayloadDto): Promise<AppUserDto>;
+	getAppUser(appUserPayload: JwtPayloadDto): Promise<UserWithAccountSettingsDto>;
 
 	/**
 	 * Update user public information
 	 * @param appUserPayload - user data from access token
 	 * @param updateAppUserDto - new information about user
-	 * @returns AppUserDto - updated app user
+	 * @returns UserWithAccountSettingsDto - updated app user
 	 */
 	updateUser(
-		appUserPayload: JWTPayloadDto,
+		appUserPayload: JwtPayloadDto,
 		updateAppUserDto: UpdateAppUserRequestDto,
-	): Promise<AppUserDto>;
+	): Promise<UserWithAccountSettingsDto>;
 
 	/**
 	 * Update user account settings
@@ -32,7 +33,7 @@ export interface IAppUserController {
 	 * @returns AccountSettingsDto - updated account settings
 	 */
 	updateAccountSettings(
-		appUserPayload: JWTPayloadDto,
+		appUserPayload: JwtPayloadDto,
 		updateAccountSettingsRequestDto: UpdateAccountSettingsRequestDto,
 	): Promise<AccountSettingsDto>;
 
@@ -43,7 +44,7 @@ export interface IAppUserController {
 	 * @returns UploadAvatarResponseDto - updated user avatar url
 	 */
 	uploadAvatar(
-		appUserPayload: JWTPayloadDto,
+		appUserPayload: JwtPayloadDto,
 		file: Express.Multer.File,
 	): Promise<UploadAvatarResponseDto>;
 
@@ -51,5 +52,5 @@ export interface IAppUserController {
 	 * Delete user avatar
 	 * @param appUserPayload - user data from access token
 	 */
-	deleteAvatar(appUserPayload: JWTPayloadDto): Promise<void>;
+	deleteAvatar(appUserPayload: JwtPayloadDto): Promise<void>;
 }

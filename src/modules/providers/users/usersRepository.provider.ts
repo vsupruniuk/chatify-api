@@ -1,10 +1,10 @@
 import { ClassProvider } from '@nestjs/common';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { UsersRepository } from '@repositories';
 
 export const usersRepositoryProvider: ClassProvider = {
-	provide: CustomProviders.CTF_USERS_REPOSITORY,
+	provide: CustomProvider.CTF_USERS_REPOSITORY,
 	useClass: UsersRepository,
 };

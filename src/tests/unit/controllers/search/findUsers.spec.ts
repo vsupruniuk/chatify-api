@@ -8,7 +8,7 @@ import { SearchController } from '@controllers';
 
 import { IUsersService } from '@services';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { providers } from '@modules/providers';
 
@@ -39,7 +39,7 @@ describe('Search controller', (): void => {
 		}).compile();
 
 		searchController = moduleFixture.get(SearchController);
-		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
 	});
 
 	describe('Find users', (): void => {
@@ -62,7 +62,7 @@ describe('Search controller', (): void => {
 		});
 
 		it('should call get activated users by nickname method from users service to find users by nickname', async (): Promise<void> => {
-			await searchController.findUsers(nickname, page, take);
+			await searchController.findUsers(nickname, { page, take });
 
 			expect(usersService.getActivatedUsersByNickname).toHaveBeenCalledTimes(1);
 			expect(usersService.getActivatedUsersByNickname).toHaveBeenNthCalledWith(
@@ -73,28 +73,16 @@ describe('Search controller', (): void => {
 			);
 		});
 
-		it('should call get activated users by nickname method from users service without pagination parameters if they were not provided', async (): Promise<void> => {
-			await searchController.findUsers(nickname);
-
-			expect(usersService.getActivatedUsersByNickname).toHaveBeenCalledTimes(1);
-			expect(usersService.getActivatedUsersByNickname).toHaveBeenNthCalledWith(
-				1,
-				nickname,
-				undefined,
-				undefined,
-			);
-		});
-
 		it('should return empty array if no users were found', async (): Promise<void> => {
 			jest.spyOn(usersService, 'getActivatedUsersByNickname').mockResolvedValue([]);
 
-			const users: UserDto[] = await searchController.findUsers(nickname, page, take);
+			const users: UserDto[] = await searchController.findUsers(nickname, { page, take });
 
 			expect(users).toHaveLength(0);
 		});
 
-		it('should return all founded users', async (): Promise<void> => {
-			const users: UserDto[] = await searchController.findUsers(nickname, page, take);
+		it('should return all found users', async (): Promise<void> => {
+			const users: UserDto[] = await searchController.findUsers(nickname, { page, take });
 
 			expect(users.sort()).toEqual(
 				usersMock
@@ -107,8 +95,8 @@ describe('Search controller', (): void => {
 			);
 		});
 
-		it('should return all founded users as array of UserDto', async (): Promise<void> => {
-			const users: UserDto[] = await searchController.findUsers(nickname, page, take);
+		it('should return all found users as array of UserDto', async (): Promise<void> => {
+			const users: UserDto[] = await searchController.findUsers(nickname, { page, take });
 
 			expect(users).toBeInstanceOf(Array);
 

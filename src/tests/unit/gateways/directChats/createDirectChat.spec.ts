@@ -14,13 +14,13 @@ import {
 } from '@services/crypto/decryptionStrategy/strategies';
 import { IDirectChatsService, IWSClientsService } from '@services';
 
-import { CustomProviders, WSEvents } from '@enums';
+import { CustomProvider, WSEvent } from '@enums';
 
-import { User, DirectChat } from '@entities';
+import { User, DirectChat, DirectChatMessage } from '@entities';
 
-import { users, directChats } from '@testMocks';
+import { users, directChats, directChatsMessages } from '@testMocks';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 import { CreateDirectChatRequestDto, DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
 
 describe('Direct chats gateway', (): void => {
@@ -41,8 +41,6 @@ describe('Direct chats gateway', (): void => {
 				providers.CTF_DIRECT_CHATS_SERVICE,
 				providers.CTF_DIRECT_CHATS_REPOSITORY,
 
-				providers.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY,
-
 				providers.CTF_USERS_SERVICE,
 				providers.CTF_USERS_REPOSITORY,
 
@@ -60,16 +58,29 @@ describe('Direct chats gateway', (): void => {
 		}).compile();
 
 		directChatsGateway = moduleFixture.get(DirectChatsGateway);
-		directChatsService = moduleFixture.get(CustomProviders.CTF_DIRECT_CHATS_SERVICE);
-		wsClientsService = moduleFixture.get(CustomProviders.CTF_WS_CLIENTS_SERVICE);
+		directChatsService = moduleFixture.get(CustomProvider.CTF_DIRECT_CHATS_SERVICE);
+		wsClientsService = moduleFixture.get(CustomProvider.CTF_WS_CLIENTS_SERVICE);
 	});
 
 	describe('Create direct chat', (): void => {
 		const userMock: User = users[0];
 		const receiverMock: User = users[1];
 		const directChatMock: DirectChat = directChats[2];
+		const directChatMessageMock: DirectChatMessage = directChatsMessages[2];
 
-		const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, userMock, {
+		const createdDirectChatMock: DirectChatWithUsersAndMessagesDto = plainToInstance(
+			DirectChatWithUsersAndMessagesDto,
+			{
+				...directChatMock,
+				users: [{ ...userMock }, { ...receiverMock }],
+				messages: [{ ...directChatMessageMock }],
+			},
+			{
+				excludeExtraneousValues: true,
+			},
+		);
+
+		const appUserPayload: JwtPayloadDto = plainToInstance(JwtPayloadDto, userMock, {
 			excludeExtraneousValues: true,
 		});
 		const createDirectChatRequestDto: CreateDirectChatRequestDto = {
@@ -78,11 +89,7 @@ describe('Direct chats gateway', (): void => {
 		};
 
 		beforeEach((): void => {
-			jest.spyOn(directChatsService, 'createChat').mockResolvedValue(
-				plainToInstance(DirectChatWithUsersAndMessagesDto, directChatMock, {
-					excludeExtraneousValues: true,
-				}),
-			);
+			jest.spyOn(directChatsService, 'createChat').mockResolvedValue(createdDirectChatMock);
 			jest.spyOn(wsClientsService, 'notifyAllClients').mockImplementation(jest.fn());
 		});
 
@@ -110,11 +117,18 @@ describe('Direct chats gateway', (): void => {
 			expect(wsClientsService.notifyAllClients).toHaveBeenNthCalledWith(
 				1,
 				[appUserPayload.id, createDirectChatRequestDto.receiverId],
-				WSEvents.ON_CREATE_CHAT,
-				plainToInstance(DirectChatWithUsersAndMessagesDto, directChatMock, {
-					excludeExtraneousValues: true,
-				}),
+				WSEvent.ON_CREATE_CHAT,
+				createdDirectChatMock,
 			);
+		});
+
+		it('should return nothing', async (): Promise<void> => {
+			const result: void = await directChatsGateway.createDirectChat(
+				appUserPayload,
+				createDirectChatRequestDto,
+			);
+
+			expect(result).toBeUndefined();
 		});
 	});
 });

@@ -59,6 +59,16 @@ describe('Direct chat messages repository', (): void => {
 
 			expect(queryBuilderMock.into).toHaveBeenCalledTimes(1);
 			expect(queryBuilderMock.into).toHaveBeenNthCalledWith(1, DirectChatMessage);
+
+			expect(queryBuilderMock.values).toHaveBeenCalledTimes(1);
+			expect(queryBuilderMock.values).toHaveBeenNthCalledWith(1, {
+				dateTime: messageDateTimeMock,
+				messageText: messageTextMock,
+				directChat: directChatMock,
+				sender: senderMock,
+			});
+
+			expect(queryBuilderMock.execute).toHaveBeenCalledTimes(1);
 		});
 
 		it('should use query builder and create a query to retrieve a created message', async (): Promise<void> => {

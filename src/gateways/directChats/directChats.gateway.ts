@@ -15,25 +15,20 @@ import { IDirectChatsGateway } from '@gateways';
 
 import { WsExceptionFilter } from '@filters';
 
-import { CustomProviders, WSEvents } from '@enums';
+import { CustomProvider, WSEvent } from '@enums';
 
-import { IDirectChatsService, IJWTTokensService, IWSClientsService } from '@services';
+import { IDirectChatsService, IJwtTokensService, IWSClientsService } from '@services';
 
-import { WsAuthMiddleware } from '@middlewares';
+import { wsAuthMiddleware } from '@middlewares';
 
 import { CreateDirectChatRequestDto, DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
-import { JWTPayloadDto } from '@dtos/jwt';
-import {
-	SendDirectChatMessageRequestDto,
-	DirectChatMessageWithChatAndUserDto,
-} from '@dtos/directChatMessages';
-import { UserDto } from '@dtos/users';
+import { JwtPayloadDto } from '@dtos/jwt';
 
 import { AppUserPayload } from '@decorators/data';
 
 import { MessageEncryptionPipe } from '@pipes';
 
-import { GlobalTypes } from '@customTypes';
+import { AuthTypes } from '@customTypes';
 
 @UsePipes(
 	new ValidationPipe({
@@ -47,34 +42,33 @@ export class DirectChatsGateway
 	implements IDirectChatsGateway, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
 	constructor(
-		@Inject(CustomProviders.CTF_DIRECT_CHATS_SERVICE)
+		@Inject(CustomProvider.CTF_DIRECT_CHATS_SERVICE)
 		private readonly _directChatsService: IDirectChatsService,
 
-		@Inject(CustomProviders.CTF_JWT_TOKENS_SERVICE)
-		private readonly _jwtTokenService: IJWTTokensService,
+		@Inject(CustomProvider.CTF_JWT_TOKENS_SERVICE)
+		private readonly _jwtTokenService: IJwtTokensService,
 
-		@Inject(CustomProviders.CTF_WS_CLIENTS_SERVICE)
+		@Inject(CustomProvider.CTF_WS_CLIENTS_SERVICE)
 		private readonly _wsClientsService: IWSClientsService,
 	) {}
 
 	public afterInit(@ConnectedSocket() client: Socket): void {
-		client.use(WsAuthMiddleware(this._jwtTokenService));
+		client.use(wsAuthMiddleware(this._jwtTokenService));
 
 		console.log(`${DirectChatsGateway.name} is ready to listening events`);
 	}
 
-	public handleConnection(@ConnectedSocket() client: GlobalTypes.TAuthorizedSocket): void {
+	public handleConnection(@ConnectedSocket() client: AuthTypes.TAuthorizedSocket): void {
 		this._wsClientsService.set(client.user.id, client);
 	}
 
-	public handleDisconnect(@ConnectedSocket() client: GlobalTypes.TAuthorizedSocket): void {
+	public handleDisconnect(@ConnectedSocket() client: AuthTypes.TAuthorizedSocket): void {
 		this._wsClientsService.delete(client.user.id);
 	}
 
-	@SubscribeMessage(WSEvents.CREATE_CHAT)
+	@SubscribeMessage(WSEvent.CREATE_CHAT)
 	public async createDirectChat(
-		@AppUserPayload() appUserPayload: JWTPayloadDto,
-
+		@AppUserPayload() appUserPayload: JwtPayloadDto,
 		@MessageBody(MessageEncryptionPipe) createDirectChatRequestDto: CreateDirectChatRequestDto,
 	): Promise<void> {
 		const createdChat: DirectChatWithUsersAndMessagesDto =
@@ -86,29 +80,8 @@ export class DirectChatsGateway
 
 		this._wsClientsService.notifyAllClients(
 			[appUserPayload.id, createDirectChatRequestDto.receiverId],
-			WSEvents.ON_CREATE_CHAT,
+			WSEvent.ON_CREATE_CHAT,
 			createdChat,
-		);
-	}
-
-	@SubscribeMessage(WSEvents.SEND_MESSAGE)
-	public async sendMessage(
-		@AppUserPayload() appUserPayload: JWTPayloadDto,
-
-		@MessageBody(MessageEncryptionPipe)
-		sendDirectChatMessageRequestDto: SendDirectChatMessageRequestDto,
-	): Promise<void> {
-		const createdMessage: DirectChatMessageWithChatAndUserDto =
-			await this._directChatsService.sendMessage(
-				appUserPayload.id,
-				sendDirectChatMessageRequestDto.directChatId,
-				sendDirectChatMessageRequestDto.messageText,
-			);
-
-		this._wsClientsService.notifyAllClients(
-			createdMessage.directChat.users.map((user: UserDto) => user.id),
-			WSEvents.ON_RECEIVE_MESSAGE,
-			createdMessage,
 		);
 	}
 }

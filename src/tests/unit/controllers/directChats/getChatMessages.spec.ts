@@ -8,15 +8,15 @@ import { DirectChatsController } from '@controllers';
 
 import { providers } from '@modules/providers';
 
-import { IDirectChatsService } from '@services';
+import { IDirectChatMessagesService } from '@services';
 import {
 	DirectChatMessageWithChatAndUserStrategy,
 	DirectChatWithUsersAndMessagesStrategy,
 } from '@services/crypto/decryptionStrategy/strategies';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
 
 import { User, DirectChat, DirectChatMessage } from '@entities';
@@ -25,7 +25,7 @@ import { users, directChats, directChatsMessages } from '@testMocks';
 
 describe('Direct chats controller', (): void => {
 	let directChatsController: DirectChatsController;
-	let directChatsService: IDirectChatsService;
+	let directChatMessagesService: IDirectChatMessagesService;
 
 	beforeAll(async (): Promise<void> => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -45,6 +45,7 @@ describe('Direct chats controller', (): void => {
 				providers.CTF_DIRECT_CHATS_SERVICE,
 				providers.CTF_DIRECT_CHATS_REPOSITORY,
 
+				providers.CTF_DIRECT_CHAT_MESSAGES_SERVICE,
 				providers.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY,
 
 				providers.CTF_CRYPTO_SERVICE,
@@ -56,7 +57,7 @@ describe('Direct chats controller', (): void => {
 		}).compile();
 
 		directChatsController = moduleFixture.get(DirectChatsController);
-		directChatsService = moduleFixture.get(CustomProviders.CTF_DIRECT_CHATS_SERVICE);
+		directChatMessagesService = moduleFixture.get(CustomProvider.CTF_DIRECT_CHAT_MESSAGES_SERVICE);
 	});
 
 	describe('Get chat messages', (): void => {
@@ -64,7 +65,7 @@ describe('Direct chats controller', (): void => {
 		const directChatMock: DirectChat = directChats[0];
 		const directChatMessagesMock: DirectChatMessage[] = directChatsMessages.slice(0, 2);
 
-		const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, userMock, {
+		const appUserPayload: JwtPayloadDto = plainToInstance(JwtPayloadDto, userMock, {
 			excludeExtraneousValues: true,
 		});
 		const chatId: string = directChatMock.id;
@@ -72,7 +73,7 @@ describe('Direct chats controller', (): void => {
 		const take: number = 10;
 
 		beforeEach((): void => {
-			jest.spyOn(directChatsService, 'getChatMessages').mockResolvedValue(
+			jest.spyOn(directChatMessagesService, 'getChatMessages').mockResolvedValue(
 				directChatMessagesMock.map((message: DirectChatMessage) => {
 					return plainToInstance(DirectChatMessageWithChatAndUserDto, message, {
 						excludeExtraneousValues: true,
@@ -85,11 +86,11 @@ describe('Direct chats controller', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should call get chat messages method from direct chats service to get chat messages', async (): Promise<void> => {
-			await directChatsController.getChatMessages(appUserPayload, chatId, page, take);
+		it('should call get chat messages method from direct chat messages service to get chat messages', async (): Promise<void> => {
+			await directChatsController.getChatMessages(appUserPayload, chatId, { page, take });
 
-			expect(directChatsService.getChatMessages).toHaveBeenCalledTimes(1);
-			expect(directChatsService.getChatMessages).toHaveBeenNthCalledWith(
+			expect(directChatMessagesService.getChatMessages).toHaveBeenCalledTimes(1);
+			expect(directChatMessagesService.getChatMessages).toHaveBeenNthCalledWith(
 				1,
 				appUserPayload.id,
 				chatId,
@@ -98,31 +99,18 @@ describe('Direct chats controller', (): void => {
 			);
 		});
 
-		it('should call get chat messages method without pagination parameters if they were not provided', async (): Promise<void> => {
-			await directChatsController.getChatMessages(appUserPayload, chatId);
-
-			expect(directChatsService.getChatMessages).toHaveBeenCalledTimes(1);
-			expect(directChatsService.getChatMessages).toHaveBeenNthCalledWith(
-				1,
-				appUserPayload.id,
-				chatId,
-				undefined,
-				undefined,
-			);
-		});
-
 		it('should return empty array if no messages were found', async (): Promise<void> => {
-			jest.spyOn(directChatsService, 'getChatMessages').mockResolvedValue([]);
+			jest.spyOn(directChatMessagesService, 'getChatMessages').mockResolvedValue([]);
 
 			const messages: DirectChatMessageWithChatAndUserDto[] =
-				await directChatsController.getChatMessages(appUserPayload, chatId, page, take);
+				await directChatsController.getChatMessages(appUserPayload, chatId, { page, take });
 
 			expect(messages).toHaveLength(0);
 		});
 
-		it('should return all founded messages', async (): Promise<void> => {
+		it('should return all found messages', async (): Promise<void> => {
 			const messages: DirectChatMessageWithChatAndUserDto[] =
-				await directChatsController.getChatMessages(appUserPayload, chatId, page, take);
+				await directChatsController.getChatMessages(appUserPayload, chatId, { page, take });
 
 			expect(messages.sort()).toEqual(
 				directChatMessagesMock
@@ -135,9 +123,9 @@ describe('Direct chats controller', (): void => {
 			);
 		});
 
-		it('should return all founded messages as array of DirectChatMessageWithChatAndUserDto', async (): Promise<void> => {
+		it('should return all found messages as array of DirectChatMessageWithChatAndUserDto', async (): Promise<void> => {
 			const messages: DirectChatMessageWithChatAndUserDto[] =
-				await directChatsController.getChatMessages(appUserPayload, chatId, page, take);
+				await directChatsController.getChatMessages(appUserPayload, chatId, { page, take });
 
 			expect(messages).toBeInstanceOf(Array);
 

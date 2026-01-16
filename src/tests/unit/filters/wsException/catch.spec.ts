@@ -3,7 +3,7 @@ import { HttpException } from '@nestjs/common/exceptions/http.exception';
 
 import { Socket } from 'socket.io';
 
-import { Environments, WSEvents, ResponseStatus } from '@enums';
+import { Environment, WSEvent, ResponseStatus } from '@enums';
 
 import { ErrorResponseResult } from '@responses/errorResponses';
 import { ErrorField } from '@responses/errors';
@@ -16,7 +16,7 @@ describe('WS exception filter', (): void => {
 	beforeAll((): void => {
 		wsExceptionFilter = new WsExceptionFilter();
 
-		process.env.NODE_ENV = Environments.PROD;
+		process.env.NODE_ENV = Environment.PROD;
 	});
 
 	afterAll((): void => {
@@ -45,9 +45,9 @@ describe('WS exception filter', (): void => {
 		it('should emit response for on error event', (): void => {
 			wsExceptionFilter.catch(exception, host);
 
-			const eventName: WSEvents = (client.emit as jest.Mock).mock.calls[0][0];
+			const eventName: WSEvent = (client.emit as jest.Mock).mock.calls[0][0];
 
-			expect(eventName).toBe(WSEvents.ON_ERROR);
+			expect(eventName).toBe(WSEvent.ON_ERROR);
 		});
 
 		it('should create a valid message and errors fields for http exception', (): void => {
@@ -81,8 +81,23 @@ describe('WS exception filter', (): void => {
 			expect(response.errors).toEqual([{ message: errorMessage, field: null }]);
 		});
 
+		it('should create a valid errors fields if exception contains and array of errors', (): void => {
+			wsExceptionFilter.catch(
+				new BadRequestException([`${errorMessage}|${errorField}`, `${errorMessage}|${errorField}`]),
+				host,
+			);
+
+			const response: ErrorResponseResult<ErrorField[]> = (client.emit as jest.Mock).mock
+				.calls[0][1];
+
+			expect(response.errors).toEqual([
+				{ message: errorMessage, field: errorField },
+				{ message: errorMessage, field: errorField },
+			]);
+		});
+
 		it('should specify stack trace and date time in dev environment', (): void => {
-			process.env.NODE_ENV = Environments.DEV;
+			process.env.NODE_ENV = Environment.DEV;
 
 			wsExceptionFilter.catch(exception, host);
 

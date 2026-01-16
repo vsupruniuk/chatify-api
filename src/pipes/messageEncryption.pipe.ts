@@ -1,6 +1,6 @@
 import { Inject, PipeTransform } from '@nestjs/common';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { ICryptoService } from '@services';
 
@@ -10,11 +10,11 @@ interface IMessage {
 
 export class MessageEncryptionPipe implements PipeTransform {
 	constructor(
-		@Inject(CustomProviders.CTF_CRYPTO_SERVICE)
+		@Inject(CustomProvider.CTF_CRYPTO_SERVICE)
 		private readonly _cryptoService: ICryptoService,
 	) {}
 
-	public async transform<T extends IMessage>(value: T): Promise<T> {
+	public async transform<V extends IMessage>(value: V): Promise<V> {
 		return {
 			...value,
 			messageText: await this._cryptoService.encryptText(value.messageText),

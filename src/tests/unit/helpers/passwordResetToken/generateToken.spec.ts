@@ -15,7 +15,7 @@ describe('Password reset token', (): void => {
 			jest.restoreAllMocks();
 		});
 
-		it('should use random uuid method from crypto package to generate random uuid', (): void => {
+		it('should call random uuid method from crypto package to generate random uuid', (): void => {
 			PasswordResetTokensHelper.generateToken();
 
 			expect(crypto.randomUUID).toHaveBeenCalledTimes(1);

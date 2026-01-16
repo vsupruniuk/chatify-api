@@ -9,7 +9,7 @@ import { providers } from '@modules/providers';
 
 import { IUsersRepository } from '@repositories';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User } from '@entities';
 
@@ -33,7 +33,7 @@ describe('Users service', (): void => {
 		}).compile();
 
 		usersService = moduleFixture.get(UsersService);
-		usersRepository = moduleFixture.get(CustomProviders.CTF_USERS_REPOSITORY);
+		usersRepository = moduleFixture.get(CustomProvider.CTF_USERS_REPOSITORY);
 	});
 
 	describe('Get by id', (): void => {
@@ -47,15 +47,6 @@ describe('Users service', (): void => {
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-			jest.clearAllMocks();
-		});
-
-		it('should be defined', (): void => {
-			expect(usersService.getById).toBeDefined();
-		});
-
-		it('should be a function', (): void => {
-			expect(usersService.getById).toBeInstanceOf(Function);
 		});
 
 		it('should call find by id method from users repository to find a user', async (): Promise<void> => {

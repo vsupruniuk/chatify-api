@@ -18,8 +18,8 @@ describe('Password hashing pipe', (): void => {
 	describe('Transform', (): void => {
 		const hashedPasswordMock: string = 'hashedPasswordMock';
 
-		const password = 'Qwerty12345!';
-		const passwordConfirmation = 'Qwerty12345!';
+		const password: string = 'Qwerty12345!';
+		const passwordConfirmation: string = 'Qwerty12345!';
 
 		beforeEach((): void => {
 			jest.spyOn(PasswordHelper, 'hashPassword').mockResolvedValue(hashedPasswordMock);

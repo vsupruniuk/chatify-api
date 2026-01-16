@@ -17,7 +17,7 @@ import { AccountSettings, User } from '@entities';
 
 import { users, accountSettings } from '@testMocks';
 
-import { Headers } from '@enums';
+import { Header, Route } from '@enums';
 
 import { SuccessfulResponseResult } from '@responses/successfulResponses';
 
@@ -28,6 +28,8 @@ describe('Find users', (): void => {
 	let app: INestApplication;
 	let postgresContainer: StartedTestContainer;
 	let dataSource: DataSource;
+
+	const route: string = `/${Route.SEARCH}/${Route.FIND_USERS}`;
 
 	beforeAll(async (): Promise<void> => {
 		postgresContainer = await TestDatabaseHelper.initDbContainer();
@@ -45,7 +47,7 @@ describe('Find users', (): void => {
 		app.useGlobalPipes(new ValidationPipe(validationPipeConfig));
 		app.useGlobalFilters(new GlobalExceptionFilter());
 
-		await app.listen(Number(process.env.TESTS_PORT));
+		await app.listen(Number(process.env.PORT));
 	});
 
 	afterAll(async (): Promise<void> => {
@@ -54,14 +56,22 @@ describe('Find users', (): void => {
 		await app.close();
 	});
 
-	describe('GET /search/find-users', (): void => {
+	describe(`GET ${route}`, (): void => {
 		const passwordMock: string = 'Qwerty12345!';
 		const createdUser: User = users[1];
 
 		const nicknamePattern: string = 'to';
 
+		const login = async (agent: ReturnType<typeof supertest.agent>): Promise<string> => {
+			const loginResponse: supertest.Response = await agent
+				.post(`/${Route.AUTH}/${Route.LOGIN}`)
+				.send({ email: createdUser.email, password: passwordMock });
+
+			return (loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken;
+		};
+
 		beforeEach(async (): Promise<void> => {
-			await supertest.agent(app.getHttpServer()).post('/auth/signup').send({
+			await supertest.agent(app.getHttpServer()).post(`/${Route.AUTH}/${Route.SIGNUP}`).send({
 				email: createdUser.email,
 				firstName: createdUser.firstName,
 				lastName: createdUser.lastName,
@@ -109,9 +119,7 @@ describe('Find users', (): void => {
 		});
 
 		it('should return 401 Unauthorized error if user does not provided authorization header', async (): Promise<void> => {
-			const response: supertest.Response = await supertest
-				.agent(app.getHttpServer())
-				.get('/search/find-users');
+			const response: supertest.Response = await supertest.agent(app.getHttpServer()).get(route);
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -119,8 +127,8 @@ describe('Find users', (): void => {
 		it('should return 401 Unauthorized error if user provided empty authorization header', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.get('/search/find-users')
-				.set(Headers.AUTHORIZATION, '');
+				.get(route)
+				.set(Header.AUTHORIZATION, '');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -128,8 +136,8 @@ describe('Find users', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header without access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.get('/search/find-users')
-				.set(Headers.AUTHORIZATION, 'Bearer');
+				.get(route)
+				.set(Header.AUTHORIZATION, 'Bearer');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -137,8 +145,8 @@ describe('Find users', (): void => {
 		it('should return 401 Unauthorized error if user provided authorization header with invalid access token', async (): Promise<void> => {
 			const response: supertest.Response = await supertest
 				.agent(app.getHttpServer())
-				.get('/search/find-users')
-				.set(Headers.AUTHORIZATION, 'Bearer accessToken');
+				.get(route)
+				.set(Header.AUTHORIZATION, 'Bearer accessToken');
 
 			expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
 		});
@@ -146,52 +154,76 @@ describe('Find users', (): void => {
 		it('should return 400 Bad Request error if nickname query parameter is missing', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const usersResponse: supertest.Response = await agent
-				.get('/search/find-users')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ page: 1, take: 10 });
 
 			expect(usersResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
+		it('should return 400 Bad Request error if page query parameter is less than 1', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const accessToken: string = await login(agent);
+
+			const usersResponse: supertest.Response = await agent
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
+				.query({ nickname: nicknamePattern, page: 0, take: 10 });
+
+			expect(usersResponse.status).toBe(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 400 Bad Request error if take query parameter is less than 1', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const accessToken: string = await login(agent);
+
+			const usersResponse: supertest.Response = await agent
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
+				.query({ nickname: nicknamePattern, page: 1, take: -1 });
+
+			expect(usersResponse.status).toBe(HttpStatus.BAD_REQUEST);
+		});
+
+		it('should return 200 OK status if request is valid and query parameters are not provided', async (): Promise<void> => {
+			const agent = supertest.agent(app.getHttpServer());
+
+			const accessToken: string = await login(agent);
+
+			const usersResponse: supertest.Response = await agent
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
+				.query({ nickname: nicknamePattern });
+
+			expect(usersResponse.status).toBe(HttpStatus.OK);
+		});
+
 		it('should return 200 OK status if request is valid', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const usersResponse: supertest.Response = await agent
-				.get('/search/find-users')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ nickname: nicknamePattern, page: 1, take: 10 });
 
 			expect(usersResponse.status).toBe(HttpStatus.OK);
 		});
 
-		it('should return 200 OK status if page and take query parameters are missing', async (): Promise<void> => {
+		it('should return 200 OK status if page and take query parameters are not provided', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const usersResponse: supertest.Response = await agent
-				.get('/search/find-users')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ nickname: nicknamePattern, page: 1, take: 10 });
 
 			expect(usersResponse.status).toBe(HttpStatus.OK);
@@ -200,16 +232,11 @@ describe('Find users', (): void => {
 		it('should return only users with nicknames containing nickname pattern', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const usersResponse: supertest.Response = await agent
-				.get('/search/find-users')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ nickname: nicknamePattern, page: 1, take: 10 });
 
 			const users: UserDto[] = (usersResponse.body as SuccessfulResponseResult<UserDto[]>).data;
@@ -222,38 +249,28 @@ describe('Find users', (): void => {
 		it('should limit number of users based on take query parameter', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const usersToGet: number = 2;
 
 			const usersResponse: supertest.Response = await agent
-				.get('/search/find-users')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ nickname: nicknamePattern, page: 1, take: usersToGet });
 
 			const users: UserDto[] = (usersResponse.body as SuccessfulResponseResult<UserDto[]>).data;
 
-			expect(users.length).toBe(usersToGet);
+			expect(users).toHaveLength(usersToGet);
 		});
 
 		it('should return different users for different page parameter', async (): Promise<void> => {
 			const agent = supertest.agent(app.getHttpServer());
 
-			const loginResponse: supertest.Response = await agent
-				.post('/auth/login')
-				.send({ email: createdUser.email, password: passwordMock });
+			const accessToken: string = await login(agent);
 
 			const usersResponseFirstPage: supertest.Response = await agent
-				.get('/search/find-users')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ nickname: nicknamePattern, page: 1, take: 2 });
 
 			const usersFirstPage: string[] = (
@@ -263,11 +280,8 @@ describe('Find users', (): void => {
 				.sort((first: string, second: string) => first.localeCompare(second));
 
 			const usersResponseSecondPage: supertest.Response = await agent
-				.get('/search/find-users')
-				.set(
-					Headers.AUTHORIZATION,
-					`Bearer ${(loginResponse.body as SuccessfulResponseResult<LoginResponseDto>).data.accessToken}`,
-				)
+				.get(route)
+				.set(Header.AUTHORIZATION, `Bearer ${accessToken}`)
 				.query({ nickname: nicknamePattern, page: 2, take: 2 });
 
 			const usersSecondPage: string[] = (

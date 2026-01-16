@@ -1,4 +1,5 @@
 import { FileHelper } from '@helpers';
+import { FileField } from '@enums';
 
 describe('File helper', (): void => {
 	describe('Validate file extension', (): void => {
@@ -10,7 +11,7 @@ describe('File helper', (): void => {
 		});
 
 		it('should call callback without error and true, if file extension is valid', (): void => {
-			FileHelper.validateFileExtension(file, callback);
+			FileHelper.validateFileExtension(FileField.USER_AVATAR, file, callback);
 
 			expect(callback).toHaveBeenCalledTimes(1);
 			expect(callback).toHaveBeenNthCalledWith(1, null, true);
@@ -18,6 +19,7 @@ describe('File helper', (): void => {
 
 		it('should call callback without error and false, if file extension is valid', (): void => {
 			FileHelper.validateFileExtension(
+				FileField.USER_AVATAR,
 				{ originalname: 'user.txt' } as Express.Multer.File,
 				callback,
 			);

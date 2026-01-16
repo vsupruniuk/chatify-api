@@ -1,11 +1,12 @@
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { plainToInstance } from 'class-transformer';
 import { DataSource } from 'typeorm';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User } from '@entities';
 
@@ -14,6 +15,8 @@ import { users } from '@testMocks';
 import { FileHelper } from '@helpers';
 
 import { IUsersService, AppUserService } from '@services';
+
+import { UserDto } from '@dtos/users';
 
 describe('App user service', (): void => {
 	let appUserService: AppUserService;
@@ -32,7 +35,7 @@ describe('App user service', (): void => {
 		}).compile();
 
 		appUserService = moduleFixture.get(AppUserService);
-		usersService = moduleFixture.get(CustomProviders.CTF_USERS_SERVICE);
+		usersService = moduleFixture.get(CustomProvider.CTF_USERS_SERVICE);
 	});
 
 	describe('Delete user avatar', (): void => {
@@ -40,7 +43,9 @@ describe('App user service', (): void => {
 		const userIdMock: string = userMock.id;
 
 		beforeEach((): void => {
-			jest.spyOn(usersService, 'getById').mockResolvedValue(userMock);
+			jest
+				.spyOn(usersService, 'getById')
+				.mockResolvedValue(plainToInstance(UserDto, userMock, { excludeExtraneousValues: true }));
 			jest.spyOn(usersService, 'updateUserAvatarUrl').mockImplementation(jest.fn());
 			jest.spyOn(FileHelper, 'deleteFile').mockImplementation(jest.fn());
 		});

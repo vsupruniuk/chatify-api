@@ -1,1 +1,2 @@
-export * from './directChatMessages.provider';
+export * from './directChatMessagesRepository.provider';
+export * from './directChatMessagesService.provider';

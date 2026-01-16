@@ -1,13 +1,4 @@
-import { Request } from 'express';
-import { Socket } from 'socket.io';
-
-import { JWTPayloadDto } from '@dtos/jwt';
-
 export declare namespace GlobalTypes {
-	type TAuthorizedRequest = Request & { user: JWTPayloadDto };
-
-	type TAuthorizedSocket = Socket & { user: JWTPayloadDto };
-
 	interface IValidationErrorResponse {
 		message: string[];
 		error: string;

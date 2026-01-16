@@ -14,15 +14,15 @@ import {
 } from '@services/crypto/decryptionStrategy/strategies';
 import { IWSClientsService } from '@services';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
-import { GlobalTypes } from '@customTypes';
+import { AuthTypes } from '@customTypes';
 
 import { User } from '@entities';
 
 import { users } from '@testMocks';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 
 describe('Direct chats gateway', (): void => {
 	let directChatsGateway: DirectChatsGateway;
@@ -41,8 +41,6 @@ describe('Direct chats gateway', (): void => {
 				providers.CTF_DIRECT_CHATS_SERVICE,
 				providers.CTF_DIRECT_CHATS_REPOSITORY,
 
-				providers.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY,
-
 				providers.CTF_USERS_SERVICE,
 				providers.CTF_USERS_REPOSITORY,
 
@@ -60,15 +58,15 @@ describe('Direct chats gateway', (): void => {
 		}).compile();
 
 		directChatsGateway = moduleFixture.get(DirectChatsGateway);
-		wsClientsService = moduleFixture.get(CustomProviders.CTF_WS_CLIENTS_SERVICE);
+		wsClientsService = moduleFixture.get(CustomProvider.CTF_WS_CLIENTS_SERVICE);
 	});
 
 	describe('Handle disconnect', (): void => {
 		const userMock: User = users[4];
 
-		const client: GlobalTypes.TAuthorizedSocket = {
-			user: plainToInstance(JWTPayloadDto, userMock, { excludeExtraneousValues: true }),
-		} as GlobalTypes.TAuthorizedSocket;
+		const client: AuthTypes.TAuthorizedSocket = {
+			user: plainToInstance(JwtPayloadDto, userMock, { excludeExtraneousValues: true }),
+		} as AuthTypes.TAuthorizedSocket;
 
 		beforeEach((): void => {
 			jest.spyOn(wsClientsService, 'delete');
@@ -78,7 +76,7 @@ describe('Direct chats gateway', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should call set method from ws clients service to save a connection', (): void => {
+		it('should call delete method from ws clients service to delete saved connection', (): void => {
 			directChatsGateway.handleDisconnect(client);
 
 			expect(wsClientsService.delete).toHaveBeenCalledTimes(1);

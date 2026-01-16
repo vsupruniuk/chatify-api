@@ -40,6 +40,7 @@ describe('Account settings repository', (): void => {
 		beforeEach((): void => {
 			queryBuilderMock.execute.mockReturnValue({ raw: [{ id: expectedAccountSettings.id }] });
 			queryBuilderMock.getOne.mockReturnValue(expectedAccountSettings);
+			queryBuilderMock.getQuery.mockReturnValue(getQueryResultMock);
 		});
 
 		afterEach((): void => {
@@ -77,8 +78,6 @@ describe('Account settings repository', (): void => {
 		});
 
 		it('should use query builder to update user account setting', async (): Promise<void> => {
-			queryBuilderMock.getQuery.mockReturnValue(getQueryResultMock);
-
 			await accountSettingsRepository.updateAccountSettings(
 				userId,
 				updateAccountSettingsRequestDto,

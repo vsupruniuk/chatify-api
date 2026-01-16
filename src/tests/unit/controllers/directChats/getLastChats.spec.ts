@@ -14,9 +14,9 @@ import {
 	DirectChatMessageWithChatAndUserStrategy,
 } from '@services/crypto/decryptionStrategy/strategies';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
-import { JWTPayloadDto } from '@dtos/jwt';
+import { JwtPayloadDto } from '@dtos/jwt';
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
 
 import { User, DirectChat } from '@entities';
@@ -45,6 +45,7 @@ describe('Direct chats controller', (): void => {
 				providers.CTF_DIRECT_CHATS_SERVICE,
 				providers.CTF_DIRECT_CHATS_REPOSITORY,
 
+				providers.CTF_DIRECT_CHAT_MESSAGES_SERVICE,
 				providers.CTF_DIRECT_CHAT_MESSAGES_REPOSITORY,
 
 				providers.CTF_CRYPTO_SERVICE,
@@ -56,14 +57,14 @@ describe('Direct chats controller', (): void => {
 		}).compile();
 
 		directChatsController = moduleFixture.get(DirectChatsController);
-		directChatsService = moduleFixture.get(CustomProviders.CTF_DIRECT_CHATS_SERVICE);
+		directChatsService = moduleFixture.get(CustomProvider.CTF_DIRECT_CHATS_SERVICE);
 	});
 
 	describe('Get last chats', (): void => {
 		const userMock: User = users[2];
 		const directChatsMock: DirectChat[] = directChats.slice(1, 3);
 
-		const appUserPayload: JWTPayloadDto = plainToInstance(JWTPayloadDto, userMock, {
+		const appUserPayload: JwtPayloadDto = plainToInstance(JwtPayloadDto, userMock, {
 			excludeExtraneousValues: true,
 		});
 		const page: number = 1;
@@ -84,7 +85,7 @@ describe('Direct chats controller', (): void => {
 		});
 
 		it('should call get user last chats from direct chats service to obtain last chats', async (): Promise<void> => {
-			await directChatsController.getLastChats(appUserPayload, page, take);
+			await directChatsController.getLastChats(appUserPayload, { page, take });
 
 			expect(directChatsService.getUserLastChats).toHaveBeenCalledTimes(1);
 			expect(directChatsService.getUserLastChats).toHaveBeenNthCalledWith(
@@ -92,18 +93,6 @@ describe('Direct chats controller', (): void => {
 				appUserPayload.id,
 				page,
 				take,
-			);
-		});
-
-		it('should call get user last chats method without pagination parameters if they were not provided', async (): Promise<void> => {
-			await directChatsController.getLastChats(appUserPayload);
-
-			expect(directChatsService.getUserLastChats).toHaveBeenCalledTimes(1);
-			expect(directChatsService.getUserLastChats).toHaveBeenNthCalledWith(
-				1,
-				appUserPayload.id,
-				undefined,
-				undefined,
 			);
 		});
 
@@ -112,18 +101,16 @@ describe('Direct chats controller', (): void => {
 
 			const chats: DirectChatWithUsersAndMessagesDto[] = await directChatsController.getLastChats(
 				appUserPayload,
-				page,
-				take,
+				{ page, take },
 			);
 
 			expect(chats).toHaveLength(0);
 		});
 
-		it('should return all founded chats', async (): Promise<void> => {
+		it('should return all found chats', async (): Promise<void> => {
 			const chats: DirectChatWithUsersAndMessagesDto[] = await directChatsController.getLastChats(
 				appUserPayload,
-				page,
-				take,
+				{ page, take },
 			);
 
 			expect(chats.sort()).toEqual(
@@ -137,11 +124,10 @@ describe('Direct chats controller', (): void => {
 			);
 		});
 
-		it('should return all founded chats as array of DirectChatWithUsersAndMessagesDto', async (): Promise<void> => {
+		it('should return all found chats as array of DirectChatWithUsersAndMessagesDto', async (): Promise<void> => {
 			const chats: DirectChatWithUsersAndMessagesDto[] = await directChatsController.getLastChats(
 				appUserPayload,
-				page,
-				take,
+				{ page, take },
 			);
 
 			expect(chats).toBeInstanceOf(Array);

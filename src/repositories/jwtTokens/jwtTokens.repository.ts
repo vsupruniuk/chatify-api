@@ -4,10 +4,10 @@ import { DataSource, UpdateResult } from 'typeorm';
 
 import { JWTToken, User } from '@entities';
 
-import { IJWTTokensRepository } from '@repositories';
+import { IJwtTokensRepository } from '@repositories';
 
 @Injectable()
-export class JwtTokensRepository implements IJWTTokensRepository {
+export class JwtTokensRepository implements IJwtTokensRepository {
 	constructor(private readonly _dataSource: DataSource) {}
 
 	public async updateToken(id: string, token: string): Promise<JWTToken> {

@@ -8,7 +8,7 @@ import { JwtTokensRepository } from '@repositories';
 
 import { JWTToken, User } from '@entities';
 
-describe('JWT token repository', (): void => {
+describe('JWT tokens repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();
 
 	let jwtTokensRepository: JwtTokensRepository;
@@ -22,7 +22,7 @@ describe('JWT token repository', (): void => {
 	});
 
 	describe('Reset token by user id', (): void => {
-		const expectedToken: JWTToken = jwtTokens[0];
+		const expectedToken: JWTToken = { ...jwtTokens[0], token: null };
 		const expectedUpdateResult: UpdateResult = { raw: [expectedToken], generatedMaps: [] };
 
 		const userIdMock: string = users[5].id;
@@ -87,6 +87,12 @@ describe('JWT token repository', (): void => {
 			expect(queryBuilderMock.returning).toHaveBeenNthCalledWith(1, '*');
 
 			expect(queryBuilderMock.execute).toHaveBeenCalledTimes(1);
+		});
+
+		it('should return updated token value', async (): Promise<void> => {
+			const updatedToken: JWTToken = await jwtTokensRepository.resetTokenByUserId(userIdMock);
+
+			expect(updatedToken).toEqual(expectedToken);
 		});
 	});
 });

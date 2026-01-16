@@ -9,7 +9,7 @@ import { IUsersRepository } from '@repositories';
 
 import { providers } from '@modules/providers';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { User, JWTToken } from '@entities';
 
@@ -33,7 +33,7 @@ describe('Users service', (): void => {
 		}).compile();
 
 		usersService = moduleFixture.get(UsersService);
-		usersRepository = moduleFixture.get(CustomProviders.CTF_USERS_REPOSITORY);
+		usersRepository = moduleFixture.get(CustomProvider.CTF_USERS_REPOSITORY);
 	});
 
 	describe('Get full user with jwt token by email', (): void => {
@@ -50,7 +50,6 @@ describe('Users service', (): void => {
 
 		afterEach((): void => {
 			jest.restoreAllMocks();
-			jest.clearAllMocks();
 		});
 
 		it('should call find full user with jwt token by email method from users repository to find a user', async (): Promise<void> => {

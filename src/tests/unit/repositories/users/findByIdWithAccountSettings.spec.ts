@@ -34,7 +34,7 @@ describe('Users repository', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should use query builder and create a query for searching a user id with account settings', async (): Promise<void> => {
+		it('should use query builder and create a query for searching a user by id with account settings', async (): Promise<void> => {
 			await usersRepository.findByIdWithAccountSettings(idMock);
 
 			expect(queryBuilderMock.createQueryBuilder).toHaveBeenCalledTimes(1);

@@ -1,10 +1,10 @@
 import { ClassProvider } from '@nestjs/common';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { DirectChatsRepository } from '@repositories';
 
 export const directChatsRepositoryProvider: ClassProvider = {
-	provide: CustomProviders.CTF_DIRECT_CHATS_REPOSITORY,
+	provide: CustomProvider.CTF_DIRECT_CHATS_REPOSITORY,
 	useClass: DirectChatsRepository,
 };

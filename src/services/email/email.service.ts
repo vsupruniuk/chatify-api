@@ -1,29 +1,28 @@
 import { Injectable } from '@nestjs/common';
 
-import { Transporter } from 'nodemailer';
 import * as nodemailer from 'nodemailer';
+import { Transporter } from 'nodemailer';
 
 import { IEmailService } from '@services';
 
 import { accountActivationTemplate, resetPasswordTemplate } from '@emailTemplates';
 
-import { EmailPriority, Environments } from '@enums';
+import { EmailPriority, EmailSubject, Environment } from '@enums';
+
+import { emailConfig } from '@configs';
 
 @Injectable()
 export class EmailService implements IEmailService {
-	private readonly APP_NAME: string = String(process.env.APP_NAME);
-	private readonly APP_EMAIL: string = String(process.env.SMTP_USER);
-	private readonly SUPPORTED_ENVIRONMENTS: string[] = [Environments.PROD];
 	private _transporter: Transporter;
 
 	constructor() {
 		this._transporter = nodemailer.createTransport({
-			host: process.env.SMTP_HOST,
-			port: Number(process.env.SMTP_PORT),
+			host: emailConfig.host,
+			port: emailConfig.port,
 			secure: true,
 			auth: {
-				user: this.APP_EMAIL,
-				pass: process.env.SMTP_PASS,
+				user: emailConfig.appEmail,
+				pass: emailConfig.pass,
 			},
 		});
 
@@ -35,12 +34,11 @@ export class EmailService implements IEmailService {
 	}
 
 	public async sendActivationEmail(receiverEmail: string, otpCode: number): Promise<void> {
-		const emailSubject: string = 'Chatify Account Activation';
 		const emailContent: string = accountActivationTemplate(otpCode);
 
 		return this._sendMail(
 			receiverEmail,
-			emailSubject,
+			EmailSubject.ACCOUNT_ACTIVATION,
 			emailContent,
 			emailContent,
 			EmailPriority.HIGH,
@@ -52,14 +50,13 @@ export class EmailService implements IEmailService {
 		userName: string,
 		token: string,
 	): Promise<void> {
-		const emailSubject: string = 'Password reset';
-		const link: string = `${process.env.CLIENT_URL}/reset-password/${token}`;
+		const link: string = `${emailConfig.clientUrl}/reset-password/${token}`;
 
-		const emailContent: string = resetPasswordTemplate(userName, this.APP_EMAIL, link);
+		const emailContent: string = resetPasswordTemplate(userName, emailConfig.appEmail, link);
 
 		return this._sendMail(
 			receiverEmail,
-			emailSubject,
+			EmailSubject.PASSWORD_RESET,
 			emailContent,
 			emailContent,
 			EmailPriority.HIGH,
@@ -68,15 +65,15 @@ export class EmailService implements IEmailService {
 
 	private async _sendMail(
 		receiverEmail: string,
-		emailSubject: string,
+		emailSubject: EmailSubject,
 		emailText: string,
 		emailHtml: string,
 		emailPriority: EmailPriority = EmailPriority.NORMAL,
 	): Promise<void> {
-		if (this.SUPPORTED_ENVIRONMENTS.includes(process.env.NODE_ENV as string)) {
+		if (emailConfig.supportedEnvironments.includes(process.env.NODE_ENV as Environment)) {
 			await this._transporter.sendMail({
-				from: { name: this.APP_NAME, address: this.APP_EMAIL },
-				sender: { name: this.APP_NAME, address: this.APP_EMAIL },
+				from: { name: emailConfig.appName, address: emailConfig.appEmail },
+				sender: { name: emailConfig.appName, address: emailConfig.appEmail },
 				to: receiverEmail,
 				subject: emailSubject,
 				text: emailText,

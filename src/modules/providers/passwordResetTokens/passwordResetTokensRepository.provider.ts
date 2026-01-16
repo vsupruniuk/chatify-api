@@ -1,10 +1,10 @@
 import { ClassProvider } from '@nestjs/common';
 
-import { CustomProviders } from '@enums';
+import { CustomProvider } from '@enums';
 
 import { PasswordResetTokensRepository } from '@repositories';
 
 export const passwordResetTokensRepositoryProvider: ClassProvider = {
-	provide: CustomProviders.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
+	provide: CustomProvider.CTF_PASSWORD_RESET_TOKENS_REPOSITORY,
 	useClass: PasswordResetTokensRepository,
 };

@@ -99,7 +99,7 @@ describe('Users repository', (): void => {
 			expect(queryBuilderMock.transaction).toHaveBeenCalledTimes(1);
 		});
 
-		it('should return updated user', async (): Promise<void> => {
+		it('should return updated user if it was updated', async (): Promise<void> => {
 			const user: User | null = await usersRepository.updatePassword(
 				userIdMock,
 				tokenIdMock,
