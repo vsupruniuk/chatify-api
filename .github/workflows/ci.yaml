@@ -42,11 +42,11 @@ jobs:
       - name: Type check
         run: npm run type-check
 
-      - name: Build
-        run: npm run build
-
       - name: Coverage tests
         run: npm run test:cov
+
+      - name: Build
+        run: npm run build
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v7.0.0
