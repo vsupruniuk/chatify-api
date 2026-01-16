@@ -48,21 +48,10 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Debug coverage file
-        shell: bash
-        run: |
-          pwd
-          ls -la
-          ls -la coverage || true
-          head -n 20 coverage/lcov.info || true
-
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v7.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
   e2e-tests:
     name: e2e-tests
