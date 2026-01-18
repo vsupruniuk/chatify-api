@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 import { DataSource } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
-import * as path from 'path';
+import * as path from 'node:path';
 
 import { Environment } from '@enums';
 
@@ -21,7 +21,7 @@ export const typeOrmConfig: PostgresConnectionOptions = {
 	entities: Object.values(entities),
 	migrations: [path.resolve(__dirname, String(process.env.DATABASE_MIGRATIONS_PATH))],
 	migrationsTableName: 'migrations',
-	ssl: process.env.NODE_ENV !== Environment.PROD ? false : { rejectUnauthorized: true },
+	ssl: process.env.NODE_ENV === Environment.PROD ? { rejectUnauthorized: true } : false,
 	logging: process.env.NODE_ENV === Environment.DEV ? ['query', 'error', 'warn'] : false,
 } as const;
 

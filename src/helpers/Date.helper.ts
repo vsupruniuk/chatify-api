@@ -21,7 +21,7 @@ export class DateHelper {
 	public static dateTimeFuture(milliseconds: number): string {
 		const dateNow: Dayjs = dayjs();
 
-		const millisecondsFixed: number = milliseconds >= 0 ? milliseconds : 0;
+		const millisecondsFixed: number = Math.max(milliseconds, 0);
 
 		return this._formatDate(dateNow.add(millisecondsFixed, 'milliseconds'));
 	}

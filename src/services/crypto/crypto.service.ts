@@ -19,7 +19,7 @@ export class CryptoService implements ICryptoService {
 		)) as Buffer;
 
 		const cipher: crypto.Cipher = crypto.createCipheriv(cryptoConfig.algorithm, key, iv);
-		const encryptedText: Buffer = Buffer.concat([cipher.update(text, 'utf-8'), cipher.final()]);
+		const encryptedText: Buffer = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
 
 		return Buffer.concat([salt, iv, encryptedText]).toString(
 			cryptoConfig.encryptionEncoding as BufferEncoding,
@@ -55,6 +55,6 @@ export class CryptoService implements ICryptoService {
 			decipher.final(),
 		]);
 
-		return decryptedText.toString('utf-8');
+		return decryptedText.toString('utf8');
 	}
 }
