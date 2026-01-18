@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
 import { JwtPayloadDto } from '@dtos/jwt';
 
@@ -8,6 +8,8 @@ import { DateHelper } from '@helpers';
 import { filesConfig } from '@configs';
 
 import { FileField } from '@enums';
+
+import { FileTypes } from '@customTypes';
 
 /**
  * Helper class for actions related to static files
@@ -24,8 +26,8 @@ export class FileHelper {
 		callback: (error: Error | null, acceptFile: boolean) => void,
 	): void {
 		const fileExtension: string = file.originalname.split('.').at(-1) || '';
-		const isAllowed = filesConfig[field].acceptableFileExtensions.some(
-			(ext) => ext === fileExtension,
+		const isAllowed = filesConfig[field].acceptableFileExtensions.includes(
+			fileExtension as FileTypes.AcceptableImageExtensions,
 		);
 
 		callback(null, isAllowed);

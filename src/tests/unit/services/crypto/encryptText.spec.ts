@@ -95,7 +95,7 @@ describe('Crypto service', (): void => {
 			await cryptoService.encryptText(text);
 
 			expect(cipherMock.update).toHaveBeenCalledTimes(1);
-			expect(cipherMock.update).toHaveBeenNthCalledWith(1, text, 'utf-8');
+			expect(cipherMock.update).toHaveBeenNthCalledWith(1, text, 'utf8');
 
 			expect(cipherMock.final).toHaveBeenCalledTimes(1);
 		});

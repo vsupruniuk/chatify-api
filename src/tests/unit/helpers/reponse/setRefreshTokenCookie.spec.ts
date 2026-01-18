@@ -6,10 +6,10 @@ import { CookiesName, Environment } from '@enums';
 
 describe('Response helper', (): void => {
 	const jwtRefreshTokenExpiresInMock: number = Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN);
-	const nodeEnvMock: Environment = Environment.PROD;
+	const nodeEnvironmentMock: Environment = Environment.PROD;
 
 	beforeAll((): void => {
-		process.env.NODE_ENV = nodeEnvMock;
+		process.env.NODE_ENV = nodeEnvironmentMock;
 	});
 
 	afterAll((): void => {

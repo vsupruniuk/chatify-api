@@ -18,7 +18,7 @@ export class ResponseTransformInterceptor<T = object> implements NestInterceptor
 					ResponseStatus.SUCCESS,
 				);
 
-				responseResult.data = data ? data : null;
+				responseResult.data = data ?? null;
 
 				return responseResult;
 			}),
