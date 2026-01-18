@@ -13,7 +13,7 @@ import { emailConfig } from '@configs';
 
 @Injectable()
 export class EmailService implements IEmailService {
-	private _transporter: Transporter;
+	private readonly _transporter: Transporter;
 
 	constructor() {
 		this._transporter = nodemailer.createTransport({

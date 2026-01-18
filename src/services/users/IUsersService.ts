@@ -1,8 +1,11 @@
-import { UserDto, UserWithAccountSettingsDto } from '@dtos/users';
-import { UserWithOtpCodeDto } from '@dtos/users';
-import { UserWithJwtTokenDto } from '@dtos/users';
-import { UserWithPasswordResetTokenDto } from '@dtos/users';
-import { FullUserWithJwtTokenDto } from '@dtos/users';
+import {
+	FullUserWithJwtTokenDto,
+	UserDto,
+	UserWithAccountSettingsDto,
+	UserWithJwtTokenDto,
+	UserWithOtpCodeDto,
+	UserWithPasswordResetTokenDto,
+} from '@dtos/users';
 import { SignupRequestDto } from '@dtos/auth/signup';
 
 /**

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import * as crypto from 'crypto';
-import * as util from 'util';
+import * as crypto from 'node:crypto';
+import * as util from 'node:util';
 
 import { CryptoService } from '@services';
 
@@ -40,7 +40,7 @@ describe('Crypto service', (): void => {
 		const decryptedMessageMock: string = Buffer.concat([
 			decipherUpdateMock,
 			decipherFinalMock,
-		]).toString('utf-8');
+		]).toString('utf8');
 
 		const bufferSubarrayMock = (startIndex: number) => {
 			if (startIndex === 0) {

@@ -103,7 +103,7 @@ describe('Logout', (): void => {
 				(cookie: string) => cookie.startsWith(`${CookiesName.REFRESH_TOKEN}=`),
 			);
 
-			expect(refreshTokenCookie).toMatch(/Expires=\s*Thu,\s*01 Jan 1970 00:00:00 GMT/i);
+			expect(refreshTokenCookie).toMatch(/expires=\s*thu,\s*01 jan 1970 00:00:00 gmt/i);
 		});
 	});
 });

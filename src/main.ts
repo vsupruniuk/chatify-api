@@ -11,7 +11,7 @@ import { GlobalExceptionFilter } from '@filters';
 
 import { corsConfig, helmetConfig, validationPipeConfig } from '@configs';
 
-async function bootstrap(): Promise<void> {
+const bootstrap = async (): Promise<void> => {
 	const port: number = Number(process.env.PORT);
 
 	const app: INestApplication = await NestFactory.create(AppModule);
@@ -27,6 +27,6 @@ async function bootstrap(): Promise<void> {
 	await app.listen(port, () => {
 		console.log(`Server started on port ${port}`);
 	});
-}
+};
 
 void bootstrap();

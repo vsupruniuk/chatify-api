@@ -143,7 +143,7 @@ describe('Upload avatar', (): void => {
 			expect(userAvatarResponse.status).toBe(HttpStatus.BAD_REQUEST);
 		});
 
-		it('should return 413 Payload Too Larger error if file size is more than 10 MB', async (): Promise<void> => {
+		it('should return 413 Payload Too Larger error if file size is more than 8 MB', async (): Promise<void> => {
 			const largeFile = Buffer.alloc(filesConfig[FileField.USER_AVATAR].fileSize + 100);
 			const agent = supertest.agent(app.getHttpServer());
 
