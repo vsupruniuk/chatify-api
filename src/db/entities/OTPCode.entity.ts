@@ -9,9 +9,6 @@ import {
 
 import { User } from '@entities';
 
-/**
- * Domain entity representing information about OTP code
- */
 @Entity('otp_codes')
 export class OTPCode {
 	@PrimaryGeneratedColumn('uuid')

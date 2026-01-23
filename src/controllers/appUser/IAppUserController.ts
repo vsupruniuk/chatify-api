@@ -7,19 +7,23 @@ import {
 } from '@dtos/accountSettings/accountSettings';
 import { UserWithAccountSettingsDto } from '@dtos/users';
 
+/**
+ * Controller interface for app user operations, like retrieving information,
+ * updating settings and changing user avatar
+ */
 export interface IAppUserController {
 	/**
-	 * Returns information about current logged-in user
-	 * @param appUserPayload - user payload from JWT token
-	 * @returns UserWithAccountSettingsDto - information about current logged in user
+	 * Get authenticated user information together with account settings
+	 * @param appUserPayload - payload retrieved from JWT access token
+	 * @returns Promise<UserWithAccountSettingsDto> - user information with account settings
 	 */
 	getAppUser(appUserPayload: JwtPayloadDto): Promise<UserWithAccountSettingsDto>;
 
 	/**
-	 * Update user public information
-	 * @param appUserPayload - user data from access token
-	 * @param updateAppUserDto - new information about user
-	 * @returns UserWithAccountSettingsDto - updated app user
+	 * Update user public information like nickname or first name
+	 * @param appUserPayload - payload retrieved from JWT access token
+	 * @param updateAppUserDto - DTO object with new values for user public information
+	 * @returns Promise<UserWithAccountSettingsDto> - user information with account settings
 	 */
 	updateUser(
 		appUserPayload: JwtPayloadDto,
@@ -28,9 +32,9 @@ export interface IAppUserController {
 
 	/**
 	 * Update user account settings
-	 * @param appUserPayload - user data from access token
-	 * @param updateAccountSettingsRequestDto - new account settings
-	 * @returns AccountSettingsDto - updated account settings
+	 * @param appUserPayload - payload retrieved from JWT access token
+	 * @param updateAccountSettingsRequestDto - DTO object with new values for user account settings
+	 * @returns Promise<AccountSettingsDto> - updated user account settings
 	 */
 	updateAccountSettings(
 		appUserPayload: JwtPayloadDto,
@@ -38,10 +42,11 @@ export interface IAppUserController {
 	): Promise<AccountSettingsDto>;
 
 	/**
-	 * Upload and save user avatar
-	 * @param appUserPayload - user data from access token
-	 * @param file - avatar uploaded by user
-	 * @returns UploadAvatarResponseDto - updated user avatar url
+	 * Upload new file for user avatar
+	 * @param appUserPayload - payload retrieved from JWT access token
+	 * @param file - image file parsed by Multer
+	 * @throws BadRequestException - if file extension is not an acceptable image
+	 * @returns Promise<UploadAvatarResponseDto> - new url to user avatar
 	 */
 	uploadAvatar(
 		appUserPayload: JwtPayloadDto,
@@ -49,8 +54,8 @@ export interface IAppUserController {
 	): Promise<UploadAvatarResponseDto>;
 
 	/**
-	 * Delete user avatar
-	 * @param appUserPayload - user data from access token
+	 * Delete user avatar file and relative database record
+	 * @param appUserPayload - payload retrieved from JWT access token
 	 */
 	deleteAvatar(appUserPayload: JwtPayloadDto): Promise<void>;
 }
