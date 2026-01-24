@@ -10,9 +10,6 @@ import {
 
 import { DirectChatMessage, User } from '@entities';
 
-/**
- * Domain entity representing direct chat between 2 users
- */
 @Entity('direct_chats')
 export class DirectChat {
 	@PrimaryGeneratedColumn('uuid')

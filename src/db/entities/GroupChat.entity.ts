@@ -11,9 +11,6 @@ import {
 
 import { GroupChatMessage, User } from '@entities';
 
-/**
- * Domain entity representing group chat between mane users
- */
 @Entity('group_chats')
 export class GroupChat {
 	@PrimaryGeneratedColumn('uuid')

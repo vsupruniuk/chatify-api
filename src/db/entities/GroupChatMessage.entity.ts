@@ -10,9 +10,6 @@ import {
 
 import { GroupChat, User } from '@entities';
 
-/**
- * Domain entity representing messages in group chats
- */
 @Entity('group_chat_messages')
 export class GroupChatMessage {
 	@PrimaryGeneratedColumn('uuid')

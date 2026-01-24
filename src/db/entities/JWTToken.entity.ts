@@ -10,9 +10,6 @@ import {
 
 import { User } from '@entities';
 
-/**
- * Domain model representing user JWT token
- */
 @Entity('jwt_tokens')
 export class JWTToken {
 	@PrimaryGeneratedColumn('uuid')
