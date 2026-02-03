@@ -3,25 +3,25 @@ import * as crypto from 'node:crypto';
 import { DateHelper } from '@helpers';
 
 import { OtpCodeDto } from '@dtos/otpCode';
+
 import { otpCodeConfig } from '@configs';
 
 /**
- * Helper clas for OTP codes
+ * Class with static helper methods for actions with OTP codes
  */
 export class OtpCodesHelper {
 	/**
-	 * Generate random 6 digit OTP code
-	 * @return otpCode - generated OTP code
+	 * Generates random 6-digit number for OTP code
+	 * @returns number - randomly generated code
 	 */
-	public static generateOTPCode(): number {
+	public static generateOtpCode(): number {
 		return crypto.randomInt(otpCodeConfig.minValue, otpCodeConfig.maxValue);
 	}
 
 	/**
-	 * Check if OTP code is expired
-	 * @param otpCode - code for expiration checking
-	 * @returns true - if code is expired
-	 * @returns false - if code is not expired
+	 * Validate if provided expired or not
+	 * @param otpCode - DTO object with OTP code
+	 * @returns boolean - value represents if code expired or not
 	 */
 	public static isExpired(otpCode: OtpCodeDto): boolean {
 		if (!otpCode.expiresAt) {

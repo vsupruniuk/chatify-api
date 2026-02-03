@@ -73,7 +73,7 @@ describe('Auth service', (): void => {
 			jest.spyOn(usersService, 'getByEmailOrNickname').mockResolvedValue(null);
 			jest.spyOn(usersService, 'createUser').mockImplementation(jest.fn());
 
-			jest.spyOn(OtpCodesHelper, 'generateOTPCode').mockReturnValue(otpCodeMock);
+			jest.spyOn(OtpCodesHelper, 'generateOtpCode').mockReturnValue(otpCodeMock);
 			jest.spyOn(DateHelper, 'dateTimeFuture').mockReturnValue(otpCodeExpirationDateMock);
 
 			jest.spyOn(emailService, 'sendActivationEmail').mockImplementation(jest.fn());
@@ -120,7 +120,7 @@ describe('Auth service', (): void => {
 		it('should use generate otp code method from otp code helper to generate an otp code for user', async (): Promise<void> => {
 			await authService.registerUser(signupRequestDto);
 
-			expect(OtpCodesHelper.generateOTPCode).toHaveBeenCalledTimes(1);
+			expect(OtpCodesHelper.generateOtpCode).toHaveBeenCalledTimes(1);
 		});
 
 		it('should use date time future from date helper to get otp code expiration date', async (): Promise<void> => {

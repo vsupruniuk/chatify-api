@@ -1,12 +1,15 @@
 import { DirectChatWithUsersAndMessagesDto } from '@dtos/directChats';
 
+/**
+ * Service interface for actions with direct chats
+ */
 export interface IDirectChatsService {
 	/**
-	 * Retrieve last direct chat, decrypt their last messages and return in public form
-	 * @param page - page of records
+	 * Get user direct chats, sorted by latest message, from the newest to oldest
+	 * @param userId - id of user who sent the request
+	 * @param page - number of pagination page
 	 * @param take - number of records to take
-	 * @param userId - user id for retrieving chats
-	 * @returns DirectChatWithUsersAndMessagesDto - array of direct chats with decrypted messages and without sensitive data
+	 * @returns Promise<DirectChatWithUsersAndMessagesDto[]> - array of found chat
 	 */
 	getUserLastChats(
 		userId: string,
@@ -15,14 +18,14 @@ export interface IDirectChatsService {
 	): Promise<DirectChatWithUsersAndMessagesDto[]>;
 
 	/**
-	 * Method for handling create direct chat event
-	 * @param senderId - id of user which sent the message
-	 * @param receiverId - if of user who will receive the message
-	 * @param messageText - text of the message
-	 * @returns DirectChatWithUsersAndMessagesDto - created chat
-	 * @throws BadRequestException - if one of the users does not exist
-	 * @throws ConflictException - if chat between users already exist
-	 * @throws UnprocessableEntityException - if failed to create chat
+	 * Creates a new chat between two users with initial message
+	 * @param senderId - id of user who sent an email
+	 * @param receiverId - id of second chat participant
+	 * @param messageText - encrypted message text
+	 * @returns Promise<DirectChatWithUsersAndMessagesDto> - created chat with initial message and users
+	 * @throws BadRequestException - if some of the users does not exist
+	 * @throws ConflictException - if direct chat between users already exist
+	 * @throws UnprocessableEntityException - if failed to create direct chat
 	 */
 	createChat(
 		senderId: string,

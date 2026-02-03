@@ -12,13 +12,15 @@ import { FileField } from '@enums';
 import { FileTypes } from '@customTypes';
 
 /**
- * Helper class for actions related to static files
+ * Class with static helper methods for actions with files
  */
 export class FileHelper {
 	/**
-	 * Validate if file extension is acceptable
-	 * @param file - uploaded file
-	 * @param callback - callback that handle file accepting
+	 * Validate file extension for the list of available for specific file field and call a callback
+	 * @param field - file field for which file extension must be validated
+	 * @param file - file to validate
+	 * @param callback - callback that will be called with error or null and boolean value,
+	 * depends on if it acceptable or not
 	 */
 	public static validateFileExtension<F extends FileField>(
 		field: F,
@@ -34,10 +36,10 @@ export class FileHelper {
 	}
 
 	/**
-	 * Change the file name to unique and save
-	 * @param user - authorized user JWT payload
-	 * @param file - file uploaded by user
-	 * @param callback - callback that handle file saving
+	 * Rename file to user-specific unique name
+	 * @param user - payload retrieved from access JWT token
+	 * @param file - file to rename
+	 * @param callback - callback that will be called with the new file name
 	 */
 	public static rename(
 		user: JwtPayloadDto,
@@ -54,8 +56,8 @@ export class FileHelper {
 	}
 
 	/**
-	 * Delete public file by given name
-	 * @param fileName - public file name which should be deleted
+	 * Delete a file from the public folder by its name
+	 * @param fileName - name of the file to delete
 	 */
 	public static deleteFile(fileName: string): void {
 		return fs.unlinkSync(path.join('public', fileName));

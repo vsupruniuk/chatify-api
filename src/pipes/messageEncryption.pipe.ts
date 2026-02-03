@@ -8,6 +8,10 @@ interface IMessage {
 	messageText: string;
 }
 
+/**
+ * Pipe for encryption message text in DTO where the message text field exist.
+ * Returns the same DTO object with encrypted text
+ */
 export class MessageEncryptionPipe implements PipeTransform {
 	constructor(
 		@Inject(CustomProvider.CTF_CRYPTO_SERVICE)

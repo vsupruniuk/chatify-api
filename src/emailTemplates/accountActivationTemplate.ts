@@ -1,6 +1,11 @@
 import * as dayjs from 'dayjs';
 
-export const accountActivationTemplate = (OTPCode: number): string => {
+/**
+ * Creates HTML content for email with activation information for user
+ * @param otpCode - one-time password code that can be used to activate account
+ * @returns string - HTML content for the email
+ */
+export const accountActivationTemplate = (otpCode: number): string => {
 	const logoUrl: string | undefined = String(process.env.APP_LOGO_URL);
 	const currentYear: number = dayjs().year();
 
@@ -95,7 +100,7 @@ export const accountActivationTemplate = (OTPCode: number): string => {
           To complete the sign-up process and activate your account, please use the unique OTP code below.
         </p>
         
-        <div class="otp-code">${OTPCode}</div>
+        <div class="otp-code">${otpCode}</div>
         
         <p style="color: #333">
           If you didn't request to sign up for Chatify or believe this was a mistake, 

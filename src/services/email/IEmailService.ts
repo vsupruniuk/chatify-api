@@ -1,19 +1,19 @@
 /**
- * Interface representing public method of email service
+ * Service interface for actions with emails
  */
 export interface IEmailService {
 	/**
-	 * Send to user email with OTP code for account activation
-	 * @param receiverEmail - user email for sending email
-	 * @param otpCode - generated OTP code
+	 * Send email to the user with account activation information
+	 * @param receiverEmail - email of the user to send email
+	 * @param otpCode - OTP code for account activation
 	 */
 	sendActivationEmail(receiverEmail: string, otpCode: number): Promise<void>;
 
 	/**
-	 * Send to user email with link for reset password
-	 * @param receiverEmail - email entered on registration
-	 * @param userName - name entered on registration
-	 * @param token - uuid token generated for this user
+	 * Send email to the user with password reset information
+	 * @param receiverEmail - email of the user to send email
+	 * @param userName - name of the user
+	 * @param token - password reset token
 	 */
 	sendResetPasswordEmail(receiverEmail: string, userName: string, token: string): Promise<void>;
 }

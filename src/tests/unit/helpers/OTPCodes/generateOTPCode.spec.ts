@@ -17,14 +17,14 @@ describe('OTP codes helper', (): void => {
 		});
 
 		it('should call random int method from crypto module to generate otp code', (): void => {
-			OtpCodesHelper.generateOTPCode();
+			OtpCodesHelper.generateOtpCode();
 
 			expect(crypto.randomInt).toHaveBeenCalledTimes(1);
 			expect(crypto.randomInt).toHaveBeenCalledWith(otpCodeConfig.minValue, otpCodeConfig.maxValue);
 		});
 
 		it('should return a generated code', (): void => {
-			const code: number = OtpCodesHelper.generateOTPCode();
+			const code: number = OtpCodesHelper.generateOtpCode();
 
 			expect(code).toBe(randomIntMock);
 		});

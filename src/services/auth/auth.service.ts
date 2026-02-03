@@ -71,7 +71,7 @@ export class AuthService implements IAuthService {
 			throw new ConflictException(errorMessage);
 		}
 
-		const otpCode: number = OtpCodesHelper.generateOTPCode();
+		const otpCode: number = OtpCodesHelper.generateOtpCode();
 		const otpCodeExpirationDate: string = DateHelper.dateTimeFuture(otpCodeConfig.ttl);
 
 		await this._usersService.createUser(otpCode, otpCodeExpirationDate, signupRequestDto);

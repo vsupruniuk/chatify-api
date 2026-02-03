@@ -2,20 +2,25 @@ import { UpdateAppUserRequestDto } from '@dtos/appUser';
 import { JwtPayloadDto } from '@dtos/jwt';
 import { UserWithAccountSettingsDto } from '@dtos/users';
 
+/**
+ * Service interface for actions with app user
+ */
 export interface IAppUserService {
 	/**
-	 * Retrieving current logged-in user
-	 * @param id - user id from access token
-	 * @returns UserWithAccountSettingsDto - current logged-in user information
-	 * @throws NotFoundException - if user not found
+	 * Retrieves the information about current logged-in user
+	 * @param id - user id for searching
+	 * @returns Promise<UserWithAccountSettingsDto> - found user together with account settings
+	 * @throws NotFoundException - if user was not found
 	 */
 	getAppUser(id: string): Promise<UserWithAccountSettingsDto>;
 
 	/**
-	 * Method for updating app user public information
-	 * @param appUserPayload - logged-in user information
-	 * @param updateAppUserDto - updated user information
-	 * @returns UserWithAccountSettingsDto - updated user
+	 * Updates current logged-in user with new values from the user
+	 * @param appUserPayload - payload retrieved from JWT access token
+	 * @param updateAppUserDto - DTO object with new values for updates
+	 * @returns Promise<UserWithAccountSettingsDto> - updated user data with account settings
+	 * @throws ConflictException - if new nickname is provided, and it's already taken
+	 * @throws UnprocessableEntityException - if failed to update app user
 	 */
 	updateAppUser(
 		appUserPayload: JwtPayloadDto,
@@ -23,10 +28,10 @@ export interface IAppUserService {
 	): Promise<UserWithAccountSettingsDto>;
 
 	/**
-	 * Method for deleting user avatar
-	 * @param userId - user id
-	 * @throws UnauthorizedException - if failed to find user by id
-	 * @throws BadRequestException - if user does not have an avatar
+	 * Deletes user avatar url from database, and image file
+	 * @param userId - user id to delete avatar
+	 * @throws UnauthorizedException - if user by id not found
+	 * @throws BadRequestException - if user does not have avatar
 	 */
 	deleteUserAvatar(userId: string): Promise<void>;
 }

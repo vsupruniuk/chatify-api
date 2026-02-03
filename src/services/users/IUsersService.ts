@@ -9,78 +9,88 @@ import {
 import { SignupRequestDto } from '@dtos/auth/signup';
 
 /**
- * Interface representing public methods of users service
+ * Service interface for actions with users
  */
 export interface IUsersService {
 	/**
-	 * Method for searching user by id
-	 * @param id - user id
-	 * @returns UserDto - if user was found
-	 * @returns null - if user wasn't found
+	 * Get a user by the id
+	 * @param id - user id for search
+	 * @returns Promise<UserDto | null> - found user or null
 	 */
 	getById(id: string): Promise<UserDto | null>;
 
+	/**
+	 * Get a user by the nickname
+	 * @param nickname - user nickname for search
+	 * @returns Promise<UserDto | null> - found user or null
+	 */
 	getByNickname(nickname: string): Promise<UserDto | null>;
 
 	/**
-	 * Method for searching all users by ids
-	 * @param ids - array of users ids
-	 * @returns UserDto[] - array of founded users
+	 * Get all users by the array of ids
+	 * @param ids - array of ids to search
+	 * @returns Promise<UserDto[]> - array of found users
 	 */
 	getAllByIds(ids: string[]): Promise<UserDto[]>;
 
 	/**
-	 * Method for searching user by its email or nickname
-	 * @param email - user email to search
-	 * @param nickname - user nickname to search
-	 * @returns UserDto - if user was found
-	 * @returns null - if user wasn't found
+	 * Get a user by the email or nickname
+	 * @param email - user email for search
+	 * @param nickname - user nickname for search
+	 * @returns Promise<UserDto | null> - found user or null
 	 */
 	getByEmailOrNickname(email: string, nickname: string): Promise<UserDto | null>;
 
 	/**
-	 * Method for searching user by password reset token
-	 * @param token - password reset token sent with email
-	 * @returns UserDto - if user was found
-	 * @returns null - if user wasn't found
+	 * Get a user by valid and not expired password reset token
+	 * @param token - user password reset token for search
+	 * @returns Promise<UserWithPasswordResetTokenDto | null> - found user with password reset token or null
 	 */
 	getByNotExpiredPasswordResetToken(token: string): Promise<UserWithPasswordResetTokenDto | null>;
 
 	/**
-	 * Method for searching user with OTP code by email
+	 * Get a not activated user by email with OTP code
 	 * @param email - user email for search
-	 * @returns UserWithOtpCodeDto - if user was found
-	 * @returns null if user wasn't found
+	 * @returns Promise<UserWithOtpCodeDto | null> - found user with OTP code or null
 	 */
 	getByEmailAndNotActiveWithOtpCode(email: string): Promise<UserWithOtpCodeDto | null>;
 
 	/**
-	 * Method for searching user with password reset token by email
+	 * Get a user by email with password reset token
 	 * @param email - user email for search
-	 * @returns UserWithPasswordResetTokenDto - if user was found
-	 * @returns null - if user wasn't found
+	 * @returns Promise<UserWithPasswordResetTokenDto | null> - found user with password reset token or null
 	 */
 	getByEmailWithPasswordResetToken(email: string): Promise<UserWithPasswordResetTokenDto | null>;
 
 	/**
-	 * Method for getting full user by email without converting to DTO
-	 * @param email - user email for searching
-	 * @returns User - if user was found
-	 * @returns null - if user wasn't found
+	 * Get a full user by email with JWT token
+	 * @param email - user email for search
+	 * @returns Promise<FullUserWithJwtTokenDto | null> - found user with JWT token or null
 	 */
 	getFullUserWithJwtTokenByEmail(email: string): Promise<FullUserWithJwtTokenDto | null>;
 
+	/**
+	 * Get a user by id with account settings
+	 * @param id - user id for search
+	 * @returns Promise<UserWithAccountSettingsDto | null> - found user with account settings or null
+	 */
 	getByIdWithAccountSettings(id: string): Promise<UserWithAccountSettingsDto | null>;
 
+	/**
+	 * Get activated users by nickname pattern
+	 * @param nickname - user nickname pattern for search
+	 * @param page - pagination page number
+	 * @param take - number of records to take
+	 * @returns Promise<UserDto[]> - array of found users
+	 */
 	getActivatedUsersByNickname(nickname: string, page: number, take: number): Promise<UserDto[]>;
 
 	/**
-	 * Method for creating user from signup data with some default settings
-	 * @param otpCode - 6-digit number for creating OTP code
-	 * @param otpCodeExpiresAt – expiration date for creating OTP code
-	 * @param signupRequestDto - signup data taken from user
-	 * @returns true - if user was created
-	 * @returns false - if user wasn't created
+	 * Create a new user with base configuration
+	 * @param otpCode - OTP code value
+	 * @param otpCodeExpiresAt - OTP code expiration date
+	 * @param signupRequestDto - DTO object with user registration information
+	 * @returns Promise<UserWithJwtTokenDto | null> - created user with JTW token or null
 	 */
 	createUser(
 		otpCode: number,
@@ -89,28 +99,26 @@ export interface IUsersService {
 	): Promise<void>;
 
 	/**
-	 * Method for activating user and clearing user OTP code
-	 * @param userId - user id for activating user
-	 * @param otpCodeId - OTP code id for clearing code
-	 * @returns UserWithJwtTokenDto - if user was activated
-	 * @returns null - if user wasn't activated
+	 * Activates user account
+	 * @param userId - user id for activation
+	 * @param otpCodeId - OTP code id for reset
+	 * @returns Promise<UserWithJwtTokenDto | null> - activated user with JWT token or null
 	 */
 	activateUser(userId: string, otpCodeId: string): Promise<UserWithJwtTokenDto | null>;
 
 	/**
-	 * Method for changing user password
-	 * @param userId - user id
-	 * @param tokenId - password reset token id
-	 * @param password - new password provided by user
-	 * @returns true - if password was updated
-	 * @returns false - if password wasn't updated
+	 * Set a new password for the user
+	 * @param userId - user id for password changing
+	 * @param tokenId - password reset token id for reset
+	 * @param password - new password value
+	 * @returns Promise<boolean> - boolean value representing if password was changed or not
 	 */
 	changeUserPassword(userId: string, tokenId: string, password: string): Promise<boolean>;
 
 	/**
-	 * Method for updating user avatar url
-	 * @param userId - user id
-	 * @param avatarUrl - new avatar url
+	 * Updates user avatar url
+	 * @param userId - user id for avatar url update
+	 * @param avatarUrl - new avatar url or null
 	 */
 	updateUserAvatarUrl(userId: string, avatarUrl: string | null): Promise<void>;
 }
