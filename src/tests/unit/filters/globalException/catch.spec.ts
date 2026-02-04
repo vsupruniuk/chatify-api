@@ -51,7 +51,7 @@ describe('Global exception filter', (): void => {
 		});
 
 		it('should call status method from a response object with the internal server error status if exception is not instance of http exception', (): void => {
-			globalExceptionFilter.catch(new Error(), host);
+			globalExceptionFilter.catch(new Error('Test error'), host);
 
 			expect(responseMock.status).toHaveBeenCalledTimes(1);
 			expect(responseMock.status).toHaveBeenNthCalledWith(1, HttpStatus.INTERNAL_SERVER_ERROR);

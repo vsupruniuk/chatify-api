@@ -106,10 +106,10 @@ describe('Direct chat messages repository', (): void => {
 			const messages: DirectChatMessage[] =
 				await directChatMessagesRepository.findLastMessagesByDirectChatId(directChatId, skip, take);
 
-			const actual = messages.sort((firstMessage, secondMessage) =>
+			const actual = messages.toSorted((firstMessage, secondMessage) =>
 				firstMessage.id.localeCompare(secondMessage.id),
 			);
-			const expected = expectedMessages.sort((firstMessage, secondMessage) =>
+			const expected = expectedMessages.toSorted((firstMessage, secondMessage) =>
 				firstMessage.id.localeCompare(secondMessage.id),
 			);
 

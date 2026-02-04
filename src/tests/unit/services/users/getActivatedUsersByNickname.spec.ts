@@ -76,7 +76,7 @@ describe('Users service', () => {
 		it('should return all found users', async (): Promise<void> => {
 			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname, page, take);
 
-			const actual = users.sort((firstUser, secondUser) =>
+			const actual = users.toSorted((firstUser, secondUser) =>
 				firstUser.id.localeCompare(secondUser.id),
 			);
 			const expected = usersMock

@@ -56,10 +56,10 @@ describe('Users repository', (): void => {
 		it('should return all founded users with provided ids', async (): Promise<void> => {
 			const foundedUsers: User[] = await usersRepository.findAllByIds(usersIdsMock);
 
-			const actual = foundedUsers.sort((firstUser, secondUser) =>
+			const actual = foundedUsers.toSorted((firstUser, secondUser) =>
 				firstUser.id.localeCompare(secondUser.id),
 			);
-			const expected = expectedUsers.sort((firstUser, secondUser) =>
+			const expected = expectedUsers.toSorted((firstUser, secondUser) =>
 				firstUser.id.localeCompare(secondUser.id),
 			);
 

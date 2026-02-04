@@ -113,7 +113,7 @@ describe('Direct chats controller', (): void => {
 				{ page, take },
 			);
 
-			const actual = chats.sort((firstChat, secondChat) =>
+			const actual = chats.toSorted((firstChat, secondChat) =>
 				firstChat.id.localeCompare(secondChat.id),
 			);
 			const expected = directChatsMock

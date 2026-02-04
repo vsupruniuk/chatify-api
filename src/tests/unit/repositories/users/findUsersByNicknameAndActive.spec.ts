@@ -78,10 +78,10 @@ describe('Users service', (): void => {
 				takeMock,
 			);
 
-			const actual = users.sort((firstUser, secondUser) =>
+			const actual = users.toSorted((firstUser, secondUser) =>
 				firstUser.id.localeCompare(secondUser.id),
 			);
-			const expected = expectedUsers.sort((firstUser, secondUser) =>
+			const expected = expectedUsers.toSorted((firstUser, secondUser) =>
 				firstUser.id.localeCompare(secondUser.id),
 			);
 

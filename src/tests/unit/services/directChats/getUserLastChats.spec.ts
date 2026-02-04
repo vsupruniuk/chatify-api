@@ -135,7 +135,7 @@ describe('Direct chats service', (): void => {
 				take,
 			);
 
-			const actual = chats.sort((firstChat, secondChat) =>
+			const actual = chats.toSorted((firstChat, secondChat) =>
 				firstChat.id.localeCompare(secondChat.id),
 			);
 			const expected = lastChatsMock

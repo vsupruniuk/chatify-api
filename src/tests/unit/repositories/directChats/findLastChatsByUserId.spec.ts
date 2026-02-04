@@ -170,10 +170,10 @@ describe('Direct chats repository', (): void => {
 				takeMock,
 			);
 
-			const actual = chats.sort((firstChat, secondChat) =>
+			const actual = chats.toSorted((firstChat, secondChat) =>
 				firstChat.id.localeCompare(secondChat.id),
 			);
-			const expected = expectedChats.sort((firstChat, secondChat) =>
+			const expected = expectedChats.toSorted((firstChat, secondChat) =>
 				firstChat.id.localeCompare(secondChat.id),
 			);
 
