@@ -31,7 +31,7 @@ jobs:
           ENVIRONMENT_VARIABLES: ${{ secrets.ENV }}
         run: |
           umask 077
-          printf '%s\n' "$DOTENV_CONTENT" > .env
+          printf '%s\n' "$ENVIRONMENT_VARIABLES" > .env
           chmod 600 .env
 
       - name: Load env variables
