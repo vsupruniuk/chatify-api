@@ -25,8 +25,12 @@ jobs:
 
       - name: Create .env
         shell: bash
+        env:
+          ENVIRONMENT_VARIABLES: ${{ secrets.ENV }}
         run: |
-          printf '%s\n' "${{ secrets.ENV }}" > .env
+          umask 077
+          printf '%s\n' "$DOTENV_CONTENT" > .env
+          chmod 600 .env
 
       - name: Load env variables
         shell: bash
@@ -74,8 +78,12 @@ jobs:
 
       - name: Create .env
         shell: bash
+        env:
+          ENVIRONMENT_VARIABLES: ${{ secrets.ENV }}
         run: |
-          printf '%s\n' "${{ secrets.ENV }}" > .env
+          umask 077
+          printf '%s\n' "$DOTENV_CONTENT" > .env
+          chmod 600 .env
 
       - name: Load env variables
         shell: bash
