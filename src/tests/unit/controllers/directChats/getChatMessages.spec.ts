@@ -112,15 +112,19 @@ describe('Direct chats controller', (): void => {
 			const messages: DirectChatMessageWithChatAndUserDto[] =
 				await directChatsController.getChatMessages(appUserPayload, chatId, { page, take });
 
-			expect(messages.sort()).toEqual(
-				directChatMessagesMock
-					.map((message: DirectChatMessage) =>
-						plainToInstance(DirectChatMessageWithChatAndUserDto, message, {
-							excludeExtraneousValues: true,
-						}),
-					)
-					.sort(),
+			const actual = messages.sort((firstMessage, secondMessage) =>
+				firstMessage.id.localeCompare(secondMessage.id),
 			);
+
+			const expected = directChatMessagesMock
+				.map((message: DirectChatMessage) =>
+					plainToInstance(DirectChatMessageWithChatAndUserDto, message, {
+						excludeExtraneousValues: true,
+					}),
+				)
+				.sort((firstMessage, secondMessage) => firstMessage.id.localeCompare(secondMessage.id));
+
+			expect(actual).toEqual(expected);
 		});
 
 		it('should return all found messages as array of DirectChatMessageWithChatAndUserDto', async (): Promise<void> => {

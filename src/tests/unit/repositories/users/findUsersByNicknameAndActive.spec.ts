@@ -78,9 +78,15 @@ describe('Users service', (): void => {
 				takeMock,
 			);
 
-			expect(users).toHaveLength(expectedUsers.length);
+			const actual = users.sort((firstUser, secondUser) =>
+				firstUser.id.localeCompare(secondUser.id),
+			);
+			const expected = expectedUsers.sort((firstUser, secondUser) =>
+				firstUser.id.localeCompare(secondUser.id),
+			);
 
-			expect(users.sort()).toEqual(expectedUsers.sort());
+			expect(users).toHaveLength(expectedUsers.length);
+			expect(actual).toEqual(expected);
 		});
 
 		it('should return empty array if no users were found', async (): Promise<void> => {

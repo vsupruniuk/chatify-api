@@ -170,9 +170,15 @@ describe('Direct chats repository', (): void => {
 				takeMock,
 			);
 
-			expect(chats).toHaveLength(expectedChats.length);
+			const actual = chats.sort((firstChat, secondChat) =>
+				firstChat.id.localeCompare(secondChat.id),
+			);
+			const expected = expectedChats.sort((firstChat, secondChat) =>
+				firstChat.id.localeCompare(secondChat.id),
+			);
 
-			expect(chats.sort()).toEqual(expectedChats.sort());
+			expect(chats).toHaveLength(expectedChats.length);
+			expect(actual).toEqual(expected);
 		});
 	});
 });

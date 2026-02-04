@@ -113,15 +113,18 @@ describe('Direct chats controller', (): void => {
 				{ page, take },
 			);
 
-			expect(chats.sort()).toEqual(
-				directChatsMock
-					.map((chat: DirectChat) =>
-						plainToInstance(DirectChatWithUsersAndMessagesDto, chat, {
-							excludeExtraneousValues: true,
-						}),
-					)
-					.sort(),
+			const actual = chats.sort((firstChat, secondChat) =>
+				firstChat.id.localeCompare(secondChat.id),
 			);
+			const expected = directChatsMock
+				.map((chat: DirectChat) =>
+					plainToInstance(DirectChatWithUsersAndMessagesDto, chat, {
+						excludeExtraneousValues: true,
+					}),
+				)
+				.sort((firstChat, secondChat) => firstChat.id.localeCompare(secondChat.id));
+
+			expect(actual).toEqual(expected);
 		});
 
 		it('should return all found chats as array of DirectChatWithUsersAndMessagesDto', async (): Promise<void> => {
