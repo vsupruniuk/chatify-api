@@ -1,5 +1,12 @@
 import * as dayjs from 'dayjs';
 
+/**
+ * Creates HTML content for the email with password reset information for user
+ * @param userName - name of the user for password reset
+ * @param appEmail - chatify email for support if needed
+ * @param link - link that can be used for password reset
+ * @returns string - HTML string content for the email
+ */
 export const resetPasswordTemplate = (userName: string, appEmail: string, link: string): string => {
 	const logoUrl: string | undefined = String(process.env.APP_LOGO_URL);
 	const currentYear: number = dayjs().year();

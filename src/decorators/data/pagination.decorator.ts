@@ -12,6 +12,11 @@ import { PaginationTypes } from '@customTypes';
 
 import { paginationConfig } from '@configs';
 
+/**
+ * Accept pagination query parameters, validate them and returns either its own or default values
+ * @throws BadRequestException - if page or take query parameters provided but value is less than 1
+ * @returns Promise<PaginationTypes.IPagination> - mapped page and take query parameters
+ */
 export const Pagination = createParamDecorator(
 	async (_, ctx: ExecutionContext): Promise<PaginationTypes.IPagination> => {
 		const parseIntPipe: ParseIntPipe = new ParseIntPipe({ optional: true });

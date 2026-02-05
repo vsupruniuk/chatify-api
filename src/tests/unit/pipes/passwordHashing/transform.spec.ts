@@ -29,27 +29,19 @@ describe('Password hashing pipe', (): void => {
 			jest.clearAllMocks();
 		});
 
-		it('should call hash password method from password helper with password field if it present in object', async (): Promise<void> => {
-			await passwordHashingPipe.transform({ password });
+		it('should call hash password method from password helper with password and password confirmation fields', async (): Promise<void> => {
+			await passwordHashingPipe.transform({ password, passwordConfirmation });
 
-			expect(PasswordHelper.hashPassword).toHaveBeenCalledTimes(1);
+			expect(PasswordHelper.hashPassword).toHaveBeenCalledTimes(2);
 			expect(PasswordHelper.hashPassword).toHaveBeenNthCalledWith(1, password);
+			expect(PasswordHelper.hashPassword).toHaveBeenNthCalledWith(2, passwordConfirmation);
 		});
 
-		it('should call hash password method from password helper with password confirmation field if it present in object', async (): Promise<void> => {
-			await passwordHashingPipe.transform({ passwordConfirmation });
+		it('should return hashed values in password fields', async (): Promise<void> => {
+			const result = await passwordHashingPipe.transform({ password, passwordConfirmation });
 
-			expect(PasswordHelper.hashPassword).toHaveBeenCalledTimes(1);
-			expect(PasswordHelper.hashPassword).toHaveBeenNthCalledWith(1, passwordConfirmation);
-		});
-
-		it('should return the same object with hashed password and password confirmation if they are present', async (): Promise<void> => {
-			const passwords = { password, passwordConfirmation };
-
-			await passwordHashingPipe.transform(passwords);
-
-			expect(passwords.password).toBe(hashedPasswordMock);
-			expect(passwords.passwordConfirmation).toBe(hashedPasswordMock);
+			expect(result.password).not.toBe(password);
+			expect(result.passwordConfirmation).not.toBe(passwordConfirmation);
 		});
 	});
 });

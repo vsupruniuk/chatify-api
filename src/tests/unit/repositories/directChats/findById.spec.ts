@@ -2,13 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { DataSource } from 'typeorm';
 
-import { QueryBuilderMock } from '@testMocks';
-
 import { DirectChatsRepository } from '@repositories';
 
 import { DirectChat } from '@entities';
 
-import { directChats } from '@testMocks';
+import { QueryBuilderMock, directChats } from '@testMocks';
 
 describe('Direct chats repository', (): void => {
 	const queryBuilderMock: QueryBuilderMock<object> = new QueryBuilderMock<object>();

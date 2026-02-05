@@ -56,9 +56,15 @@ describe('Users repository', (): void => {
 		it('should return all founded users with provided ids', async (): Promise<void> => {
 			const foundedUsers: User[] = await usersRepository.findAllByIds(usersIdsMock);
 
-			expect(foundedUsers).toHaveLength(expectedUsers.length);
+			const actual = foundedUsers.toSorted((firstUser, secondUser) =>
+				firstUser.id.localeCompare(secondUser.id),
+			);
+			const expected = expectedUsers.toSorted((firstUser, secondUser) =>
+				firstUser.id.localeCompare(secondUser.id),
+			);
 
-			expect(foundedUsers.sort()).toEqual(expectedUsers.sort());
+			expect(foundedUsers).toHaveLength(expectedUsers.length);
+			expect(actual).toEqual(expected);
 		});
 
 		it('should return empty array if users were not found', async (): Promise<void> => {

@@ -20,8 +20,7 @@ import { User, OTPCode, JWTToken } from '@entities';
 import { CustomProvider } from '@enums';
 
 import { OtpCodeDto } from '@dtos/otpCode';
-import { ActivateAccountRequestDto } from '@dtos/auth/accountActivation';
-import { ActivateAccountDto } from '@dtos/auth/accountActivation';
+import { ActivateAccountDto, ActivateAccountRequestDto } from '@dtos/auth/accountActivation';
 import { UserWithJwtTokenDto, UserWithOtpCodeDto } from '@dtos/users';
 
 import { OtpCodesHelper, TransformHelper } from '@helpers';

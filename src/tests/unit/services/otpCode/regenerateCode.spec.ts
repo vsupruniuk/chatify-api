@@ -45,7 +45,7 @@ describe('OTP codes service', (): void => {
 		const id: string = otpCodeMock.id;
 
 		beforeEach((): void => {
-			jest.spyOn(OtpCodesHelper, 'generateOTPCode').mockReturnValue(otpCode);
+			jest.spyOn(OtpCodesHelper, 'generateOtpCode').mockReturnValue(otpCode);
 			jest.spyOn(DateHelper, 'dateTimeFuture').mockReturnValue(otpCodeExpirationDate);
 
 			jest.spyOn(otpCodesRepository, 'updateOtpCode').mockResolvedValue(otpCodeMock);
@@ -58,7 +58,7 @@ describe('OTP codes service', (): void => {
 		it('should call generate otp code method from otp codes helper to generate new code', async (): Promise<void> => {
 			await otpCodesService.regenerateCode(id);
 
-			expect(OtpCodesHelper.generateOTPCode).toHaveBeenCalledTimes(1);
+			expect(OtpCodesHelper.generateOtpCode).toHaveBeenCalledTimes(1);
 		});
 
 		it('should call date time future method from date helper to generate new expiration date for otp code', async (): Promise<void> => {

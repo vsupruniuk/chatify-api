@@ -9,9 +9,6 @@ import {
 
 import { User } from '@entities';
 
-/**
- * Domain entity representing settings for user account
- */
 @Entity('account_settings')
 export class AccountSettings {
 	@PrimaryGeneratedColumn('uuid')

@@ -2,9 +2,6 @@ import { ResponseStatus } from '@enums';
 
 import { ResponseResult } from '@responses';
 
-/**
- * Class representing error response result
- */
 export class ErrorResponseResult<T = object> extends ResponseResult {
 	public message: string;
 

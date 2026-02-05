@@ -20,7 +20,7 @@ export class OtpCodesService implements IOtpCodesService {
 	) {}
 
 	public async regenerateCode(id: string): Promise<number | null> {
-		const otpCode: number = OtpCodesHelper.generateOTPCode();
+		const otpCode: number = OtpCodesHelper.generateOtpCode();
 		const otpCodeExpirationDate: string = DateHelper.dateTimeFuture(otpCodeConfig.ttl);
 
 		const updatedCode: OTPCode = await this._otpCodesRepository.updateOtpCode(

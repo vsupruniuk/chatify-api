@@ -80,7 +80,7 @@ describe('Create direct chat', (): void => {
 
 		const createSocket = async (user: User): Promise<Socket> => {
 			const loginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer()) //
+				.agent(app.getHttpServer())
 				.post(`/${Route.AUTH}/${Route.LOGIN}`)
 				.send({ email: user.email, password: passwordMock });
 
@@ -101,11 +101,11 @@ describe('Create direct chat', (): void => {
 		afterEach(async (): Promise<void> => {
 			await dataSource.synchronize(true);
 
-			if (senderSocket && senderSocket.connected) {
+			if (senderSocket?.connected) {
 				senderSocket.disconnect();
 			}
 
-			if (receiverSocket && receiverSocket.connected) {
+			if (receiverSocket?.connected) {
 				receiverSocket.disconnect();
 			}
 		});
@@ -117,7 +117,7 @@ describe('Create direct chat', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on('connect', (): void => {
-					reject('Unauthorized socket connected');
+					reject(new Error('Unauthorized socket connected'));
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
@@ -138,7 +138,7 @@ describe('Create direct chat', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on('connect', (): void => {
-					reject('Unauthorized socket connected');
+					reject(new Error('Unauthorized socket connected'));
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
@@ -159,7 +159,7 @@ describe('Create direct chat', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on('connect', (): void => {
-					reject('Unauthorized socket connected');
+					reject(new Error('Unauthorized socket connected'));
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
@@ -180,7 +180,7 @@ describe('Create direct chat', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on('connect', (): void => {
-					reject('Unauthorized socket connected');
+					reject(new Error('Unauthorized socket connected'));
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
@@ -202,7 +202,7 @@ describe('Create direct chat', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
-					reject('Chat with invalid receiver id was created');
+					reject(new Error('Chat with invalid receiver id was created'));
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, (error) => {
@@ -226,7 +226,7 @@ describe('Create direct chat', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
-					reject('Chat with non string message was created');
+					reject(new Error('Chat with non string message was created'));
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, (error) => {
@@ -250,7 +250,7 @@ describe('Create direct chat', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
-					reject('Chat with empty message was created');
+					reject(new Error('Chat with empty message was created'));
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, (error) => {
@@ -274,7 +274,7 @@ describe('Create direct chat', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
-					reject('Chat with too long message was created');
+					reject(new Error('Chat with too long message was created'));
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, (error) => {
@@ -298,7 +298,7 @@ describe('Create direct chat', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
-					reject('Chat with not existing receiver was created');
+					reject(new Error('Chat with not existing receiver was created'));
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, (error) => {
@@ -341,7 +341,7 @@ describe('Create direct chat', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(WSEvent.ON_CREATE_CHAT, () => {
-					reject('Chat between users that have a direct chat was created');
+					reject(new Error('Chat between users that have a direct chat was created'));
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, (error) => {
@@ -377,7 +377,7 @@ describe('Create direct chat', (): void => {
 				);
 
 				senderSocket.on(WSEvent.ON_ERROR, () => {
-					reject('Chat was not created for valid event');
+					reject(new Error('Chat was not created for valid event'));
 				});
 			});
 		});
@@ -403,7 +403,7 @@ describe('Create direct chat', (): void => {
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, () => {
-					reject('Chat was not created for valid event');
+					reject(new Error('Chat was not created for valid event'));
 				});
 			});
 		});
@@ -431,7 +431,7 @@ describe('Create direct chat', (): void => {
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, () => {
-					reject('Chat was not created for valid event');
+					reject(new Error('Chat was not created for valid event'));
 				});
 			});
 		});

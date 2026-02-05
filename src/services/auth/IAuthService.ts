@@ -5,76 +5,76 @@ import { ResetPasswordRequestDto } from '@dtos/auth/resetPassword';
 import { LoginRequestDto, LoginDto } from '@dtos/auth/login';
 
 /**
- * Interface representing public methods of auth service
+ * Service method for authorization actions
  */
 export interface IAuthService {
 	/**
-	 * Method for registration user with all necessary default relations
-	 * @param signupRequestDto - user data for registration
-	 * @throws ConflictException - if user with provided email or nickname already exist
-	 * @throws UnprocessableEntityException - if unexpectedly failed to create user
+	 * Creates user with basic configuration and sends account activation email
+	 * @param signupRequestDto - DTO object with user registration data
+	 * @throws ConflictException - if email or nickname already taken
 	 */
 	registerUser(signupRequestDto: SignupRequestDto): Promise<void>;
 
 	/**
-	 * Method for activating user account via OTP code
-	 * @param activateAccountRequestDto - user email and code for activation
-	 * @returns ActivateAccountDto - generated access and refresh tokens
-	 * @throws NotFoundException - if not found user for activation with provided email
-	 * @throws BadRequestException - if OTP code invalid or expired
-	 * @throws UnprocessableEntityException - if failed to activate user
+	 * Activates user account, creates and returns access and refresh tokens
+	 * @param activateAccountRequestDto - DTO object with information for account activation
+	 * @returns Promise<ActivateAccountDto> - generated access and refresh tokens
+	 * @throws NotFoundException - if user with provided email and active OTP code not found
+	 * @throws BadRequestException - if OTP code expired or not valid
+	 * @throws UnprocessableEntityException - if failed to activate user account
 	 */
 	activateAccount(
 		activateAccountRequestDto: ActivateAccountRequestDto,
 	): Promise<ActivateAccountDto>;
 
 	/**
-	 * Method for recreating and resending OTP code for user
-	 * @param resendActivationCodeRequestDto - user email to search user
-	 * @throws NotFoundException - if not found user for activation with provided email
-	 * @throws UnprocessableEntityException - if failed to generate new OTP code
+	 * Generates new activation code and sends it to the user
+	 * @param resendActivationCodeRequestDto - DTO object with information for generating and sending new code
+	 * @throws NotFoundException - if user with provided email does not exist
+	 * @throws UnprocessableEntityException - if failed to regenerate activation code
 	 */
 	resendActivationCode(
 		resendActivationCodeRequestDto: ResendActivationCodeRequestDto,
 	): Promise<void>;
 
 	/**
-	 * Method for creating password reset token and sending to user via email
-	 * @param resetPasswordRequestDto - user email to search user
-	 * @throws NotFoundException - if not found user with provided email
-	 * @throws UnprocessableEntityException - if failed to generate password reset token
+	 * Creates new password reset token and sends email to the user
+	 * @param resetPasswordRequestDto - DTO object with information for generation and sending token
+	 * @throws NotFoundException - if user with provided email not found
+	 * @throws UnprocessableEntityException - if failed to generate new token
 	 */
 	resetPassword(resetPasswordRequestDto: ResetPasswordRequestDto): Promise<void>;
 
 	/**
-	 * Method for confirmation and changing user password
+	 * Save new password for the user
 	 * @param password - new user password
-	 * @param token - password reset token sent with email
-	 * @throws NotFoundException - if not found user associated with token
+	 * @param token - password reset token from the email
+	 * @throws NotFoundException - if user with provided and active token and email not found
 	 * @throws UnprocessableEntityException - if failed to update password
 	 */
 	confirmResetPassword(password: string, token: string): Promise<void>;
 
 	/**
-	 * Method for handling user login
-	 * @param loginRequestDto - user email and password
-	 * @returns LoginDto - access and refresh tokens
-	 * @throws NotFoundException - if user with provided login does not exist
-	 * @throws BadRequestException - if password is not valid
+	 * Validate user login credentials and generate access and refresh tokens
+	 * @param loginRequestDto - DTO object with login credentials
+	 * @returns Promise<LoginDto> - generated access and refresh tokens
+	 * @throws NotFoundException - if user with provided email not exist
+	 * @throws BadRequestException - if user password is not valid
 	 */
 	login(loginRequestDto: LoginRequestDto): Promise<LoginDto>;
 
 	/**
-	 * Method for handling user log out
-	 * @param refreshToken - user refresh token from cookies
-	 * @throws UnprocessableEntityException - if failed to log out
+	 * Reset user JWT token to null
+	 * @param refreshToken - user refresh token
+	 * @throws UnprocessableEntityException - if failed to reset token
 	 */
 	logout(refreshToken: string): Promise<void>;
 
 	/**
-	 * Method for handling refresh flow
+	 * Generate new access and refresh tokens for logged-in user
 	 * @param userRefreshToken - user refresh token
-	 * @throws UnauthorizedException - if refresh token
+	 * @returns Promise<LoginDto> - generated access and refresh tokens
+	 * @throws UnauthorizedException - if refresh token is not valid or failed to get the user from database
 	 */
 	refresh(userRefreshToken: string): Promise<LoginDto>;
 }

@@ -5,12 +5,12 @@ import { CookiesName, Environment } from '@enums';
 import { jwtConfig } from '@configs';
 
 /**
- * Helper class for handling response object manipulation
+ * Class with static helper methods for actions with HTTP response object
  */
 export class ResponseHelper {
 	/**
-	 * Method for saving refresh token in user cookies
-	 * @param response - user response object
+	 * Save provided refresh token to the used cookies
+	 * @param response - user HTTP response object
 	 * @param refreshToken - JWT refresh token
 	 */
 	public static setRefreshTokenCookie(response: Response, refreshToken: string): void {

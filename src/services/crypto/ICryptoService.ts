@@ -1,15 +1,18 @@
+/**
+ * Service interface for actions related to text encryption and decryption
+ */
 export interface ICryptoService {
 	/**
-	 * Encrypt text and return encrypted result
-	 * @param text - original text
-	 * @returns encrypted text
+	 * Encrypt provided text with help of crypto library
+	 * @param text - original text to encrypt
+	 * @returns Promise<string> - encrypted text
 	 */
 	encryptText(text: string): Promise<string>;
 
 	/**
-	 * Decrypt text and return original text
-	 * @param encryptedText - encrypted text value
-	 * @returns original decrypted text
+	 * Decrypt provided text with help of crypto library
+	 * @param encryptedText - text to decrypt
+	 * @returns Promise<string> - original decrypted text
 	 */
 	decryptText(encryptedText: string): Promise<string>;
 }

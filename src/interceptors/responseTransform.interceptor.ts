@@ -6,6 +6,9 @@ import { SuccessfulResponseResult } from '@responses/successfulResponses';
 
 import { ResponseStatus } from '@enums';
 
+/**
+ * Interceptor that runs after each successful request, and map all responses into single, structured form
+ */
 @Injectable()
 export class ResponseTransformInterceptor<T = object> implements NestInterceptor {
 	public intercept(
