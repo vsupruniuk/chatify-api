@@ -76,12 +76,15 @@ describe('Users service', () => {
 		it('should return all found users', async (): Promise<void> => {
 			const users: UserDto[] = await usersService.getActivatedUsersByNickname(nickname, page, take);
 
-			expect(users).toHaveLength(usersMock.length);
-			expect(users.sort()).toEqual(
-				usersMock
-					.map((user: User) => plainToInstance(UserDto, user, { excludeExtraneousValues: true }))
-					.sort(),
+			const actual = users.toSorted((firstUser, secondUser) =>
+				firstUser.id.localeCompare(secondUser.id),
 			);
+			const expected = usersMock
+				.map((user: User) => plainToInstance(UserDto, user, { excludeExtraneousValues: true }))
+				.sort((firstUser, secondUser) => firstUser.id.localeCompare(secondUser.id));
+
+			expect(users).toHaveLength(usersMock.length);
+			expect(actual).toEqual(expected);
 		});
 
 		it('should return users as array of UserDto', async (): Promise<void> => {

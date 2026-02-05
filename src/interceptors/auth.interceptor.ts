@@ -19,6 +19,11 @@ import { JwtPayloadDto } from '@dtos/jwt';
 
 import { AuthTypes } from '@customTypes';
 
+/**
+ * Interceptor that runs before each request and validates client authorization.
+ * If client is not authorized, it will throw relevant error,
+ * otherwise, client data from access token will be attached to the request object
+ */
 @Injectable()
 export class AuthInterceptor implements NestInterceptor {
 	constructor(

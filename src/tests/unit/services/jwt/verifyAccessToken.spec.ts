@@ -71,7 +71,7 @@ describe('JWT tokens service', (): void => {
 		});
 
 		it('should return null if access token is not valid', async (): Promise<void> => {
-			jest.spyOn(jwtService, 'verifyAsync').mockRejectedValue(new Error());
+			jest.spyOn(jwtService, 'verifyAsync').mockRejectedValue(new Error('Test error'));
 
 			const payload: JwtPayloadDto | null = await jwtTokensService.verifyAccessToken(accessToken);
 

@@ -119,11 +119,11 @@ describe('Send message', (): void => {
 		afterEach(async (): Promise<void> => {
 			await dataSource.synchronize(true);
 
-			if (senderSocket && senderSocket.connected) {
+			if (senderSocket?.connected) {
 				senderSocket.disconnect();
 			}
 
-			if (receiverSocket && receiverSocket.connected) {
+			if (receiverSocket?.connected) {
 				receiverSocket.disconnect();
 			}
 		});
@@ -135,7 +135,7 @@ describe('Send message', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on('connect', (): void => {
-					reject('Unauthorized socket connected');
+					reject(new Error('Unauthorized socket connected'));
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
@@ -156,7 +156,7 @@ describe('Send message', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on('connect', (): void => {
-					reject('Unauthorized socket connected');
+					reject(new Error('Unauthorized socket connected'));
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
@@ -177,7 +177,7 @@ describe('Send message', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on('connect', (): void => {
-					reject('Unauthorized socket connected');
+					reject(new Error('Unauthorized socket connected'));
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
@@ -198,7 +198,7 @@ describe('Send message', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on('connect', (): void => {
-					reject('Unauthorized socket connected');
+					reject(new Error('Unauthorized socket connected'));
 				});
 
 				senderSocket.on('connect_error', (error: Error) => {
@@ -220,7 +220,7 @@ describe('Send message', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(WSEvent.ON_RECEIVE_MESSAGE, () => {
-					reject('Message with invalid direct chat id was created');
+					reject(new Error('Message with invalid direct chat id was created'));
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, (error) => {
@@ -244,7 +244,7 @@ describe('Send message', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(WSEvent.ON_RECEIVE_MESSAGE, () => {
-					reject('Message with non string message was created');
+					reject(new Error('Message with non string message was created'));
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, (error) => {
@@ -268,7 +268,7 @@ describe('Send message', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(WSEvent.ON_RECEIVE_MESSAGE, () => {
-					reject('Message with empty message was created');
+					reject(new Error('Message with empty message was created'));
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, (error) => {
@@ -292,7 +292,7 @@ describe('Send message', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(WSEvent.ON_RECEIVE_MESSAGE, () => {
-					reject('Message with too long message was created');
+					reject(new Error('Message with too long message was created'));
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, (error) => {
@@ -316,7 +316,7 @@ describe('Send message', (): void => {
 
 			await new Promise<void>((resolve, reject) => {
 				senderSocket.on(WSEvent.ON_RECEIVE_MESSAGE, () => {
-					reject('Message with not existing direct chat was created');
+					reject(new Error('Message with not existing direct chat was created'));
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, (error) => {
@@ -348,7 +348,7 @@ describe('Send message', (): void => {
 				);
 
 				senderSocket.on(WSEvent.ON_ERROR, () => {
-					reject('Message was not created for valid event');
+					reject(new Error('Message was not created for valid event'));
 				});
 			});
 		});
@@ -370,7 +370,7 @@ describe('Send message', (): void => {
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, () => {
-					reject('Message was not created for valid event');
+					reject(new Error('Message was not created for valid event'));
 				});
 			});
 		});
@@ -394,7 +394,7 @@ describe('Send message', (): void => {
 				});
 
 				senderSocket.on(WSEvent.ON_ERROR, () => {
-					reject('Message was not created for valid event');
+					reject(new Error('Message was not created for valid event'));
 				});
 			});
 		});

@@ -84,15 +84,18 @@ describe('Search controller', (): void => {
 		it('should return all found users', async (): Promise<void> => {
 			const users: UserDto[] = await searchController.findUsers(nickname, { page, take });
 
-			expect(users.sort()).toEqual(
-				usersMock
-					.map((user: User) =>
-						plainToInstance(UserDto, user, {
-							excludeExtraneousValues: true,
-						}),
-					)
-					.sort(),
+			const actual = users.toSorted((firstUser, secondUser) =>
+				firstUser.id.localeCompare(secondUser.id),
 			);
+			const expected = usersMock
+				.map((user: User) =>
+					plainToInstance(UserDto, user, {
+						excludeExtraneousValues: true,
+					}),
+				)
+				.sort((firstUser, secondUser) => firstUser.id.localeCompare(secondUser.id));
+
+			expect(actual).toEqual(expected);
 		});
 
 		it('should return all found users as array of UserDto', async (): Promise<void> => {

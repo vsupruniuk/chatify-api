@@ -14,7 +14,8 @@ import { DateHelper } from '@helpers';
 import { GlobalTypes } from '@customTypes';
 
 /**
- * Global exception filter for handling all exceptions and errors in app.
+ * Global exception filter for handling all exceptions and errors in REST flows.
+ * Filer maps errors and returns appropriate HTTP response
  */
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {

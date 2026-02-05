@@ -77,7 +77,7 @@ describe('App user controller', (): void => {
 		});
 
 		it('should throw Bad Request exception if file is undefined', async (): Promise<void> => {
-			await expect(appUserController.uploadAvatar(appUserPayload, undefined)).rejects.toThrow(
+			await expect(appUserController.uploadAvatar(appUserPayload)).rejects.toThrow(
 				BadRequestException,
 			);
 		});

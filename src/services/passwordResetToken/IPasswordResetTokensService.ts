@@ -1,8 +1,11 @@
+/**
+ * Service interface for actions with password reset token
+ */
 export interface IPasswordResetTokensService {
 	/**
-	 * Method for regenerating user password reset token
-	 * @param id - password reset token id
-	 * @returns generated token
+	 * Generate new password reset token and save to the database
+	 * @param id - id of password reset token record
+	 * @returns Promise<string | null> - generated token value or null if failed to generate new token
 	 */
 	regenerateToken(id: string): Promise<string | null>;
 }

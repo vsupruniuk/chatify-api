@@ -11,19 +11,20 @@ import { ResetPasswordConfirmationRequestDto } from '@dtos/auth/resetPasswordCon
 import { LoginRequestDto, LoginResponseDto } from '@dtos/auth/login';
 
 /**
- * Interface representing public methods of auth controller
+ * Controller interface for authorization operations like account activation, login
  */
 export interface IAuthController {
 	/**
-	 * Method for handling signup request from user.
-	 * @param signupRequestDto - data for creating user
+	 * Sign up user and create default account
+	 * @param signupRequestDto - DTO object with user initial information
 	 */
 	signup(signupRequestDto: SignupRequestDto): Promise<void>;
 
 	/**
-	 * Method for activating user account via OTP code
-	 * @param response - user response object
-	 * @param activateAccountRequestDto - generated access token
+	 * Accept user activation code and activate account
+	 * @param response - user response object provided by Nest.js
+	 * @param activateAccountRequestDto - DTO with user account activation data
+	 * @returns Promise<ActivateAccountResponseDto> - JWT access token
 	 */
 	activateAccount(
 		response: Response,
@@ -31,23 +32,23 @@ export interface IAuthController {
 	): Promise<ActivateAccountResponseDto>;
 
 	/**
-	 * Method for handling request to send activation code one more time for activation account
-	 * @param resendActivationCodeRequestDto - email of not activated account
+	 * Generate new account activation code and send again to the user
+	 * @param resendActivationCodeRequestDto - DTO with information for generating and sending new activation code
 	 */
 	resendActivationCode(
 		resendActivationCodeRequestDto: ResendActivationCodeRequestDto,
 	): Promise<void>;
 
 	/**
-	 * Method for generating reset password token and sending via email
-	 * @param resetPasswordRequestDto - user email for generating token
+	 * Generate password reset token from the user and send to him via email
+	 * @param resetPasswordRequestDto - DTO with the information for generating password reset token for the user
 	 */
 	resetPassword(resetPasswordRequestDto: ResetPasswordRequestDto): Promise<void>;
 
 	/**
-	 * Method for resetting user password
-	 * @param resetPasswordConfirmationRequestDto - new user password with confirmation password
-	 * @param passwordResetToken - uuid token which user get via email
+	 * Accept a new password from the user and set it as permanent
+	 * @param resetPasswordConfirmationRequestDto - DTO object with new user password
+	 * @param passwordResetToken - token received by the user from the email
 	 */
 	resetPasswordConfirmation(
 		resetPasswordConfirmationRequestDto: ResetPasswordConfirmationRequestDto,
@@ -55,25 +56,25 @@ export interface IAuthController {
 	): Promise<void>;
 
 	/**
-	 * Method for handling user login
-	 * @param response - client response object
-	 * @param loginRequestDto - user email end password
-	 * @returns LoginResponseDto - access token for login
+	 * Proceed user login, obtain access and refresh tokens
+	 * @param response - user response object provided by Nest.js
+	 * @param loginRequestDto - DTO object with user email and password
+	 * @returns Promise<LoginResponseDto> - generated access token
 	 */
 	login(response: Response, loginRequestDto: LoginRequestDto): Promise<LoginResponseDto>;
 
 	/**
-	 * Method for handling log out
-	 * @param response - client response object
-	 * @param refreshToken - user refresh token from cookie
+	 * Handle user log out process
+	 * @param response - user response object provided by Nest.js
+	 * @param refreshToken - user refresh token from cookies
 	 */
 	logout(response: Response, refreshToken: string): Promise<void>;
 
 	/**
-	 * Method for handling access token refreshing
-	 * @param response - user response object
+	 * Generate new access and refresh tokens for the user
+	 * @param response - user response object provided by Nest.js
 	 * @param refreshToken - user refresh token from cookies
-	 * @returns LoginResponseDto - access token from login
+	 * @returns Promise<LoginResponseDto> - generated access token
 	 */
 	refresh(response: Response, refreshToken?: string): Promise<LoginResponseDto>;
 }

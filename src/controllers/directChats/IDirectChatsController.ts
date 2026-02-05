@@ -4,13 +4,15 @@ import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
 
 import { PaginationTypes } from '@customTypes';
 
+/**
+ * Controller interface for direct chats HTTP requests
+ */
 export interface IDirectChatsController {
 	/**
-	 * Retrieve user last direct chats
-	 * @param appUserPayload - user data from access token
-	 * @param page - page number of records
-	 * @param take - number of records to retrieve
-	 * @returns DirectChatWithUsersAndMessagesDto - user last chats
+	 * Get user chats sorted by the time of last message
+	 * @param appUserPayload - payload retrieved from JWT access token
+	 * @param pagination - object with pagination query parameters
+	 * @returns Promise<DirectChatWithUsersAndMessagesDto[]> - array of direct chats with users and last message
 	 */
 	getLastChats(
 		appUserPayload: JwtPayloadDto,
@@ -18,12 +20,11 @@ export interface IDirectChatsController {
 	): Promise<DirectChatWithUsersAndMessagesDto[]>;
 
 	/**
-	 * Retrieve chat messages
-	 * @param appUserPayload - user data from access token
-	 * @param chatId - chat id for retrieving messages
-	 * @param page - page number of records
-	 * @param take - number of record to retrieve
-	 * @returns DirectChatMessageWithChatAndUserDto - direct chat last messages
+	 * Get chat messages sorted by the time
+	 * @param appUserPayload - payload retrieved from JWT access token
+	 * @param chatId - id of the chat from query parameter
+	 * @param pagination - objects with pagination query parameters
+	 * @returns Promise<DirectChatMessageWithChatAndUserDto[]> - array of chat messages with related chat and user information
 	 */
 	getChatMessages(
 		appUserPayload: JwtPayloadDto,

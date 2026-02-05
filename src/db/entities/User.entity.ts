@@ -20,9 +20,6 @@ import {
 	PasswordResetToken,
 } from '@entities';
 
-/**
- * Domain entity representing user
- */
 @Entity('users')
 export class User {
 	@PrimaryGeneratedColumn('uuid')

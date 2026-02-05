@@ -2,13 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { DataSource } from 'typeorm';
 
-import { QueryBuilderMock } from '@testMocks';
-
 import { AccountSettingsRepository } from '@repositories';
 
 import { AccountSettings, User } from '@entities';
 
-import { accountSettings, users } from '@testMocks';
+import { QueryBuilderMock, accountSettings, users } from '@testMocks';
 
 import { UpdateAccountSettingsRequestDto } from '@dtos/accountSettings/accountSettings';
 

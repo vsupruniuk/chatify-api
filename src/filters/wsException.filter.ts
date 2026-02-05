@@ -13,7 +13,8 @@ import { GlobalTypes } from '@customTypes';
 import { DateHelper } from '@helpers';
 
 /**
- * Exception filter for handling websockets exceptions and errors in app.
+ * Global exception filter for handling all exceptions and errors in WS flows.
+ * Filer maps errors and emits appropriate error event
  */
 @Catch()
 export class WsExceptionFilter extends BaseWsExceptionFilter {

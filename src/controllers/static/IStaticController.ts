@@ -1,10 +1,14 @@
 import { StreamableFile } from '@nestjs/common';
 
+/**
+ * Controller interface for actions with static files
+ */
 export interface IStaticController {
 	/**
-	 * Method for retrieving static files from the API
-	 * @param fileName - request file name
-	 * @returns file as StreamableFile
+	 * Get static file from the API
+	 * @param fileName - static file name for retrieving
+	 * @throws NotFoundException - if file was not found
+	 * @returns StreamableFile - file content
 	 */
 	getFile(fileName: string): StreamableFile;
 }

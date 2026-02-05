@@ -106,9 +106,15 @@ describe('Direct chat messages repository', (): void => {
 			const messages: DirectChatMessage[] =
 				await directChatMessagesRepository.findLastMessagesByDirectChatId(directChatId, skip, take);
 
-			expect(messages).toHaveLength(expectedMessages.length);
+			const actual = messages.toSorted((firstMessage, secondMessage) =>
+				firstMessage.id.localeCompare(secondMessage.id),
+			);
+			const expected = expectedMessages.toSorted((firstMessage, secondMessage) =>
+				firstMessage.id.localeCompare(secondMessage.id),
+			);
 
-			expect(messages.sort()).toEqual(expectedMessages.sort());
+			expect(messages).toHaveLength(expectedMessages.length);
+			expect(actual).toEqual(expected);
 		});
 	});
 });

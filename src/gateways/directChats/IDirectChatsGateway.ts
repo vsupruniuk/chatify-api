@@ -2,13 +2,13 @@ import { JwtPayloadDto } from '@dtos/jwt';
 import { CreateDirectChatRequestDto } from '@dtos/directChats';
 
 /**
- * Interface representing public methods of direct chats gateway
+ * Gateway interface for live time action related to direct chats
  */
 export interface IDirectChatsGateway {
 	/**
-	 * Event handler for creating direct chat
-	 * @param appUserPayload - sender user payload from access token
-	 * @param createDirectChatRequestDto - receiver id and initial message
+	 * Create a direct chat between two users with initial message and notify both users if they are connected
+	 * @param appUserPayload - payload retrieved from JWT access token
+	 * @param createDirectChatRequestDto - DTO object with information for creating direct chat
 	 */
 	createDirectChat(
 		appUserPayload: JwtPayloadDto,

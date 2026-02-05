@@ -158,15 +158,18 @@ describe('Direct chat messages service', (): void => {
 			const messages: DirectChatMessageWithChatAndUserDto[] =
 				await directChatMessagesService.getChatMessages(userId, directChatId, page, take);
 
-			expect(messages.sort()).toEqual(
-				directChatMessagesMock
-					.map((message: DirectChatMessage) =>
-						plainToInstance(DirectChatMessageWithChatAndUserDto, message, {
-							excludeExtraneousValues: true,
-						}),
-					)
-					.sort(),
+			const actual = messages.toSorted((firstMessage, secondMessage) =>
+				firstMessage.id.localeCompare(secondMessage.id),
 			);
+			const expected = directChatMessagesMock
+				.map((message: DirectChatMessage) =>
+					plainToInstance(DirectChatMessageWithChatAndUserDto, message, {
+						excludeExtraneousValues: true,
+					}),
+				)
+				.sort((firstMessage, secondMessage) => firstMessage.id.localeCompare(secondMessage.id));
+
+			expect(actual).toEqual(expected);
 		});
 	});
 });

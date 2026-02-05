@@ -10,6 +10,11 @@ import { AuthTypes } from '@customTypes';
 
 type WSMiddleware = (event: Event, next: (error?: Error) => void) => Promise<void>;
 
+/**
+ * Middleware that runs on each new Web Socket connection and validates client authorization.
+ * If client is not authorized, the next handler will be called with the relevant error
+ * @param jwtTokensService - service for validation provided access token
+ */
 export const wsAuthMiddleware = (jwtTokensService: IJwtTokensService): WSMiddleware => {
 	return async (event: Event, next: (error?: Error) => void): Promise<void> => {
 		try {
