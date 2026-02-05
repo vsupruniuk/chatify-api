@@ -8,6 +8,7 @@
     "allowSyntheticDefaultImports": true,
     "strictFunctionTypes": true,
     "target": "ESNext",
+    "useDefineForClassFields": false,
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
