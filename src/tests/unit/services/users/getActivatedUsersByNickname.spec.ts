@@ -92,7 +92,7 @@ describe('Users service', () => {
 
 			expect(users).toBeInstanceOf(Array);
 
-			users.every((user: UserDto) => {
+			users.forEach((user: UserDto) => {
 				expect(user).toBeInstanceOf(UserDto);
 			});
 		});

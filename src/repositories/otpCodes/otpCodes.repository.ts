@@ -19,6 +19,6 @@ export class OtpCodesRepository implements IOtpCodesRepository {
 			.returning('*')
 			.execute();
 
-		return codeUpdateResult.raw[0] as OTPCode;
+		return (codeUpdateResult.raw as OTPCode[])[0];
 	}
 }

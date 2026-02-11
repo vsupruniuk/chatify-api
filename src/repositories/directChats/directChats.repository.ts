@@ -156,7 +156,9 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 					`last_message.id = (${lastMessageSubQuery})`,
 				)
 				.leftJoinAndSelect('last_message.sender', 'sender')
-				.where('direct_chat.id = :id', { id: chatInsertResult.generatedMaps[0].id })
+				.where('direct_chat.id = :id', {
+					id: chatInsertResult.generatedMaps[0].id,
+				})
 				.getOne();
 		});
 	}

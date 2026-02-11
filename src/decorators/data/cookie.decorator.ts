@@ -9,5 +9,5 @@ import { Request } from 'express';
 export const Cookie = createParamDecorator((name: string, ctx: ExecutionContext) => {
 	const request: Request = ctx.switchToHttp().getRequest<Request>();
 
-	return request.cookies[name];
+	return request.cookies[name] as string;
 });

@@ -40,7 +40,7 @@ export class JwtTokensService implements IJwtTokensService {
 			return await this._jwtService.verifyAsync<JwtPayloadDto>(token, {
 				secret: jwtConfig.accessTokenSecret,
 			});
-		} catch (error) {
+		} catch (_error: unknown) {
 			return null;
 		}
 	}
@@ -50,7 +50,7 @@ export class JwtTokensService implements IJwtTokensService {
 			return await this._jwtService.verifyAsync<JwtPayloadDto>(token, {
 				secret: jwtConfig.refreshTokenSecret,
 			});
-		} catch (error: unknown) {
+		} catch (_error: unknown) {
 			return null;
 		}
 	}

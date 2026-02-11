@@ -1,4 +1,4 @@
-import type { Config } from 'jest';
+import { Config } from 'jest';
 
 const config: Config = {
 	rootDir: '.',
@@ -71,6 +71,7 @@ const config: Config = {
 	moduleDirectories: ['node_modules', 'src', 'dist'],
 	setupFiles: ['dotenv/config', 'reflect-metadata', '<rootDir>/jest.setup.ts'],
 	collectCoverage: true,
+	coverageProvider: 'v8',
 	collectCoverageFrom: [
 		'src/**/*.{ts,tsx}',
 

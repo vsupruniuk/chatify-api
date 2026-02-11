@@ -11,9 +11,7 @@ import { CustomProvider } from '@enums';
 import { TransformHelper } from '@helpers';
 
 @Injectable()
-export class DirectChatWithUsersAndMessagesStrategy
-	implements IDecryptionStrategy<DirectChatWithUsersAndMessagesDto>
-{
+export class DirectChatWithUsersAndMessagesStrategy implements IDecryptionStrategy<DirectChatWithUsersAndMessagesDto> {
 	constructor(
 		@Inject(CustomProvider.CTF_CRYPTO_SERVICE)
 		private readonly _cryptoService: ICryptoService,
