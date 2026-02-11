@@ -1,4 +1,4 @@
-FROM node:24.12.0-slim AS builder
+FROM node:24.13.0-alpine3.23 AS builder
 
 WORKDIR /usr/src/app
 
@@ -14,7 +14,7 @@ COPY src ./src
 
 RUN npm run build
 
-FROM node:24.12.0-slim AS runner
+FROM node:24.13.0-alpine3.23 AS runner
 
 WORKDIR /usr/src/app
 
@@ -24,7 +24,10 @@ COPY --from=builder /usr/src/app/package-lock.json ./package-lock.json
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 
-RUN groupadd -r app && useradd -r -g app app && chown -R app:app /usr/src/app
+RUN addgroup -S app \
+    && adduser -S -G app app \
+    && chown -R app:app /usr/src/app
+
 USER app
 
 CMD ["npm", "run", "start:prod"]
