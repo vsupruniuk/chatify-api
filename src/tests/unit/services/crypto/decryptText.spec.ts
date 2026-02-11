@@ -32,10 +32,10 @@ describe('Crypto service', (): void => {
 		const keyMock: Buffer = Buffer.from('keyMock');
 		const decipherUpdateMock: Buffer = Buffer.from('cipherUpdateMock');
 		const decipherFinalMock: Buffer = Buffer.from('cipherFinalMock');
-		const decipherMock: crypto.Decipher = {
+		const decipherMock: crypto.Decipheriv = {
 			update: jest.fn().mockReturnValue(decipherUpdateMock),
 			final: jest.fn().mockReturnValue(decipherFinalMock),
-		} as unknown as crypto.Decipher;
+		} as unknown as crypto.Decipheriv;
 
 		const decryptedMessageMock: string = Buffer.concat([
 			decipherUpdateMock,
@@ -58,7 +58,7 @@ describe('Crypto service', (): void => {
 			jest.spyOn(Buffer, 'from');
 			jest
 				.spyOn(Buffer.prototype, 'subarray')
-				.mockImplementation(bufferSubarrayMock as (...args: unknown[]) => unknown);
+				.mockImplementation(bufferSubarrayMock as (..._args: unknown[]) => unknown);
 			jest.spyOn(crypto, 'scrypt').mockImplementation(() => keyMock);
 			jest.spyOn(util, 'promisify').mockImplementation((fn) => fn);
 			jest.spyOn(crypto, 'createDecipheriv').mockReturnValue(decipherMock);

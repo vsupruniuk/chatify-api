@@ -85,7 +85,7 @@ describe('Send message', (): void => {
 
 		const createSocket = async (user: User): Promise<Socket> => {
 			const loginResponse: supertest.Response = await supertest
-				.agent(app.getHttpServer()) //
+				.agent(app.getHttpServer())
 				.post(`/${Route.AUTH}/${Route.LOGIN}`)
 				.send({ email: user.email, password: passwordMock });
 

@@ -392,7 +392,7 @@ describe('Create direct chat', (): void => {
 			senderSocket.connect();
 
 			senderSocket.emit(WSEvent.CREATE_CHAT, {
-				receiverId: receiver?.id,
+				receiverId: receiver.id,
 				messageText: initialMessage.messageText,
 			});
 

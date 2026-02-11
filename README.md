@@ -56,3 +56,13 @@ Pre-requirements - create a `.env` file with configured variables
     make up 
 ```
 
+@nestjs/config
+@nestjs/serve-static
+cross-env
+source-map-support
+ts-loader
+
+
+
+
+

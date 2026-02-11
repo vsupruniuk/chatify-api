@@ -19,7 +19,7 @@ export class JwtTokensRepository implements IJwtTokensRepository {
 			.returning('*')
 			.execute();
 
-		return jwtTokenUpdateResult.raw[0] as JWTToken;
+		return (jwtTokenUpdateResult.raw as JWTToken[])[0];
 	}
 
 	public async resetTokenByUserId(userId: string): Promise<JWTToken> {
@@ -41,6 +41,6 @@ export class JwtTokensRepository implements IJwtTokensRepository {
 			.returning('*')
 			.execute();
 
-		return updateTokenResult.raw[0] as JWTToken;
+		return (updateTokenResult.raw as JWTToken[])[0];
 	}
 }

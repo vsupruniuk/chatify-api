@@ -23,6 +23,6 @@ export class PasswordResetTokensRepository implements IPasswordResetTokensReposi
 			.returning('*')
 			.execute();
 
-		return tokenUpdateResult.raw[0] as PasswordResetToken;
+		return (tokenUpdateResult.raw as PasswordResetToken[])[0];
 	}
 }
