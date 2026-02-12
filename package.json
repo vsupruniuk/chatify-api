@@ -15,7 +15,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "lint:ci": "eslint \"src/**/*.ts\"",
     "type-check": "tsc",
@@ -24,9 +24,9 @@
     "test:unit": "jest --runInBand --coverage=false",
     "test:e2e": "cross-env NODE_OPTIONS=\"-r ts-node/register\" jest --config jest-e2e.config.ts --runInBand --coverage=false",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
-    "migration:run": "npm run typeorm migration:run -- -d dist/configs/typeOrm.config.js",
-    "migration:generate": "npm run typeorm -- -d dist/configs/typeOrm.config.js migration:generate src/db/migrations/$npm_config_name",
-    "migration:revert": "npm run typeorm -- -d dist/configs/typeOrm.config.js migration:revert",
+    "migration:run": "npm run typeorm migration:run -- -d dist/src/configs/typeOrm.config.js",
+    "migration:generate": "npm run typeorm -- -d dist/src/configs/typeOrm.config.js migration:generate src/db/migrations/$npm_config_name",
+    "migration:revert": "npm run typeorm -- -d dist/src/configs/typeOrm.config.js migration:revert",
     "prepare": "husky"
   },
   "dependencies": {
