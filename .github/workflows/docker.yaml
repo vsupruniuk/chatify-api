@@ -72,6 +72,7 @@ jobs:
           organization: ${{ env.DOCKER_SCOUT_ORGANIZATION }}
           image: ${{ steps.release_version.outputs.image }}
           environment: ${{ env.DOCKER_SCOUT_ENV }}
+          to-env: ${{ env.DOCKER_SCOUT_ENV }}
           ignore-unchanged: false
           only-severities: critical,high,medium,low,unspecified
           github-token: ${{ secrets.GITHUB_TOKEN }}
