@@ -8,9 +8,6 @@ COPY tsconfig.json ./
 COPY tsconfig.build.json ./
 COPY nest-cli.json ./
 
-RUN npm ci \
-    && npm i tar@7.5.7 @isaacs/brace-expansion@5.0.1
-
 COPY src ./src
 
 RUN npm run build
