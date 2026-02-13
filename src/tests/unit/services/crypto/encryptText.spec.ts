@@ -28,10 +28,10 @@ describe('Crypto service', (): void => {
 		const keyMock: Buffer = Buffer.from('keyMock');
 		const cipherUpdateMock: Buffer = Buffer.from('cipherUpdateMock');
 		const cipherFinalMock: Buffer = Buffer.from('cipherFinalMock');
-		const cipherMock: crypto.Cipher = {
+		const cipherMock: crypto.Cipheriv = {
 			update: jest.fn().mockReturnValue(cipherUpdateMock),
 			final: jest.fn().mockReturnValue(cipherFinalMock),
-		} as unknown as crypto.Cipher;
+		} as unknown as crypto.Cipheriv;
 
 		const encryptedMessageMock: string = Buffer.concat([
 			Buffer.from(bufferMock),

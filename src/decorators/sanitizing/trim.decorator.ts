@@ -13,6 +13,6 @@ export const Trim = (): PropertyDecorator => {
 			return params.value.trim();
 		}
 
-		return params.value;
+		return params.value as unknown;
 	});
 };

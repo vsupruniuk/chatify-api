@@ -18,7 +18,7 @@ export class CryptoService implements ICryptoService {
 			cryptoConfig.keyLength,
 		)) as Buffer;
 
-		const cipher: crypto.Cipher = crypto.createCipheriv(cryptoConfig.algorithm, key, iv);
+		const cipher: crypto.Decipheriv = crypto.createCipheriv(cryptoConfig.algorithm, key, iv);
 		const encryptedText: Buffer = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
 
 		return Buffer.concat([salt, iv, encryptedText]).toString(
@@ -48,7 +48,7 @@ export class CryptoService implements ICryptoService {
 			cryptoConfig.keyLength,
 		)) as Buffer;
 
-		const decipher: crypto.Decipher = crypto.createDecipheriv(cryptoConfig.algorithm, key, iv);
+		const decipher: crypto.Decipheriv = crypto.createDecipheriv(cryptoConfig.algorithm, key, iv);
 
 		const decryptedText: Buffer = Buffer.concat([
 			decipher.update(encryptedTextContent),

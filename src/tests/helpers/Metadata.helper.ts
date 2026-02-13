@@ -16,7 +16,7 @@ export class MetadataHelper {
 			ROUTE_ARGS_METADATA,
 			MetadataWrapper,
 			'metadataWrapper',
-		);
+		) as GlobalTypes.IMetadataArguments;
 
 		return args[Object.keys(args)[0]].factory;
 	}

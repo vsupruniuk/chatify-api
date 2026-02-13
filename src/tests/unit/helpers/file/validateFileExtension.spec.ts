@@ -1,4 +1,5 @@
 import { FileHelper } from '@helpers';
+
 import { FileField } from '@enums';
 
 describe('File helper', (): void => {

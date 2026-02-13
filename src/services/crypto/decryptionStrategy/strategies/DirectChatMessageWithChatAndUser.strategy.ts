@@ -10,9 +10,7 @@ import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
 import { TransformHelper } from '@helpers';
 
 @Injectable()
-export class DirectChatMessageWithChatAndUserStrategy
-	implements IDecryptionStrategy<DirectChatMessageWithChatAndUserDto>
-{
+export class DirectChatMessageWithChatAndUserStrategy implements IDecryptionStrategy<DirectChatMessageWithChatAndUserDto> {
 	constructor(
 		@Inject(CustomProvider.CTF_CRYPTO_SERVICE)
 		private readonly _cryptoService: ICryptoService,

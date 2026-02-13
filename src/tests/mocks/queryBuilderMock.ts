@@ -10,9 +10,11 @@ export class QueryBuilderMock<T extends ObjectLiteral>
 		Partial<InsertQueryBuilder<T>>
 {
 	public createQueryBuilder: jest.Mock = jest.fn().mockReturnThis();
-	public transaction: jest.Mock = jest.fn().mockImplementation(async (callback) => {
-		return await callback(this);
-	});
+	public transaction: jest.Mock = jest
+		.fn()
+		.mockImplementation(async (callback: (..._args: unknown[]) => unknown) => {
+			return await callback(this);
+		});
 
 	public select: jest.Mock = jest.fn().mockReturnThis();
 	public from: jest.Mock = jest.fn().mockReturnThis();
