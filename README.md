@@ -40,6 +40,7 @@ Pre-requirements - create a `.env` file with configured variables
     npm run start:dev
     
     # prod
+    npm run build
     npm run start:prod
 ```
 
@@ -55,14 +56,3 @@ Pre-requirements - create a `.env` file with configured variables
     # or use Makefile
     make up 
 ```
-
-@nestjs/config
-@nestjs/serve-static
-cross-env
-source-map-support
-ts-loader
-
-
-
-
-
