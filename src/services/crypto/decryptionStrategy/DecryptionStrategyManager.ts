@@ -12,22 +12,22 @@ import { DirectChatMessageWithChatAndUserDto } from '@dtos/directChatMessages';
 
 @Injectable()
 export class DecryptionStrategyManager implements IDecryptionStrategyManager {
-	private readonly strategies: Record<string, IDecryptionStrategy<object>> = {};
+	private readonly _strategies: Record<string, IDecryptionStrategy<object>> = {};
 
 	constructor(
 		directChatWithUsersAndMessagesStrategy: DirectChatWithUsersAndMessagesStrategy,
 		directChatMessageWithChatAndUserStrategy: DirectChatMessageWithChatAndUserStrategy,
 	) {
-		this.strategies[DirectChatWithUsersAndMessagesDto.name] =
+		this._strategies[DirectChatWithUsersAndMessagesDto.name] =
 			directChatWithUsersAndMessagesStrategy;
 
-		this.strategies[DirectChatMessageWithChatAndUserDto.name] =
+		this._strategies[DirectChatMessageWithChatAndUserDto.name] =
 			directChatMessageWithChatAndUserStrategy;
 	}
 
 	public async decrypt<T extends object>(data: T): Promise<T> {
 		const className: string = data.constructor.name;
-		const strategy: IDecryptionStrategy<object> | null = this.strategies[className] || null;
+		const strategy: IDecryptionStrategy<object> | null = this._strategies[className] || null;
 
 		if (!strategy) {
 			throw new InternalServerErrorException(
