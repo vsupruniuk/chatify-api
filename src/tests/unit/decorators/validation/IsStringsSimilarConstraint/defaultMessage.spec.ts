@@ -21,8 +21,8 @@ describe('Is strings similar decorator', (): void => {
 		it('should return a message that contains both fields names', (): void => {
 			const message: string = isStringsSimilarConstraint.defaultMessage(validationArguments);
 
-			expect(message.includes(property)).toBe(true);
-			expect(message.includes(relatedPropertyName)).toBe(true);
+			expect(message).toContain(property);
+			expect(message).toContain(relatedPropertyName);
 		});
 	});
 });
