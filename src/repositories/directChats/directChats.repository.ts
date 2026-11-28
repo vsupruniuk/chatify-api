@@ -115,13 +115,15 @@ export class DirectChatsRepository implements IDirectChatsRepository {
 				.returning('*')
 				.execute();
 
-			for (const user of [sender, receiver]) {
-				await transactionalEntityManager
-					.createQueryBuilder()
-					.relation(DirectChat, 'users')
-					.of(chatInsertResult.generatedMaps[0])
-					.add(user);
-			}
+			await Promise.all(
+				[sender, receiver].map((user: UserDto) =>
+					transactionalEntityManager
+						.createQueryBuilder()
+						.relation(DirectChat, 'users')
+						.of(chatInsertResult.generatedMaps[0])
+						.add(user),
+				),
+			);
 
 			await transactionalEntityManager
 				.createQueryBuilder()
