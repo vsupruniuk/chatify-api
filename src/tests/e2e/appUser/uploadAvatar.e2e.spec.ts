@@ -187,7 +187,7 @@ describe('Upload avatar', (): void => {
 				userAvatarResponse.body as SuccessfulResponseResult<UploadAvatarResponseDto>
 			).data;
 
-			expect(responseData.avatarUrl.length > 0).toBe(true);
+			expect(responseData.avatarUrl.length).toBeGreaterThan(0);
 		});
 
 		it('should save user avatar file name in DB', async (): Promise<void> => {
